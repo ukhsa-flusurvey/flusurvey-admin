@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
+
 
 export default function Login() {
     return (
@@ -33,12 +35,18 @@ export default function Login() {
                                 </label>
                                 <label className="block mt-4">
                                     <span className="text-gray-700">Password</span>
-                                    <input type="password" className='form-input block w-full mt-1 rounded border-gray-300'></input>
+                                    <input type="password"
+                                        placeholder='XXXXXX'
+                                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
 
                                 </label>
 
+                                <PrimaryButton
 
-                                <button className='mt-4 rounded bg-blue-600 hover:bg-blue-700 px-6 disabled:bg-blue-400 py-2 text-white'>Login</button>
+                                >
+                                    Login
+                                </PrimaryButton>
+
 
                                 <div className='flex row items-center my-4'>
                                     <div className='border-t border-t-gray-400 grow h-[1px]'></div>
