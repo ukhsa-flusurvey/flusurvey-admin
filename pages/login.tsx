@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
+import PrimaryOutlinedButton from '@/components/buttons/PrimaryOutlinedButton';
 
 
 export default function Login() {
@@ -54,10 +55,10 @@ export default function Login() {
                                     <div className='border-t border-t-gray-400 grow h-[1px]'></div>
                                 </div>
 
-                                <button className='mt-2 rounded text-blue-600 border border-blue-600 w-full px-6 py-2 flex justify-center items-center'>
+                                <PrimaryOutlinedButton>
                                     <ShieldCheckIcon className="h-6 w-6 mr-2" />
                                     Login Via Institute Account
-                                </button>
+                                </PrimaryOutlinedButton>
 
                             </div>
 
