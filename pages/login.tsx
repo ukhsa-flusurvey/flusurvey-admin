@@ -55,7 +55,9 @@ export default function Login() {
                                     <div className='border-t border-t-gray-400 grow h-[1px]'></div>
                                 </div>
 
-                                <PrimaryOutlinedButton>
+                                <PrimaryOutlinedButton
+                                    className='mt-2 w-full'
+                                >
                                     <ShieldCheckIcon className="h-6 w-6 mr-2" />
                                     Login Via Institute Account
                                 </PrimaryOutlinedButton>

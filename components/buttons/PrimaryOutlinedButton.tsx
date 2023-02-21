@@ -1,16 +1,28 @@
 import React, { ButtonHTMLAttributes, useState } from 'react';
+import clsx from 'clsx';
 
 
 interface PrimaryOutlinedButtonProps extends ButtonHTMLAttributes<HTMLElement> {
+    className?: string;
 }
 
 const PrimaryOutlinedButton: React.FC<PrimaryOutlinedButtonProps> = ({ children, ...props }) => {
     return (
-        <button 
-        {...props}
-        className='mt-2 rounded text-blue-600 border border-blue-600 w-full px-6 py-2 flex justify-center items-center hover:text-blue-800 hover:border-blue-800 hover:bg-gray-200'>
+        <button
+            {...props}
+            className={clsx(
+                'rounded flex justify-center items-center',
+                'px-6 py-2',
+                'border-2 border-blue-600 hover:border-transparent',
+                'hover:bg-blue-600',
+                'text-blue-600  hover:text-white',
+                'focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-opacity-50',
+                props.className,
+            )}
+        >
+
             {children}
-        </button>
+        </button >
     );
 };
 
