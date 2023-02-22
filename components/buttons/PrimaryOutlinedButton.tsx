@@ -16,7 +16,7 @@ const PrimaryOutlinedButton: React.FC<PrimaryOutlinedButtonProps> = ({ children,
                 'border-2 border-blue-600 hover:border-transparent',
                 'hover:bg-blue-600',
                 'text-blue-600  hover:text-white',
-                'focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-opacity-50',
+                'focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-opacity-30',
                 props.className,
             )}
         >
