@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import QuestionMarkCircleIcon from '@heroicons/react/24/outline/QuestionMarkCircleIcon';
-import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
+import Sidebar from '@/components/sidebar/Sidebar';
 
 
 export default function Home() {
@@ -13,26 +12,8 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className='flex'>
-                <div className='bg-slate-600 h-screen w-[300px] flex flex-col'>
-                    <div className='px-4 py-4 bg-slate-600'>
-                        <div className='text-white text-xl border-l-[4px] border-l-blue-500 pl-3'>
-                            <span className='text-base text-blue-200'>CASE-ADMIN</span> <br />
-                            <span className='font-semibold tracking-wider'>Infectieradar</span>
-                        </div>
-                    </div>
-                    <div className='grow px-2 py-4'>
-                        <div className='bg-slate-600 text-gray-300 px-2 py-2 rounded cursor-pointer hover:underline hover:bg-slate-700'>Dashboard</div>
-                        <div className='bg-slate-700 shadow-inner text-white px-2 py-2 rounded  hover:shadow-inner hover:bg-slate-700'>Study Management</div>
-                        <div className='bg-slate-600 text-gray-300 px-2 py-2 rounded cursor-pointer hover:underline hover:bg-slate-700'>Messaging</div>
-                        <div className='bg-slate-600 text-gray-300 px-2 py-2 rounded cursor-pointer hover:underline hover:bg-slate-700'>Participants</div>
-                    </div>
-                    <div className='bg-slate-700 py-4 px-4 text-gray-300 shadow-inner'>
-                        <div className='px-2 py-2 flex '><UserCircleIcon className='h-6 w-6 mr-2 text-gray-400' /> Profile</div>
-                        <div className='px-2 py-2 flex'><QuestionMarkCircleIcon className='h-6 w-6 mr-2 text-gray-400' /> Help</div>
-                        <div className='px-2 py-2 '>Logout</div>
-                    </div>
-
-                </div>
+                <Sidebar>
+                </Sidebar>
             </main>
         </>
     )
