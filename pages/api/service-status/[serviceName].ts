@@ -2,14 +2,10 @@ import caseAdminAPIInstance from '@/utils/server/api';
 import { isAxiosError } from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-
-
 export type ServiceStatusInfo = {
     msg: string;
     status: number;
 }
-
-
 
 const fetchStatus = async (serviceName: string) => {
     try {
