@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 interface NavItemProps {
-    children?: string
+    children: string;
+    isActive: boolean;
+    onSelect: any;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ children, ...props }) => {
-    const [active, setActive] = useState(false);
-    function handleClick() {
-        setActive(!active);
-    }
+const NavItem: React.FC<NavItemProps> = ({ children, isActive, onSelect, ...props }) => {
 
     return (
         <div
             {...props}
-            onClick={handleClick}
+            onClick={onSelect}
             className={clsx(
                 'rounded cursor-pointer',
                 'px-2 py-2',
-                { 'bg-slate-600': !active }, { 'bg-slate-700': active }, 'hover:bg-slate-700',
-                { 'text-gray-300': !active }, { 'text-white': active }, 'hover:underline',
-                { 'shadow-inner': active }
+                { 'bg-slate-600': !isActive }, { 'bg-slate-700': isActive }, 'hover:bg-slate-700',
+                { 'text-gray-300': !isActive }, { 'text-white': isActive }, 'hover:underline',
+                { 'shadow-inner': isActive }
             )}
         >
+
             {children}
         </div>
     );
