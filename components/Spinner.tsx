@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 interface SpinnerProps {
-    color?: 'blue';
+    color?: 'blue' | 'white';
     size?: 'sm' | 'md' | 'lg' | 'xl';
     invisibleLabel?: string;
 }
@@ -16,13 +16,13 @@ const Spinner: React.FC<SpinnerProps> = (props) => {
                 {
                     'border-gray-300': props.color === undefined,
                     'border-blue-500': props.color === 'blue',
+                    'border-white/30': props.color === 'white',
                     'h-6 w-6 border-[3px]': props.size === 'sm',
                     'h-8 w-8 border-4': props.size === 'md' || props.size === undefined,
                     'h-12 w-12 border-[5px]': props.size === 'lg',
                     'h-16 w-16 border-[6px]': props.size === 'xl',
                 }
             )}
-
             role="status">
             <span
                 className="sr-only"
