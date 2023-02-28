@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import NavItem from './NavItem';
+import SidebarButton from '../buttons/SidebarButton';
 import QuestionMarkCircleIcon from '@heroicons/react/24/outline/QuestionMarkCircleIcon';
 import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
 
@@ -44,7 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children, ...props }) => {
             <div className='bg-slate-700 py-4 px-4 text-gray-300 shadow-inner'>
                 <div className='px-2 py-2 flex '><UserCircleIcon className='h-6 w-6 mr-2 text-gray-400' /> Profile</div>
                 <div className='px-2 py-2 flex'><QuestionMarkCircleIcon className='h-6 w-6 mr-2 text-gray-400' /> Help</div>
-                <div className='px-2 py-2 '>Logout</div>
+                <SidebarButton label='Help' icon={<QuestionMarkCircleIcon className='h-6 w-6 mr-2 text-gray-400' />}
+                > </SidebarButton>
+                <SidebarButton label='Logout' ></SidebarButton>
             </div>
         </div>
     );
