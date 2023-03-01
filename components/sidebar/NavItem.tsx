@@ -4,7 +4,7 @@ import clsx from 'clsx';
 interface NavItemProps {
     children: string;
     isActive: boolean;
-    onSelect: any;
+    onSelect: () => void;
 }
 
 const NavItem: React.FC<NavItemProps> = ({ children, isActive, onSelect, ...props }) => {
