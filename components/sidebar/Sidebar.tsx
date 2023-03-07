@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import NavItem from './NavItem';
-import SidebarButton from '../buttons/SidebarButton';
+import SidebarButton from './SidebarButton';
 import QuestionMarkCircleIcon from '@heroicons/react/24/outline/QuestionMarkCircleIcon';
 import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
 import ArrowRightOnRectangleIcon from '@heroicons/react/24/outline/ArrowRightOnRectangleIcon';
