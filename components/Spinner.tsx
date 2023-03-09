@@ -14,8 +14,8 @@ const Spinner: React.FC<SpinnerProps> = (props) => {
                 "inline-block animate-spin rounded-full  netalign-[-0.125em]  motion-reduce:animate-[spin-2.0s_linear_infinite]",
                 'border-solid border-current border-r-gray-100',
                 {
-                    'border-gray-300': props.color === undefined,
-                    'border-blue-500': props.color === 'blue',
+                    'border-gray-300 border-r-gray-300/30': props.color === undefined,
+                    'border-blue-500 border-r-blue-500/20': props.color === 'blue',
                     'border-white/30': props.color === 'white',
                     'h-6 w-6 border-[3px]': props.size === 'sm',
                     'h-8 w-8 border-4': props.size === 'md' || props.size === undefined,

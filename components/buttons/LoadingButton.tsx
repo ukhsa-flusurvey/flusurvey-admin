@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import React from 'react';
 import Spinner from '../Spinner';
 import Button, { ButtonProps } from './Button';
 
