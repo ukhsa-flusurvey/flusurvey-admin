@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as fs from 'fs';
 import * as https from 'https';
+import { LoginMsg, LoginResponse, TokenResponse } from './types/authAPI';
 
 const caseAdminAPIInstance = axios.create({
     baseURL: process.env.MANAGEMENT_API_URL ? process.env.MANAGEMENT_API_URL : '',
@@ -10,5 +11,15 @@ const caseAdminAPIInstance = axios.create({
         ca: fs.readFileSync(process.env.MUTUAL_TLS_CA_CERTIFICATE_PATH ? process.env.MUTUAL_TLS_CA_CERTIFICATE_PATH : '')
     })
 });
+
+const getTokenHeader = (accessToken: string) => {
+    return {
+        'Authorization': `Bearer ${accessToken}`
+    }
+}
+
+// Auth API
+export const loginWithEmailRequest = (creds: LoginMsg) => caseAdminAPIInstance.post<LoginResponse>('/v1/auth/login-with-email', creds);
+export const renewTokenRequest = (refreshToken: string, accessToken: string) => caseAdminAPIInstance.post<TokenResponse>('/v1/auth/renew-token', { refreshToken }, { headers: { ...getTokenHeader(accessToken) } });
 
 export default caseAdminAPIInstance;
