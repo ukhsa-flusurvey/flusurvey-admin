@@ -1,16 +1,16 @@
-import React, { InputHTMLAttributes, useState } from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import XCircleIcon from '@heroicons/react/20/solid/XCircleIcon';
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 
-interface InputFormProps extends InputHTMLAttributes<HTMLElement> {
+interface InputFormProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     hasError?: boolean;
     errorMsg?: string;
 
 }
 
-const InputForm: React.FC<InputFormProps> = ({ hasError, ...props }) => {
+const InputForm: React.FC<InputFormProps> = ({ hasError, errorMsg, ...props }) => {
 
     return (<div>
         {props.label ?
@@ -44,17 +44,19 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, ...props }) => {
                 },
             )}>
         </input>
-        {(hasError && props.errorMsg) ?
-            <motion.div animate={{ y: [-10, -10, 0], opacity: 1, scale: 1 }}
-                transition={{
-                    ease: [0.5, 0.71, 1, 1],
-                }}
-                initial={{ opacity: 0, scale: 0.7 }}
-                className='bg-rose-200 rounded px-2 py-2 flex'>
-                <XCircleIcon className='h-6 w-6 mr-2 text-red-500' />  {props.errorMsg}
-            </motion.div>
-            : null}
-    </div>
+        <AnimatePresence>
+            {(hasError && errorMsg) &&
+                <motion.div
+                    animate={{ opacity: 1, height: 'auto' }}
+                    initial={{ opacity: 0, height: 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className='bg-rose-200 rounded px-2 py-2 flex overflow-hidden'>
+                    <XCircleIcon className='h-6 w-6 mr-2 text-red-500' />
+                    {errorMsg}
+                </motion.div>
+            }
+        </AnimatePresence>
+    </div >
     );
 };
 
