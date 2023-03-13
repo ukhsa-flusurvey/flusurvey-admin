@@ -2,6 +2,7 @@ import { loginWithEmailRequest, renewTokenRequest } from "@/utils/server/api";
 import NextAuth, { AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { Provider } from "next-auth/providers"
+import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
 
 interface CredentialsUser {
     id: string;
@@ -12,6 +13,7 @@ interface CredentialsUser {
         refreshToken: string;
     };
 }
+
 
 const CASECredentialProvider = CredentialsProvider({
     id: "case-credentials",
@@ -33,7 +35,7 @@ const CASECredentialProvider = CredentialsProvider({
                 instanceId: process.env.INSTANCE_ID ? process.env.INSTANCE_ID : 'default',
             });
             if (response.data.secondFactorNeeded) {
-                throw new Error('Second factor needed');
+                throw new Error(ERROR_SECOND_FACTOR_NEEDED);
             }
 
             const now = new Date();

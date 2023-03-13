@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/router'
 import Button from '@/components/buttons/Button';
 import { useState } from 'react';
+import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
 
 
 export default function Login() {
@@ -19,6 +20,8 @@ export default function Login() {
         password: '',
         verificationCode: ''
     });
+
+    const [isSecondFactor, setIsSecondFactor] = useState(false);
 
 
     console.log(session, status)
@@ -35,10 +38,10 @@ export default function Login() {
     if (status === 'authenticated') {
         return <div className='h-screen bg-slate-100 flex justify-center items-center'>
             <div className='bg-white rounded shadow p-6'>
-                <h1 className=' text-gray-600 mb-2'>You are already logged in as:</h1>
+                <h1 className=' text-gray-600 mb-2'>You are logged in as:</h1>
                 <p className='text-2xl font-bold'>{session.user?.email}</p>
                 <div className='flex space-x-4'>
-                    <Button onClick={() => router.push('/dashboard')}>Go to dashboard</Button>
+                    <Button onClick={() => router.push('/studies')}>Go to dashboard</Button>
                     <Button onClick={() => signOut()}>Logout</Button>
                 </div>
             </div>
@@ -52,13 +55,14 @@ export default function Login() {
                 email: loginData.email,
                 password: loginData.password,
                 redirect: false,
+                verificationCode: loginData.verificationCode,
             });
             console.log(res)
             if (!res) {
                 return
             }
-            if (res.error === 'Second factor needed') {
-                console.log('todo, ask code');
+            if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
+                setIsSecondFactor(true);
             }
 
         } catch (error) {
@@ -66,6 +70,93 @@ export default function Login() {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    let loginForm = <div></div>;
+
+    if (isSecondFactor) {
+        loginForm = <div>
+            <form onSubmit={(event) => {
+                event.preventDefault();
+                handleLogin();
+            }} >
+                <label className="block mt-4">
+                    <span className="text-gray-700">6 digit code</span>
+                    <input type="text"
+                        onChange={(event) => {
+                            setLoginData({
+                                ...loginData,
+                                verificationCode: event.target.value.replaceAll('-', '')
+                            })
+                        }}
+                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
+
+                </label>
+                <Button >Submit</Button>
+            </form>
+        </div>
+    } else {
+        loginForm = <div className='mt-10'>
+            <h2 className='text-3xl'>Login</h2>
+            <form onSubmit={(event) => {
+                event.preventDefault();
+                handleLogin();
+            }} >
+                <label className="block mt-4">
+                    <span className="text-gray-700">Email</span>
+                    <input type="email"
+                        onChange={(event) => {
+                            setLoginData({
+                                ...loginData,
+                                email: event.target.value
+                            })
+                        }}
+                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
+
+                </label>
+                <label className="block mt-4">
+                    <span className="text-gray-700">Password</span>
+                    <input type="password"
+                        onChange={(event) => {
+                            setLoginData({
+                                ...loginData,
+                                password: event.target.value
+                            })
+                        }}
+                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
+
+
+                </label>
+
+                <LoadingButton
+                    isLoading={isLoading}
+                    type='submit'
+                    onClick={() => {
+                        handleLogin();
+                    }}
+                >
+                    Login
+                </LoadingButton>
+            </form>
+
+            <div className='flex row items-center my-4'>
+                <div className='border-t border-t-gray-400 grow h-[1px]'></div>
+                <span className='px-2 text-gray-400'>OR</span>
+                <div className='border-t border-t-gray-400 grow h-[1px]'></div>
+            </div>
+
+            <PrimaryOutlinedButton
+                className='mt-2 w-full'
+                type='button'
+                onClick={() => {
+                    signIn('management-user-oauth', { redirect: true, callbackUrl: '/dashboard' });
+                }}
+            >
+                <ShieldCheckIcon className="h-6 w-6 mr-2" />
+                Login Via Institute Account
+            </PrimaryOutlinedButton>
+
+        </div>
     }
 
     return (
@@ -90,67 +181,7 @@ export default function Login() {
                                 </h1>
                             </div>
 
-                            <div className='mt-10'>
-                                <h2 className='text-3xl'>Login</h2>
-                                <form onSubmit={(event) => {
-                                    event.preventDefault();
-                                    handleLogin();
-                                }} >
-                                    <label className="block mt-4">
-                                        <span className="text-gray-700">Email</span>
-                                        <input type="email"
-                                            onChange={(event) => {
-                                                setLoginData({
-                                                    ...loginData,
-                                                    email: event.target.value
-                                                })
-                                            }}
-                                            className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-                                    </label>
-                                    <label className="block mt-4">
-                                        <span className="text-gray-700">Password</span>
-                                        <input type="password"
-                                            onChange={(event) => {
-                                                setLoginData({
-                                                    ...loginData,
-                                                    password: event.target.value
-                                                })
-                                            }}
-                                            className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-
-                                    </label>
-
-                                    <LoadingButton
-                                        isLoading={isLoading}
-                                        type='submit'
-                                        onClick={() => {
-                                            handleLogin();
-                                        }}
-                                    >
-                                        Login
-                                    </LoadingButton>
-                                </form>
-
-                                <div className='flex row items-center my-4'>
-                                    <div className='border-t border-t-gray-400 grow h-[1px]'></div>
-                                    <span className='px-2 text-gray-400'>OR</span>
-                                    <div className='border-t border-t-gray-400 grow h-[1px]'></div>
-                                </div>
-
-                                <PrimaryOutlinedButton
-                                    className='mt-2 w-full'
-                                    type='button'
-                                    onClick={() => {
-                                        signIn('management-user-oauth', { redirect: true, callbackUrl: '/dashboard' });
-                                    }}
-                                >
-                                    <ShieldCheckIcon className="h-6 w-6 mr-2" />
-                                    Login Via Institute Account
-                                </PrimaryOutlinedButton>
-
-                            </div>
+                            {loginForm}
 
                         </div>
 

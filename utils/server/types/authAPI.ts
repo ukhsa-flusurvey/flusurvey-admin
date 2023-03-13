@@ -1,5 +1,7 @@
 import { Profile, User } from "./user";
 
+export const ERROR_SECOND_FACTOR_NEEDED = 'Second factor needed';
+
 export interface LoginMsg {
     email: string;
     password: string;

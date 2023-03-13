@@ -11,7 +11,16 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className='flex'>
-                Landing page
+                - CASE admin title
+                - short description of the tool on this landing page
+
+                Links to
+                service status
+                study management
+                user management
+                documentation
+
+                - dveloped by coneno
             </main>
         </>
     )
