@@ -1,16 +1,17 @@
 import React, { InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
-import XCircleIcon from '@heroicons/react/20/solid/XCircleIcon';
 import { AnimatePresence, motion } from "framer-motion"
 
 interface InputFormProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     hasError?: boolean;
     errorMsg?: string;
+    color?: 'blue';
+    onChange?: () => void;
 
 }
 
-const InputForm: React.FC<InputFormProps> = ({ hasError, errorMsg, ...props }) => {
+const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, color, ...props }) => {
 
     return (<div>
         {props.label ?
@@ -36,12 +37,21 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, errorMsg, ...props }) =
             : null}
         <input {...props} type={props.type}
             placeholder={props.placeholder}
+            onChange={onChange}
             className={clsx(
                 'form-input block w-full mt-1 rounded border-gray-300',
-                props.className,
+                'focus:ring-4 focus:ring-offset-2',
                 {
-                    'border-2 border-red-500': hasError
+                    'focus:ring-blue-600 focus:ring-opacity-30 ': color === 'blue' || !color,
                 },
+                {
+                    'border-2 border-red-500': hasError,
+                    'focus:border-red-500 focus:border-2': hasError,
+                    'focus:ring-red-500 focus:ring-opacity-30 focus:ring-4 focus:ring-offset-2': hasError,
+
+                },
+                props.className,
+
             )}>
         </input>
         <AnimatePresence>
@@ -50,8 +60,8 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, errorMsg, ...props }) =
                     animate={{ opacity: 1, height: 'auto' }}
                     initial={{ opacity: 0, height: 0 }}
                     exit={{ opacity: 0, height: 0 }}
-                    className='bg-rose-200 rounded px-2 py-2 flex overflow-hidden'>
-                    <XCircleIcon className='h-6 w-6 mr-2 text-red-500' />
+                    className='py-2 flex overflow-hidden text-red-500 text-right text-xs'
+                >
                     {errorMsg}
                 </motion.div>
             }
