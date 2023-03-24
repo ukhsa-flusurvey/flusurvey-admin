@@ -4,6 +4,7 @@ import PrimaryOutlinedButton from './buttons/PrimaryOutlinedButton';
 import LoadingButton from './buttons/LoadingButton';
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
 import { signIn } from 'next-auth/react';
+import Input from './inputs/Input';
 
 interface LoginFormProps {
     isSecondFactor: boolean;
@@ -19,10 +20,11 @@ interface LoginFormProps {
         password: string;
     }) => void;
     handleLogin: () => void;
-
+    hasError?: boolean;
+    errorMsg?: string;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoading, isSecondFactor, handleLogin, ...props }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoading, isSecondFactor, handleLogin, hasError, errorMsg, ...props }) => {
 
     if (isSecondFactor) {
         return (
@@ -33,14 +35,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 }} >
                     <label className="block mt-4">
                         <span className="text-gray-700">6 digit code</span>
-                        <input type="text"
+                        <Input type="text"
                             onChange={(event) => {
                                 setLoginData({
                                     ...loginData,
                                     verificationCode: event.target.value.replaceAll('-', '')
                                 })
                             }}
-                            className='form-input block w-full mt-1 rounded border-gray-300'></input>
+                            hasError={hasError} errorMsg={errorMsg}></Input>
 
                     </label>
                     <Button >Submit</Button>
@@ -56,28 +58,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
             }} >
                 <label className="block mt-4">
                     <span className="text-gray-700">Email</span>
-                    <input type="email"
+                    <Input type="email"
                         onChange={(event) => {
                             setLoginData({
                                 ...loginData,
                                 email: event.target.value
                             })
                         }}
-                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
+                        hasError={hasError} errorMsg={errorMsg}></Input>
 
                 </label>
                 <label className="block mt-4">
                     <span className="text-gray-700">Password</span>
-                    <input type="password"
+                    <Input type="password"
                         onChange={(event) => {
                             setLoginData({
                                 ...loginData,
                                 password: event.target.value
                             })
                         }}
-                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-
+                        hasError={hasError} errorMsg={errorMsg}></Input>
                 </label>
 
                 <LoadingButton

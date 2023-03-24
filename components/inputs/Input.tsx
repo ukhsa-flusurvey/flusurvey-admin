@@ -7,7 +7,7 @@ interface InputFormProps extends InputHTMLAttributes<HTMLInputElement> {
     hasError?: boolean;
     errorMsg?: string;
     color?: 'blue';
-    onChange?: () => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 }
 
