@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import Button from '@/components/buttons/Button';
 import { useState } from 'react';
 import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
+import LoginForm from '@/components/LoginForm';
 
 
 export default function Login() {
@@ -72,93 +73,6 @@ export default function Login() {
         }
     }
 
-    let loginForm = <div></div>;
-
-    if (isSecondFactor) {
-        loginForm = <div>
-            <form onSubmit={(event) => {
-                event.preventDefault();
-                handleLogin();
-            }} >
-                <label className="block mt-4">
-                    <span className="text-gray-700">6 digit code</span>
-                    <input type="text"
-                        onChange={(event) => {
-                            setLoginData({
-                                ...loginData,
-                                verificationCode: event.target.value.replaceAll('-', '')
-                            })
-                        }}
-                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-                </label>
-                <Button >Submit</Button>
-            </form>
-        </div>
-    } else {
-        loginForm = <div className='mt-10'>
-            <h2 className='text-3xl'>Login</h2>
-            <form onSubmit={(event) => {
-                event.preventDefault();
-                handleLogin();
-            }} >
-                <label className="block mt-4">
-                    <span className="text-gray-700">Email</span>
-                    <input type="email"
-                        onChange={(event) => {
-                            setLoginData({
-                                ...loginData,
-                                email: event.target.value
-                            })
-                        }}
-                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-                </label>
-                <label className="block mt-4">
-                    <span className="text-gray-700">Password</span>
-                    <input type="password"
-                        onChange={(event) => {
-                            setLoginData({
-                                ...loginData,
-                                password: event.target.value
-                            })
-                        }}
-                        className='form-input block w-full mt-1 rounded border-gray-300'></input>
-
-
-                </label>
-
-                <LoadingButton
-                    isLoading={isLoading}
-                    type='submit'
-                    onClick={() => {
-                        handleLogin();
-                    }}
-                >
-                    Login
-                </LoadingButton>
-            </form>
-
-            <div className='flex row items-center my-4'>
-                <div className='border-t border-t-gray-400 grow h-[1px]'></div>
-                <span className='px-2 text-gray-400'>OR</span>
-                <div className='border-t border-t-gray-400 grow h-[1px]'></div>
-            </div>
-
-            <PrimaryOutlinedButton
-                className='mt-2 w-full'
-                type='button'
-                onClick={() => {
-                    signIn('management-user-oauth', { redirect: true, callbackUrl: '/dashboard' });
-                }}
-            >
-                <ShieldCheckIcon className="h-6 w-6 mr-2" />
-                Login Via Institute Account
-            </PrimaryOutlinedButton>
-
-        </div>
-    }
-
     return (
         <>
             <Head>
@@ -181,7 +95,11 @@ export default function Login() {
                                 </h1>
                             </div>
 
-                            {loginForm}
+
+                            <LoginForm isSecondFactor={isSecondFactor} isLoading={isLoading}
+                                loginData={loginData} handleLogin={handleLogin}
+                                setLoginData={setLoginData}
+                            ></LoginForm>
 
                         </div>
 
