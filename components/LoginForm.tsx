@@ -42,7 +42,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                                     verificationCode: event.target.value.replaceAll('-', '')
                                 })
                             }}
-                            hasError={hasError} errorMsg={errorMsg}></Input>
+                            hasError={hasError} errorMsg="Wrong verification code"></Input>
 
                     </label>
                     <Button >Submit</Button>
@@ -65,7 +65,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                                 email: event.target.value
                             })
                         }}
-                        hasError={hasError} errorMsg={errorMsg}></Input>
+                        hasError={hasError}></Input>
 
                 </label>
                 <label className="block mt-4">
@@ -77,7 +77,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                                 password: event.target.value
                             })
                         }}
-                        hasError={hasError} errorMsg={errorMsg}></Input>
+                        hasError={hasError} errorMsg="Wrong email or password"></Input>
                 </label>
 
                 <LoadingButton

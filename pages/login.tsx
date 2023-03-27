@@ -1,8 +1,5 @@
 import Head from 'next/head'
-import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
-import PrimaryOutlinedButton from '@/components/buttons/PrimaryOutlinedButton';
 import { useSession, signIn, signOut } from "next-auth/react";
-import LoadingButton from '@/components/buttons/LoadingButton';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/router'
 import Button from '@/components/buttons/Button';
@@ -23,6 +20,7 @@ export default function Login() {
     });
 
     const [isSecondFactor, setIsSecondFactor] = useState(false);
+    const [isError, setError] = useState(false);
 
 
     console.log(session, status)
@@ -62,7 +60,13 @@ export default function Login() {
             if (!res) {
                 return
             }
+            if (res.ok === false) {
+                setError(true);
+            } else {
+                setError(false);
+            }
             if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
+                setError(false);
                 setIsSecondFactor(true);
             }
 
@@ -99,6 +103,7 @@ export default function Login() {
                             <LoginForm isSecondFactor={isSecondFactor} isLoading={isLoading}
                                 loginData={loginData} handleLogin={handleLogin}
                                 setLoginData={setLoginData}
+                                hasError={isError}
                             ></LoginForm>
 
                         </div>
