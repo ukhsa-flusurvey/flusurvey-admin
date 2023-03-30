@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useSession, signIn, signOut } from "next-auth/react";
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/router'
@@ -79,12 +78,6 @@ export default function Login() {
 
     return (
         <>
-            <Head>
-                <title>CASE Admin - Login</title>
-                <meta name="description" content="admin page for CASE instance" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
             <main className='h-screen bg-blue-500 bg-repeat bg-[length:350px_350px] bg-[url(/images/random-shapes.svg)]'>
 
                 <div className='h-full drop-shadow-[5px_0px_8px_rgba(0,0,0,0.25)]'>
