@@ -14,8 +14,8 @@ export default function App({ Component, pageProps: {
 } }: AppProps) {
     return <SessionProvider session={session}>
         <DefaultHead
-            title={process.env.NEXT_PUBLIC_APP_NAME || ''}
-            description='This is the CASE admin tool, to manage studies, surveys, messages and participants.'
+            title={'Infectieradar Admin'}
+            description='Admin Tool for the Infectieradar platform'
         />
         <Component {...pageProps} />
     </SessionProvider>
