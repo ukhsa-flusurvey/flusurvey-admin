@@ -52,7 +52,6 @@ const CASECredentialProvider = CredentialsProvider({
             console.error(error);
             throw error;
         }
-        return null;
     },
 })
 
