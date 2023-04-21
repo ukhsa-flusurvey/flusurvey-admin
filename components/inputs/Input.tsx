@@ -42,6 +42,7 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
             onChange={onChange}
             className={clsx(
                 'form-input block w-full mt-1 rounded border-gray-300',
+                'disabled:bg-gray-100 disabled:cursor-not-allowed',
                 'focus:ring-4 focus:ring-offset-2',
                 {
                     'focus:ring-blue-600 focus:ring-opacity-30 ': color === 'blue' || !color,

@@ -56,7 +56,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
 
     return (
         <div className='p-6 bg-white rounded'>
-            <h2 className='text-3xl font-bold'>Study property editor</h2>
+            <h2 className='text-3xl font-bold'>Study creator</h2>
             <h3 className='text-2xl font-bold mt-8'>Study configuration</h3>
             <form
                 onSubmit={(event) => {
@@ -129,6 +129,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                         placeholder='Enter study name'
                         type='text'
                         autoComplete='off'
+                        disabled
                     />
                 </StudyProperty>
 
@@ -141,6 +142,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                         rows={4}
                         placeholder='Add a study description'
                         autoComplete='off'
+                        disabled
                     />
                 </StudyProperty>
 
