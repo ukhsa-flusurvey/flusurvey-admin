@@ -12,7 +12,7 @@ const caseAdminAPIInstance = axios.create({
     }) : undefined,
 });
 
-const getTokenHeader = (accessToken: string) => {
+export const getTokenHeader = (accessToken: string) => {
     return {
         'Authorization': `Bearer ${accessToken}`
     }

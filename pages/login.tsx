@@ -54,7 +54,7 @@ export default function Login() {
             const res = await signIn('case-credentials', {
                 email: loginData.email,
                 password: loginData.password,
-                redirect: true,
+                redirect: false,
                 verificationCode: loginData.verificationCode,
                 callbackUrl: callBackURL as string,
             });

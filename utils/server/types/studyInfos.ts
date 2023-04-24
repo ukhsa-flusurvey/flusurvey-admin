@@ -1,4 +1,4 @@
-import { LocalizedString } from 'survey-engine/data_types';
+import { Expression, LocalizedString } from 'survey-engine/data_types';
 
 export interface SurveyInfos {
     infos: Array<{
@@ -8,4 +8,20 @@ export interface SurveyInfos {
         description: LocalizedString;
         typicalDuration: LocalizedString;
     }>
+}
+
+export interface Study {
+    key: string;
+    status: string;
+    secretKey: string;
+    props: {
+        name: LocalizedString[];
+        description: LocalizedString[];
+        tags: LocalizedString[][];
+    }
+    configs: {
+        idMappingMethod: string;
+        participantFileUploadRule: Expression;
+    }
+    rules: Expression[];
 }
