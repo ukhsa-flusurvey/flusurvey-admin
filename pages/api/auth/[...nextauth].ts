@@ -52,7 +52,6 @@ const CASECredentialProvider = CredentialsProvider({
             console.error(error);
             throw error;
         }
-        return null;
     },
 })
 
@@ -91,6 +90,7 @@ export const authOptions = {
     },
     callbacks: {
         async jwt({ token, user, account }) {
+            console.log('jwt callback');
             if (account) {
                 // Save the access token and refresh token in the JWT on the initial login
                 if (account.provider === 'case-credentials') {

@@ -16,7 +16,8 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
     return (<div>
         {props.label ?
             <label
-                className="block mt-4">
+                htmlFor={props.id}
+                className="block cursor-text">
                 <span className={clsx(
                     "text-gray-700",
                     {
@@ -35,11 +36,13 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
                 </span>
             </label>
             : null}
-        <input {...props} type={props.type}
+        <input {...props}
+            type={props.type}
             placeholder={props.placeholder}
             onChange={onChange}
             className={clsx(
                 'form-input block w-full mt-1 rounded border-gray-300',
+                'disabled:bg-gray-100 disabled:cursor-not-allowed',
                 'focus:ring-4 focus:ring-offset-2',
                 {
                     'focus:ring-blue-600 focus:ring-opacity-30 ': color === 'blue' || !color,

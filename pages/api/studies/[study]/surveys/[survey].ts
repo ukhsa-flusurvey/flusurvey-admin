@@ -1,7 +1,7 @@
 import caseAdminAPIInstance from "@/utils/server/api";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../../auth/[...nextauth]";
 
 
 export default async function handler(
@@ -13,17 +13,10 @@ export default async function handler(
         res.status(401).json({ error: 'Unauthorized' });
         return;
     }
-    // console.log(session);
-    /*const token = await getToken({ req })
-    if (!token) {
-        res.status(401).json({ error: 'Unauthorized' });
-        return;
-    }*/
-    const { study } = req.query as { study: string[] };
-    console.log(study)
-    // console.log(token.access_token);
 
-    const studyKey = study[0];
+    const { study, survey } = req.query as { study: string, survey: string };
+
+    const studyKey = study;
     try {
         const response = await caseAdminAPIInstance.get(`/v1/study/${studyKey}/surveys`,
             {
@@ -32,8 +25,7 @@ export default async function handler(
                 }
             }
         );
-        // console.log(response.data);
-
+        res.status(200).json(response.data);
     }
 
     catch (error) {
@@ -42,6 +34,5 @@ export default async function handler(
         return;
     }
 
-
-    res.status(200).json({ name: 'John Doe' })
+    return;
 }
