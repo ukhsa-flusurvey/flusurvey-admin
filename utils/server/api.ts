@@ -3,6 +3,10 @@ import * as fs from 'fs';
 import * as https from 'https';
 import { LoginMsg, LoginResponse, TokenResponse } from './types/authAPI';
 
+export const getCASEManagementAPIURL = (path: string): URL => {
+    return new URL(path, process.env.MANAGEMENT_API_URL ? process.env.MANAGEMENT_API_URL : '');
+}
+
 const caseAdminAPIInstance = axios.create({
     baseURL: process.env.MANAGEMENT_API_URL ? process.env.MANAGEMENT_API_URL : '',
     httpsAgent: process.env.USE_MUTUAL_TLS === 'true' ? new https.Agent({
