@@ -23,9 +23,11 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={`${open_sans.variable} font-sans`}>
-            <body>
+            <body className='flex flex-col h-screen'>
                 <AppBar />
-                {children}
+                <main className='flex-1'>
+                    {children}
+                </main>
             </body>
         </html>
     );

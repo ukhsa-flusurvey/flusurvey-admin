@@ -3,12 +3,9 @@ import Link from "next/link";
 export default async function Page() {
     return (
         <div>
-            TODO: page
-            <Link href='/tools/admin-v1'>
+            Admin v1
+            <Link href='/tools/admin-v1/messaging'>
                 test
-            </Link>
-            <Link href='/service-status'>
-                Service Status
             </Link>
         </div>
     )
