@@ -156,7 +156,9 @@ export const authOptions = {
     }
 } as AuthOptions;
 
-export default NextAuth(authOptions)
+
+const handler = NextAuth(authOptions)
+export { handler as GET, handler as POST }
 
 declare module "next-auth/" {
     interface Session {

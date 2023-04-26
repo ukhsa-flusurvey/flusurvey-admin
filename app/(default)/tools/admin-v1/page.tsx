@@ -1,10 +1,14 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
 import Container from "@/components/Container";
 import Navbar from "@/components/admin-tool-v1/Navbar";
+import StudySelector from "@/components/admin-tool-v1/StudySelector";
 import Link from "next/link";
+import { Suspense } from "react";
 
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
+
     return (
         <>
             <Navbar
@@ -22,7 +26,12 @@ export default async function Page() {
                         </p>
                     </div>
                     <div className="sm:ps-6">
-                        add links
+                        <Suspense
+                            fallback={<p>loading...</p>}
+                        >
+                            {/* @ts-expect-error Async Server Component */}
+                            <StudySelector />
+                        </Suspense>
                     </div>
                 </div>
 

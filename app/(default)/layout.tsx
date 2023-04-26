@@ -1,4 +1,4 @@
-import AppBar from '@/components/AppBar';
+import AppBar from '@/components/appbar/AppBar';
 import '@/styles/globals.css'
 
 import { Open_Sans } from 'next/font/google'
@@ -24,6 +24,7 @@ export default function RootLayout({
     return (
         <html lang="en" className={`${open_sans.variable} font-sans`}>
             <body className='flex flex-col h-screen'>
+                {/* @ts-expect-error Async Server Component */}
                 <AppBar />
                 <main className='flex-1'>
                     {children}

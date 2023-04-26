@@ -1,10 +1,10 @@
-import React, { ReactElement, useState } from 'react';
-import Button from './buttons/Button';
-import PrimaryOutlinedButton from './buttons/PrimaryOutlinedButton';
-import LoadingButton from './buttons/LoadingButton';
+import React from 'react';
+import Button from '../buttons/Button';
+import PrimaryOutlinedButton from '../buttons/PrimaryOutlinedButton';
+import LoadingButton from '../buttons/LoadingButton';
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
 import { signIn } from 'next-auth/react';
-import Input from './inputs/Input';
+import Input from '../inputs/Input';
 
 interface LoginFormProps {
     isSecondFactor: boolean;
@@ -50,7 +50,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
             </div>);
     }
     return (
-        <div className='mt-10'>
+        <div className='mt-8'>
             <h2 className='text-3xl'>Login</h2>
             <form onSubmit={(event) => {
                 event.preventDefault();
@@ -60,6 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                     <span className="text-gray-700">Email</span>
                     <Input type="email"
                         autoComplete='email'
+                        name='email'
                         onChange={(event) => {
                             setLoginData({
                                 ...loginData,
