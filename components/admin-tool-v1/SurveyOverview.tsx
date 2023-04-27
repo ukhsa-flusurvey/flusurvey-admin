@@ -1,11 +1,15 @@
-import { getStudies } from "@/utils/server/studyAPI";
-import Link from "next/link";
+import { getSurveysForStudy } from "@/utils/server/studyAPI";
+import NotImplemented from "../NotImplemented";
+import { SurveyInfos } from "@/utils/server/types/studyInfos";
 
-export default async function StudySelector() {
+interface SurveyOverviewProps {
+    studyKey: string
+}
 
-    let studies = [];
+export default async function SurveyOverview(props: SurveyOverviewProps) {
+    let surveys: SurveyInfos;
     try {
-        studies = await getStudies();
+        surveys = (await getSurveysForStudy(props.studyKey));
     } catch (error: any) {
         console.log(error)
         return (
@@ -16,7 +20,40 @@ export default async function StudySelector() {
         )
     }
 
-    // console.log(studies)
+    // console.log(surveys)
+
+    const renderSurveys = () => {
+        if (!surveys || !surveys.infos || surveys.infos.length === 0) {
+            return (
+                <div className="p-4 border border-dashed border-gray-300 rounded">
+                    <p className=" text-gray-400">No surveys found</p>
+                    <p className="text-sm text-gray-400">Upload your first survey using the button below</p>
+                </div>
+            )
+        }
+        return (
+            <div className="flex flex-col gap-2 ">
+                {surveys.infos.map((survey) => (
+                    <div
+                        key={survey.surveyKey}
+                        className="font-bold px-4 py-2 rounded border bg-gray-50 border-gray-200">
+                        {survey.surveyKey}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+
+
+
+    return <>
+        {renderSurveys()}
+        <NotImplemented className="mt-2">
+            see version history | preview survey | delete survey versions
+        </NotImplemented>
+    </>
+    /*
 
     if (!studies || studies.length === 0) {
         return (
@@ -50,5 +87,5 @@ export default async function StudySelector() {
                 Create new study
             </Link>
         </>
-    )
+    )*/
 }
