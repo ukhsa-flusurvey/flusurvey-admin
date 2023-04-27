@@ -1,4 +1,5 @@
 import NotImplemented from "@/components/NotImplemented"
+import StudyRuleUploader from "@/components/admin-tool-v1/StudyRuleUploader"
 import SurveyOverview from "@/components/admin-tool-v1/SurveyOverview"
 import SurveyUploader from "@/components/admin-tool-v1/SurveyUploader"
 import { Suspense } from "react"
@@ -59,9 +60,9 @@ export default async function Page({ params: { studyKey } }: {
                         </p>
                     </div>
                     <div className="sm:ps-6">
-                        <NotImplemented>
-                            rule uploader
-                        </NotImplemented>
+                        <StudyRuleUploader
+                            studyKey={studyKey}
+                        />
                         <NotImplemented className="mt-2">
                             see rule history (with update times) | preview active rules
                         </NotImplemented>

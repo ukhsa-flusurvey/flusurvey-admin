@@ -1,42 +1,46 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Expression } from 'survey-engine/data_types';
 import Filepicker from '../inputs/Filepicker';
 import Button from '../buttons/Button';
-import { Survey } from 'survey-engine/data_types';
 import { useRouter } from 'next/navigation';
 
-interface SurveyUploaderProps {
+interface StudyRuleUploaderProps {
     studyKey: string;
 }
 
-const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
-    const [newSurvey, setNewSurvey] = useState<Survey | undefined>(undefined);
+const StudyRuleUploader: React.FC<StudyRuleUploaderProps> = ({ studyKey }) => {
+    const [newStudyRules, setNewStudyRules] = useState<Expression[] | undefined>(undefined);
     const router = useRouter()
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
-    const uploadSurvey = async () => {
+    const uploadStudyRules = async () => {
         setError(undefined);
         setSuccess(undefined)
         setIsLoading(true);
-        if (newSurvey) {
+        if (newStudyRules) {
             try {
-                const url = new URL(`/api/case-management-api/v1/study/${studyKey}/surveys`, process.env.NEXT_PUBLIC_API_URL)
+                const url = new URL(`/api/case-management-api/v1/study/${studyKey}/rules`, process.env.NEXT_PUBLIC_API_URL)
                 const response = await fetch(url.toString(), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ survey: newSurvey }),
+                    body: JSON.stringify({ rules: newStudyRules }),
                 });
                 const data = await response.json();
-                setSuccess('Survey uploaded successfully');
-                console.log(data);
-                router.refresh();
-
+                if (response.status !== 200) {
+                    setError(data.error);
+                    console.log(data);
+                } else {
+                    console.log(data);
+                    setSuccess('Study rules uploaded successfully');
+                    router.refresh();
+                }
             }
             catch (e: any) {
                 setError(e.message);
@@ -44,12 +48,12 @@ const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
             }
         }
         setIsLoading(false);
-    };
-
+    }
 
     return (
-        <>
-            <h3 className='text-slate-500 font-bold mb-2'>New survey</h3>
+        <div>
+            <h3 className='text-slate-500 font-bold mb-2'>Select study rule:</h3>
+
             <Filepicker
                 accept={{
                     'application/json': ['.json'],
@@ -62,9 +66,9 @@ const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
                             const text = e.target?.result;
                             if (typeof text === 'string') {
                                 const data = JSON.parse(text);
-                                setNewSurvey(data as Survey);
+                                setNewStudyRules(data as Expression[]);
                             } else {
-                                setNewSurvey(undefined);
+                                setNewStudyRules(undefined);
                                 console.log('error');
                             }
                         }
@@ -73,18 +77,17 @@ const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
                     console.log(files);
                 }}
             />
-            {error && <p className='text-red-500'>{error}</p>}
             {success && <p className='text-green-500'>{success}</p>}
+            {error && <p className='text-red-500'>{error}</p>}
             <Button
-                disabled={newSurvey === undefined || isLoading}
+                disabled={newStudyRules === undefined || isLoading}
                 onClick={() => {
-                    uploadSurvey();
-                    // console.log('create survey');
+                    uploadStudyRules();
                 }}>
                 Upload
             </Button>
-        </>
+        </div>
     );
 };
 
-export default SurveyUploader;
+export default StudyRuleUploader;
