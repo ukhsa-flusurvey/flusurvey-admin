@@ -41,7 +41,9 @@ export default async function Page({ params: { studyKey } }: {
                         </p>
                     </div>
                     <div className="sm:ps-6">
-                        <SurveyUploader />
+                        <SurveyUploader
+                            studyKey={studyKey}
+                        />
                     </div>
                 </div>
 
