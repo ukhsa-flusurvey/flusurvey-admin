@@ -286,7 +286,7 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
             </div>
             <div>
                 <h4 className='text-lg font-bold'>Template Preview</h4>
-                <div className='h-96 border border-dashed mt-6 rounded'>
+                <div className='h-96 border border-dashed mt-6 rounded overflow-scroll'>
                     {newTemplate &&
                         <div dangerouslySetInnerHTML={{ __html: newTemplate }} />
                     }
