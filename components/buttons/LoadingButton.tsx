@@ -8,7 +8,7 @@ interface LoadingButtonProps extends ButtonProps {
 
 const LoadingButton: React.FC<LoadingButtonProps> = ({ children, isLoading, ...props }) => {
     return (
-        <Button {...props} disabled={isLoading}>
+        <Button {...props} disabled={props.disabled || isLoading}>
 
             {children}
             {isLoading ? <span className='flex items-center ml-4'>
