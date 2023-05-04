@@ -4,6 +4,8 @@ import ServiceStatusLoading from "@/components/service-status/ServiceStatusLoadi
 import { DocumentChartBarIcon, UserGroupIcon } from "@heroicons/react/24/solid"
 import { Suspense } from "react"
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
 
     return (
