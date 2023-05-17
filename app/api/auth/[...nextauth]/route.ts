@@ -34,18 +34,18 @@ const CASECredentialProvider = CredentialsProvider({
                 verificationCode: credentials.verificationCode,
                 instanceId: process.env.INSTANCE_ID ? process.env.INSTANCE_ID : 'default',
             });
-            if (response.data.secondFactorNeeded) {
+            if (response.secondFactorNeeded) {
                 throw new Error(ERROR_SECOND_FACTOR_NEEDED);
             }
 
             const now = new Date();
             return {
-                id: response.data.user.id,
-                email: response.data.user.account.accountId,
+                id: response.user.id,
+                email: response.user.account.accountId,
                 account: {
-                    accessToken: response.data.token.accessToken,
-                    expiresAt: new Date(now.getTime() + response.data.token.expiresIn * 60000),
-                    refreshToken: response.data.token.refreshToken,
+                    accessToken: response.token.accessToken,
+                    expiresAt: new Date(now.getTime() + response.token.expiresIn * 60000),
+                    refreshToken: response.token.refreshToken,
                 }
             };
         } catch (error: any) {
@@ -113,7 +113,8 @@ export const authOptions = {
                     };
                 }
 
-                // console.log(account);
+                console.log(account);
+                console.log(user);
                 return {
                     // email: account.email,
                     access_token: account.access_token,
@@ -156,6 +157,12 @@ export const authOptions = {
             session.error = token.error
             return session
         },
+
+    },
+    logger: {
+        debug: (...args) => console.log(...args),
+        error: (...args) => console.error(...args),
+        warn: (...args) => console.warn(...args),
     }
 } as AuthOptions;
 
