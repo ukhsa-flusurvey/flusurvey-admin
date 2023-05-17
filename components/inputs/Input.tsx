@@ -54,7 +54,6 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
 
                 },
                 props.className,
-
             )}>
         </input>
         <AnimatePresence>

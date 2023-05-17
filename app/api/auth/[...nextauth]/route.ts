@@ -23,7 +23,7 @@ const CASECredentialProvider = CredentialsProvider({
         verificationCode: { label: "Verification Code", type: "text" },
     },
     async authorize(credentials, req) {
-        if (!credentials) {
+        if (!credentials || !credentials.email || !credentials.password) {
             return null;
         }
 
@@ -48,8 +48,8 @@ const CASECredentialProvider = CredentialsProvider({
                     refreshToken: response.data.token.refreshToken,
                 }
             };
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error('Unexpected error when logging in with credentials');
             throw error;
         }
     },
@@ -65,6 +65,7 @@ const CASEOAuthProvider = (process.env.OPENID_CONFIG && process.env.OAUTH_CLIENT
     clientSecret: process.env.OAUTH_CLIENT_SECRET,
     authorization: { params: { scope: "openid email profile" } },
     idToken: true,
+
     profile(profile) {
         return {
             id: profile.sub,
@@ -86,7 +87,7 @@ if (CASEOAuthProvider) {
 export const authOptions = {
     providers: providers,
     pages: {
-        signIn: '/login',
+        signIn: '/auth/login',
     },
     callbacks: {
         async jwt({ token, user, account }) {
