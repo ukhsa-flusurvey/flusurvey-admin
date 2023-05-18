@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, createContext, useState } from 'react';
 import clsx from 'clsx';
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, DocumentIcon } from '@heroicons/react/24/solid';
 import { Transition } from '@headlessui/react';
@@ -40,12 +40,32 @@ const ToggleButton: React.FC<{ isExpanded: boolean, onClick: () => void }> = (pr
     );
 }
 
+const SidebarContext = createContext({
+    isExpanded: false,
+    toggleSidebar: () => { }
+});
+
+export function SidebarContextProvider({ children }: { children: React.ReactNode }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    return (
+        <SidebarContext.Provider value={{
+            isExpanded,
+            toggleSidebar: () => setIsExpanded(prev => !prev)
+        }}>
+            {children}
+        </SidebarContext.Provider>
+    );
+}
+
+
+
 const Navbar: React.FC<NavbarProps> = (props) => {
-    const [isExpanded, setIsExpanded] = React.useState(true);
+    const { isExpanded, toggleSidebar } = React.useContext(SidebarContext);
     const pathname = usePathname();
 
     const isActiveRoute = (href: string) => {
-        return pathname.startsWith(href);
+        return pathname.endsWith(href);
     }
 
 
@@ -105,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                     })}
                 </nav>
                 <span className='grow'></span>
-                <ToggleButton isExpanded={isExpanded} onClick={() => setIsExpanded(prev => !prev)} />
+                <ToggleButton isExpanded={isExpanded} onClick={() => toggleSidebar()} />
             </div>
         </div>
 

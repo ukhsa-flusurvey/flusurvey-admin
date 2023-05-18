@@ -5,7 +5,7 @@ import { ClipboardDocumentListIcon, EnvelopeIcon } from "@heroicons/react/24/out
 import Link from "next/link";
 import { Suspense } from "react";
 
-export const revalidate = 0;
+
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
