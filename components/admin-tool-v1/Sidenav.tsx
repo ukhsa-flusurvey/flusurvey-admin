@@ -9,6 +9,10 @@ import { usePathname } from 'next/navigation';
 
 
 interface NavbarProps {
+    title: {
+        icon: ReactNode;
+        label: string;
+    }
     links: { href: string; title: string, icon: ReactNode }[];
 }
 
@@ -79,12 +83,10 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             <div className="backdrop-blur-3xl bg-white/95 h-full flex flex-col justify-center">
 
                 <h2 className="flex items-center p-4 gap-2">
-                    <span className="bg-red-400 rounded text-white w-8 h-8 flex text-lg items-center justify-center">
-                        A
-                    </span>
+                    {props.title.icon}
                     {isExpanded &&
                         <span className="text-xl font-bold">
-                            Admin Tool V1
+                            {props.title.label}
                         </span>}
                 </h2>
                 <div className='px-4'>
