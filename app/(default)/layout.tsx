@@ -1,3 +1,4 @@
+import AuthProvider from '@/components/AuthProvider';
 import AppBar from '@/components/appbar/AppBar';
 import '@/styles/globals.css'
 
@@ -23,12 +24,14 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={`${open_sans.variable} font-sans`}>
-            <body className='flex flex-col h-screen'>
-                {/* @ts-expect-error Async Server Component */}
-                <AppBar />
-                <main className='flex-1'>
-                    {children}
-                </main>
+            <body>
+                <AuthProvider>
+                    {/* @ts-expect-error Async Server Component */}
+                    <AppBar />
+                    <main className='h-screen pt-16'>
+                        {children}
+                    </main>
+                </AuthProvider>
             </body>
         </html>
     );

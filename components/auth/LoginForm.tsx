@@ -49,6 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 </form>
             </div>);
     }
+
     return (
         <div className='mt-8'>
             <h2 className='text-3xl'>Login</h2>
@@ -88,6 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 <LoadingButton
                     isLoading={isLoading}
                     type='submit'
+                    disabled={loginData.email === '' || loginData.password === ''}
                 >
                     Login
                 </LoadingButton>
