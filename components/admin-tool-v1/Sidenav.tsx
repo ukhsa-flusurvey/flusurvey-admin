@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                                 >{link.icon}</span>
                                 {isExpanded && link.title}
                                 {!isExpanded && <div className={clsx(
-                                    'absolute left-[52px] group-hover:opacity-100 opacity-0 -translate-x-1/2 group-hover:translate-x-0 h-full flex items-center flex-nowrap transition-all bg-gray-100 shadow-sm p-2 rounded whitespace-nowrap',
+                                    'absolute left-[52px] hidden group-hover:opacity-100 opacity-0 -translate-x-1/2 group-hover:translate-x-0 h-full group-hover:flex items-center flex-nowrap transition-all bg-gray-100 shadow-sm p-2 rounded whitespace-nowrap',
                                     {
                                         'bg-gray-200': isActiveRoute(link.href),
                                     }
