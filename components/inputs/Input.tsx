@@ -17,7 +17,7 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
         {props.label ?
             <label
                 htmlFor={props.id}
-                className="block cursor-text">
+                className="block cursor-text text-sm text-gray-700 font-medium">
                 <span className={clsx(
                     "text-gray-700",
                     {

@@ -1,7 +1,9 @@
+import MessageScheduleEditor from "@/components/admin-tool-v1/MessageScheduleEditor";
+
 export default async function Page() {
     return (
-        <>
-            TODO: page
-        </>
+        <div className="p-6">
+            <MessageScheduleEditor />
+        </div>
     )
 }

@@ -4,6 +4,7 @@ import { ArrowPathIcon, CalendarDaysIcon, EllipsisVerticalIcon, PlusIcon, StopCi
 import PrimaryOutlinedLink from "@/components/buttons/PrimaryOutlineLink";
 import Link from "next/link";
 import { format, formatDistanceStrict } from "date-fns";
+import { redirect } from "next/navigation";
 
 
 const dateFromTimestamp = (timestamp: number) => {
@@ -16,7 +17,9 @@ const formatTimestamp = (timestamp: number) => {
 
 const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => {
     return (
-        <Link className="bg-white rounded shadow p-4 mb-4 flex flex-col gap-2 group hover:bg-gray-50"
+        <Link
+            prefetch={false}
+            className="bg-white rounded shadow p-4 mb-4 flex flex-col gap-2 group hover:bg-gray-50"
             href={`/tools/admin-v1/messaging/schedules/${schedule.id}`}
         >
             <div className="flex items-center gap-2">
@@ -72,9 +75,14 @@ const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => 
 
 
 export default async function Page() {
-    const schedules = (await getMessageSchedules()).autoMessages || [];
+    let schedules: MessageSchedule[];
+    try {
+        schedules = await getMessageSchedules();
+    } catch (e) {
+        redirect('/auth/login?callbackUrl=/tools/admin-v1/messaging/schedules')
+    }
 
-    console.log(schedules)
+    // console.log(schedules)
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Message schedules</h1>

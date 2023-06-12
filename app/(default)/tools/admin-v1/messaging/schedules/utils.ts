@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth/next";
 
 
 
-export const getMessageSchedules = async (): Promise<{ autoMessages?: MessageSchedule[] }> => {
+export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
     const session = await getServerSession(authOptions);
     if (!session || session.error || session.accessToken === undefined) {
         throw new Error('Unauthorized');
@@ -29,5 +29,23 @@ export const getMessageSchedules = async (): Promise<{ autoMessages?: MessageSch
     if (data.error) {
         throw new Error(data.error);
     }
-    return data;
+    let schedules: Array<MessageSchedule> = data.autoMessages || [];
+    schedules = schedules.map((schedule) => {
+        let nt = schedule.nextTime;
+        if (typeof nt === 'string') nt = parseInt(nt);
+
+        let until = schedule.until;
+        if (typeof until === 'string') until = parseInt(until);
+
+        let period = schedule.period;
+        if (typeof period === 'string') period = parseInt(period);
+
+        return {
+            ...schedule,
+            nextTime: nt,
+            until,
+            period,
+        }
+    })
+    return schedules;
 }
