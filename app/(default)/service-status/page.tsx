@@ -23,7 +23,6 @@ export default async function Page() {
                             icon={<DocumentChartBarIcon className="w-full h-full" />}
                         />
                     }>
-                        {/* @ts-expect-error Async Server Component */}
                         <ServiceStatus
                             service='study-service'
                             name='Study Service'
@@ -35,7 +34,6 @@ export default async function Page() {
                         name='User Management'
                         icon={<UserGroupIcon className="w-full h-full" />}
                     />}>
-                        {/* @ts-expect-error Async Server Component */}
                         <ServiceStatus
                             service='user-management'
                             name='User Management'

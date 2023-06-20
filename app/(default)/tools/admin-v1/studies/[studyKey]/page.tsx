@@ -27,7 +27,6 @@ export default async function Page({ params: { studyKey } }: {
                         <Suspense
                             fallback={<p>loading...</p>}
                         >
-                            {/* @ts-expect-error Async Server Component */}
                             <SurveyOverview
                                 studyKey={studyKey}
                             />

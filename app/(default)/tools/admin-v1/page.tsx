@@ -45,7 +45,6 @@ export default async function Page() {
                             <Suspense
                                 fallback={<p>loading...</p>}
                             >
-                                {/* @ts-expect-error Async Server Component */}
                                 <StudySelector />
                             </Suspense>
                         </div>

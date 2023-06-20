@@ -26,7 +26,6 @@ export default function RootLayout({
         <html lang="en" className={`${open_sans.variable} font-sans`}>
             <body>
                 <AuthProvider>
-                    {/* @ts-expect-error Async Server Component */}
                     <AppBar />
                     <main className='h-screen pt-16'>
                         {children}
