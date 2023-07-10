@@ -137,9 +137,9 @@ export const authOptions = {
                     const response = await renewTokenRequest(token.refresh_token, token.access_token);
                     return {
                         ...token,
-                        access_token: response.data.accessToken,
-                        expires_at: new Date().getTime() + response.data.expiresIn * 60000,
-                        refresh_token: response.data.refreshToken,
+                        access_token: response.accessToken,
+                        expires_at: new Date().getTime() + response.expiresIn * 60000,
+                        refresh_token: response.refreshToken,
                     }
                 } catch (error) {
                     console.error(error);

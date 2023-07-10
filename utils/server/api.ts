@@ -1,6 +1,3 @@
-import axios from 'axios';
-import * as fs from 'fs';
-import * as https from 'https';
 import { LoginMsg, LoginResponse, TokenResponse } from './types/authAPI';
 
 export const getCASEManagementAPIURL = (path: string): URL => {
@@ -34,14 +31,14 @@ const postToCASEManagementAPI = async (path: string, data: any, accessToken?: st
 }
 
 
-const caseAdminAPIInstance = axios.create({
+/*const caseAdminAPIInstance = axios.create({
     baseURL: process.env.MANAGEMENT_API_URL ? process.env.MANAGEMENT_API_URL : '',
     httpsAgent: process.env.USE_MUTUAL_TLS === 'true' ? new https.Agent({
         key: fs.readFileSync(process.env.MUTUAL_TLS_CLIENT_KEY_PATH ? process.env.MUTUAL_TLS_CLIENT_KEY_PATH : ''),
         cert: fs.readFileSync(process.env.MUTUAL_TLS_CLIENT_CERTIFICATE_PATH ? process.env.MUTUAL_TLS_CLIENT_CERTIFICATE_PATH : ''),
         ca: fs.readFileSync(process.env.MUTUAL_TLS_CA_CERTIFICATE_PATH ? process.env.MUTUAL_TLS_CA_CERTIFICATE_PATH : '')
     }) : undefined,
-});
+});*/
 
 
 // Auth API
@@ -49,7 +46,23 @@ export const loginWithEmailRequest = async (creds: LoginMsg): Promise<LoginRespo
     return postToCASEManagementAPI('/v1/auth/login-with-email', creds);
 }
 
+export const renewTokenRequest = async (refreshToken: string, accessToken: string): Promise<TokenResponse> => {
+    const url = getCASEManagementAPIURL('/v1/auth/renew-token');
 
-export const renewTokenRequest = (refreshToken: string, accessToken: string) => caseAdminAPIInstance.post<TokenResponse>('/v1/auth/renew-token', { refreshToken }, { headers: { ...getTokenHeader(accessToken) } });
+    const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken }),
+        headers: {
+            ...getTokenHeader(accessToken),
+        },
+        next: { revalidate: 0 }
+    });
+    if (response.status !== 200) {
+        const err = await response.json();
+        console.error(`issue renew token request: ${response.status} ${err} | ${url}`);
+        throw new Error(err.error);
+    }
+    const data = await response.json();
+    return data as TokenResponse;
+}
 
-export default caseAdminAPIInstance;
