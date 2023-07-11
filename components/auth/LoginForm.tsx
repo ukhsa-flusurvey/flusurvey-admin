@@ -49,6 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 </form>
             </div>);
     }
+
     return (
         <div className='mt-8'>
             <h2 className='text-3xl'>Login</h2>
@@ -59,6 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 <label className="block mt-4">
                     <span className="text-gray-700">Email</span>
                     <Input type="email"
+                        className='w-full'
                         autoComplete='email'
                         name='email'
                         onChange={(event) => {
@@ -74,6 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                     <span className="text-gray-700">Password</span>
                     <Input type="password"
                         autoComplete='current-password'
+                        className='w-full'
                         onChange={(event) => {
                             setLoginData({
                                 ...loginData,
@@ -86,6 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 <LoadingButton
                     isLoading={isLoading}
                     type='submit'
+                    disabled={loginData.email === '' || loginData.password === ''}
                 >
                     Login
                 </LoadingButton>
@@ -100,8 +104,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
             <PrimaryOutlinedButton
                 className='mt-2 w-full'
                 type='button'
-                onClick={() => {
-                    signIn('management-user-oauth', { redirect: true, callbackUrl: '/dashboard' });
+                onClick={async () => {
+                    await signIn('management-user-oauth', { redirect: false, callbackUrl: '/' });
+                    console.log('login')
                 }}
             >
                 <ShieldCheckIcon className="h-6 w-6 mr-2" />

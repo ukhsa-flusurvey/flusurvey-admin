@@ -2,22 +2,22 @@ import React, { ButtonHTMLAttributes, useState } from 'react';
 import clsx from 'clsx';
 
 
-interface PrimaryOutlinedButtonProps extends ButtonHTMLAttributes<HTMLElement> {
+interface DangerOutlinedButtonProps extends ButtonHTMLAttributes<HTMLElement> {
     className?: string;
 }
 
-const PrimaryOutlinedButton: React.FC<PrimaryOutlinedButtonProps> = ({ children, ...props }) => {
+const DangerOutlinedButton: React.FC<DangerOutlinedButtonProps> = ({ children, ...props }) => {
     return (
         <button
             {...props}
             className={clsx(
                 'rounded flex justify-center items-center',
                 'px-6 py-2',
-                'border-2 border-blue-600 hover:border-transparent',
-                'hover:bg-blue-600',
-                'text-blue-600 hover:text-white',
+                'border-2 border-red-600 hover:border-transparent',
+                'hover:bg-red-600',
+                'text-red-600 hover:text-white',
                 'disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
-                'focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-opacity-30',
+                'focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-opacity-30',
                 props.className,
             )}
         >
@@ -27,4 +27,4 @@ const PrimaryOutlinedButton: React.FC<PrimaryOutlinedButtonProps> = ({ children,
     );
 };
 
-export default PrimaryOutlinedButton;
+export default DangerOutlinedButton;

@@ -23,7 +23,7 @@ const CASECredentialProvider = CredentialsProvider({
         verificationCode: { label: "Verification Code", type: "text" },
     },
     async authorize(credentials, req) {
-        if (!credentials) {
+        if (!credentials || !credentials.email || !credentials.password) {
             return null;
         }
 
@@ -34,22 +34,22 @@ const CASECredentialProvider = CredentialsProvider({
                 verificationCode: credentials.verificationCode,
                 instanceId: process.env.INSTANCE_ID ? process.env.INSTANCE_ID : 'default',
             });
-            if (response.data.secondFactorNeeded) {
+            if (response.secondFactorNeeded) {
                 throw new Error(ERROR_SECOND_FACTOR_NEEDED);
             }
 
             const now = new Date();
             return {
-                id: response.data.user.id,
-                email: response.data.user.account.accountId,
+                id: response.user.id,
+                email: response.user.account.accountId,
                 account: {
-                    accessToken: response.data.token.accessToken,
-                    expiresAt: new Date(now.getTime() + response.data.token.expiresIn * 60000),
-                    refreshToken: response.data.token.refreshToken,
+                    accessToken: response.token.accessToken,
+                    expiresAt: new Date(now.getTime() + response.token.expiresIn * 60000),
+                    refreshToken: response.token.refreshToken,
                 }
             };
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error('Unexpected error when logging in with credentials');
             throw error;
         }
     },
@@ -65,6 +65,7 @@ const CASEOAuthProvider = (process.env.OPENID_CONFIG && process.env.OAUTH_CLIENT
     clientSecret: process.env.OAUTH_CLIENT_SECRET,
     authorization: { params: { scope: "openid email profile" } },
     idToken: true,
+
     profile(profile) {
         return {
             id: profile.sub,
@@ -86,7 +87,7 @@ if (CASEOAuthProvider) {
 export const authOptions = {
     providers: providers,
     pages: {
-        signIn: '/login',
+        signIn: '/auth/login',
     },
     callbacks: {
         async jwt({ token, user, account }) {
@@ -112,7 +113,8 @@ export const authOptions = {
                     };
                 }
 
-                // console.log(account);
+                console.log(account);
+                console.log(user);
                 return {
                     // email: account.email,
                     access_token: account.access_token,
@@ -135,9 +137,9 @@ export const authOptions = {
                     const response = await renewTokenRequest(token.refresh_token, token.access_token);
                     return {
                         ...token,
-                        access_token: response.data.accessToken,
-                        expires_at: new Date().getTime() + response.data.expiresIn * 60000,
-                        refresh_token: response.data.refreshToken,
+                        access_token: response.accessToken,
+                        expires_at: new Date().getTime() + response.expiresIn * 60000,
+                        refresh_token: response.refreshToken,
                     }
                 } catch (error) {
                     console.error(error);
@@ -155,6 +157,12 @@ export const authOptions = {
             session.error = token.error
             return session
         },
+
+    },
+    logger: {
+        debug: (...args) => console.log(...args),
+        error: (...args) => console.error(...args),
+        warn: (...args) => console.warn(...args),
     }
 } as AuthOptions;
 

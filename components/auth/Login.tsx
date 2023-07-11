@@ -37,11 +37,10 @@ const Login: React.FC<LoginProps> = (props) => {
                 verificationCode: loginData.verificationCode,
                 callbackUrl: callBackURL as string,
             });
-            console.log(res)
             if (!res) {
                 return
             }
-            if (res.ok === false) {
+            if (res.ok === false || res.error !== null) {
                 setError(true);
 
             } else {

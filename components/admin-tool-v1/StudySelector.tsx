@@ -18,13 +18,19 @@ export default async function StudySelector() {
 
     // console.log(studies)
 
-    if (!studies || studies.length === 0) {
+    if (!studies || !studies.studies || studies.studies.length === 0) {
         return (
             <>
-                <div className="p-4 border border-dashed border-gray-300 rounded">
+                <div className="p-4 border border-dashed border-gray-300 rounded mb-2">
                     <p className=" text-gray-400">No studies found</p>
                     <p className="text-sm text-gray-400">Create your first study using the button below</p>
                 </div>
+                <Link
+                    className="block font-bold px-4 py-2 rounded bg-slate-100 border-gray-200 hover:text-blue-600 hover:bg-gray-100"
+                    href='/tools/admin-v1/studies/new'
+                >
+                    Create new study
+                </Link>
             </>
         )
     }

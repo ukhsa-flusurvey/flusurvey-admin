@@ -1,14 +1,7 @@
 import 'server-only';
-import { Expression, Survey } from "survey-engine/data_types";
-import caseAdminAPIInstance, { getCASEManagementAPIURL, getTokenHeader } from "./api";
+import { getCASEManagementAPIURL, getTokenHeader } from "./api";
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-
-
-export const createStudy = (study: any, accessToken: string) => caseAdminAPIInstance.post(`/v1/studies`, { study }, { headers: { ...getTokenHeader(accessToken) } });
-
-export const saveStudyRules = (studyKey: string, rules: Expression[], accessToken: string) => caseAdminAPIInstance.post(`/v1/study/${studyKey}/rules`, { studyKey, rules }, { headers: { ...getTokenHeader(accessToken) } });
-export const saveSurveyForStudy = (studyKey: string, survey: Survey, accessToken: string) => caseAdminAPIInstance.post(`/v1/study/${studyKey}/surveys`, { survey }, { headers: { ...getTokenHeader(accessToken) } });
 
 
 export const getSurveysForStudy = async (studyKey: string) => {

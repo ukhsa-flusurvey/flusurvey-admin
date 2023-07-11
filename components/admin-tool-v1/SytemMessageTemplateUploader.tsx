@@ -8,6 +8,7 @@ import Filepicker from '../inputs/Filepicker';
 import InputForm from '../inputs/Input';
 import NotImplemented from '../NotImplemented';
 import LoadingButton from '../buttons/LoadingButton';
+import { encodeTemplate } from './utils';
 
 const topics = [
     {
@@ -56,12 +57,7 @@ const topics = [
 ]
 
 
-const encodeTemplate = (template: string | undefined) => {
-    if (!template) { return undefined; }
-    // encode with base64
-    const encoded = Buffer.from(template).toString('base64');
-    return encoded;
-}
+
 
 interface SystemMessageTemplateUploaderProps {
 
@@ -286,7 +282,7 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
             </div>
             <div>
                 <h4 className='text-lg font-bold'>Template Preview</h4>
-                <div className='h-96 border border-dashed mt-6 rounded'>
+                <div className='h-96 border border-dashed mt-6 rounded overflow-scroll'>
                     {newTemplate &&
                         <div dangerouslySetInnerHTML={{ __html: newTemplate }} />
                     }

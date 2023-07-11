@@ -1,30 +1,32 @@
 import React, { ButtonHTMLAttributes, useState } from 'react';
 import clsx from 'clsx';
+import Link, { LinkProps } from 'next/link';
 
 
-interface PrimaryOutlinedButtonProps extends ButtonHTMLAttributes<HTMLElement> {
+
+interface PrimaryOutlinedLinkProps extends LinkProps {
     className?: string;
+    children: React.ReactNode;
 }
 
-const PrimaryOutlinedButton: React.FC<PrimaryOutlinedButtonProps> = ({ children, ...props }) => {
+const PrimaryOutlinedLink: React.FC<PrimaryOutlinedLinkProps> = ({ children, ...props }) => {
     return (
-        <button
+        <Link
             {...props}
             className={clsx(
-                'rounded flex justify-center items-center',
+                'rounded inline-flex justify-center items-center',
                 'px-6 py-2',
                 'border-2 border-blue-600 hover:border-transparent',
                 'hover:bg-blue-600',
-                'text-blue-600 hover:text-white',
-                'disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
+                'text-blue-600  hover:text-white',
                 'focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-opacity-30',
                 props.className,
             )}
         >
 
             {children}
-        </button >
+        </Link >
     );
 };
 
-export default PrimaryOutlinedButton;
+export default PrimaryOutlinedLink;
