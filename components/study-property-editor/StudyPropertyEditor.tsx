@@ -34,6 +34,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
             name: [],
             description: [],
             tags: [],
+            systemDefaultStudy: false,
         },
         configs: {
             idMappingMethod: 'sha256-b64',
@@ -71,6 +72,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                     <Input
                         id="study-key"
                         placeholder='Study key'
+                        className='w-full'
                         type='text'
                         autoComplete='off'
                         onChange={(event) => {
@@ -95,6 +97,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                     <Input
                         id="study-secret-key"
                         placeholder='enter a secret'
+                        className='w-full'
                         type='password'
                         autoComplete='off'
                         onChange={(event) => {
@@ -112,6 +115,20 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                     </NotImplemented>
                 </StudyProperty>
 
+                <StudyProperty
+                    label='System default study'
+                    description='If true, participants will be automatically assigned to this study triggering the `ENTER` event.'
+                >
+                    <Input
+                        id="system-default-study"
+                        type='checkbox'
+                        className='w-6 h-6'
+                        onChange={(event) => {
+                            setNewStudy({ ...newStudy, props: { ...newStudy.props, systemDefaultStudy: event.target.checked } });
+                        }}
+                    />
+                </StudyProperty>
+
                 <hr></hr>
 
                 <h3 className='text-2xl font-bold mt-6'>Display Texts</h3>
@@ -127,6 +144,7 @@ const StudyPropertyEditor: React.FC<StudyPropertyEditorProps> = (props) => {
                     <Input
                         id="study-name"
                         placeholder='Enter study name'
+                        className='w-full'
                         type='text'
                         autoComplete='off'
                         disabled

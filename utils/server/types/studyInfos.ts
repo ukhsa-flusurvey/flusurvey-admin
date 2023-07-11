@@ -18,6 +18,7 @@ export interface Study {
         name: LocalizedString[];
         description: LocalizedString[];
         tags: LocalizedString[][];
+        systemDefaultStudy: boolean;
     }
     configs: {
         idMappingMethod: string;

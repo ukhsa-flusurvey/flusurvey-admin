@@ -17,7 +17,7 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
         {props.label ?
             <label
                 htmlFor={props.id}
-                className="block cursor-text">
+                className="block cursor-text text-sm text-gray-700 font-medium">
                 <span className={clsx(
                     "text-gray-700",
                     {
@@ -41,7 +41,7 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
             placeholder={props.placeholder}
             onChange={onChange}
             className={clsx(
-                'form-input block w-full mt-1 rounded border-gray-300',
+                'form-input block mt-1 rounded border-gray-300',
                 'disabled:bg-gray-100 disabled:cursor-not-allowed',
                 'focus:ring-4 focus:ring-offset-2',
                 {
@@ -54,7 +54,6 @@ const InputForm: React.FC<InputFormProps> = ({ hasError, onChange, errorMsg, col
 
                 },
                 props.className,
-
             )}>
         </input>
         <AnimatePresence>

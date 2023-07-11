@@ -29,7 +29,10 @@ const Filepicker: React.FC<FilepickerProps> = (props) => {
             <input
                 className="bg-blue-100 border-2 border-gray-400 rounded-lg p-4"
                 {...getInputProps()} />
-            <p>Drag and drop some files here, or click to select files</p>
+            {acceptedFiles.length > 0 ? <p>{
+                acceptedFiles[0].name
+            }</p> : <p>Drag and drop some files here, or click to select files</p>}
+
         </div>
     );
 };
