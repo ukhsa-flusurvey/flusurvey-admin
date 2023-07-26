@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Sidenav from "@/components/admin-tool-v1/Sidenav";
-import { ArrowLeftIcon, BarsArrowDownIcon, BoltIcon, ClipboardDocumentListIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, BarsArrowDownIcon, BoltIcon, ClipboardDocumentListIcon, DocumentTextIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import React from "react"
@@ -24,6 +24,11 @@ export default async function Layout({ children, params: { studyKey } }: {
             title: 'Back',
             href: '/tools/admin-v1',
             icon: <ArrowLeftIcon className="w-6 h-6" />
+        },
+        {
+            title: 'Participants',
+            href: `/tools/admin-v1/studies/${studyKey}/participants`,
+            icon: <UserGroupIcon className="w-6 h-6" />
         },
         {
             title: 'Surveys',
