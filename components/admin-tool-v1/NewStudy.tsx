@@ -1,10 +1,11 @@
 'use client';
+
 import React, { useTransition } from 'react';
 import StudyPropertyEditor from '../study-property-editor/StudyPropertyEditor';
 import { Study } from '@/utils/server/types/studyInfos';
 import { useRouter } from 'next/navigation';
 import { createStudy } from '@/app/(default)/tools/admin-v1/studies/new/createStudyAction';
-import { useSession } from 'next-auth/react';
+
 
 interface NewStudyProps {
 }
