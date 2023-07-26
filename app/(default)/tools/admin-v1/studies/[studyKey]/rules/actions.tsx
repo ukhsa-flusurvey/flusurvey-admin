@@ -2,14 +2,13 @@
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { Study } from "@/utils/server/types/studyInfos";
 import { getServerSession } from "next-auth/next";
 import { Expression } from "survey-engine/data_types";
 
 
 export const uploadStudyRules = async (studyKey: string, rulesObj: {
     rules: Expression[]
-}): Promise<Study> => {
+}) => {
     const session = await getServerSession(authOptions);
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 

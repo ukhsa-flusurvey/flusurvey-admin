@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useTransition } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { useState } from "react";
 import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
@@ -9,6 +9,7 @@ import InputForm from '../inputs/Input';
 import NotImplemented from '../NotImplemented';
 import LoadingButton from '../buttons/LoadingButton';
 import { encodeTemplate } from './utils';
+import { uploadCommonTemplate } from '@/app/(default)/tools/admin-v1/messaging/common-templates/actions';
 
 const topics = [
     {
@@ -68,12 +69,11 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
     const [newTemplate, setNewTemplate] = useState<string | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [subject, setSubject] = useState<string>('');
     const [headerOverrides, setHeaderOverrides] = useState<{ from: string, sender: string, replyTo: string[] }>({ from: '', sender: '', replyTo: [] });
+    const [isPending, startTransition] = useTransition();
 
-
-    const uploadTemplate = async () => {
+    const submit = async () => {
         const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE;
         const payload = {
             messageType: selectedTopic.id,
@@ -90,28 +90,17 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
 
         setError(undefined);
         setSuccess(undefined)
-        setIsLoading(true);
-
-        try {
-            const url = new URL(`/api/case-management-api/v1/messaging/email-templates`, process.env.NEXT_PUBLIC_API_URL)
-            const response = await fetch(url.toString(), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ "template": payload }),
-            });
-            const data = await response.json();
-            setSuccess('Template uploaded successfully');
-            console.log(data);
-
-        }
-        catch (e: any) {
-            setError(e.message);
-            console.log(e);
-        }
-
-        setIsLoading(false);
+        startTransition(async () => {
+            try {
+                const r = await uploadCommonTemplate(payload);
+                setSuccess('Template uploaded successfully');
+                console.log(r);
+            }
+            catch (e: any) {
+                setError(e.message);
+                console.log(e);
+            }
+        })
     }
 
     return (
@@ -269,8 +258,8 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
             <div className='flex justify-end'>
                 <LoadingButton
                     type='button'
-                    onClick={uploadTemplate}
-                    isLoading={isLoading}
+                    onClick={submit}
+                    isLoading={isPending}
                     disabled={!newTemplate || !selectedTopic || !subject}
                 >
                     Upload Template
