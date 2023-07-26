@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import Filepicker from '../inputs/Filepicker';
 import Button from '../buttons/Button';
 import { Survey } from 'survey-engine/data_types';
 import { useRouter } from 'next/navigation';
+import { uploadSurvey } from '@/app/(default)/tools/admin-v1/studies/[studyKey]/surveyUploadAction';
 
 interface SurveyUploaderProps {
     studyKey: string;
@@ -15,35 +16,25 @@ const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
     const router = useRouter()
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isPending, startTransition] = useTransition();
 
 
-    const uploadSurvey = async () => {
+    const submit = async () => {
         setError(undefined);
         setSuccess(undefined)
-        setIsLoading(true);
         if (newSurvey) {
-            try {
-                const url = new URL(`/api/case-management-api/v1/study/${studyKey}/surveys`, process.env.NEXT_PUBLIC_API_URL)
-                const response = await fetch(url.toString(), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ survey: newSurvey }),
-                });
-                const data = await response.json();
-                setSuccess('Survey uploaded successfully');
-                console.log(data);
-                router.refresh();
+            startTransition(async () => {
 
-            }
-            catch (e: any) {
-                setError(e.message);
-                console.log(e);
-            }
-        }
-        setIsLoading(false);
+                try {
+                    const response = await uploadSurvey(studyKey, newSurvey)
+                    router.refresh();
+                }
+                catch (e: any) {
+                    setError(e.message);
+                    console.log(e);
+                }
+            })
+        };
     };
 
 
@@ -76,9 +67,9 @@ const SurveyUploader: React.FC<SurveyUploaderProps> = ({ studyKey }) => {
             {error && <p className='text-red-500'>{error}</p>}
             {success && <p className='text-green-500'>{success}</p>}
             <Button
-                disabled={newSurvey === undefined || isLoading}
+                disabled={newSurvey === undefined || isPending}
                 onClick={() => {
-                    uploadSurvey();
+                    submit();
                     // console.log('create survey');
                 }}>
                 Upload
