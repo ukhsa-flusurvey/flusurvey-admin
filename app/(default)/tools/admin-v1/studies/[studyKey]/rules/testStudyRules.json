@@ -1,0 +1,951 @@
+[
+	{
+		"dtype": "exp",
+		"exp": {
+			"name": "REMOVE_SURVEYS_BY_KEY",
+			"data": [
+				{
+					"dtype": "str",
+					"str": "weekly"
+				}
+			]
+		}
+	},
+	{
+		"dtype": "exp",
+		"exp": {
+			"name": "ADD_NEW_SURVEY",
+			"data": [
+				{
+					"dtype": "str",
+					"str": "weekly"
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "timestampWithOffset",
+						"data": [
+							{
+								"dtype": "num",
+								"num": 300
+							}
+						]
+					}
+				},
+				{
+					"dtype": "num",
+					"num": 0
+				},
+				{
+					"dtype": "str",
+					"str": "prio"
+				}
+			]
+		}
+	},
+	{
+		"dtype": "exp",
+		"exp": {
+			"name": "IF",
+			"data": [
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "responseHasKeysAny",
+						"data": [
+							{
+								"dtype": "str",
+								"str": "weekly.HS.Q4"
+							},
+							{
+								"dtype": "str",
+								"str": "rg.scg"
+							},
+							{
+								"dtype": "str",
+								"str": "2"
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "UPDATE_FLAG",
+						"data": [
+							{
+								"dtype": "str",
+								"str": "prev"
+							},
+							{
+								"dtype": "str",
+								"str": "1"
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "UPDATE_FLAG",
+						"data": [
+							{
+								"dtype": "str",
+								"str": "prev"
+							},
+							{
+								"dtype": "str",
+								"str": "0"
+							}
+						]
+					}
+				}
+			]
+		}
+	},
+	{
+		"dtype": "exp",
+		"exp": {
+			"name": "IF",
+			"data": [
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "not",
+						"data": [
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "responseHasKeysAny",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "weekly.QWithin24hours"
+										},
+										{
+											"dtype": "str",
+											"str": "rg.scg"
+										},
+										{
+											"dtype": "str",
+											"str": "3"
+										}
+									]
+								}
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "UPDATE_FLAG",
+						"data": [
+							{
+								"dtype": "str",
+								"str": "lastWeeklySubmission"
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "timestampWithOffset",
+									"data": [
+										{
+											"dtype": "num",
+											"num": 0
+										}
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	},
+	{
+		"dtype": "exp",
+		"exp": {
+			"name": "IFTHEN",
+			"data": [
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "hasParticipantFlag",
+						"data": [
+							{
+								"dtype": "str",
+								"str": "selfSwabbing"
+							},
+							{
+								"dtype": "str",
+								"str": "active"
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "IF",
+						"data": [
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "or",
+									"data": [
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "not",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "hasParticipantFlagKey",
+															"data": [
+																{
+																	"dtype": "str",
+																	"str": "selfSwabbingSampledTime"
+																}
+															]
+														}
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "gt",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "timestampWithOffset",
+															"data": [
+																{
+																	"dtype": "num",
+																	"num": -864000
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "parseValueAsNum",
+															"returnType": "float",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "getParticipantFlagValue",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "selfSwabbingSampledTime"
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "IF",
+									"data": [
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "or",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "and",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "responseHasKeysAny",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "weekly.Q1b1NL"
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "rg.scg"
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "1"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "lt",
+																		"data": [
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "timestampWithOffset",
+																					"data": [
+																						{
+																							"dtype": "num",
+																							"num": -255600
+																						}
+																					]
+																				}
+																			},
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "getResponseValueAsNum",
+																					"returnType": "float",
+																					"data": [
+																						{
+																							"dtype": "str",
+																							"str": "weekly.Q1d1NL"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "rg.scg.0"
+																						}
+																					]
+																				}
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "and",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "responseHasKeysAny",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "weekly.Q1b3NL"
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "rg.scg"
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "1"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "lt",
+																		"data": [
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "timestampWithOffset",
+																					"data": [
+																						{
+																							"dtype": "num",
+																							"num": -255600
+																						}
+																					]
+																				}
+																			},
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "getResponseValueAsNum",
+																					"returnType": "float",
+																					"data": [
+																						{
+																							"dtype": "str",
+																							"str": "weekly.Q1d3NL"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "rg.scg.0"
+																						}
+																					]
+																				}
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "DO",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "REMOVE_SURVEYS_BY_KEY",
+															"data": [
+																{
+																	"dtype": "str",
+																	"str": "SwabNotSelected"
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "REMOVE_SURVEYS_BY_KEY",
+															"data": [
+																{
+																	"dtype": "str",
+																	"str": "SwabSample"
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "ADD_NEW_SURVEY",
+															"data": [
+																{
+																	"dtype": "str",
+																	"str": "SwabSample"
+																},
+																{
+																	"dtype": "num",
+																	"num": 0
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "timestampWithOffset",
+																		"data": [
+																			{
+																				"dtype": "num",
+																				"num": 43200
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "str",
+																	"str": "immediate"
+																}
+															]
+														}
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "IF",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "and",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "and",
+																		"data": [
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "responseHasKeysAny",
+																					"data": [
+																						{
+																							"dtype": "str",
+																							"str": "weekly.q1.1"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "rg.mcg"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "3"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "5"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "6"
+																						},
+																						{
+																							"dtype": "str",
+																							"str": "7"
+																						}
+																					]
+																				}
+																			},
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "lt",
+																					"data": [
+																						{
+																							"dtype": "exp",
+																							"exp": {
+																								"name": "timestampWithOffset",
+																								"data": [
+																									{
+																										"dtype": "num",
+																										"num": -432000
+																									}
+																								]
+																							}
+																						},
+																						{
+																							"dtype": "exp",
+																							"exp": {
+																								"name": "getResponseValueAsNum",
+																								"returnType": "float",
+																								"data": [
+																									{
+																										"dtype": "str",
+																										"str": "weekly.HS.Q3"
+																									},
+																									{
+																										"dtype": "str",
+																										"str": "rg.0"
+																									}
+																								]
+																							}
+																						}
+																					]
+																				}
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "externalEventEval",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "samplerIsSelected"
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "DO",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "REMOVE_SURVEYS_BY_KEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabNotSelected"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "REMOVE_SURVEYS_BY_KEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabSample"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "ADD_NEW_SURVEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabSample"
+																			},
+																			{
+																				"dtype": "num",
+																				"num": 0
+																			},
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "timestampWithOffset",
+																					"data": [
+																						{
+																							"dtype": "num",
+																							"num": 43200
+																						}
+																					]
+																				}
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "immediate"
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "DO",
+															"data": [
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "REMOVE_SURVEYS_BY_KEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabSample"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "REMOVE_SURVEYS_BY_KEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabNotSelected"
+																			}
+																		]
+																	}
+																},
+																{
+																	"dtype": "exp",
+																	"exp": {
+																		"name": "ADD_NEW_SURVEY",
+																		"data": [
+																			{
+																				"dtype": "str",
+																				"str": "SwabNotSelected"
+																			},
+																			{
+																				"dtype": "num",
+																				"num": 0
+																			},
+																			{
+																				"dtype": "exp",
+																				"exp": {
+																					"name": "timestampWithOffset",
+																					"data": [
+																						{
+																							"dtype": "num",
+																							"num": 86400
+																						}
+																					]
+																				}
+																			},
+																			{
+																				"dtype": "str",
+																				"str": "immediate"
+																			}
+																		]
+																	}
+																}
+															]
+														}
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "DO",
+									"data": [
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "REMOVE_SURVEYS_BY_KEY",
+												"data": [
+													{
+														"dtype": "str",
+														"str": "SwabSample"
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "REMOVE_SURVEYS_BY_KEY",
+												"data": [
+													{
+														"dtype": "str",
+														"str": "SwabNotSelected"
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "ADD_NEW_SURVEY",
+												"data": [
+													{
+														"dtype": "str",
+														"str": "SwabNotSelected"
+													},
+													{
+														"dtype": "num",
+														"num": 0
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "timestampWithOffset",
+															"data": [
+																{
+																	"dtype": "num",
+																	"num": 86400
+																}
+															]
+														}
+													},
+													{
+														"dtype": "str",
+														"str": "immediate"
+													}
+												]
+											}
+										}
+									]
+								}
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "IF",
+						"data": [
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "and",
+									"data": [
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "responseHasKeysAny",
+												"data": [
+													{
+														"dtype": "str",
+														"str": "weekly.q1.1"
+													},
+													{
+														"dtype": "str",
+														"str": "rg.mcg"
+													},
+													{
+														"dtype": "str",
+														"str": "3"
+													},
+													{
+														"dtype": "str",
+														"str": "5"
+													},
+													{
+														"dtype": "str",
+														"str": "6"
+													},
+													{
+														"dtype": "str",
+														"str": "7"
+													}
+												]
+											}
+										},
+										{
+											"dtype": "exp",
+											"exp": {
+												"name": "lt",
+												"data": [
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "timestampWithOffset",
+															"data": [
+																{
+																	"dtype": "num",
+																	"num": -432000
+																}
+															]
+														}
+													},
+													{
+														"dtype": "exp",
+														"exp": {
+															"name": "getResponseValueAsNum",
+															"returnType": "float",
+															"data": [
+																{
+																	"dtype": "str",
+																	"str": "weekly.HS.Q3"
+																},
+																{
+																	"dtype": "str",
+																	"str": "rg.0"
+																}
+															]
+														}
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "UPDATE_FLAG",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "selfSwabbingHasRecentSymptomsInLastWeekly"
+										},
+										{
+											"dtype": "str",
+											"str": "true"
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "UPDATE_FLAG",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "selfSwabbingHasRecentSymptomsInLastWeekly"
+										},
+										{
+											"dtype": "str",
+											"str": "false"
+										}
+									]
+								}
+							}
+						]
+					}
+				},
+				{
+					"dtype": "exp",
+					"exp": {
+						"name": "IF",
+						"data": [
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "responseHasKeysAny",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "weekly.Q1aNL"
+										},
+										{
+											"dtype": "str",
+											"str": "rg.mcg"
+										},
+										{
+											"dtype": "str",
+											"str": "0"
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "UPDATE_FLAG",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "selfSwabbingHasNoTestInLastWeekly"
+										},
+										{
+											"dtype": "str",
+											"str": "true"
+										}
+									]
+								}
+							},
+							{
+								"dtype": "exp",
+								"exp": {
+									"name": "UPDATE_FLAG",
+									"data": [
+										{
+											"dtype": "str",
+											"str": "selfSwabbingHasNoTestInLastWeekly"
+										},
+										{
+											"dtype": "str",
+											"str": "false"
+										}
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+]

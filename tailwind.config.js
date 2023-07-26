@@ -10,6 +10,7 @@ module.exports = {
     theme: {
         fontFamily: {
             sans: ['var(--font-open-sans)', ...fontFamily.sans],
+            mono: [...fontFamily.mono],
         },
         extend: {},
     },
