@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Expression } from 'survey-engine/data_types';
 import Filepicker from '../inputs/Filepicker';
 import Button from '../buttons/Button';
 import { useRouter } from 'next/navigation';
+import { uploadStudyRules } from '@/app/(default)/tools/admin-v1/studies/[studyKey]/rules/actions';
+
 
 interface StudyRuleUploaderProps {
     studyKey: string;
@@ -15,39 +17,24 @@ const StudyRuleUploader: React.FC<StudyRuleUploaderProps> = ({ studyKey }) => {
     const router = useRouter()
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isPending, startTransition] = useTransition();
 
 
-    const uploadStudyRules = async () => {
+    const submit = async () => {
         setError(undefined);
         setSuccess(undefined)
-        setIsLoading(true);
+
         if (newStudyRules) {
-            try {
-                const url = new URL(`/api/case-management-api/v1/study/${studyKey}/rules`, process.env.NEXT_PUBLIC_API_URL)
-                const response = await fetch(url.toString(), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ rules: newStudyRules }),
-                });
-                const data = await response.json();
-                if (response.status !== 200) {
-                    setError(data.error);
-                    console.log(data);
-                } else {
-                    console.log(data);
+            startTransition(async () => {
+                try {
+                    const response = await uploadStudyRules(studyKey, { rules: newStudyRules })
                     setSuccess('Study rules uploaded successfully');
                     router.refresh();
+                } catch (e: any) {
+                    setError(e.message);
                 }
-            }
-            catch (e: any) {
-                setError(e.message);
-                console.log(e);
-            }
+            });
         }
-        setIsLoading(false);
     }
 
     return (
@@ -80,9 +67,9 @@ const StudyRuleUploader: React.FC<StudyRuleUploaderProps> = ({ studyKey }) => {
             {success && <p className='text-green-500'>{success}</p>}
             {error && <p className='text-red-500'>{error}</p>}
             <Button
-                disabled={newStudyRules === undefined || isLoading}
+                disabled={newStudyRules === undefined || isPending}
                 onClick={() => {
-                    uploadStudyRules();
+                    submit();
                 }}>
                 Upload
             </Button>
