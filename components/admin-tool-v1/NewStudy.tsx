@@ -3,6 +3,8 @@ import React, { useTransition } from 'react';
 import StudyPropertyEditor from '../study-property-editor/StudyPropertyEditor';
 import { Study } from '@/utils/server/types/studyInfos';
 import { useRouter } from 'next/navigation';
+import { createStudy } from '@/app/(default)/tools/admin-v1/studies/new/createStudyAction';
+import { useSession } from 'next-auth/react';
 
 interface NewStudyProps {
 }
@@ -10,31 +12,30 @@ interface NewStudyProps {
 const NewStudy: React.FC<NewStudyProps> = (props) => {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push('/auth/login?callbackUrl=/tools/admin-v1/studies/new');
+        }
+    });
 
-    const createStudy = async (study: Study) => {
-        const url = new URL(`/api/case-management-api/v1/studies`, process.env.NEXT_PUBLIC_API_URL)
-        const response = await fetch(url.toString(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ study }),
+    const onSubmit = async (study: Study) => {
+        startTransition(async () => {
+            try {
+                const r = await createStudy(study, session.data?.accessToken as string);
+                router.refresh();
+                router.replace(`/tools/admin-v1/studies/${r.key}`);
+            } catch (e) {
+                console.error(e);
+            }
         });
-        const data = await response.json();
-        console.log(data);
-
-        startTransition(() => {
-            router.refresh();
-            router.replace(`/tools/admin-v1/studies/${data.key}`);
-        })
     };
-
 
     return (
         <StudyPropertyEditor
             onSubmit={(study) => {
                 console.log(study);
-                createStudy(study);
+                onSubmit(study);
             }}
         />
     );
