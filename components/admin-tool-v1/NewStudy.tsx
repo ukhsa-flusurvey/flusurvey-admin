@@ -12,20 +12,18 @@ interface NewStudyProps {
 const NewStudy: React.FC<NewStudyProps> = (props) => {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            router.push('/auth/login?callbackUrl=/tools/admin-v1/studies/new');
-        }
-    });
 
     const onSubmit = async (study: Study) => {
         startTransition(async () => {
             try {
-                const r = await createStudy(study, session.data?.accessToken as string);
+                const r = await createStudy(study);
                 router.refresh();
                 router.replace(`/tools/admin-v1/studies/${r.key}`);
-            } catch (e) {
+            } catch (e: any) {
+                if (e.message === 'unauthenticated') {
+                    router.push('/auth/login?callbackUrl=/tools/admin-v1/studies/new');
+                    return;
+                }
                 console.error(e);
             }
         });
