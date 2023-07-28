@@ -17,6 +17,9 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
 
     const apiResponse = await fetch(url.toString(), {
         headers: { ...getTokenHeader(session.accessToken) },
+        next: {
+            revalidate: 0,
+        }
     });
 
     const resp = new Response(apiResponse.body, {
@@ -41,6 +44,9 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
         headers: { ...getTokenHeader(session.accessToken) },
         method: 'POST',
         body: JSON.stringify(body),
+        next: {
+            revalidate: 0,
+        }
     });
 
     const resp = new Response(apiResponse.body, {
