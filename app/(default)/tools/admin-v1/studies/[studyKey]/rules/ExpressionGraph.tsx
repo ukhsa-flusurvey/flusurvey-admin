@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { CustomSourceHandle, CustomTargetHandle } from './CustomHandle';
 import { IfNode } from './StudyEngineNodes';
-
+import { BsBoundingBoxCircles, BsArrowsMove } from 'react-icons/bs';
 import { RadioGroup } from '@headlessui/react';
 
 
@@ -362,17 +362,17 @@ const ExpressionGraph: React.FC<ExpressionGraphProps> = (props) => {
                             <div className='flex'>
                                 <RadioGroup.Option
                                     id='drag-select'
-                                    className='bg-gray-200 text-sm rounded-l border-r border-gray-300 p-1 ui-checked:bg-gray-300 cursor-pointer'
+                                    className='bg-gray-100 text-sm rounded-l border-r border-gray-300 px-2 py-1 ui-checked:bg-gray-300 cursor-pointer'
                                     value={'select'}
                                 >
-                                    Select
+                                    <BsBoundingBoxCircles className='text-xl' />
                                 </RadioGroup.Option>
                                 <RadioGroup.Option
                                     id='drag-pan'
-                                    className='bg-gray-200 text-sm rounded-r border-l border-gray-300 p-1 ui-checked:bg-gray-300 cursor-pointer'
+                                    className='bg-gray-100 text-sm rounded-r border-l border-gray-300 px-2 py-1 ui-checked:bg-gray-300 cursor-pointer'
                                     value={'pan'}
                                 >
-                                    Pan
+                                    <BsArrowsMove className='text-xl' />
                                 </RadioGroup.Option>
                             </div>
                         </RadioGroup>

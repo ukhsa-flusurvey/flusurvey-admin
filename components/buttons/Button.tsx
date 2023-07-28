@@ -11,7 +11,7 @@ const Button: React.FC<ButtonProps> = ({ children, color, ...props }) => {
         <button
             {...props}
             className={clsx(
-                'mt-4 rounded flex justify-center items-center',
+                'rounded flex justify-center items-center',
                 'px-6 py-2',
                 'focus:outline-none focus:ring-4 focus:ring-offset-2',
                 {

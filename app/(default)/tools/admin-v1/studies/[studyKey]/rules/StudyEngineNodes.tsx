@@ -1,8 +1,9 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Bars2Icon } from '@heroicons/react/24/solid';
+import { BsGripHorizontal } from 'react-icons/bs';
 import clsx from 'clsx';
 import React from 'react';
-import { Handle, NodeToolbar, Position } from 'reactflow';
+import { NodeToolbar, Position } from 'reactflow';
 import { CustomSourceHandle, CustomTargetHandle } from './CustomHandle';
 
 interface CustomNodeProps {
@@ -35,7 +36,7 @@ const NodeHeader = ({ symbol, title, type, className }: { symbol: React.ReactNod
             {title}
         </span>
         <span className='custom-drag-handle cursor-move z-50'>
-            <Bars2Icon className='w-4 h-4 ' />
+            <BsGripHorizontal className='text-2xl' />
         </span>
     </div>
     )

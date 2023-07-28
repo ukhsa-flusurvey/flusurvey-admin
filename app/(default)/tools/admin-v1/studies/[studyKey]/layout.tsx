@@ -4,6 +4,7 @@ import { ArrowLeftIcon, BarsArrowDownIcon, BoltIcon, ClipboardDocumentListIcon, 
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import React from "react"
+import { BsFileEarmarkLock, BsFileEarmarkArrowDown } from "react-icons/bs";
 
 // export const revalidate = 0;
 export const dynamic = 'force-dynamic'
@@ -26,11 +27,6 @@ export default async function Layout({ children, params: { studyKey } }: {
             icon: <ArrowLeftIcon className="w-6 h-6" />
         },
         {
-            title: 'Participants',
-            href: `/tools/admin-v1/studies/${studyKey}/participants`,
-            icon: <UserGroupIcon className="w-6 h-6" />
-        },
-        {
             title: 'Surveys',
             href: `/tools/admin-v1/studies/${studyKey}`,
             icon: <DocumentTextIcon className="w-6 h-6" />
@@ -44,6 +40,21 @@ export default async function Layout({ children, params: { studyKey } }: {
             title: 'Study actions',
             href: `/tools/admin-v1/studies/${studyKey}/actions`,
             icon: <BoltIcon className="w-6 h-6" />
+        },
+        {
+            title: 'Participants',
+            href: `/tools/admin-v1/studies/${studyKey}/participants`,
+            icon: <UserGroupIcon className="w-6 h-6" />
+        },
+        {
+            title: 'Response downloader',
+            href: `/tools/admin-v1/studies/${studyKey}/exporter/responses`,
+            icon: <BsFileEarmarkArrowDown className="text-xl" />
+        },
+        {
+            title: 'Confidential response downloader',
+            href: `/tools/admin-v1/studies/${studyKey}/exporter/confidential-responses`,
+            icon: <BsFileEarmarkLock className="text-xl" />
         },
     ];
 
