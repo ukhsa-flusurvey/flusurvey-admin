@@ -28,7 +28,7 @@ export default async function Page({ params: { studyKey } }: {
                 surveyInfos={surveys}
             />
 
-            <div className="mt-12 rounded bg-neutral-200 p-3">
+            <div className="mt-16 rounded bg-neutral-200 p-3 mb-16">
                 <SurveyInfoDownloader
                     studyKey={studyKey}
                     surveyInfos={surveys}

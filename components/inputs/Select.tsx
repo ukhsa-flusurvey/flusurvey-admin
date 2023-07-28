@@ -30,7 +30,7 @@ const Select: React.FC<SelectProps> = (props) => {
                 </label>
                 <Listbox.Button
                     id={props.id}
-                    className='flex items-center rounded border border-gray-300 px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-cyan-700/50'
+                    className='flex items-center rounded border bg-white border-gray-300 px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-cyan-700/50'
                 >
                     {props.value.length ? props.value : <span className='text-gray-600'>{props.placeholder}</span>}
                     <span
@@ -46,7 +46,7 @@ const Select: React.FC<SelectProps> = (props) => {
                     leaveTo="opacity-0"
                 >
                     <Listbox.Options
-                        className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white z-50 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 
                         {props.options.map((option) => (
                             <Listbox.Option
@@ -64,7 +64,6 @@ const Select: React.FC<SelectProps> = (props) => {
                                         <span className='ui-selected:font-bold'>
                                             {option.label}
                                         </span>
-
                                     </>
                                 )}
                             </Listbox.Option>

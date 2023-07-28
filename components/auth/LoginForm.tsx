@@ -72,7 +72,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                         hasError={hasError}></Input>
 
                 </label>
-                <label className="block mt-4">
+                <label className="block my-4">
                     <span className="text-gray-700">Password</span>
                     <Input type="password"
                         autoComplete='current-password'
