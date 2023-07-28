@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     return (
         <div className={clsx(
             "bg-[url(/images/colorful-circles-portrait.png)] bg-cover bg-center",
-            "border-r border-gray-200",
+            "border-r z-50 border-gray-200",
             "transition-all duration-200",
             isExpanded ? 'w-64 min-w-[255px]' : 'w-16'
         )}>
