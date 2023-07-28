@@ -34,7 +34,7 @@ const dummyCondition = {
     ]
 }
 
-const parseSlot = (responseItem: ResponseItem, parentKey: string) => {
+const parseSlot = (responseItem: ResponseItem, parentKey: string, hasSiblings?: boolean) => {
     let slotResponses: {
         [key: string]: string;
     } = {};
@@ -44,47 +44,29 @@ const parseSlot = (responseItem: ResponseItem, parentKey: string) => {
         if (responseItem.value) {
             slotResponses[currentKey] = responseItem.value;
         } else {
-            slotResponses[parentKey.substring(0, parentKey.length - 1)] = responseItem.key;
+            if (hasSiblings) {
+                slotResponses[currentKey] = 'TRUE';
+            } else {
+                slotResponses[parentKey.substring(0, parentKey.length - 1)] = responseItem.key;
+            }
         }
         return slotResponses;
     }
+    const hasMoreChildren = responseItem.items?.length > 1;
     responseItem.items.forEach((item) => {
-        const newSlotes = parseSlot(item, `${currentKey}.`);
+
+        const newSlotes = parseSlot(item, `${currentKey}.`, hasMoreChildren);
         slotResponses = {
             ...slotResponses,
             ...newSlotes,
         }
     })
     return slotResponses;
-
-    /*response.response?.items?.forEach((item) => {
-        const slotKey = `${itemKey}-${response.response?.key}.${item.key}`;
-        if (!item.items) {
-            return;
-        }
-
-        slotResponses = {
-            ...slotResponses,
-            ...newSlots,
-        }
-    })*/
-    /*responseItems.forEach((item) => {
-        if (item.items) {
-
-        } else {
-            const key = `${slotKey}.${item.key}`;
-            if (item.value) {
-                slotResponses[key] = item.value;
-            }
-        }
-    })*/
-    return slotResponses;
 }
 
 
 
 const parseSingleConfidentialResponse = (response: SurveySingleItemResponse) => {
-    console.log('response: ', response);
     const itemKey = response.key;
     let slotResponses = {};
     if (!response.response) {
