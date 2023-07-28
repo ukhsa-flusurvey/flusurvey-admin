@@ -2,11 +2,12 @@
 
 import LoadingButton from '@/components/buttons/LoadingButton';
 import InputForm from '@/components/inputs/Input';
+import Select from '@/components/inputs/Select';
 import { SurveyInfos } from '@/utils/server/types/studyInfos';
-import { Listbox, RadioGroup, Switch, Transition } from '@headlessui/react';
+import { RadioGroup, Switch } from '@headlessui/react';
 import { addMonths, format } from 'date-fns';
-import React, { Fragment } from 'react';
-import { BsChevronExpand, BsFiletypeCsv, BsFiletypeJson } from 'react-icons/bs';
+import React from 'react';
+import { BsFiletypeCsv, BsFiletypeJson } from 'react-icons/bs';
 
 interface ResponseDownloaderProps {
     studyKey: string;
@@ -28,49 +29,14 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
 
 
-    const surveyKeySelector = <Listbox
-        value={selectedSurveyKey} onChange={setSelectedSurveyKey}>
-
-        <div className='relative'>
-            <label
-                htmlFor="survey-key-select"
-                className='block text-sm font-medium text-gray-700 mb-1'
-            >
-                Survey key
-            </label>
-            <Listbox.Button
-                id="survey-key-select"
-                className='flex items-center rounded border border-gray-300 px-3 py-2 w-full'
-            >
-                {selectedSurveyKey ? selectedSurveyKey : <span className='text-gray-600'>Select survey key</span>}
-                <span
-                    className='text-gray-700 ms-auto'
-                >
-                    <BsChevronExpand />
-                </span>
-            </Listbox.Button>
-            <Transition
-                as={Fragment}
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-            >
-                <Listbox.Options
-                    className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-
-                    {props.surveyInfos?.infos.map((survey) => (
-                        <Listbox.Option
-                            key={survey.surveyKey}
-                            value={survey.surveyKey}
-                            className='cursor-default select-none px-3 py-2 ui-active:text-white ui-active:bg-cyan-700  ui-selected:bg-cyan-700 ui-selected:text-white'
-                        >
-                            {survey.surveyKey}
-                        </Listbox.Option>
-                    ))}
-                </Listbox.Options>
-            </Transition>
-        </div>
-    </Listbox>
+    const surveyKeySelector = <Select
+        id="survey-key-select"
+        options={props.surveyInfos ? props.surveyInfos.infos.map((surveyInfo) => ({ value: surveyInfo.surveyKey, label: surveyInfo.surveyKey })) : []}
+        value={selectedSurveyKey ? selectedSurveyKey : ''}
+        onChange={(value) => setSelectedSurveyKey(value)}
+        label="Survey key"
+        placeholder="Select survey key"
+    />
 
     const exportFormatSelector = <RadioGroup value={exportFormat} onChange={setExportFormat}
         id='export-format-select'

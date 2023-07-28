@@ -1,6 +1,7 @@
 import { getSurveysForStudy } from "@/utils/server/studyAPI";
 import { SurveyInfos } from "@/utils/server/types/studyInfos";
 import ResponseDownloader from "./ResponseDownloader";
+import SurveyInfoDownloader from "./SurveyInfoDownloader";
 
 
 export default async function Page({ params: { studyKey } }: {
@@ -27,13 +28,13 @@ export default async function Page({ params: { studyKey } }: {
                 surveyInfos={surveys}
             />
 
+            <div className="mt-12 rounded bg-neutral-200 p-3">
+                <SurveyInfoDownloader
+                    studyKey={studyKey}
+                    surveyInfos={surveys}
+                />
+            </div>
 
-            <p>
-                TODO:
-                - download survey infos
-                - survey info lang
-                - survey info format (CSV or JSON)
-            </p>
         </div>
     )
 }
