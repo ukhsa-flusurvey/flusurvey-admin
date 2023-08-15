@@ -4,9 +4,9 @@ import { Navbar, NavbarBrand } from "@nextui-org/navbar";
 import { Card, CardBody } from "@nextui-org/card";
 import Image from 'next/image';
 import { Link as NextUILink } from '@nextui-org/link'
-import { Avatar } from "@nextui-org/avatar";
 import clsx from "clsx";
 import { BsEnvelopeAt, BsCloudCheck, BsClipboard2Data, BsPersonFillGear, BsJournalMedical } from "react-icons/bs";
+import Avatar from "./Avatar";
 
 interface ToolCardProps {
     title: string;
@@ -16,6 +16,7 @@ interface ToolCardProps {
     icon: React.ReactNode;
 }
 
+const pxs = 4;
 const ToolCard: React.FC<ToolCardProps> = (props) => {
     return (
         <Card
@@ -48,6 +49,7 @@ const ToolCard: React.FC<ToolCardProps> = (props) => {
         </Card>
     )
 }
+
 
 export default async function Page() {
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
@@ -137,8 +139,103 @@ export default async function Page() {
                 </Container>
             </section>
 
+            <section className="py-24">
+                <Container className="flex gap-5 flex-wrap">
+                    <Avatar
+                        userId={'twesestid12312sddssss2332'}
+                        pixelSize={pxs}
+                        size={32}
+                    />
+                    <Avatar
+                        userId={'twesestid12312wewesddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid12weweewerwer312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid12234234312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twe2sestid12234234312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid122342334312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid122342234312sdadssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid122342334312sdds0msss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid122342324312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid122342343v3v3v3v3v12sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid1wewewe2234234312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid12234234234234234ösmdlfm312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid12234234234234234ösmdlfm312sddssöföddödöfdöfdöföfföss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid12234234234234234ösmdlfm31tzjt2sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid1223423423werwer4234234ösmdlfm312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    <Avatar
+                        userId={'twesestid1223423423423423jghjgh4ösmdlfm312sddssss2332'}
+                        pixelSize={pxs}
+                        size={8}
+                    />
+                    {
+                        [...Array.from(Array(100 + 1).keys()).slice(1)].map(
+                            (i) => <Avatar
+                                key={i}
+                                userId={i.toString()}
+                                pixelSize={pxs}
+                                size={8}
+                            />
+                        )
+                    }
+                </Container>
+            </section>
+
             <footer className="bg-content3">
-                <Container className="py-unit-xl flex justify-center text-default-600">
+                <Container className="py-unit-xl flex justify-center text-sm text-default-600">
                     <span className="me-1">© {(new Date()).getFullYear()},</span>
                     <a href="https://coneno.com" target="blank"> coneno GmbH</a>
                 </Container>
