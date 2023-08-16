@@ -65,7 +65,7 @@ export default async function Page() {
             >
                 <Container className="flex grow">
                     <NavbarBrand
-                        className="flex flex-col items-start border-l-2 border-cyan-800 ps-unit-2"
+                        className="flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-unit-2"
                     >
                         <p className='font-normal text-cyan-800 text-tiny'>CASE ADMIN</p>
                         <p className='font-semibold tracking-wider text-small'>{appName}</p>
@@ -154,7 +154,7 @@ export default async function Page() {
                         <ToolCard
                             title='Service status'
                             description='Overview showing if the application can connect to the backend services.'
-                            href='/tools/admin-v1'
+                            href='/service-status'
                             iconClassName="bg-gradient-to-b from-neutral-400 to-neutral-600 text-white"
                             icon={<BsCloudCheck />}
                         />
