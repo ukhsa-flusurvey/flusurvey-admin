@@ -8,6 +8,7 @@ import { Button } from "@nextui-org/button";
 
 import clsx from "clsx";
 import { BsEnvelopeAt, BsCloudCheck, BsClipboard2Data, BsPersonFillGear, BsJournalMedical } from "react-icons/bs";
+import NavbarAuth from "../../components/navbar/NavbarAuth";
 
 
 interface ToolCardProps {
@@ -72,18 +73,7 @@ export default async function Page() {
 
                     </NavbarBrand>
                     <NavbarContent justify="end">
-                        <NavbarItem
-                        >
-                            <Button
-                                variant="flat"
-                                radius="sm"
-                                as={NextUILink}
-                                href='/auth/login'
-                            >
-                                Login
-                            </Button>
-
-                        </NavbarItem>
+                        <NavbarAuth />
                     </NavbarContent>
                 </Container>
 

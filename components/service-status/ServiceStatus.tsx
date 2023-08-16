@@ -1,8 +1,8 @@
 import React from 'react';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import { ServiceStatusInfo, getServiceStatus } from '@/utils/server/status';
-import Spinner from '../Spinner';
 import { Card, CardBody } from '@nextui-org/card';
+import { Spinner } from '@nextui-org/spinner';
 
 
 interface ServiceStatusDisplayProps {
@@ -33,7 +33,7 @@ export default async function ServiceStatus(props: ServiceStatusDisplayProps) {
     const renderStatusIconWithText = () => {
         if (props.isLoading) {
             return <div className='flex flex-col justify-center text-center'>
-                <Spinner color='blue' />
+                <Spinner color='primary' />
             </div>
         }
 
