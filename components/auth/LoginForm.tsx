@@ -1,10 +1,10 @@
 import React from 'react';
-import Button from '../buttons/Button';
 import PrimaryOutlinedButton from '../buttons/PrimaryOutlinedButton';
 import LoadingButton from '../buttons/LoadingButton';
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
 import { signIn } from 'next-auth/react';
-import Input from '../inputs/Input';
+import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
 
 interface LoginFormProps {
     isSecondFactor: boolean;
@@ -35,14 +35,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 }} >
                     <label className="block mt-4">
                         <span className="text-gray-700">6 digit code</span>
+
                         <Input type="text"
-                            onChange={(event) => {
+                            value={loginData.verificationCode}
+                            onValueChange={(value) => {
                                 setLoginData({
                                     ...loginData,
-                                    verificationCode: event.target.value.replaceAll('-', '')
+                                    verificationCode: value.replaceAll('-', '')
                                 })
                             }}
-                            hasError={hasError} errorMsg="Wrong verification code"></Input>
+                            validationState={hasError ? 'invalid' : 'valid'}
+                            errorMessage={hasError ? 'Wrong verification code' : ''}
+                        />
 
                     </label>
                     <Button >Submit</Button>
@@ -51,48 +55,66 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
     }
 
     return (
-        <div className='mt-8'>
+        <div className='flex flex-col gap-unit-md'>
             <h2 className='text-3xl'>Login</h2>
             <form onSubmit={(event) => {
                 event.preventDefault();
                 handleLogin();
-            }} >
-                <label className="block mt-4">
-                    <span className="text-gray-700">Email</span>
-                    <Input type="email"
-                        className='w-full'
-                        autoComplete='email'
-                        name='email'
-                        onChange={(event) => {
-                            setLoginData({
-                                ...loginData,
-                                email: event.target.value
-                            })
-                        }}
-                        hasError={hasError}></Input>
+            }}
+                className='flex flex-col gap-unit-md'
+            >
 
-                </label>
-                <label className="block my-4">
-                    <span className="text-gray-700">Password</span>
-                    <Input type="password"
-                        autoComplete='current-password'
-                        className='w-full'
-                        onChange={(event) => {
-                            setLoginData({
-                                ...loginData,
-                                password: event.target.value
-                            })
-                        }}
-                        hasError={hasError} errorMsg="Wrong email or password"></Input>
-                </label>
+                <Input
+                    type="email"
+                    value={loginData.email}
+                    variant="flat"
+                    label='Email'
+                    labelPlacement='outside'
+                    size='lg'
+                    autoComplete='email'
+                    name='email'
+                    placeholder='Enter your email'
+                    onValueChange={(value) => {
+                        setLoginData({
+                            ...loginData,
+                            email: value
+                        })
+                    }}
+                    validationState={hasError ? 'invalid' : 'valid'}
+                    errorMessage={hasError ? 'Wrong email or password' : ''}
+                />
 
-                <LoadingButton
+                <Input
+                    label='Password'
+                    type="password"
+                    variant='flat'
+                    security='true'
+                    size='lg'
+                    autoComplete='current-password'
+                    name='password'
+                    labelPlacement='outside'
+                    placeholder='Enter your password'
+                    value={loginData.password}
+                    onValueChange={(value) => {
+                        setLoginData({
+                            ...loginData,
+                            password: value
+                        })
+                    }}
+                    validationState={hasError ? 'invalid' : 'valid'}
+                    errorMessage={hasError ? 'Wrong email or password' : ''}
+                />
+
+
+                <Button
                     isLoading={isLoading}
                     type='submit'
-                    disabled={loginData.email === '' || loginData.password === ''}
+                    isDisabled={loginData.email === '' || loginData.password === ''}
+                    color='primary'
+                    size='lg'
                 >
                     Login
-                </LoadingButton>
+                </Button>
             </form>
 
             <div className='flex row items-center my-4'>
@@ -101,9 +123,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                 <div className='border-t border-t-gray-400 grow h-[1px]'></div>
             </div>
 
-            <PrimaryOutlinedButton
-                className='mt-2 w-full'
+            <Button
                 type='button'
+                variant='ghost'
+                size='lg'
+                color='primary'
                 onClick={async () => {
                     await signIn('management-user-oauth', { redirect: false, callbackUrl: '/' });
                     console.log('login')
@@ -111,7 +135,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
             >
                 <ShieldCheckIcon className="h-6 w-6 mr-2" />
                 Login Via Institute Account
-            </PrimaryOutlinedButton>
+            </Button>
 
         </div>
     );

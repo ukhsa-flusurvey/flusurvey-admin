@@ -3,25 +3,26 @@
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 
-function AvatarFromId({ userId, size, pixelSize }: {
+// Define the 8 color combinations
+const colorCombinations = [
+    { bg: "#a7f3d0", fg: "#064e3b" },
+    { bg: "#d9f99d", fg: "#365314" },
+    { bg: "#fecdd3", fg: "#881337" },
+    { bg: "#f5d0fe", fg: "#701a75" },
+    { bg: "#a5f3fc", fg: "#164e63" },
+    { bg: "#fde68a", fg: "#78350f" },
+    { bg: "#bae6fd", fg: "#0c4a6e" },
+    { bg: "#e2e8f0", fg: "#0f172a" }
+];
+
+const size = 8;
+
+function AvatarFromId({ userId, pixelSize }: {
     userId: string;
-    size: number;
     pixelSize: number;
 }) {
     const [binaryString, setBinaryString] = useState("");
     const [colors, setColors] = useState({ bg: "#FFFFFF", fg: "#000000" });
-
-    // Define the 8 color combinations
-    const colorCombinations = [
-        { bg: "#a7f3d0", fg: "#064e3b" },
-        { bg: "#d9f99d", fg: "#365314" },
-        { bg: "#fecdd3", fg: "#881337" },
-        { bg: "#f5d0fe", fg: "#701a75" },
-        { bg: "#a5f3fc", fg: "#164e63" },
-        { bg: "#fde68a", fg: "#78350f" },
-        { bg: "#bae6fd", fg: "#0c4a6e" },
-        { bg: "#e2e8f0", fg: "#0f172a" }
-    ];
 
     useEffect(() => {
         async function generateAvatarData() {
