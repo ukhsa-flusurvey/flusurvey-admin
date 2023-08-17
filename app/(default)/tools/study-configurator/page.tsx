@@ -1,10 +1,8 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import AppbarWithProfile from "@/components/navbar/AppbarWithProfile";
-import NavbarAuth from "@/components/navbar/NavbarAuth";
+import AppbarBaseForTools from "@/components/navbar/AppbarBaseForTools";
 import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
-import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
-import App from "next/app";
-import { BsHouse, BsHouseFill, BsJournalMedical } from "react-icons/bs";
+import { BsHouseFill } from "react-icons/bs";
+import StudyConfigAppbarBase from "./StudyConfigAppbarBase";
 
 
 export const dynamic = 'force-dynamic';
@@ -14,35 +12,30 @@ export default async function Page() {
 
     return (
         <>
-
-            <div className="pt-unit-sm pb-unit-1 border-b border-b-default bg-content2">
-                <AppbarWithProfile
-                    toolName='Study Configurator'
-                    toolIcon={<StudyConfigIcon size="md" />}
+            <StudyConfigAppbarBase />
+            <div className="px-unit-lg mt-1 pb-unit-1">
+                <Breadcrumbs
+                    links={
+                        [
+                            {
+                                href: '/tools/study-configurator',
+                                title: <BsHouseFill />
+                            },
+                            {
+                                href: '/tools',
+                                title: 'Tools'
+                            },
+                            {
+                                href: '/tools/study-configurator',
+                                title: 'Study Configurator'
+                            }
+                        ]
+                    }
                 />
-                <div className="px-unit-lg mt-1">
-                    <Breadcrumbs
-                        links={
-                            [
-                                {
-                                    href: '/tools/study-configurator',
-                                    title: <BsHouseFill />
-                                },
-                                {
-                                    href: '/tools',
-                                    title: 'Tools'
-                                },
-                                {
-                                    href: '/tools/study-configurator',
-                                    title: 'Study Configurator'
-                                }
-                            ]
-                        }
-                    />
-
-                </div>
 
             </div>
+
+
             <div className="bg-content3 px-unit-lg py-unit-sm border-b border-b-default shadow-sm">
                 Sub-feature specific menu
             </div>

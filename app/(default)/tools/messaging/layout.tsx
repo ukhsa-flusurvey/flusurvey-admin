@@ -4,6 +4,7 @@ import { ArrowLeftIcon, ChatBubbleBottomCenterTextIcon, ClipboardDocumentListIco
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import React from "react"
+import MessagingAppbarBase from "./MessagingAppbarBase";
 
 // export const revalidate = 0;
 export const dynamic = 'force-dynamic'
@@ -44,19 +45,23 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
 
     return (
-        <div className="h-full flex w-full">
-            <Sidenav
-                title={{
-                    label: 'Messaging',
-                    icon: <span className="bg-sky-600/50 rounded text-white w-8 h-8 flex text-lg items-center justify-center">
-                        <EnvelopeIcon className="w-5 h-5" />
-                    </span>
-                }}
-                links={links}
-            />
-            <div className="overflow-y-scroll grow">
-                {children}
-            </div>
-        </div >
+        <>
+            <MessagingAppbarBase />
+            <div className="h-full flex w-full">
+
+                <Sidenav
+                    title={{
+                        label: 'Messaging',
+                        icon: <span className="bg-sky-600/50 rounded text-white w-8 h-8 flex text-lg items-center justify-center">
+                            <EnvelopeIcon className="w-5 h-5" />
+                        </span>
+                    }}
+                    links={links}
+                />
+                <div className="overflow-y-scroll grow">
+                    {children}
+                </div>
+            </div >
+        </>
     )
 }

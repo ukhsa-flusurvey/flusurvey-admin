@@ -116,13 +116,13 @@ export default async function Page() {
                         <ToolCard
                             title='Participants'
                             description='Features to access study participants and their data.'
-                            href='/tools/admin-v1'
+                            href='/tools/participants'
                             icon={<ParticipantsIcon size="lg" />}
                         />
                         <ToolCard
                             title='User management'
                             description='User management related functions for admins.'
-                            href='/tools/admin-v1'
+                            href='/tools/user-management'
                             icon={<UserManagementIcon size="lg" />}
                         />
                         <ToolCard
