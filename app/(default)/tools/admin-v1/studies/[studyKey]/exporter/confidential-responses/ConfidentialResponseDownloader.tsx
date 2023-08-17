@@ -1,8 +1,8 @@
 'use client';
 
-import LoadingButton from '@/components/buttons/LoadingButton';
+
 import { Switch } from '@headlessui/react';
-import { sl } from 'date-fns/locale';
+import { Button } from '@nextui-org/button';
 import React from 'react';
 import { ResponseItem, SurveySingleItemResponse } from 'survey-engine/data_types';
 
@@ -159,7 +159,7 @@ const ConfidentialResponseDownloader: React.FC<ConfidentialResponseDownloaderPro
                 </p>
             )}
 
-            <LoadingButton
+            <Button
                 isLoading={isPending}
                 disabled={participantIds.length < 1}
                 onClick={async () => {
@@ -214,7 +214,7 @@ const ConfidentialResponseDownloader: React.FC<ConfidentialResponseDownloaderPro
                 }}
             >
                 Download confidential responses
-            </LoadingButton>
+            </Button>
         </div>
     );
 };

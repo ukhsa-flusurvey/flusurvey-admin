@@ -7,9 +7,9 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import Filepicker from '../inputs/Filepicker';
 import InputForm from '../inputs/Input';
 import NotImplemented from '../NotImplemented';
-import LoadingButton from '../buttons/LoadingButton';
 import { encodeTemplate } from './utils';
-import { uploadCommonTemplate } from '@/app/(default)/tools/admin-v1/messaging/common-templates/actions';
+import { uploadCommonTemplate } from '@/app/(default)/tools/messaging/common-templates/actions';
+import { Button } from '@nextui-org/button';
 
 const topics = [
     {
@@ -72,6 +72,9 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
     const [subject, setSubject] = useState<string>('');
     const [headerOverrides, setHeaderOverrides] = useState<{ from: string, sender: string, replyTo: string[] }>({ from: '', sender: '', replyTo: [] });
     const [isPending, startTransition] = useTransition();
+
+
+    const [documentSrc, setDocumentSrc] = useState<string | null>(null);
 
     const submit = async () => {
         const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE;
@@ -239,10 +242,14 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
                                     reader.onload = (e) => {
                                         const text = e.target?.result;
                                         if (typeof text === 'string') {
+                                            const blob = new Blob([text], { type: 'text/html' });
                                             setNewTemplate(text);
+                                            const url = URL.createObjectURL(blob);
+                                            setDocumentSrc(url);
 
                                         } else {
                                             setNewTemplate(undefined);
+                                            setDocumentSrc(null);
                                             console.log('error');
                                         }
                                     }
@@ -256,14 +263,14 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
                 </div>
             </div>
             <div className='flex justify-end'>
-                <LoadingButton
+                <Button
                     type='button'
                     onClick={submit}
                     isLoading={isPending}
                     disabled={!newTemplate || !selectedTopic || !subject}
                 >
                     Upload Template
-                </LoadingButton>
+                </Button>
             </div>
             <div>
                 {error && <p className='text-red-500'>{error}</p>}
@@ -271,10 +278,13 @@ const SystemMessageTemplateUploader: React.FC<SystemMessageTemplateUploaderProps
             </div>
             <div>
                 <h4 className='text-lg font-bold'>Template Preview</h4>
-                <div className='h-96 border border-dashed mt-6 rounded overflow-scroll'>
-                    {newTemplate &&
-                        <div dangerouslySetInnerHTML={{ __html: newTemplate }} />
-                    }
+                <div className='border border-dashed mt-6 rounded '>
+                    {documentSrc &&
+                        <iframe
+                            src={documentSrc}
+                            style={{ width: '100%', height: '500px' }}
+                            title="Dynamic Document"
+                        />}
                 </div>
             </div>
         </>

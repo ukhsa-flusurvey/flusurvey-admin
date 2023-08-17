@@ -59,7 +59,9 @@ const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
                     <DropdownSection>
                         <DropdownItem key="logout" color="danger"
                             onClick={() => {
-                                signOut();
+                                signOut({
+                                    callbackUrl: '/'
+                                });
                             }}
                         >
                             Log Out

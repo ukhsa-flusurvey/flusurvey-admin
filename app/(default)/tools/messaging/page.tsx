@@ -15,7 +15,7 @@ export default async function Page() {
                 <div className="sm:ps-6 flex flex-col gap-2">
                     <Link
                         className="font-bold px-4 py-2 rounded border border-gray-200 hover:text-blue-600 hover:bg-gray-100"
-                        href='/tools/admin-v1/messaging/common-templates'>
+                        href='/tools/messaging/common-templates'>
                         Manage System Messages
                     </Link>
                     <Link
