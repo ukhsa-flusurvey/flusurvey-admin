@@ -62,7 +62,6 @@ export default async function Page() {
             <Navbar isBordered
                 maxWidth="full"
                 shouldHideOnScroll
-
             >
                 <Container className="flex grow">
                     <NavbarBrand
@@ -76,9 +75,9 @@ export default async function Page() {
                         <NavbarAuth />
                     </NavbarContent>
                 </Container>
-
             </Navbar>
-            <div className="relative w-full h-80">
+
+            <div className="relative w-full h-80 py-unit-lg ">
                 <Image
                     src="/images/crowd.png"
                     fill
@@ -115,7 +114,7 @@ export default async function Page() {
                         <ToolCard
                             title='Study configurator'
                             description='Create, edit or delete studies. Manage study rules and surveys.'
-                            href='/tools/admin-v1'
+                            href='/tools/study-configurator'
                             iconClassName="bg-gradient-to-b from-sky-400 to-sky-600 text-white"
                             icon={<BsJournalMedical />}
                         />
@@ -137,7 +136,7 @@ export default async function Page() {
                         <ToolCard
                             title='Messaging'
                             description='Configure email templates and message schedules for the system.'
-                            href='/tools/admin-v1'
+                            href='/tools/messaging'
                             iconClassName="bg-gradient-to-b from-indigo-400 to-indigo-600 text-white"
                             icon={<BsEnvelopeAt />}
                         />
@@ -169,7 +168,6 @@ export default async function Page() {
                     >
                         coneno GmbH
                     </NextUILink>
-
                 </Container>
             </footer>
         </main>
