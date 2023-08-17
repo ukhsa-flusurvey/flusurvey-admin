@@ -1,6 +1,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AppbarWithProfile from "@/components/navbar/AppbarWithProfile";
 import NavbarAuth from "@/components/navbar/NavbarAuth";
+import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
 import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import App from "next/app";
 import { BsHouse, BsHouseFill, BsJournalMedical } from "react-icons/bs";
@@ -17,11 +18,7 @@ export default async function Page() {
             <div className="pt-unit-sm pb-unit-1 border-b border-b-default bg-content2">
                 <AppbarWithProfile
                     toolName='Study Configurator'
-                    toolIcon={<div
-                        className="w-8 h-8 shadow-sm rounded-small flex items-center justify-center text-center text-lg bg-gradient-to-b from-sky-400 to-sky-600 text-white"
-                    >
-                        <BsJournalMedical />
-                    </div>}
+                    toolIcon={<StudyConfigIcon size="md" />}
                 />
                 <div className="px-unit-lg mt-1">
                     <Breadcrumbs

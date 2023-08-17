@@ -9,13 +9,17 @@ import { Button } from "@nextui-org/button";
 import clsx from "clsx";
 import { BsEnvelopeAt, BsCloudCheck, BsClipboard2Data, BsPersonFillGear, BsJournalMedical } from "react-icons/bs";
 import NavbarAuth from "../../components/navbar/NavbarAuth";
+import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
+import ParticipantsIcon from "@/components/tool-icons/ParticipantsIcon";
+import UserManagementIcon from "@/components/tool-icons/UserManagementIcon";
+import MessagingIcon from "@/components/tool-icons/MessagingIcon";
+import ServiceStatusIcon from "@/components/tool-icons/ServiceStatusIcon";
 
 
 interface ToolCardProps {
     title: string;
     description: string;
     href: string;
-    iconClassName: string;
     icon: React.ReactNode;
 }
 
@@ -32,15 +36,7 @@ const ToolCard: React.FC<ToolCardProps> = (props) => {
         >
             <CardBody>
                 <div className="flex gap-unit-4">
-                    <div>
-
-                        <span className={clsx(
-                            "w-14 h-14 shadow-sm rounded-medium flex items-center justify-center text-center text-3xl",
-                            props.iconClassName
-                        )}>
-                            {props.icon}
-                        </span>
-                    </div>
+                    {props.icon}
                     <div>
                         <h3 className="text-md font-semibold">{props.title}</h3>
                         <p className="text-small text-default-500">{props.description}</p>
@@ -115,37 +111,31 @@ export default async function Page() {
                             title='Study configurator'
                             description='Create, edit or delete studies. Manage study rules and surveys.'
                             href='/tools/study-configurator'
-                            iconClassName="bg-gradient-to-b from-sky-400 to-sky-600 text-white"
-                            icon={<BsJournalMedical />}
+                            icon={<StudyConfigIcon size="lg" />}
                         />
                         <ToolCard
                             title='Participants'
                             description='Features to access study participants and their data.'
                             href='/tools/admin-v1'
-                            iconClassName="bg-gradient-to-b from-orange-400 to-orange-600 text-white"
-                            icon={<BsClipboard2Data />}
+                            icon={<ParticipantsIcon size="lg" />}
                         />
                         <ToolCard
                             title='User management'
                             description='User management related functions for admins.'
                             href='/tools/admin-v1'
-                            iconClassName="bg-gradient-to-b from-emerald-400 to-emerald-600 text-white"
-                            icon={<BsPersonFillGear />}
-
+                            icon={<UserManagementIcon size="lg" />}
                         />
                         <ToolCard
                             title='Messaging'
                             description='Configure email templates and message schedules for the system.'
                             href='/tools/messaging'
-                            iconClassName="bg-gradient-to-b from-indigo-400 to-indigo-600 text-white"
-                            icon={<BsEnvelopeAt />}
+                            icon={<MessagingIcon size="lg" />}
                         />
                         <ToolCard
                             title='Service status'
                             description='Overview showing if the application can connect to the backend services.'
                             href='/service-status'
-                            iconClassName="bg-gradient-to-b from-neutral-400 to-neutral-600 text-white"
-                            icon={<BsCloudCheck />}
+                            icon={<ServiceStatusIcon size="lg" />}
                         />
                     </div>
                 </Container>
