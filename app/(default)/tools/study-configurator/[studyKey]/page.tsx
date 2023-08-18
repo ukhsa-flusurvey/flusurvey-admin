@@ -1,10 +1,15 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { BsHouseFill } from "react-icons/bs";
-import NewStudyForm from "./NewStudyForm";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+interface PageProps {
+    params: {
+        studyKey: string
+    }
+}
+
+export default async function Page(props: PageProps) {
     const session = await getServerSession();
     if (!session || !session.user?.email) {
         redirect('/auth/login?callbackUrl=/tools/study-configurator/new');
@@ -21,13 +26,13 @@ export default async function Page() {
                                 title: <BsHouseFill />
                             },
                             {
-                                title: 'Create a new study'
+                                title: props.params.studyKey
                             }
                         ]
                     }
                 />
                 <main className="py-unit-lg">
-                    <NewStudyForm />
+                    todo
                 </main>
             </div>
         </div>

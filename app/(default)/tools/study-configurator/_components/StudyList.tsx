@@ -31,7 +31,7 @@ const StudyCard = (props: { study: Study }) => {
                         <span>{(props.study.stats.participantCount || 0) + (props.study.stats.tempParticipantCount || 0)}</span>
                         <span><BsDot /></span>
                         <span className='me-1 text-default-500'>Responses: </span>
-                        <span>{props.study.stats.responseCount}</span>
+                        <span>{props.study.stats.responseCount || 0}</span>
                     </div>
 
                 </div>

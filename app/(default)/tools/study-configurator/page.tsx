@@ -12,22 +12,8 @@ export const dynamic = 'force-dynamic';
 export default async function Page() {
     return (
         <>
-            <div className="px-unit-lg py-unit-1 bg-default-50 hidden">
-                <Breadcrumbs
-                    links={
-                        [
-                            {
-                                href: '/tools/study-configurator',
-                                title: <BsHouseFill />
-                            },
-                        ]
-                    }
-                />
-            </div>
-
-
             <main
-                className="px-unit-lg grow bg-cover bg-center bg-[url(/images/paper_iceberg.png)]"
+                className="px-unit-lg"
             >
                 <div className="flex justify-center items-center p-unit-lg h-full">
                     <Card

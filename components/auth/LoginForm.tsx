@@ -1,6 +1,4 @@
 import React from 'react';
-import PrimaryOutlinedButton from '../buttons/PrimaryOutlinedButton';
-import LoadingButton from '../buttons/LoadingButton';
 import ShieldCheckIcon from '@heroicons/react/24/outline/ShieldCheckIcon';
 import { signIn } from 'next-auth/react';
 import { Input } from "@nextui-org/input";
