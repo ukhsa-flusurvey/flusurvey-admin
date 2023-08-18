@@ -1,8 +1,18 @@
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { Accept, useDropzone } from "react-dropzone";
+import { BsFileEarmarkArrowUp } from 'react-icons/bs';
 
 interface FilepickerProps {
+    id: string;
+    label?: string;
     accept?: Accept;
+
+    placeholders?: {
+        upload: string;
+        drag: string;
+    }
+
     onChange: (files: File[]) => void;
 }
 
@@ -22,17 +32,48 @@ const Filepicker: React.FC<FilepickerProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [acceptedFiles]);
 
-    return (
-        <div
-            className="bg-blue-100 border-2 border-gray-400 rounded-lg p-4 hover:bg-blue-200 outline-blue-300"
-            {...getRootProps()}>
-            <input
-                className="bg-blue-100 border-2 border-gray-400 rounded-lg p-4"
-                {...getInputProps()} />
-            {acceptedFiles.length > 0 ? <p>{
-                acceptedFiles[0].name
-            }</p> : <p>Drag and drop some files here, or click to select files</p>}
+    const placeholders = {
+        upload: props.placeholders?.upload || 'Click to pick a file',
+        drag: props.placeholders?.drag || 'or Drag and drop'
+    }
 
+    return (
+        <div className=''>
+            {props.label && (
+                <label htmlFor={props.id}
+                    className="block text-small font-medium text-foreground pb-1.5"
+                >
+                    {props.label}
+                </label>
+            )}
+
+            <div
+                className={clsx("border-medium border-dashed border-default-200  rounded-medium p-4 hover:border-default-400 cursor-pointer outline-primary",
+                    {
+                        "border-default-400 bg-default-100": isDragActive,
+                    }
+                )}
+                {...getRootProps()}>
+                <input
+                    id={props.id}
+                    className=""
+                    {...getInputProps()} />
+                <div className='flex justify-center items-center gap-1'>
+                    {acceptedFiles.length > 0 ? <p>{
+                        acceptedFiles[0].name
+                    }</p> : <>
+                        <BsFileEarmarkArrowUp className='text-2xl text-default-400' />
+                        <p>
+                            <span className='text-secondary me-1'>
+                                {placeholders.upload}
+                            </span>
+                            <span>
+                                {placeholders.drag}
+                            </span>
+                        </p>
+                    </>}
+                </div>
+            </div>
         </div>
     );
 };

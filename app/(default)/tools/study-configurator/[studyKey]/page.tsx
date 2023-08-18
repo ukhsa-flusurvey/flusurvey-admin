@@ -2,6 +2,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { BsHouseFill } from "react-icons/bs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import StudyDashboard from "../_components/StudyDashboard";
 
 interface PageProps {
     params: {
@@ -32,7 +33,7 @@ export default async function Page(props: PageProps) {
                     }
                 />
                 <main className="py-unit-lg">
-                    todo
+                    <StudyDashboard studyKey={props.params.studyKey} />
                 </main>
             </div>
         </div>
