@@ -2,10 +2,10 @@
 
 import { AuthAPIFetcher } from '@/utils/server/fetcher';
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card';
-import { Button, Divider, Skeleton, Spinner, Tooltip } from '@nextui-org/react';
+import { Button, Divider, Skeleton, Spinner } from '@nextui-org/react';
 import { signOut } from 'next-auth/react';
 import React from 'react';
-import { BsAsterisk, BsCardChecklist, BsChevronRight, BsClockHistory, BsExclamationTriangle, BsGit, BsPlus } from 'react-icons/bs';
+import { BsCardChecklist, BsChevronRight, BsExclamationTriangle, BsPlus } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
 import useSWR from 'swr';
 
@@ -46,7 +46,7 @@ const SurveyCard: React.FC<{ surveyKey: string; studyKey: string }> = ({ surveyK
 
 
     return (<Card radius='sm'>
-        <div className='p-unit-sm flex items-center'>
+        <div className='p-unit-sm flex items-center gap-unit-md'>
             <div className='grow'>
 
                 <div className='font-bold'>
@@ -95,7 +95,7 @@ const SurveyList: React.FC<{ studyKey: string }> = ({ studyKey }) => {
             return null;
         }
 
-        errorComp = <div className='bg-danger-50 gap-unit-md rounded-medium p-unit-md flex items-center'>
+        errorComp = <div className='bg-danger-50 gap-unit-md rounded-medium p-unit-md flex items-center mb-unit-md'>
             <div className='text-danger text-2xl'>
                 <BsExclamationTriangle />
             </div>
@@ -132,7 +132,7 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = (props) => {
                 <h3 className='text-xl font-bold'>Surveys</h3>
             </CardHeader>
             <Divider />
-            <CardBody>
+            <CardBody className='max-h-[400px] overflow-y-scroll'>
                 <SurveyList
                     studyKey={props.studyKey}
                 />

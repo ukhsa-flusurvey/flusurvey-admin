@@ -129,7 +129,7 @@ export const authOptions = {
                 // If the access token has expired, try to refresh it
                 if (!token.refresh_token || !token.access_token) {
                     return {
-                        ...token,
+                        // ...token,
                         error: 'RefreshAccessTokenError' as const,
                     }
                 }
@@ -144,7 +144,7 @@ export const authOptions = {
                 } catch (error) {
                     console.error(error);
                     return {
-                        ...token,
+                        // ...token,
                         error: 'RefreshAccessTokenError' as const,
                     }
                 }

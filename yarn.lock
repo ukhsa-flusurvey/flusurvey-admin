@@ -490,16 +490,17 @@
     "@nextui-org/theme" "2.0.5"
     "@react-aria/utils" "^3.19.0"
 
-"@nextui-org/link@2.0.11":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@nextui-org/link/-/link-2.0.11.tgz#c397f34008c2811f585a5a3710c30ed07946946e"
-  integrity sha512-gDnmSn9OsoNb2bxJjVSHKgfHFqweZc2uOSB6hde64xlw9m3LbPCSlC8N414+TTxWhfrnyQijkwx5KxsUnFoxOg==
+"@nextui-org/link@2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@nextui-org/link/-/link-2.0.12.tgz#8617a4b4e781959e9e20b3a4f3199cc7b231fc84"
+  integrity sha512-vji3DVfEj6i85cwmAMj/Ol+d5dHQ/afoEV+S324K/mnU6PahWRgGJFxLbsvjSN0YEqdBlx/4tKY7zglCPdlexA==
   dependencies:
     "@nextui-org/react-utils" "2.0.6"
     "@nextui-org/shared-icons" "2.0.2"
     "@nextui-org/shared-utils" "2.0.2"
     "@nextui-org/system" "2.0.5"
     "@nextui-org/theme" "2.0.5"
+    "@nextui-org/use-aria-link" "2.0.12"
     "@react-aria/focus" "^3.14.0"
     "@react-aria/link" "^3.5.3"
     "@react-aria/utils" "^3.19.0"
@@ -633,10 +634,10 @@
     "@nextui-org/react-rsc-utils" "2.0.6"
     "@nextui-org/shared-utils" "2.0.2"
 
-"@nextui-org/react@^2.0.22":
-  version "2.0.22"
-  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-2.0.22.tgz#31a03b11e09a9a13fb8e780bfacf1e425515d3b0"
-  integrity sha512-2+614OeBPq8p7tVRi9onWkBdBUzPRXOsdJf1hpKXOhmDsm4uhbshsx6moty9NyknWWdS8KPoLQOAuFISbtAVzw==
+"@nextui-org/react@^2.0.23":
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-2.0.23.tgz#f75dc38965bae849b7993a0c94359f84aa007bfe"
+  integrity sha512-d+OES1F9IJFLbbIgtXHPnynQH0dP0pHEDmwfTmEApJsV1X05qOV6p/Qdg7fZ76z+x7g+eQUdclf5wHe1wppkdA==
   dependencies:
     "@nextui-org/accordion" "2.0.12"
     "@nextui-org/avatar" "2.0.11"
@@ -651,7 +652,7 @@
     "@nextui-org/image" "2.0.11"
     "@nextui-org/input" "2.0.14"
     "@nextui-org/kbd" "2.0.10"
-    "@nextui-org/link" "2.0.11"
+    "@nextui-org/link" "2.0.12"
     "@nextui-org/modal" "2.0.13"
     "@nextui-org/navbar" "2.0.11"
     "@nextui-org/pagination" "2.0.12"
@@ -870,6 +871,17 @@
     "@react-aria/interactions" "^3.17.0"
     "@react-aria/utils" "^3.19.0"
     "@react-types/button" "^3.7.4"
+    "@react-types/shared" "^3.19.0"
+
+"@nextui-org/use-aria-link@2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@nextui-org/use-aria-link/-/use-aria-link-2.0.12.tgz#81fcacdc42486aeae85da85a435a2a5095906442"
+  integrity sha512-Q+ztjV19GK9lT9XZ440pdSKhOY+Hc4cKK4CDsZGYgh2WqUAjy1qI2fiQZjQ2pQNda49Gl+QvZzTglX14wO2xAg==
+  dependencies:
+    "@react-aria/focus" "^3.14.0"
+    "@react-aria/interactions" "^3.17.0"
+    "@react-aria/utils" "^3.19.0"
+    "@react-types/link" "^3.4.4"
     "@react-types/shared" "^3.19.0"
 
 "@nextui-org/use-aria-modal-overlay@2.0.3":
@@ -2000,10 +2012,10 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node@20.5.0":
-  version "20.5.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.0.tgz#7fc8636d5f1aaa3b21e6245e97d56b7f56702313"
-  integrity sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==
+"@types/node@20.5.1":
+  version "20.5.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.1.tgz#178d58ee7e4834152b0e8b4d30cbfab578b9bb30"
+  integrity sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==
 
 "@types/prop-types@*", "@types/prop-types@^15.0.0":
   version "15.7.5"
