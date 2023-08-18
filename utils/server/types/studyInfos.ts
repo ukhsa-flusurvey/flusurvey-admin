@@ -24,5 +24,10 @@ export interface Study {
         idMappingMethod: string;
         participantFileUploadRule: Expression;
     }
+    stats: {
+        participantCount: number;
+        tempParticipantCount: number;
+        responseCount: number;
+    };
     rules: Expression[];
 }

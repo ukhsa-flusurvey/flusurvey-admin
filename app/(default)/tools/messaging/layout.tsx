@@ -45,7 +45,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
 
     return (
-        <>
+        <div className="h-screen flex flex-col">
             <MessagingAppbarBase />
             <div className="h-full flex w-full">
 
@@ -62,6 +62,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
                     {children}
                 </div>
             </div >
-        </>
+        </div>
     )
 }

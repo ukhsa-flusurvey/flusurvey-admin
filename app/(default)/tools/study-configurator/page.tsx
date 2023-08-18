@@ -1,19 +1,18 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import AppbarBaseForTools from "@/components/navbar/AppbarBaseForTools";
-import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
-import { BsHouseFill } from "react-icons/bs";
-import StudyConfigAppbarBase from "./StudyConfigAppbarBase";
+import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
+import { Divider } from "@nextui-org/divider";
+import { BsHouseFill, BsPlus } from "react-icons/bs";
+import { Link as NextUILink } from '@nextui-org/link'
+import StudyList from "./_components/StudyList";
 
 
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
-
     return (
         <>
-            <StudyConfigAppbarBase />
-            <div className="px-unit-lg mt-1 pb-unit-1">
+            <div className="px-unit-lg py-unit-1 bg-default-50 hidden">
                 <Breadcrumbs
                     links={
                         [
@@ -21,32 +20,46 @@ export default async function Page() {
                                 href: '/tools/study-configurator',
                                 title: <BsHouseFill />
                             },
-                            {
-                                href: '/tools',
-                                title: 'Tools'
-                            },
-                            {
-                                href: '/tools/study-configurator',
-                                title: 'Study Configurator'
-                            }
                         ]
                     }
                 />
-
             </div>
 
 
-            <div className="bg-content3 px-unit-lg py-unit-sm border-b border-b-default shadow-sm">
-                Sub-feature specific menu
-            </div>
-            <main className="px-unit-lg">
-                <div className="h-96 bg-content1">
-                    page content
+            <main
+                className="px-unit-lg grow bg-cover bg-center bg-[url(/images/paper_iceberg.png)]"
+            >
+                <div className="flex justify-center items-center p-unit-lg h-full">
+                    <Card
+                        fullWidth={false}
+                        className="bg-white/50 w-full sm:w-[600px]"
+                        isBlurred
+                        isFooterBlurred
+                    >
+                        <CardHeader className="bg-content2">
+                            <h2 className="text-2xl font-bold">Studies</h2>
+                        </CardHeader>
+                        <Divider />
+                        <CardBody className="">
+                            <StudyList />
+
+                        </CardBody>
+                        <Divider />
+                        <CardFooter
+
+                        >
+                            <Button
+                                variant="flat"
+                                color="primary"
+                                as={NextUILink}
+                                href="/tools/study-configurator/new"
+                            >
+                                <BsPlus />
+                                Create new study
+                            </Button>
+                        </CardFooter>
+                    </Card>
                 </div>
-                <div className="h-96 bg-content3"></div>
-                <div className="h-96 bg-content4"></div>
-                <div className="h-96 bg-content2"></div>
-                <div className="h-96 bg-content3"></div>
             </main>
         </>
     )

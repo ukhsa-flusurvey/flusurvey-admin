@@ -1,19 +1,16 @@
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Container from "@/components/Container";
-import { Navbar, NavbarBrand, NavbarItem, NavbarContent } from "@nextui-org/navbar";
+import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import { Card, CardBody } from "@nextui-org/card";
 import Image from 'next/image';
 import { Link as NextUILink } from '@nextui-org/link'
-import { Button } from "@nextui-org/button";
-
-import clsx from "clsx";
-import { BsEnvelopeAt, BsCloudCheck, BsClipboard2Data, BsPersonFillGear, BsJournalMedical } from "react-icons/bs";
 import NavbarAuth from "../../components/navbar/NavbarAuth";
 import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
 import ParticipantsIcon from "@/components/tool-icons/ParticipantsIcon";
 import UserManagementIcon from "@/components/tool-icons/UserManagementIcon";
 import MessagingIcon from "@/components/tool-icons/MessagingIcon";
 import ServiceStatusIcon from "@/components/tool-icons/ServiceStatusIcon";
+
 
 
 interface ToolCardProps {
@@ -23,7 +20,7 @@ interface ToolCardProps {
     icon: React.ReactNode;
 }
 
-const pxs = 4;
+
 const ToolCard: React.FC<ToolCardProps> = (props) => {
     return (
         <Card
@@ -44,7 +41,6 @@ const ToolCard: React.FC<ToolCardProps> = (props) => {
                 </div>
 
             </CardBody>
-
         </Card>
     )
 }
@@ -67,6 +63,7 @@ export default async function Page() {
                         <p className='font-semibold tracking-wider text-small'>{appName}</p>
 
                     </NavbarBrand>
+
                     <NavbarContent justify="end">
                         <NavbarAuth />
                     </NavbarContent>
@@ -77,7 +74,8 @@ export default async function Page() {
                 <Image
                     src="/images/crowd.png"
                     fill
-                    objectFit="cover"
+                    priority
+                    className="object-cover"
                     alt=""
                 />
                 <Container className="h-full flex items-center justify-start">
