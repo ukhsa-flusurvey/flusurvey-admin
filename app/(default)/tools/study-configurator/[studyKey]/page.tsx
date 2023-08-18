@@ -13,7 +13,7 @@ interface PageProps {
 export default async function Page(props: PageProps) {
     const session = await getServerSession();
     if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator/new');
+        redirect('/auth/login?callbackUrl=/tools/study-configurator');
     }
 
     return (

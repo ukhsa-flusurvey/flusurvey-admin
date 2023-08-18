@@ -1,8 +1,9 @@
 'use client';
 
 import Filepicker from '@/components/inputs/Filepicker';
-import { Input } from '@nextui-org/react';
 import React from 'react';
+import SurveyOverview from './SurveyOverview';
+
 
 interface StudyDashboardProps {
     studyKey: string;
@@ -11,13 +12,6 @@ interface StudyDashboardProps {
 const StudyDashboard: React.FC<StudyDashboardProps> = (props) => {
     return (
         <div className='flex flex-col gap-unit-lg'>
-            <Input
-                label='Study name'
-                placeholder='Study name'
-                labelPlacement='outside'
-                variant='bordered'
-            >
-            </Input>
             <Filepicker
                 id='test'
                 label='Upload a file'
@@ -25,6 +19,9 @@ const StudyDashboard: React.FC<StudyDashboardProps> = (props) => {
                     console.log(files);
 
                 }}
+            />
+            <SurveyOverview
+                studyKey={props.studyKey}
             />
         </div>
     );
