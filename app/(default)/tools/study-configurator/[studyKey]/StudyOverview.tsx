@@ -85,11 +85,6 @@ const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
                     </div>
                     <Divider />
                     <div className='flex gap-unit-md'>
-                        <div className='flex flex-col gap-unit-md'>
-
-
-                        </div>
-
                         <div>
                             <NotImplemented>language selector</NotImplemented>
                             <NotImplemented>name, description, tags</NotImplemented>

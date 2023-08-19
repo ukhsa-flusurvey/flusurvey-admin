@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { BsHouseFill } from "react-icons/bs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import StudyDashboard from "./StudyDashboard";
@@ -36,12 +35,9 @@ export default async function Page(props: PageProps) {
         <div className="px-unit-lg bg-white/60 h-full">
             <div className="py-unit-sm">
                 <Breadcrumbs
+                    homeLink="/tools/study-configurator"
                     links={
                         [
-                            {
-                                href: '/tools/study-configurator',
-                                title: <BsHouseFill />
-                            },
                             {
                                 title: props.params.studyKey
                             }

@@ -8,6 +8,7 @@ import React from 'react';
 import { BsCardChecklist, BsChevronRight, BsExclamationTriangle, BsPlus } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
 import useSWR from 'swr';
+import { Link as NextUILink } from '@nextui-org/link'
 
 interface SurveyOverviewProps {
     studyKey: string;
@@ -70,6 +71,9 @@ const SurveyCard: React.FC<{ surveyKey: string; studyKey: string }> = ({ surveyK
             </div>
             <Button
                 variant='ghost'
+                as={NextUILink}
+                type='button'
+                href={`/tools/study-configurator/${studyKey}/survey/${surveyKey}`}
             >
                 Open Survey
                 <BsChevronRight />
@@ -142,8 +146,8 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = (props) => {
                 <Button
                     variant="flat"
                     color="primary"
-                //as={NextUILink}
-                // href="/tools/study-configurator/new"
+                    as={NextUILink}
+                    href={`/tools/study-configurator/${props.studyKey}/survey/new`}
                 >
                     <BsPlus />
                     Create new survey

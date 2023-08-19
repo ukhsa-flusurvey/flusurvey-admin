@@ -1,12 +1,22 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import NewStudyForm from "./NewStudyForm";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+
+interface PageProps {
+    params: {
+        studyKey: string;
+        surveyKey: string;
+    }
+}
+
+export const dynamic = 'force-dynamic';
+
+
+export default async function Page(props: PageProps) {
     const session = await getServerSession();
     if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator/new');
+        redirect('/auth/login?callbackUrl=/tools/study-configurator');
     }
 
     return (
@@ -17,13 +27,17 @@ export default async function Page() {
                     links={
                         [
                             {
-                                title: 'Create a new study'
+                                title: props.params.studyKey,
+                                href: `/tools/study-configurator/${props.params.studyKey}`,
+                            },
+                            {
+                                title: `Survey: ${props.params.surveyKey}`,
                             }
                         ]
                     }
                 />
                 <main className="py-unit-lg">
-                    <NewStudyForm />
+                    todo
                 </main>
             </div>
         </div>
