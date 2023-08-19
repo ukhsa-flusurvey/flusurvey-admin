@@ -1,6 +1,8 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
+import NotImplemented from "@/components/NotImplemented";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import SurveyEditActions from "../SurveyEditActions";
 
 
 interface PageProps {
@@ -37,7 +39,16 @@ export default async function Page(props: PageProps) {
                     }
                 />
                 <main className="py-unit-lg">
-                    todo
+                    <div className="grid grid-cols-2 gap-unit-md">
+                        <NotImplemented >
+                            list of existing survey versions
+                        </NotImplemented>
+
+                        <SurveyEditActions
+                            studyKey={props.params.studyKey}
+                            surveyKey={props.params.surveyKey}
+                        />
+                    </div>
                 </main>
             </div>
         </div>
