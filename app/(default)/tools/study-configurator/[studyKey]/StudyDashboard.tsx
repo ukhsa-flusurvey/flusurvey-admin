@@ -2,6 +2,7 @@ import React from 'react';
 import SurveyOverview from './SurveyOverview';
 import { Study } from '@/utils/server/types/studyInfos';
 import StudyOverview from './StudyOverview';
+import DangerZone from './DangerZone';
 
 
 interface StudyDashboardProps {
@@ -20,8 +21,10 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                     studyKey={props.studyKey}
                 />
             </div>
-            <div>
-
+            <div className='py-unit-lg'>
+                <DangerZone
+                    studyKey={props.studyKey}
+                />
             </div>
         </>
     );
