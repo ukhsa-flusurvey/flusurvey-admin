@@ -4,20 +4,41 @@ import React, { useState, useTransition } from 'react';
 import { Link as NextUILink } from '@nextui-org/link'
 import { Button } from '@nextui-org/button';
 import Filepicker from '@/components/inputs/Filepicker';
-import { Survey } from 'survey-engine/data_types';
-import { BsCloudArrowUp, BsPencilSquare } from 'react-icons/bs';
+import { BsCloudArrowUp, BsPencilSquare, BsShuffle } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
-import { uploadSurvey } from './surveyUploadAction';
+import { Expression, isExpression } from 'survey-engine/data_types';
+import { uploadStudyRules } from './actionUploadStudyRules';
 
 
-interface SurveyEditActionsProps {
+interface StudyRuleEditActionsProps {
     studyKey: string;
-    surveyKey: string;
 }
 
-const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
+const checkIfValidStudyRule = (rules: any): boolean => {
+    // check if an array and if all items are expressions
+    if (!Array.isArray(rules)) {
+        return false;
+    }
+    for (const rule of rules) {
+        if (!isExpression(rule)) {
+            return false;
+        }
+        if (rule.name !== 'IFTHEN') {
+            return false;
+        }
+        if (!Array.isArray(rule.data) || rule.data.length < 1) {
+            return false;
+        }
+        if (rule.data[0].exp?.name !== 'checkEventType') {
+            return false;
+        }
+    }
+    return true;
+}
+
+const StudyRuleEditActions: React.FC<StudyRuleEditActionsProps> = (props) => {
     const [isPending, startTransition] = useTransition();
-    const [newSurvey, setNewSurvey] = useState<Survey | undefined>(undefined);
+    const [newStudyRules, setNewStudyRules] = useState<Expression[] | undefined>(undefined);
     const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = useState<string | undefined>(undefined);
     const router = useRouter();
@@ -25,12 +46,12 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
     const submit = async () => {
         setErrorMsg(undefined);
         setSuccessMsg(undefined);
-        if (newSurvey) {
+        if (newStudyRules) {
             startTransition(async () => {
                 try {
-                    const response = await uploadSurvey(props.studyKey, newSurvey)
+                    const response = await uploadStudyRules(props.studyKey, { rules: newStudyRules })
+                    setSuccessMsg('Study rules uploaded successfully');
                     router.refresh();
-                    setSuccessMsg('Survey uploaded successfully.');
                 }
                 catch (e: any) {
                     setErrorMsg(e.message);
@@ -46,14 +67,17 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
             isBlurred
         >
             <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Actions</h3>
+                <h3 className='text-xl font-bold flex items-center'>
+                    <BsShuffle className='mr-unit-sm text-default-400' />
+                    General study rules
+                </h3>
             </CardHeader>
             <Divider />
             <CardBody className='max-h-[400px] overflow-y-scroll'>
                 <div className='flex flex-col gap-1'>
                     <Filepicker
                         id='upload-survey-filepicker'
-                        label='Upload survey'
+                        label='Upload new study rules'
                         accept={{
                             'application/json': ['.json'],
                         }}
@@ -68,29 +92,19 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
                                     if (typeof text === 'string') {
                                         const data = JSON.parse(text);
 
-                                        let surveyKeyFromData = '';
-                                        if (data && data.surveyDefinition && data.surveyDefinition.key) {
-                                            surveyKeyFromData = data.surveyDefinition.key;
-                                        }
-
-                                        if (!surveyKeyFromData) {
-                                            setErrorMsg('Survey key not found in the uploaded file.');
+                                        if (!checkIfValidStudyRule(data)) {
+                                            setErrorMsg('Selected file does not appear to be a valid study rule file. Please check if you have selected the correct file.');
                                             return;
                                         }
-
-                                        if (props.surveyKey.length > 0 && surveyKeyFromData !== props.surveyKey) {
-                                            setErrorMsg('Survey key in the uploaded file does not match the current survey key.');
-                                            return;
-                                        }
-                                        setNewSurvey(data as Survey);
+                                        setNewStudyRules(data as Expression[]);
                                     } else {
-                                        setNewSurvey(undefined);
+                                        setNewStudyRules(undefined);
                                         console.log('error');
                                     }
                                 }
                                 reader.readAsText(files[0]);
                             } else {
-                                setNewSurvey(undefined);
+                                setNewStudyRules(undefined);
                             }
                             // console.log(files);
                         }}
@@ -103,16 +117,15 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
                         color='secondary'
                         size='lg'
                         isLoading={isPending}
-                        isDisabled={newSurvey === undefined}
+                        isDisabled={newStudyRules === undefined}
                         startContent={<BsCloudArrowUp className='text-large' />}
                         onClick={() => {
                             submit();
-                            // console.log('create survey');
                         }}
                     >
                         Upload
                     </Button>
-                    <span className='text-default-400 text-small'>Use a JSON file from your computer to publish a new survey version</span>
+                    <span className='text-default-400 text-small'>Use a JSON file from your computer to publish a new set of study rules</span>
                 </div>
 
                 <div className='flex row items-center my-4'>
@@ -128,13 +141,12 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
                         as={NextUILink}
                         size='lg'
                         isDisabled={true || isPending}
-                        href={`/tools/study-configurator/${props.studyKey}/survey/${props.surveyKey}/edit`}
+                        href={`/tools/study-configurator/${props.studyKey}/rules`}
                         startContent={<BsPencilSquare className='text-large' />}
                     >
-
                         Open in Editor
                     </Button>
-                    <span className='text-default-400 text-small'>Open the current version of the survey in the interactive editor</span>
+                    <span className='text-default-400 text-small'>Open the current version of the study rules in the interactive editor</span>
                 </div>
             </CardBody>
             <Divider />
@@ -143,4 +155,4 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
     );
 };
 
-export default SurveyEditActions;
+export default StudyRuleEditActions;

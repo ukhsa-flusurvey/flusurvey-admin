@@ -5,7 +5,7 @@ import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card';
 import { Button, Divider, Skeleton, Spinner } from '@nextui-org/react';
 import { signOut } from 'next-auth/react';
 import React from 'react';
-import { BsCardChecklist, BsChevronRight, BsExclamationTriangle, BsPlus } from 'react-icons/bs';
+import { BsCardChecklist, BsChevronRight, BsExclamationTriangle, BsPlus, BsUiChecks } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
 import useSWR from 'swr';
 import { Link as NextUILink } from '@nextui-org/link'
@@ -133,7 +133,10 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = (props) => {
             isBlurred
         >
             <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Surveys</h3>
+                <h3 className='text-xl font-bold flex items-center'>
+                    <BsUiChecks className='mr-unit-sm text-default-400' />
+                    Surveys
+                </h3>
             </CardHeader>
             <Divider />
             <CardBody className='max-h-[400px] overflow-y-scroll'>

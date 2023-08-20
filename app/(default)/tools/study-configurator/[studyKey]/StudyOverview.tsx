@@ -4,6 +4,7 @@ import { Divider } from '@nextui-org/divider';
 import { Chip } from '@nextui-org/chip';
 import React from 'react';
 import NotImplemented from '@/components/NotImplemented';
+import { BsInfoCircle } from 'react-icons/bs';
 
 interface StudyOverviewProps {
     study: Study;
@@ -46,7 +47,10 @@ const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
             isBlurred
         >
             <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Properties</h3>
+                <h3 className='text-xl font-bold flex items-center'>
+                    <BsInfoCircle className='mr-unit-sm text-default-400' />
+                    Properties
+                </h3>
             </CardHeader>
             <Divider />
             <CardBody className=''>

@@ -3,17 +3,19 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { getServerSession } from "next-auth/next";
-import { Survey } from "survey-engine/data_types";
+import { Expression } from "survey-engine/data_types";
 
 
-export const uploadSurvey = async (studyKey: string, survey: Survey) => {
+export const uploadStudyRules = async (studyKey: string, rulesObj: {
+    rules: Expression[]
+}) => {
     const session = await getServerSession(authOptions);
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
-    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/surveys`);
+    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/rules`);
     const r = await fetch(url.toString(), {
         method: 'POST',
-        body: JSON.stringify({ survey: survey }),
+        body: JSON.stringify(rulesObj),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
             'Content-Type': 'application/json'

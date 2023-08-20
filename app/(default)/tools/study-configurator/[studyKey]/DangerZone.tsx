@@ -3,7 +3,7 @@
 import NotImplemented from '@/components/NotImplemented';
 import { Button, Card, CardBody, CardHeader, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import React, { useTransition } from 'react';
-import { BsExclamationTriangleFill } from 'react-icons/bs';
+import { BsExclamationDiamond, BsExclamationTriangleFill } from 'react-icons/bs';
 import { deleteStudyAction } from './actionDeleteStudy';
 import { useRouter } from 'next/navigation';
 import { ca } from 'date-fns/locale';
@@ -101,7 +101,10 @@ const DangerZone: React.FC<DangerZoneProps> = (props) => {
 
         >
             <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Danger zone</h3>
+                <h3 className='text-xl font-bold flex items-center'>
+                    <BsExclamationDiamond className='mr-unit-sm text-default-400' />
+                    Danger zone
+                </h3>
             </CardHeader>
             <Divider />
             <CardBody>
