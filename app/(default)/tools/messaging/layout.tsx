@@ -1,5 +1,5 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import Sidenav from "@/components/admin-tool-v1/Sidenav";
+import Sidenav from "@/app-to-migrate/admin-tool-v1/Sidenav";
 import { ArrowLeftIcon, ChatBubbleBottomCenterTextIcon, ClipboardDocumentListIcon, ClockIcon, EnvelopeIcon, HomeIcon, InboxStackIcon } from "@heroicons/react/24/outline";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
@@ -47,6 +47,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
     return (
         <div className="h-screen flex flex-col">
             <MessagingAppbarBase />
+            <div className="bg-cover bg-center bg-[url(/images/foldedpaper_pattern.png)] grow">
+                <div className="w-full h-full bg-white/20">
+                    {children}
+                </div>
+            </div>
+            {/*}
             <div className="h-full flex w-full">
 
                 <Sidenav
@@ -61,7 +67,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 <div className="overflow-y-scroll grow">
                     {children}
                 </div>
-            </div >
+                </div >*/}
         </div>
     )
 }

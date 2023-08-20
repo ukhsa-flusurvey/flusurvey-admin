@@ -5,9 +5,9 @@ import Link from "next/link";
 export default async function Page() {
     return (
         <div
-            className="bg-cover bg-center bg-[url(/images/paper_iceberg.png)] h-full"
-        // className=" bg-[url(/images/foldedpaper_pattern.png)] bg-repeat bg-[length:1000px_600px] h-full"
-        // className="bg-center bg-[url(/images/foldedpaper_pattern.png)] bg-cover h-full"
+        //     className="bg-cover bg-center bg-[url(/images/paper_iceberg.png)] h-full"
+        //    className=" bg-[url(/images/foldedpaper_pattern.png)] bg-repeat bg-[length:1000px_600px] h-full"
+        //className="bg-center bg-[url(/images/foldedpaper_pattern.png)] bg-cover h-full"
         // className="bg-center bg-[url(/images/foldedpapers.png)] bg-cover h-full"
         // className="bg-end bg-[url(/images/paper_iceberg2.png)] bg-cover h-full"
 
