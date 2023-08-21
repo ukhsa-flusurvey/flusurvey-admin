@@ -1,5 +1,6 @@
 'use client'
 
+import StudyCard from '@/components/StudyCard';
 import { AuthAPIFetcher } from '@/utils/server/fetcher';
 import { Study } from '@/utils/server/types/studyInfos';
 import { Spinner, Card, CardBody, Link as NextUILink, Chip } from '@nextui-org/react';
@@ -11,45 +12,7 @@ import useSWR from 'swr';
 interface StudyListProps {
 }
 
-const StudyCard = (props: { study: Study }) => {
-    return <Card shadow='none'
-        className="border border-default-400 bg-gradient-to-r from-content2 to-content1"
-        radius='sm'
-        isPressable
-        as={NextUILink}
-        href={`/tools/study-configurator/${props.study.key}`}
-    >
-        <CardBody className='p-unit-sm'>
-            <div className=' flex'>
-                <div className='grow'>
-                    <div className='text-lg font-bold'>
-                        {props.study.key}
-                        {props.study.props.systemDefaultStudy && <Chip color='default' variant='flat' size='sm' className='ml-unit-sm'>Default</Chip>}
-                    </div>
-                    <div className='text-small flex items-center mt-unit-1'>
-                        <span className='me-1 text-default-500'>Participants: </span>
-                        <span>{(props.study.stats.participantCount || 0) + (props.study.stats.tempParticipantCount || 0)}</span>
-                        <span><BsDot /></span>
-                        <span className='me-1 text-default-500'>Responses: </span>
-                        <span>{props.study.stats.responseCount || 0}</span>
-                    </div>
 
-                </div>
-                <div className='flex items-center gap-unit-sm'>
-                    <Chip
-                        variant='dot'
-                        color={
-                            props.study.status === 'active' ? 'success' : 'default'
-                        }>
-                        {props.study.status}
-                    </Chip>
-                    <BsChevronRight />
-                </div>
-            </div>
-
-        </CardBody>
-    </Card>
-}
 
 const StudyList: React.FC<StudyListProps> = (props) => {
     const { data, error, isLoading } = useSWR<{ studies: Study[] }>(`/api/case-management-api/v1/studies`, AuthAPIFetcher)
@@ -97,6 +60,7 @@ const StudyList: React.FC<StudyListProps> = (props) => {
         })
         studyList = <div className="grid grid-cols-1  gap-unit-lg">
             {studies.map((study: Study) => <StudyCard key={study.key}
+                baseURL='/tools/study-configurator'
                 study={study}
             />)}
         </div>
