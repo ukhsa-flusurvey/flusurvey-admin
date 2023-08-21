@@ -34,7 +34,7 @@ export const getSurveysForStudy = async (studyKey: string) => {
     return data;
 }
 
-export const getStudies = async () => {
+export const getStudies = async (): Promise<{ studies?: Study[] }> => {
     const session = await getServerSession(authOptions);
     if (!session || session.error || session.accessToken === undefined) {
         throw new Error('Unauthorized');
