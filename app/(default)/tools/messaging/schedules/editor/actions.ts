@@ -1,19 +1,22 @@
 'use server';
 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { MessageSchedule } from "@/utils/server/types/messaging";
+import { getServerSession } from "next-auth/next";
 
 
 export const saveMessageSchedule = async (
-    messageSchedule: MessageSchedule,
-    accessToken: string
+    messageSchedule: MessageSchedule
 ) => {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.accessToken) throw new Error('unauthenticated');
     const url = getCASEManagementAPIURL('/v1/messaging/auto-messages');
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify({ 'autoMessage': messageSchedule }),
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${session?.accessToken}`,
             'Content-Type': 'application/json'
         },
         next: { revalidate: 0 }
@@ -26,14 +29,16 @@ export const saveMessageSchedule = async (
 }
 
 export const deleteMessageSchedule = async (
-    id: string,
-    accessToken: string
+    id: string
 ) => {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.accessToken) throw new Error('unauthenticated');
+
     const url = getCASEManagementAPIURL(`/v1/messaging/auto-message/${id}`);
     const r = await fetch(url.toString(), {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${session?.accessToken}`,
         },
         next: { revalidate: 0 }
     });

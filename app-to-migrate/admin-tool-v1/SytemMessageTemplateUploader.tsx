@@ -7,7 +7,7 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import Filepicker from '../../components/inputs/Filepicker';
 import InputForm from '../inputs/Input';
 import NotImplemented from '../../components/NotImplemented';
-import { encodeTemplate } from './utils';
+import { encodeTemplate } from '../../app/(default)/tools/messaging/schedules/editor/utils';
 import { uploadCommonTemplate } from '@/app-to-migrate/admin-v1/messaging/common-templates/actions';
 import { Button } from '@nextui-org/button';
 

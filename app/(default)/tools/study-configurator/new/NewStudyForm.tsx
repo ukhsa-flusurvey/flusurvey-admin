@@ -268,12 +268,6 @@ const NewStudyForm: React.FC<NewStudyFormProps> = (props) => {
                     </Button>
                 </div>
             </form>
-            {/*<StudyPropertyEditor
-                onSubmit={(study) => {
-                    console.log(study);
-                    onSubmit(study);
-                }}
-            />*/}
         </>
 
     );

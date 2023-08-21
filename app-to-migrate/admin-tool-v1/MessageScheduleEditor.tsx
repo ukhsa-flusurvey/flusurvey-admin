@@ -5,13 +5,12 @@ import React, { useEffect } from 'react';
 import { MessageSchedule } from '@/utils/server/types/messaging';
 import { RadioGroup } from '@headlessui/react';
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
-import InputForm from '../inputs/Input';
 import { addMonths, format } from 'date-fns';
 import NotImplemented from '../../components/NotImplemented';
 import Filepicker from '../../components/inputs/Filepicker';
-import { encodeTemplate } from './utils';
+import { encodeTemplate } from '../../app/(default)/tools/messaging/schedules/editor/utils';
 import { useRouter } from 'next/navigation';
-import { deleteMessageSchedule, saveMessageSchedule } from './actions';
+import { deleteMessageSchedule, saveMessageSchedule } from '../../app/(default)/tools/messaging/schedules/editor/actions';
 import { useSession } from 'next-auth/react';
 
 
@@ -19,28 +18,7 @@ interface MessageScheduleEditorProps {
     scheduleToEdit?: MessageSchedule;
 }
 
-const initialSchedule: MessageSchedule = {
-    id: '',
-    label: '',
-    type: 'all-users',
-    studyKey: '',
-    nextTime: new Date().getTime() / 1000,
-    period: 86400,
-    until: 0,
-    condition: undefined,
-    template: {
-        defaultLanguage: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en',
-        messageType: '',
-        headerOverrides: undefined,
-        translations: [
-            {
-                lang: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en',
-                subject: '',
-                templateDef: '',
-            }
-        ]
-    }
-}
+
 
 
 const dateToInputStr = (date: Date) => {
@@ -48,25 +26,7 @@ const dateToInputStr = (date: Date) => {
 }
 
 const MessageScheduleEditor: React.FC<MessageScheduleEditorProps> = (props) => {
-    const [schedule, setSchedule] = React.useState<MessageSchedule>(props.scheduleToEdit ?? {
-        ...initialSchedule
-    });
 
-    const [isPending, startTransition] = React.useTransition();
-    const router = useRouter();
-    const [showSubmitError, setShowSubmitError] = React.useState(false);
-
-    const [currentDateTime, setCurrentDateTime] = React.useState(new Date());
-    useEffect(() => {
-        setCurrentDateTime(new Date());
-    }, []);
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            router.push('/auth/login?callbackUrl=/tools/admin-v1/messaging/schedules');
-        }
-    });
 
 
     const scheduleTypeSelector = <RadioGroup value={schedule.type}
@@ -307,40 +267,8 @@ const MessageScheduleEditor: React.FC<MessageScheduleEditorProps> = (props) => {
                     >
                         Save
                     </PrimaryOutlinedButton>
-                    <SecondaryOutlinedLink href="/tools/admin-v1/messaging/schedules">
-                        Cancel
-                    </SecondaryOutlinedLink>
-                    {schedule.id && (
-                        <DangerOutlinedButton
-                            className='ml-auto'
-                            type='button'
-                            onClick={() => {
-                                if (confirm('Are you sure you want to delete this schedule?')) {
-                                    startTransition(async () => {
-                                        try {
-                                            await deleteMessageSchedule(schedule.id, session.data?.accessToken ?? '');
-                                            router.refresh();
-                                            router.push('/tools/admin-v1/messaging/schedules');
-                                        } catch (error) {
-                                            console.error(error);
-                                            setShowSubmitError(true);
-                                        }
-                                    })
-                                }
 
-                            }}
-                            disabled={isPending}
-                        >
-                            Delete
-                        </DangerOutlinedButton>)}
                 </div>
-                {showSubmitError && (
-                    <div className='mt-4 pt-4'>
-                        <p className='text-red-500'>
-                            Something went wrong. Please try again.
-                        </p>
-                    </div>
-                )}
             </form>
         </div>
     );
