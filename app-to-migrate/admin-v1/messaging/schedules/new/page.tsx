@@ -1,4 +1,4 @@
-import MessageScheduleEditor from "@/components/admin-tool-v1/MessageScheduleEditor";
+import MessageScheduleEditor from "@/app-to-migrate/admin-tool-v1/MessageScheduleEditor";
 
 export default async function Page() {
     return (

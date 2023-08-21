@@ -1,6 +1,6 @@
 import Container from "@/components/Container";
 import NotImplemented from "@/components/NotImplemented";
-import SystemMessageTemplateUploader from "@/components/admin-tool-v1/SytemMessageTemplateUploader";
+import SystemMessageTemplateUploader from "@/app-to-migrate/admin-tool-v1/SytemMessageTemplateUploader";
 
 
 export default async function Page() {

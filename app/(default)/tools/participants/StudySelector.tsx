@@ -47,10 +47,6 @@ export default async function StudySelector() {
                     }
                 )
             )}
-
-
-
-
         </>
     )
 }

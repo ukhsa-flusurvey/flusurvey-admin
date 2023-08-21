@@ -8,7 +8,7 @@ interface PageProps {
 export default async function Page(props: PageProps) {
     return (
         <main>
-            todo: schedules
+            todo: custom messages
         </main>
     )
 }

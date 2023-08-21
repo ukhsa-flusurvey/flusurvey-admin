@@ -1,44 +1,75 @@
 import Container from "@/components/Container";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Divider } from "@nextui-org/divider";
 import Link from "next/link";
+import { BsCalendarWeek, BsChevronRight, BsCodeSquare, BsEnvelopePaper } from "react-icons/bs";
+
+
+const LinkCard = (props: { href: string, title: string, description: string, icon: React.ReactNode }) => {
+    return (<Card
+        isPressable
+        as={Link}
+        href={props.href}
+        className="bg-white hover:bg-content2"
+    >
+        <div className="p-unit-md flex items-center">
+            <div className="me-unit-md text-default-400 text-3xl">
+                {props.icon}
+            </div>
+            <div className="grow">
+                <h3 className="font-bold text-large">{props.title}</h3>
+                <p className="text-default-600 text-small">{props.description}</p>
+            </div>
+            <div >
+                <BsChevronRight />
+            </div>
+        </div>
+    </Card>)
+}
 
 
 export default async function Page() {
     return (
-        <div
-        //     className="bg-cover bg-center bg-[url(/images/paper_iceberg.png)] h-full"
-        //    className=" bg-[url(/images/foldedpaper_pattern.png)] bg-repeat bg-[length:1000px_600px] h-full"
-        //className="bg-center bg-[url(/images/foldedpaper_pattern.png)] bg-cover h-full"
-        // className="bg-center bg-[url(/images/foldedpapers.png)] bg-cover h-full"
-        // className="bg-end bg-[url(/images/paper_iceberg2.png)] bg-cover h-full"
+        <main className="px-unit-lg">
 
-        >
-            <Container className="py-6 flex justify-center w-full">
-                <div className="bg-white rounded p-6 shadow-sm flex gap-4 flex-col sm:flex-row  sm:divide-x">
-                    <div className="w-full sm:w-[400px]">
-                        <h3 className="text-xl font-bold">Messaging</h3>
-                        <p className="text-gray-500 text-sm">
-                            Manage message templates and schedules.
-                        </p>
-                    </div>
-                    <div className="sm:ps-6 flex flex-col gap-2">
-                        <Link
-                            className="font-bold px-4 py-2 rounded border border-gray-200 hover:text-blue-600 hover:bg-gray-100"
-                            href='/tools/messaging/common-templates'>
-                            Manage System Messages
-                        </Link>
-                        <Link
-                            className="font-bold px-4 py-2 rounded border border-gray-200 hover:text-blue-600 hover:bg-gray-100"
-                            href='/tools/admin-v1/messaging/custom-templates'>
-                            Manage Custom Messages Templates
-                        </Link>
-                        <Link
-                            className="font-bold px-4 py-2 rounded border border-gray-200 hover:text-blue-600 hover:bg-gray-100"
-                            href='/tools/admin-v1/messaging/schedules'>
-                            Manage Schedules
-                        </Link>
-                    </div>
-                </div>
-            </Container>
-        </div>
+            <div className="flex justify-center items-center p-unit-lg h-full">
+                <Card
+                    fullWidth={false}
+                    className="bg-white/50 w-full sm:w-[600px]"
+                    isBlurred
+                    isFooterBlurred
+                >
+                    <CardHeader className="bg-content2">
+                        <h2 className="text-2xl font-bold">
+                            Messaging tools
+                        </h2>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="">
+                        <div className="flex flex-col gap-unit-md">
+                            <LinkCard
+                                href="/tools/messaging/system-messages"
+                                title="System messages"
+                                description="Configure messages sent by the system at specific events, like signup, password reset, etc."
+                                icon={<BsEnvelopePaper />}
+                            />
+                            <LinkCard
+                                href="/tools/messaging/custom-messages"
+                                title="Custom messages"
+                                description="Messages for specific study events (e.g. reminders) or for researcher notifications can be configured here."
+                                icon={<BsCodeSquare />}
+                            />
+                            <LinkCard
+                                href="/tools/messaging/schedules"
+                                title="Message schedules"
+                                description="Manage schedules for sending messages, e.g., weekly emails."
+                                icon={<BsCalendarWeek />}
+                            />
+
+                        </div>
+                    </CardBody>
+                </Card>
+            </div>
+        </main>
     )
 }

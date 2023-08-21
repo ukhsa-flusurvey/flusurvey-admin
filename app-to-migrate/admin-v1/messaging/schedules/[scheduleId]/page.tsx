@@ -1,7 +1,7 @@
 import { MessageSchedule } from "@/utils/server/types/messaging";
 import { getMessageSchedules } from "../utils";
 import { redirect } from "next/navigation";
-import MessageScheduleEditor from "@/components/admin-tool-v1/MessageScheduleEditor";
+import MessageScheduleEditor from "@/app-to-migrate/admin-tool-v1/MessageScheduleEditor";
 
 interface PageProps {
     params: {

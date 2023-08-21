@@ -4,11 +4,11 @@ import React, { useTransition } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { useState } from "react";
 import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
-import Filepicker from '../inputs/Filepicker';
+import Filepicker from '../../components/inputs/Filepicker';
 import InputForm from '../inputs/Input';
-import NotImplemented from '../NotImplemented';
+import NotImplemented from '../../components/NotImplemented';
 import { encodeTemplate } from './utils';
-import { uploadCommonTemplate } from '@/app/(default)/tools/messaging/common-templates/actions';
+import { uploadCommonTemplate } from '@/app-to-migrate/admin-v1/messaging/common-templates/actions';
 import { Button } from '@nextui-org/button';
 
 const topics = [
