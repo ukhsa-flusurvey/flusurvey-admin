@@ -1,17 +1,19 @@
 import { Study } from '@/utils/server/types/studyInfos';
-import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card';
+import { Card, CardBody, CardHeader } from '@nextui-org/card';
 import { Divider } from '@nextui-org/divider';
 import { Chip } from '@nextui-org/chip';
 import React from 'react';
 import NotImplemented from '@/components/NotImplemented';
 import { BsInfoCircle } from 'react-icons/bs';
+import DisplayTexts from './DisplayTexts';
+
 
 interface StudyOverviewProps {
     study: Study;
 }
 
-const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
 
+const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
     const studyStats = <div className='flex'>
         <div className='flex flex-col grow text-end'>
             <span className='text-default-400 text-small'>
@@ -88,12 +90,12 @@ const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
 
                     </div>
                     <Divider />
-                    <div className='flex gap-unit-md'>
-                        <div>
-                            <NotImplemented>language selector</NotImplemented>
-                            <NotImplemented>name, description, tags</NotImplemented>
-                        </div>
+
+                    <DisplayTexts study={props.study} />
+                    <div>
+                        <NotImplemented>name, description, tags</NotImplemented>
                     </div>
+
                     <div className='grow'></div>
                     <Divider />
                     {studyStats}

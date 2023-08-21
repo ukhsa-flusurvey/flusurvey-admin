@@ -17,7 +17,7 @@ export interface Study {
     props: {
         name: LocalizedString[];
         description: LocalizedString[];
-        tags: LocalizedString[][];
+        tags: Array<{ label: LocalizedString[] }>;
         systemDefaultStudy: boolean;
     }
     configs: {
