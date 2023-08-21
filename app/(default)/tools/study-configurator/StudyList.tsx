@@ -3,10 +3,10 @@
 import StudyCard from '@/components/StudyCard';
 import { AuthAPIFetcher } from '@/utils/server/fetcher';
 import { Study } from '@/utils/server/types/studyInfos';
-import { Spinner, Card, CardBody, Link as NextUILink, Chip } from '@nextui-org/react';
+import { Spinner } from '@nextui-org/react';
 import { signOut } from 'next-auth/react';
 import React from 'react';
-import { BsChevronRight, BsDot, BsExclamationTriangle, BsJournalMedical } from 'react-icons/bs';
+import { BsExclamationTriangle, BsJournalMedical } from 'react-icons/bs';
 import useSWR from 'swr';
 
 interface StudyListProps {

@@ -38,11 +38,6 @@ const links = [
 ];
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.user === undefined) {
-        redirect('/auth/login?callbackUrl=/tools/admin-v1/messaging');
-    }
-
 
     return (
         <div className="h-screen flex flex-col">

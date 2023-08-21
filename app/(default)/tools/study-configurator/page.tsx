@@ -1,8 +1,7 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
-import { BsHouseFill, BsPlus } from "react-icons/bs";
+import { BsPlus } from "react-icons/bs";
 import { Link as NextUILink } from '@nextui-org/link'
 import StudyList from "./StudyList";
 

@@ -1,7 +1,10 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Container from "@/components/Container";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
+import { getServerSession } from "next-auth/next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { BsCalendarWeek, BsChevronRight, BsCodeSquare, BsEnvelopePaper } from "react-icons/bs";
 
 
@@ -29,6 +32,11 @@ const LinkCard = (props: { href: string, title: string, description: string, ico
 
 
 export default async function Page() {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+        redirect('/auth/login?callbackUrl=/tools/messaging');
+    }
+
     return (
         <main className="px-unit-lg">
 
