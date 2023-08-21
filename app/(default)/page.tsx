@@ -33,7 +33,9 @@ const ToolCard: React.FC<ToolCardProps> = (props) => {
         >
             <CardBody>
                 <div className="flex gap-unit-4">
-                    {props.icon}
+                    <div>
+                        {props.icon}
+                    </div>
                     <div>
                         <h3 className="text-md font-semibold">{props.title}</h3>
                         <p className="text-small text-default-500">{props.description}</p>

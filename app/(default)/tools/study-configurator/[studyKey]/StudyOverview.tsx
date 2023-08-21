@@ -3,7 +3,6 @@ import { Card, CardBody, CardHeader } from '@nextui-org/card';
 import { Divider } from '@nextui-org/divider';
 import { Chip } from '@nextui-org/chip';
 import React from 'react';
-import NotImplemented from '@/components/NotImplemented';
 import { BsInfoCircle } from 'react-icons/bs';
 import DisplayTexts from './DisplayTexts';
 
@@ -92,9 +91,6 @@ const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
                     <Divider />
 
                     <DisplayTexts study={props.study} />
-                    <div>
-                        <NotImplemented>name, description, tags</NotImplemented>
-                    </div>
 
                     <div className='grow'></div>
                     <Divider />
