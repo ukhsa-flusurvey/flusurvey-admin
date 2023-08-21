@@ -2,7 +2,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import NotImplemented from "@/components/NotImplemented";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import SurveyEditActions from "../SurveyEditActions";
+import SurveyEditActions from "./SurveyEditActions";
 
 
 interface PageProps {

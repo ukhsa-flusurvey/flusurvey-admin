@@ -7,7 +7,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { Survey } from 'survey-engine/data_types';
 import { BsCloudArrowUp, BsPencilSquare } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
-import { uploadSurvey } from './surveyUploadAction';
+import { uploadSurvey } from '../surveyUploadAction';
 
 
 interface SurveyEditActionsProps {
@@ -53,7 +53,7 @@ const SurveyEditActions: React.FC<SurveyEditActionsProps> = (props) => {
                 <div className='flex flex-col gap-1'>
                     <Filepicker
                         id='upload-survey-filepicker'
-                        label='Upload survey'
+                        label='Upload new survey version'
                         accept={{
                             'application/json': ['.json'],
                         }}

@@ -1,6 +1,10 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import CreateSurveyActionsCard from "./CreateSurveyActionsCard";
+import { getSurveyKeys } from "@/utils/server/studyAPI";
+import { Suspense } from "react";
+import { Spinner } from "@nextui-org/spinner";
 
 
 interface PageProps {
@@ -17,6 +21,9 @@ export default async function Page(props: PageProps) {
     if (!session || !session.user?.email) {
         redirect('/auth/login?callbackUrl=/tools/study-configurator');
     }
+
+    const surveyKeys = await getSurveyKeys(props.params.studyKey);
+    console.log(surveyKeys);
 
     return (
         <div className="px-unit-lg bg-white/60 h-full">
@@ -36,7 +43,16 @@ export default async function Page(props: PageProps) {
                     }
                 />
                 <main className="py-unit-lg">
-                    todo
+                    <Suspense fallback={
+                        <div className="flex justify-center">
+                            <Spinner />
+                        </div>
+                    }>
+                        <CreateSurveyActionsCard
+                            studyKey={props.params.studyKey}
+                            existingSurveyKeys={surveyKeys.keys || []}
+                        />
+                    </Suspense>
                 </main>
             </div>
         </div>

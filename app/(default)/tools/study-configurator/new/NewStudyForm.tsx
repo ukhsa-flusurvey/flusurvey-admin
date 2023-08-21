@@ -8,6 +8,7 @@ import { createStudy } from '@/app/(default)/tools/study-configurator/new/create
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import NotImplemented from '@/components/NotImplemented';
 import { Button, Divider, Input, Switch, Textarea } from '@nextui-org/react';
+import LanguageSelector from '@/components/LanguageSelector';
 
 
 interface NewStudyFormProps {
@@ -193,6 +194,15 @@ const NewStudyForm: React.FC<NewStudyFormProps> = (props) => {
 
                 >
                     <div className='flex flex-col gap-unit-lg'>
+                        <div className='flex justify-end'>
+                            <LanguageSelector
+                                showBadgeForLanguages={['nl']}
+                                onLanguageChange={(lang) => {
+                                    console.log(lang);
+                                }}
+                            />
+                        </div>
+
                         <NotImplemented className=''>
                             language selector
                             | help text: display texts should be defined in all languages
