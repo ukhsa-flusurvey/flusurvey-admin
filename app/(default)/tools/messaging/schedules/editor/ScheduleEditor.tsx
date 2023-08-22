@@ -4,7 +4,7 @@ import { MessageSchedule } from '@/utils/server/types/messaging';
 import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Switch, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-import { deleteMessageSchedule } from './actions';
+import { deleteMessageSchedule, saveMessageSchedule } from './actions';
 import { BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from './utils';
@@ -96,9 +96,25 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
     const currentTranslatedContent = schedule.template.translations.find(t => t.lang === selectedLanguage);
 
-    console.log('schedule', schedule);
     return (
-        <form>
+        <form
+            onSubmit={(event) => {
+                event.preventDefault();
+                setSubmitError('');
+                startTransition(async () => {
+                    console.log(schedule);
+                    try {
+                        await saveMessageSchedule(schedule);
+                        router.refresh();
+                        router.replace('/tools/messaging/schedules');
+                    } catch (error: any) {
+                        console.error(error);
+                        setSubmitError(error.message);
+                    }
+
+                })
+            }}
+        >
             <h2 className="font-bold text-2xl mb-unit-sm flex items-start">
                 <span className='grow'>
                     {props.schedule ? 'Edit schedule' : 'New schedule'}
@@ -628,7 +644,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                         type='submit'
                         color='primary'
                         size='lg'
-                        // isDisabled={!validateStudy()}
+                        isDisabled={!schedule || !schedule.label || !schedule.template.translations || schedule.template.translations.length === 0}
                         isLoading={isPending}
                     >
                         {props.schedule ? 'Save changes' : 'Create schedule'}
@@ -648,7 +664,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 </div>
 
             </div >
-        </form>
+        </form >
     );
 };
 
