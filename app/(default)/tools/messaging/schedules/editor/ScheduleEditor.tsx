@@ -29,11 +29,7 @@ const initialSchedule: MessageSchedule = {
         messageType: '',
         headerOverrides: undefined,
         translations: [
-            {
-                lang: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en',
-                subject: '',
-                templateDef: '',
-            }
+
         ]
     }
 }
@@ -67,7 +63,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
             return
         };
         const t = schedule.template.translations.find(t => t.lang === selectedLanguage);
-        if (!t) {
+        if (!t || !t.templateDef) {
             setEmailPreviewDocSrc(null);
             return;
         }
