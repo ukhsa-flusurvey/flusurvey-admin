@@ -180,6 +180,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                             selectedKeys={new Set([schedule.type])}
                             onSelectionChange={(keys: Set<React.Key> | 'all') => {
                                 const selectedKey = (keys as Set<React.Key>).values().next().value;
+                                if (!selectedKey) return;
                                 setSchedule((s) => {
                                     const newSchedule = { ...s };
 
@@ -325,7 +326,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                         selectedKeys={new Set([schedule.template.messageType])}
                         onSelectionChange={(keys: Set<React.Key> | 'all') => {
                             const selectedKey = (keys as Set<React.Key>).values().next().value;
-
+                            if (!selectedKey) return;
                             setSchedule((s) => {
                                 const newSchedule = { ...s };
 
