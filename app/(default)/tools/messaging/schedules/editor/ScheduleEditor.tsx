@@ -1,7 +1,7 @@
 'use client';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { MessageSchedule } from '@/utils/server/types/messaging';
-import { Button, Card, CardHeader, Code, Divider, Input, ScrollShadow, Snippet, Tab, Tabs } from '@nextui-org/react';
+import { Button, Card, CardHeader, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Snippet, Switch, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { deleteMessageSchedule } from './actions';
@@ -9,6 +9,7 @@ import { BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFilety
 import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from './utils';
 import Filepicker from '@/components/inputs/Filepicker';
+import clsx from 'clsx';
 
 
 interface ScheduleEditorProps {
@@ -26,7 +27,7 @@ const initialSchedule: MessageSchedule = {
     condition: undefined,
     template: {
         defaultLanguage: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en',
-        messageType: '',
+        messageType: 'weekly',
         headerOverrides: undefined,
         translations: [
 
@@ -94,7 +95,6 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
             <h2 className="font-bold text-2xl mb-unit-sm flex items-start">
                 <span className='grow'>
                     {props.schedule ? 'Edit schedule' : 'New schedule'}
-
                 </span>
                 {props.schedule && (
                     <Button
@@ -137,6 +137,164 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 label="Message settings"
                 description="General settings for the message."
             >
+                <div>
+                    <Select
+                        label='Message type'
+                        labelPlacement='outside'
+                        placeholder='Select message type'
+                        description='Select the type of message to send.'
+                        selectedKeys={new Set([schedule.template.messageType])}
+                        onSelectionChange={(keys: Set<React.Key> | 'all') => {
+                            const selectedKey = (keys as Set<React.Key>).values().next().value;
+
+                            setSchedule((s) => {
+                                const newSchedule = { ...s };
+
+                                newSchedule.template.messageType = selectedKey;
+                                return newSchedule;
+                            })
+                        }}
+                    >
+                        <SelectItem
+                            key='weekly'
+                            value='weekly'
+                            description='Send message to users only on their randomly assigned weekday.'
+                        >
+                            weekly
+                        </SelectItem>
+                        <SelectItem
+                            key='newsletter'
+                            value='newsletter'
+                            description='Send a newsletter type message'
+                        >
+                            newsletter
+                        </SelectItem>
+                        <SelectItem
+                            key='study-reminder'
+                            value='study-reminder'
+                            description='Use this if this is not a weekly reminder but a reminder for a specific study.'
+                        >
+                            study reminder
+                        </SelectItem>
+                    </Select>
+                </div>
+                <div className='mt-unit-lg pt-unit-md'>
+                    <Switch
+                        isSelected={schedule.template.headerOverrides !== undefined}
+                        onValueChange={(value) => {
+                            if (!value && schedule.template.headerOverrides !== undefined && (
+                                schedule.template.headerOverrides.from ||
+                                schedule.template.headerOverrides.replyTo.length > 0 ||
+                                schedule.template.headerOverrides.sender
+                            )) {
+                                if (!confirm('Are you sure you want to remove the email header overrides?')) {
+                                    return;
+                                }
+                            }
+                            setSchedule((s) => {
+                                const newSchedule = { ...s };
+                                if (value) {
+                                    newSchedule.template.headerOverrides = {
+                                        from: '',
+                                        replyTo: [],
+                                        noReplyTo: false,
+                                        sender: '',
+                                    }
+                                } else {
+                                    newSchedule.template.headerOverrides = undefined;
+                                }
+                                return newSchedule;
+                            })
+                        }}
+                    >
+                        Override email headers
+                    </Switch>
+                    <p className='text-tiny text-default-400'>
+                        Override the email headers for this message. This will override the default headers set in the email server configuration.
+                    </p>
+                    <div
+                        className={clsx('flex flex-col gap-unit-md mt-unit-md p-unit-md border border-default-200 rounded-medium',
+                            {
+                                'bg-default-100 opacity-50': !schedule.template.headerOverrides
+                            }
+                        )}
+                    >
+                        <Input
+                            type='text'
+                            label='From'
+                            placeholder='Enter from'
+                            description='This will appear as the sender of the email. E.g. "Name <email@comp.tld" or simply "email@comp.tld"'
+                            value={schedule.template.headerOverrides?.from ?? ''}
+                            onValueChange={(value) => {
+                                setSchedule((s) => {
+                                    const newSchedule = { ...s };
+                                    if (newSchedule.template.headerOverrides) {
+                                        newSchedule.template.headerOverrides.from = value;
+                                    }
+                                    return newSchedule;
+                                })
+                            }}
+                            variant='flat'
+                            labelPlacement='outside'
+                            disabled={!schedule.template.headerOverrides}
+                        />
+
+                        <Input
+                            type='text'
+                            label='Sender'
+                            placeholder='Enter sender'
+                            description='This email address will be used for the email server as a sender.'
+                            value={schedule.template.headerOverrides?.sender ?? ''}
+                            onValueChange={(value) => {
+                                setSchedule((s) => {
+                                    const newSchedule = { ...s };
+                                    if (newSchedule.template.headerOverrides) {
+                                        newSchedule.template.headerOverrides.sender = value;
+                                    }
+                                    return newSchedule;
+                                })
+                            }}
+                            variant='flat'
+                            labelPlacement='outside'
+                            disabled={!schedule.template.headerOverrides}
+                        />
+
+                        <Input
+                            type='text'
+                            label='Reply to'
+                            placeholder='Enter reply to'
+                            description='List of email addresses that will be used as reply to addresses. Comma separated.'
+                            value={schedule.template.headerOverrides?.replyTo.join(',') ?? ''}
+                            onValueChange={(value) => {
+                                setSchedule((s) => {
+                                    const newSchedule = { ...s };
+                                    if (newSchedule.template.headerOverrides) {
+                                        newSchedule.template.headerOverrides.replyTo = value.split(',').map(v => v.trim());
+                                    }
+                                    return newSchedule;
+                                })
+                            }}
+                            variant='flat'
+                            labelPlacement='outside'
+                            disabled={!schedule.template.headerOverrides}
+                        />
+
+                        <Checkbox
+                            isSelected={schedule.template.headerOverrides?.noReplyTo ?? false}
+                            onValueChange={(value) => {
+                                setSchedule((s) => {
+                                    const newSchedule = { ...s };
+                                    if (newSchedule.template.headerOverrides) {
+                                        newSchedule.template.headerOverrides.noReplyTo = value;
+                                    }
+                                    return newSchedule;
+                                })
+                            }}
+                        >
+                            {'Mark this address with "no-reply"'}
+                        </Checkbox>
+                    </div>
+                </div>
 
             </TwoColumnsWithCards>
 
