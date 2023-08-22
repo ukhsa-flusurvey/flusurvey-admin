@@ -47,22 +47,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
                     {children}
                 </div>
             </div>
-            {/*}
-            <div className="h-full flex w-full">
-
-                <Sidenav
-                    title={{
-                        label: 'Messaging',
-                        icon: <span className="bg-sky-600/50 rounded text-white w-8 h-8 flex text-lg items-center justify-center">
-                            <EnvelopeIcon className="w-5 h-5" />
-                        </span>
-                    }}
-                    links={links}
-                />
-                <div className="overflow-y-scroll grow">
-                    {children}
-                </div>
-                </div >*/}
         </div>
     )
 }

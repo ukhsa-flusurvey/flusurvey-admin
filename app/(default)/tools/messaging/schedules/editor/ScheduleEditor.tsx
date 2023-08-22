@@ -1,7 +1,7 @@
 'use client';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { MessageSchedule } from '@/utils/server/types/messaging';
-import { Button, Card, CardHeader, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Snippet, Switch, Tab, Tabs } from '@nextui-org/react';
+import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Switch, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { deleteMessageSchedule } from './actions';
@@ -10,6 +10,13 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from './utils';
 import Filepicker from '@/components/inputs/Filepicker';
 import clsx from 'clsx';
+import NotImplemented from '@/components/NotImplemented';
+import { addMonths, addWeeks, format } from 'date-fns';
+
+
+const dateToInputStr = (date: Date) => {
+    return format(date, 'yyyy-MM-dd\'T\'HH:mm')
+}
 
 
 interface ScheduleEditorProps {
@@ -21,9 +28,9 @@ const initialSchedule: MessageSchedule = {
     label: '',
     type: 'all-users',
     studyKey: '',
-    nextTime: new Date().getTime() / 1000,
+    nextTime: Math.floor(new Date().getTime() / 1000),
     period: 86400,
-    until: 0,
+    until: undefined,
     condition: undefined,
     template: {
         defaultLanguage: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en',
@@ -128,11 +135,166 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 label='Schedule infos'
                 description='Set properties like how often the message should be sent and to whom.'
             >
-                <div className='flex flex-col gap-unit-lg'>
-                    todo: add properties
+                <div className='flex flex-col gap-unit-md'>
+                    <Input
+                        id='label'
+                        type='text'
+                        label='Label'
+                        placeholder='Enter label'
+                        value={schedule.label}
+                        onValueChange={(value) => {
+                            setSchedule((s) => {
+                                const newSchedule = { ...s };
+                                newSchedule.label = value;
+                                return newSchedule;
+                            })
+                        }}
+                        variant='bordered'
+                        labelPlacement='outside'
+                        description='A label for this schedule. This will be used to identify the schedule in the list of schedules.'
+                    />
+
+                    <div className='mb-unit-md'>
+                        <Select
+                            label='Send to'
+                            labelPlacement='outside'
+                            variant='bordered'
+                            placeholder='Select target group'
+                            description='Target group of this message.'
+                            selectedKeys={new Set([schedule.type])}
+                            onSelectionChange={(keys: Set<React.Key> | 'all') => {
+                                const selectedKey = (keys as Set<React.Key>).values().next().value;
+                                setSchedule((s) => {
+                                    const newSchedule = { ...s };
+
+                                    newSchedule.type = selectedKey;
+                                    return newSchedule;
+                                })
+                            }}
+                        >
+                            <SelectItem
+                                key='all-users'
+                                value='all-users'
+                                description='Consider all users in the system when sending the message'
+                            >
+                                All users
+                            </SelectItem>
+                            <SelectItem
+                                key='study-participants'
+                                value='study-participants'
+                                description='Only consider users that are participating in a specific study who fulfill a condition'
+                            >
+                                Study participants
+                            </SelectItem>
+                        </Select>
+                    </div>
+                    {schedule.type === 'study-participants' && (
+                        <div className='p-unit-md  flex flex-col gap-unit-md border border-default-200 rounded-medium'>
+                            <Input
+                                label='From study (by study key)'
+                                placeholder='Enter the study key'
+                                value={schedule.studyKey ?? ''}
+                                onValueChange={(value) => {
+                                    setSchedule((s) => {
+                                        const newSchedule = { ...s };
+                                        newSchedule.studyKey = value;
+                                        return newSchedule;
+                                    })
+                                }}
+                                variant='bordered'
+                                labelPlacement='outside'
+                                description='The study key of the study from which to select participants.'
+                            />
+                            <NotImplemented>
+                                Add a condition to filter participants
+                            </NotImplemented>
+                        </div>
+                    )}
+
+
+                    <Input
+                        type='datetime-local'
+                        label='Next time'
+                        placeholder='Enter next time'
+                        value={dateToInputStr(new Date(schedule.nextTime * 1000))}
+                        min={dateToInputStr(currentDateTime)}
+                        max={dateToInputStr(addMonths(currentDateTime, 12))}
+                        onValueChange={(value) => {
+                            setSchedule({
+                                ...schedule,
+                                nextTime: Math.floor(new Date(value).getTime() / 1000)
+                            })
+                        }}
+                        variant='bordered'
+                        labelPlacement='outside'
+                        description='The next time the message will be sent.'
+                    />
+
+                    <Input
+                        type='number'
+                        label='Period'
+                        placeholder='Enter period'
+                        value={schedule.period.toString()}
+                        min={0}
+                        onValueChange={(value) => {
+                            setSchedule({
+                                ...schedule,
+                                period: parseInt(value)
+                            })
+                        }
+                        }
+                        variant='bordered'
+                        labelPlacement='outside'
+                        description='The period in seconds after which the message will be sent again.'
+                        endContent={<span className='text-default-400'>seconds</span>}
+                    />
+
+                    <div className='flex items-center gap-unit-md'>
+                        <div className='shrink-0'>
+                            <Switch
+                                isSelected={schedule.until !== undefined}
+                                onValueChange={(value) => {
+                                    setSchedule((s) => {
+                                        const newSchedule = { ...s };
+                                        if (value) {
+                                            newSchedule.until = Math.floor(addWeeks(new Date(), 1).getTime() / 1000);
+                                        } else {
+                                            newSchedule.until = undefined;
+                                        }
+                                        return newSchedule;
+                                    })
+                                }}
+                            >
+                                Auto delete
+                            </Switch>
+                        </div>
+                        <div className='grow'>
+                            <Input
+                                id='until'
+                                type='datetime-local'
+                                label='Until (optional)'
+                                placeholder='Enter date time'
+                                isDisabled={!schedule.until}
+                                value={dateToInputStr(new Date((schedule.until || 0) * 1000))}
+                                min={dateToInputStr(currentDateTime)}
+                                max={dateToInputStr(addMonths(currentDateTime, 24))}
+                                onValueChange={(value) => {
+                                    setSchedule({
+                                        ...schedule,
+                                        until: Math.floor(new Date(value).getTime() / 1000)
+                                    })
+                                }}
+                                variant='bordered'
+                                labelPlacement='outside'
+                                description='The date and time after which the message will not be sent anymore and the schedule wil be deleted.'
+                            />
+                        </div>
+                    </div>
                 </div>
             </TwoColumnsWithCards>
+
             <Divider />
+
             <TwoColumnsWithCards
                 label="Message settings"
                 description="General settings for the message."
@@ -141,6 +303,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     <Select
                         label='Message type'
                         labelPlacement='outside'
+                        variant='bordered'
                         placeholder='Select message type'
                         description='Select the type of message to send.'
                         selectedKeys={new Set([schedule.template.messageType])}
@@ -298,7 +461,6 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
             </TwoColumnsWithCards>
 
-
             <Divider />
 
             <TwoColumnsWithCards
@@ -381,7 +543,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     />
 
                     <div>
-                        <div className='flex flex-col w-full'>
+                        <div className='flex flex-col w-full h-[566px]'>
                             <Tabs aria-label="Preview mode" color="default" variant="solid">
                                 <Tab
                                     key="source"
