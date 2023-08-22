@@ -1,11 +1,11 @@
 'use client';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { MessageSchedule } from '@/utils/server/types/messaging';
-import { Button, Card, CardHeader, Divider, Input } from '@nextui-org/react';
+import { Button, Card, CardHeader, Code, Divider, Input, ScrollShadow, Snippet, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { deleteMessageSchedule } from './actions';
-import { BsExclamationTriangle, BsFiletypeHtml } from 'react-icons/bs';
+import { BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from './utils';
 import Filepicker from '@/components/inputs/Filepicker';
@@ -67,7 +67,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
             setEmailPreviewDocSrc(null);
             return;
         }
-        const docSrc = `data:text/html;charset=UTF-8,${encodeURIComponent(decodeTemplate(t.templateDef ?? '') ?? '')}`;
+        const docSrc = decodeTemplate(t.templateDef ?? '') ?? '';
         setEmailPreviewDocSrc(docSrc);
     }, [selectedLanguage, schedule]);
 
@@ -222,22 +222,79 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                         }}
                     />
 
-                    <Card
-                        className='boder-large border-dsshed mt-6'>
-                        <CardHeader className='bg-content2'>
-                            <h3 className='font-bold text-large'>Email preview</h3>
-                        </CardHeader>
-                        <Divider />
-                        {emailPreviewDocSrc ?
-                            <iframe
-                                src={emailPreviewDocSrc}
-                                style={{ width: '100%', height: '500px' }}
-                                title="Email template preview"
-                            /> : <div className='flex flex-col items-center justify-center h-[500px]'>
-                                <p className='font-bold text-large text-warning'>No template</p>
-                                <BsFiletypeHtml className='mt-unit-sm text-4xl text-warning-300' />
-                            </div>}
-                    </Card>
+                    <div>
+                        <div className='flex flex-col w-full'>
+                            <Tabs aria-label="Preview mode" color="default" variant="solid">
+                                <Tab
+                                    key="source"
+                                    title={
+                                        <div className="flex items-center space-x-2">
+                                            <BsFileEarmarkCode />
+                                            <span>Source</span>
+                                        </div>
+                                    }
+                                >
+                                    <Code
+                                        className='h-[500px] w-full max-w-full overflow-x-scroll'
+                                    >
+                                        <ScrollShadow
+                                            className='h-full'
+                                            size={60}
+                                        >
+                                            {emailPreviewDocSrc ? <>{emailPreviewDocSrc.split('\n').map(
+                                                (line, i) => {
+                                                    let tabCount = 0;
+                                                    let spaceCount = 0;
+                                                    const tabMatcher = line.match(/^\t*/);
+                                                    if (tabMatcher && tabMatcher.length > 0) {
+                                                        tabCount = (tabMatcher[0] || '').length;
+                                                    }
+                                                    const spaceMatcher = line.match(/^\s*/);
+                                                    if (spaceMatcher && spaceMatcher.length > 0) {
+                                                        spaceCount = (spaceMatcher[0] || '').length;
+                                                    }
+                                                    return <div key={i} className='flex items-center'>
+                                                        <span className='text-default-400 text-small w-6 mr-unit-sm'>{i + 1}</span>
+                                                        <span style={{ width: tabCount * 8 }}></span>
+                                                        <span style={{ width: spaceCount * 2 }}></span>
+                                                        {line}
+                                                    </div>
+                                                }
+                                            )}</> : <div className='flex flex-col items-center justify-center h-full'>
+                                                <p className='font-bold text-large text-warning'>No template</p>
+                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
+                                            </div>}
+                                        </ScrollShadow>
+                                    </Code>
+
+                                </Tab>
+                                <Tab
+                                    key="preview"
+                                    title={
+                                        <div className="flex items-center space-x-2">
+
+                                            <span>
+                                                <BsFiletypeHtml className='mr-unit-sm text-default-500' />
+                                            </span>
+                                            Email preview
+                                        </div>
+                                    }
+                                >
+                                    <div className='border border-dashed border-deafult-200 rounded-medium'>
+                                        {emailPreviewDocSrc ?
+                                            <iframe
+                                                src={`data:text/html;charset=UTF-8,${encodeURIComponent(emailPreviewDocSrc)}`}
+                                                style={{ width: '100%', height: '500px' }}
+                                                title="Email template preview"
+                                            /> : <div className='flex flex-col items-center justify-center h-[500px]'>
+                                                <p className='font-bold text-large text-warning'>No template</p>
+                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
+                                            </div>}
+                                    </div>
+                                </Tab>
+                            </Tabs>
+                        </div>
+                    </div>
                 </div>
             </TwoColumnsWithCards>
 
