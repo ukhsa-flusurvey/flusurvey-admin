@@ -97,6 +97,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         await uploadMessageTemplate(emailTemplateConfig);
                         router.refresh();
                         setSubmitSuccess(true);
+                        if (!props.emailTemplateConfig) {
+                            router.replace('/tools/messaging/custom-messages');
+                        }
                     } catch (error: any) {
                         console.error(error);
                         setSubmitError(error.message);
@@ -126,7 +129,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                             emailTemplateConfig.messageType,
                                             emailTemplateConfig.studyKey ?? '');
                                         router.refresh();
-                                        router.replace('/tools/messaging/schedules');
+                                        router.replace('/tools/messaging/custom-messages');
                                     } catch (error: any) {
                                         console.error(error);
                                         setSubmitError(`Failed to delete schedule: ${error.message}`);
@@ -147,7 +150,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 <div className='flex flex-col gap-unit-md'>
                     <Input
                         label='Message type'
-                        isReadOnly={props.isSystemTemplate}
+                        isReadOnly={props.emailTemplateConfig !== undefined}
                         placeholder='Enter the message type'
                         isRequired
                         value={emailTemplateConfig.messageType ?? ''}
@@ -160,13 +163,14 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         }}
                         variant='bordered'
                         labelPlacement='outside'
-                        description='This message type will be used to identify the message in the system, e.g. "T3_reminder".'
+                        description={!props.isSystemTemplate && 'This message type will be used to identify the message in the system, e.g. "T3_reminder". Cannot be changed later.'}
                     />
 
                     {!props.isSystemTemplate && (
                         <Input
                             label='Study key (Optional)'
                             placeholder='Enter a study key'
+                            isReadOnly={props.emailTemplateConfig !== undefined}
                             value={emailTemplateConfig.studyKey ?? ''}
                             onValueChange={(value) => {
                                 setEmailTemplateConfig((s) => {
@@ -177,7 +181,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                             }}
                             variant='bordered'
                             labelPlacement='outside'
-                            description='Assign this message to a study if you want to use it in a study, to avoid name (message type) collisions.'
+                            description='Assign this message to a study if you want to use it in a study, to avoid name (message type) collisions. Cannot be changed later.'
                         />)}
                     <Divider />
                     <div className=''>

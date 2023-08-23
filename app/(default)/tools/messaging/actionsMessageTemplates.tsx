@@ -36,7 +36,7 @@ export const deleteMessageTemplate = async (
 
     const url = getCASEManagementAPIURL(`/v1/messaging/email-templates/delete`);
     const r = await fetch(url.toString(), {
-        method: 'DELETE',
+        method: 'POST',
         body: JSON.stringify({ messageType, studyKey }),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,

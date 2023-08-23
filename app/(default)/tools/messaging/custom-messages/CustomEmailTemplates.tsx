@@ -20,7 +20,7 @@ const ItemCard = (props: ItemCardProps) => {
     return <Card className="bg-white group  hover:bg-default-100"
         isPressable
         as={Link}
-        href={`/tools/messaging/custom-messages/editor?messageType=${props.template.messageType}&studyKey=${props.template.studyKey}`}
+        href={`/tools/messaging/custom-messages/editor?messageType=${props.template.messageType}&studyKey=${props.template.studyKey || ''}`}
     >
         <div className='p-unit-md flex gap-unit-md items-center'>
             <div className='grow'>
