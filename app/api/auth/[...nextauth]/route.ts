@@ -91,8 +91,6 @@ export const authOptions = {
     },
     callbacks: {
         async jwt({ token, user, account }) {
-            console.log('jwt callback');
-
             if (account) {
                 // Save the access token and refresh token in the JWT on the initial login
                 if (account.provider === 'case-credentials') {
@@ -126,6 +124,7 @@ export const authOptions = {
                 // If the access token has not expired yet, return it
                 return token
             } else {
+                console.log('refreshing token');
                 // If the access token has expired, try to refresh it
                 if (!token.refresh_token || !token.access_token) {
                     return {
