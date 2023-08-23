@@ -25,7 +25,7 @@ const ScheduleList: React.FC<ScheduleListProps> = (props) => {
     let errorComp: React.ReactNode = null;
     if (error) {
         if (error.message === 'Unauthorized') {
-            signOut({ callbackUrl: '/auth/login?callbackUrl=/tools/study-configurator' });
+            signOut({ callbackUrl: '/auth/login?callbackUrl=/tools/messaging/schedules' });
             return null;
         }
 

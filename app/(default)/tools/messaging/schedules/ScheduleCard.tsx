@@ -1,5 +1,5 @@
 import { MessageSchedule } from '@/utils/server/types/messaging';
-import { format, formatDistanceStrict } from 'date-fns';
+import { formatDistanceStrict } from 'date-fns';
 import { BsArrowClockwise, BsCalendarDate, BsChevronRight } from 'react-icons/bs';
 import { dateFromTimestamp, formatTimestamp } from './utils';
 import { Card } from '@nextui-org/card';
