@@ -54,7 +54,7 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
 
     return (
         <div className={clsx(
-            'bg-content2',
+            'bg-content2 z-40',
             {
                 'border-b border-b-default': props.isBordered,
                 'py-unit-sm': props.children === undefined,

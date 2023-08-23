@@ -6,7 +6,7 @@ import { Study } from "@/utils/server/types/studyInfos";
 import { getServerSession } from "next-auth/next";
 
 
-export const uploadCommonTemplate = async (template: any): Promise<Study> => {
+export const uploadMessageTemplate = async (template: any): Promise<Study> => {
     const session = await getServerSession(authOptions);
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
@@ -23,6 +23,29 @@ export const uploadCommonTemplate = async (template: any): Promise<Study> => {
     if (r.status !== 200) {
         console.log(await r.json());
         throw new Error('upload failed');
+    }
+    return r.json();
+}
+
+export const deleteMessageTemplate = async (
+    messageType: string,
+    studyKey: string,
+) => {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.accessToken) throw new Error('unauthenticated');
+
+    const url = getCASEManagementAPIURL(`/v1/messaging/email-templates/delete`);
+    const r = await fetch(url.toString(), {
+        method: 'DELETE',
+        body: JSON.stringify({ messageType, studyKey }),
+        headers: {
+            'Authorization': `Bearer ${session?.accessToken}`,
+        },
+        next: { revalidate: 0 }
+    });
+    if (r.status !== 200) {
+        console.log(await r.json());
+        throw new Error('Failed to delete message schedule');
     }
     return r.json();
 }

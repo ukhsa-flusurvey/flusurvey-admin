@@ -37,7 +37,7 @@ const TwoColumnsWithCards: React.FC<{
 
             </div>
             <Card
-                className='bg-white/70 grow'
+                className='bg-white/70 flex-1'
                 isBlurred
             >
                 <CardBody>

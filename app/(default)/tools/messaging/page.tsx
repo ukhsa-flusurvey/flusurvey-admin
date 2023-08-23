@@ -56,7 +56,7 @@ export default async function Page() {
                     <CardBody className="">
                         <div className="flex flex-col gap-unit-md">
                             <LinkCard
-                                href="/tools/messaging/system-messages"
+                                href="/tools/messaging/system-messages/registration"
                                 title="System messages"
                                 description="Configure messages sent by the system at specific events, like signup, password reset, etc."
                                 icon={<BsEnvelopePaper />}
