@@ -1,9 +1,9 @@
 'use client'
 
 import LanguageSelector from '@/components/LanguageSelector';
-import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
-import { Button, Checkbox, Divider, Select, SelectItem, Switch, card } from '@nextui-org/react';
 import React from 'react';
+import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
+import { Button, Checkbox, Divider, Select, SelectItem } from '@nextui-org/react';
 import { BsDownload } from 'react-icons/bs';
 
 interface SurveyInfoDownloaderProps {
@@ -29,7 +29,7 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
 
     } else {
         cardContent = (<fieldset>
-            <p className='text-tiny text-default-500 p-unit-sm bg-content1 rounded-small'>
+            <p className='text-tiny text-default-600 p-unit-sm bg-primary-50 rounded-small'>
                 Download the history of the survey structure in a CSV or JSON format. This can be helpful when interpreting the response data.
             </p>
 
@@ -98,12 +98,12 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                     </SelectItem>
                 </Select>
             </div>
-            <div className='mt-unit-md'>
+            <div className='mt-unit-md pt-unit-md'>
                 <LanguageSelector onLanguageChange={(l) =>
                     setLanguage(l)
                 } />
             </div>
-            <div className='mt-unit-md bg-white border border-default-100 rounded-medium px-unit-sm py-unit-2'>
+            <div className='mt-unit-md'>
                 <Checkbox
                     id='use-short-keys-for-survey-info-downloader'
                     isSelected={useShortKeys}
@@ -131,7 +131,7 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                 </div>
             </CardHeader>
             <Divider />
-            <CardBody className="">
+            <CardBody className="bg-white">
                 {cardContent}
                 {errorMsg && <div className='text-red-500 mt-unit-md font-bold'>{errorMsg}</div>}
             </CardBody>
