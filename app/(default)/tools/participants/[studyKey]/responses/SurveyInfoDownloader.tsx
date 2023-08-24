@@ -4,7 +4,8 @@ import LanguageSelector from '@/components/LanguageSelector';
 import React from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
 import { Button, Checkbox, Divider, Select, SelectItem } from '@nextui-org/react';
-import { BsCheckCircle, BsDownload, BsExclamationTriangle } from 'react-icons/bs';
+import { BsDownload } from 'react-icons/bs';
+import ErrorOrSuccessInlineAlert from '../../../../../../components/ErrorOrSuccessInlineAlert';
 
 interface SurveyInfoDownloaderProps {
     studyKey: string;
@@ -134,20 +135,10 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                 <Divider />
                 <CardBody className="bg-white">
                     {cardContent}
-                    {errorMsg && <div
-                        className='text-red-600 mt-unit-md font-bold flex items-center justify-end'
-                        role='alert'
-                    >
-                        <BsExclamationTriangle className='inline-block mr-unit-sm' />
-                        {errorMsg}
-                    </div>}
-                    {successMsg && <div
-                        className='text-green-600 mt-unit-md font-bold flex items-center justify-end'
-                        role='alert'
-                    >
-                        <BsCheckCircle className='inline-block mr-unit-sm' />
-                        {successMsg}
-                    </div>}
+                    <ErrorOrSuccessInlineAlert
+                        errorMsg={errorMsg}
+                        successMsg={successMsg}
+                    />
                 </CardBody>
                 <Divider />
                 <CardFooter className='flex justify-end'>

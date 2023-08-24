@@ -2,6 +2,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import ConfidentialResponseDownloader from "./ConfidentialResponseDownloader";
 
 
 export const dynamic = 'force-dynamic';
@@ -35,7 +36,11 @@ export default async function Page(props: PageProps) {
                 }
             />
             <main className="py-unit-lg">
-                todo
+                <div className="flex justify-center">
+                    <ConfidentialResponseDownloader
+                        studyKey={props.params.studyKey}
+                    />
+                </div>
             </main>
         </div>
     );
