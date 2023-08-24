@@ -5,7 +5,7 @@ import { Divider } from "@nextui-org/divider";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BsX } from "react-icons/bs";
+import { BsCardText, BsFileEarmarkLock, BsFileEarmarkSpreadsheet, BsFolder2Open, BsPeople, BsX } from "react-icons/bs";
 import { Button } from "@nextui-org/button";
 
 export const dynamic = 'force-dynamic';
@@ -49,37 +49,35 @@ export default async function Page(props: PageProps) {
                     <CardBody className="">
                         <div className="flex flex-col gap-unit-md">
                             <LinkCard
-                                href="/tools/messaging/system-messages/registration"
+                                href={`/tools/participants/${props.params.studyKey}/overview`}
                                 title="Participants"
                                 description="Access participant states to get an overview what happens in your study."
-                                icon={<>todo</>}
-                            // icon={<BsEnvelopePaper />}
+                                icon={<BsPeople />}
                             />
                             <LinkCard
-                                href="/tools/messaging/custom-messages"
+                                href={`/tools/participants/${props.params.studyKey}/responses`}
                                 title="Responses"
                                 description="Download responses and survey info files for the study."
-                                icon={<>todo</>}
+                                icon={<BsFileEarmarkSpreadsheet />}
                             />
                             <LinkCard
-                                href="/tools/messaging/schedules"
+                                href={`/tools/participants/${props.params.studyKey}/confidential-responses`}
                                 title="Confidential responses"
                                 description="Download for confidential responses."
-                                icon={<>todo</>}
+                                icon={<BsFileEarmarkLock />}
                             />
                             <LinkCard
-                                href="/tools/messaging/schedules"
+                                href={`/tools/participants/${props.params.studyKey}/reports`}
                                 title="Participant reports"
                                 description="Browse report objects created for participants."
-                                icon={<>todo</>}
+                                icon={<BsCardText />}
                             />
                             <LinkCard
-                                href="/tools/messaging/schedules"
+                                href={`/tools/participants/${props.params.studyKey}/files`}
                                 title="Participant files"
                                 description="Browse and download files provided by the participants."
-                                icon={<>todo</>}
+                                icon={<BsFolder2Open />}
                             />
-
                         </div>
                     </CardBody>
                 </Card>
