@@ -4,7 +4,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import React from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
 import { Button, Checkbox, Divider, Select, SelectItem } from '@nextui-org/react';
-import { BsDownload } from 'react-icons/bs';
+import { BsCheckCircle, BsDownload, BsExclamationTriangle } from 'react-icons/bs';
 
 interface SurveyInfoDownloaderProps {
     studyKey: string;
@@ -18,6 +18,8 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
     const [useShortKeys, setUseShortKeys] = React.useState<boolean>(false);
     const [isPending, startTransition] = React.useTransition();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
+    const [successMsg, setSuccessMsg] = React.useState<string | undefined>(undefined);
+
 
     let cardContent = null;
     if (props.availableSurveys.length === 0) {
@@ -25,8 +27,6 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
             <div>No surveys available in this study</div>
         </>
         )
-
-
     } else {
         cardContent = (<fieldset>
             <p className='text-tiny text-default-600 p-unit-sm bg-primary-50 rounded-small'>
@@ -117,58 +117,75 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
     }
 
     return (
-        <Card
-            fullWidth={false}
-            className="bg-white/60"
-            isBlurred
-            isFooterBlurred
-        >
-            <CardHeader className="bg-content2">
-                <div>
-                    <h2 className="text-2xl font-bold flex items-center">
-                        Survey info downloader
-                    </h2>
-                </div>
-            </CardHeader>
-            <Divider />
-            <CardBody className="bg-white">
-                {cardContent}
-                {errorMsg && <div className='text-red-500 mt-unit-md font-bold'>{errorMsg}</div>}
-            </CardBody>
-            <Divider />
-            <CardFooter className='flex justify-end'>
-                <Button
-                    variant="flat"
-                    color="primary"
-                    isLoading={isPending}
-                    startContent={<BsDownload />}
-                    isDisabled={props.availableSurveys.length === 0 || !selectedSurveyKey}
-                    onPress={async () => {
-                        setErrorMsg(undefined);
-                        if (!selectedSurveyKey) {
-                            setErrorMsg('Please select a survey key.');
-                            return;
-                        }
-                        startTransition(async () => {
-                            const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/survey/${selectedSurveyKey}/survey-info${exportFormat === 'csv' ? '/csv' : ''}?lang=${language}&shortKeys=${useShortKeys}`)
-                            if (resp.status !== 200) {
-                                const err = await resp.json();
-                                setErrorMsg(err.error);
+        <div>
+            <Card
+                fullWidth={false}
+                className="bg-white/60"
+                isBlurred
+                isFooterBlurred
+            >
+                <CardHeader className="bg-content2">
+                    <div>
+                        <h2 className="text-2xl font-bold flex items-center">
+                            Survey info downloader
+                        </h2>
+                    </div>
+                </CardHeader>
+                <Divider />
+                <CardBody className="bg-white">
+                    {cardContent}
+                    {errorMsg && <div
+                        className='text-red-600 mt-unit-md font-bold flex items-center justify-end'
+                        role='alert'
+                    >
+                        <BsExclamationTriangle className='inline-block mr-unit-sm' />
+                        {errorMsg}
+                    </div>}
+                    {successMsg && <div
+                        className='text-green-600 mt-unit-md font-bold flex items-center justify-end'
+                        role='alert'
+                    >
+                        <BsCheckCircle className='inline-block mr-unit-sm' />
+                        {successMsg}
+                    </div>}
+                </CardBody>
+                <Divider />
+                <CardFooter className='flex justify-end'>
+                    <Button
+                        variant="flat"
+                        color="primary"
+                        isLoading={isPending}
+                        startContent={<BsDownload />}
+                        isDisabled={props.availableSurveys.length === 0 || !selectedSurveyKey}
+                        onPress={async () => {
+                            setErrorMsg(undefined);
+                            setSuccessMsg(undefined);
+                            if (!selectedSurveyKey) {
+                                setErrorMsg('Please select a survey key.');
                                 return;
                             }
-                            const blob = await resp.blob();
-                            const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
-                            const link = document.createElement('a');
-                            link.href = window.URL.createObjectURL(blob);
-                            link.download = (fileName || `${selectedSurveyKey}_info.${exportFormat}`).replaceAll('"', '');
-                            link.click();
-                        });
-                    }}
-                >
-                    Get survey info
-                </Button>
-            </CardFooter>
-        </Card>
+                            startTransition(async () => {
+                                const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/survey/${selectedSurveyKey}/survey-info${exportFormat === 'csv' ? '/csv' : ''}?lang=${language}&shortKeys=${useShortKeys}`)
+                                if (resp.status !== 200) {
+                                    const err = await resp.json();
+                                    setErrorMsg(err.error);
+                                    return;
+                                }
+                                const blob = await resp.blob();
+                                const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
+                                const link = document.createElement('a');
+                                link.href = window.URL.createObjectURL(blob);
+                                link.download = (fileName || `${selectedSurveyKey}_info.${exportFormat}`).replaceAll('"', '');
+                                link.click();
+                                setSuccessMsg('Download successful.');
+                            });
+                        }}
+                    >
+                        Get survey info
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
     );
 };
 

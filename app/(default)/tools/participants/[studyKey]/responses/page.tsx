@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getSurveyKeys } from "@/utils/server/studyAPI";
 import SurveyInfoDownloader from "./SurveyInfoDownloader";
+import ResponseDownloader from "./ResponseDownloader";
 
 
 export const dynamic = 'force-dynamic';
@@ -47,10 +48,11 @@ export default async function Page(props: PageProps) {
                 }
             />
             <main className="py-unit-lg">
-                <div className="grid grid-cols-2 gap-unit-lg">
-                    <div>
-                        response downloader
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-unit-lg">
+                    <ResponseDownloader
+                        studyKey={props.params.studyKey}
+                        availableSurveys={surveyKeys}
+                    />
                     <SurveyInfoDownloader
                         studyKey={props.params.studyKey}
                         availableSurveys={surveyKeys}
