@@ -1,5 +1,6 @@
 'use client'
 
+import { Spinner } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 
@@ -50,6 +51,12 @@ function AvatarFromId({ userId, pixelSize }: {
 
         generateAvatarData();
     }, [userId]);
+
+    if (!binaryString) {
+        return <Spinner
+            size='sm'
+        />;
+    }
 
     const rows: Array<Array<string>> = [];
     for (let i = 0; i < binaryString.length; i++) {

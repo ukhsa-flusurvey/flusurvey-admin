@@ -123,7 +123,7 @@ const ReportsDownloader: React.FC<ReportsDownloaderProps> = (props) => {
 
 
                             const resp = await fetch(
-                                `/api/case-management-api/v1/data/${props.studyKey}/reports${searchParams.toString() ? '?' + searchParams.toString() : ''}}`,
+                                `/api/case-management-api/v1/data/${props.studyKey}/reports${searchParams.toString() ? '?' + searchParams.toString() : ''}`,
                                 {
                                     method: 'GET',
                                     headers: {
