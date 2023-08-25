@@ -154,42 +154,6 @@ const ReportsDownloader: React.FC<ReportsDownloaderProps> = (props) => {
                             setErrorMsg(err.message);
                         }
                     });
-                    /*
-                             const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/fetch-confidential-responses`,
-                                 {
-                                     method: 'POST',
-                                     headers: {
-                                         'Content-Type': 'application/json'
-                                     },
-                                     body: JSON.stringify({
-                                         participantIds: participantIds,
-                                         keyFilter: '',
-                                         condition: onlyForActiveParticipants ? conditionForActiveParticipants : dummyCondition
-                                     }),
-                                     next: {
-                                         revalidate: 10
-                                     }
-                                 }
-                             )
-
-
-                             if (resp.status !== 200) {
-                                 const err = await resp.json();
-                                 setErrorMsg(err.error);
-                                 //setErrorMsg(await resp.text());
-                                 return;
-                             }
-                             const data = await resp.json();
-                             if (!data.responses) {
-                                 setErrorMsg('No responses found.');
-                                 return;
-                             }
-                             const result = parseConfidentialResponses(data.responses);
-
-
-                             setSuccessMsg('Downloaded successfully.');
-
-                     });*/
                 }}
             >
                 Get reports
@@ -293,65 +257,6 @@ const ReportsDownloader: React.FC<ReportsDownloaderProps> = (props) => {
                 {queryCard}
                 {outputCard}
             </CardBody>
-
-            {/*<Button
-
-                    onPress={async () => {
-                        setErrorMsg(undefined);
-                        setSuccessMsg(undefined);
-                        if (participantIds.length < 1) {
-                            setErrorMsg('Please enter at least one participant id.');
-                            return;
-                        }
-                        startTransition(async () => {
-                            try {
-                                const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/fetch-confidential-responses`,
-                                    {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({
-                                            participantIds: participantIds,
-                                            keyFilter: '',
-                                            condition: onlyForActiveParticipants ? conditionForActiveParticipants : dummyCondition
-                                        }),
-                                        next: {
-                                            revalidate: 10
-                                        }
-                                    }
-                                )
-
-
-                                if (resp.status !== 200) {
-                                    const err = await resp.json();
-                                    setErrorMsg(err.error);
-                                    //setErrorMsg(await resp.text());
-                                    return;
-                                }
-                                const data = await resp.json();
-                                if (!data.responses) {
-                                    setErrorMsg('No responses found.');
-                                    return;
-                                }
-                                const result = parseConfidentialResponses(data.responses);
-
-                                const blob = new Blob([JSON.stringify(result)], { type: 'application/json' });
-                                const fileName = `${props.studyKey}_confidential_responses.json`
-                                const link = document.createElement('a');
-                                link.href = window.URL.createObjectURL(blob);
-                                link.download = (fileName).replaceAll('"', '');
-                                link.click();
-                                setSuccessMsg('Downloaded successfully.');
-                            } catch (err: any) {
-                                setErrorMsg(err.message);
-                            }
-                        });
-                    }}
-                >
-                    Get confidential responses
-                </Button>*/}
-
         </Card>
     );
 };
