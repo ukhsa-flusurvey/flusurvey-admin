@@ -138,7 +138,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                             }
                         }}
 
-                    >Delete schedule</Button>
+                    >Delete template</Button>
                 )}
             </h2>
             {errorComp}
