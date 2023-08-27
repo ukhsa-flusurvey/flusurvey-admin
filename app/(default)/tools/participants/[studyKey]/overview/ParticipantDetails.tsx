@@ -235,7 +235,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
     if (!props.participant) {
         return (
-            <div className='px-unit-md gap-unit-md flex flex-col'>
+            <div className='ps-unit-lg gap-unit-md flex flex-col'>
                 <h2 className='text-2xl font-bold'>Participant details</h2>
                 <div className='w-full h-[300px] flex items-center justify-center'>
                     <div className='flex flex-col items-center bg-white/60 rounded-medium p-unit-lg backdrop-blur-sm text-center'>
@@ -256,7 +256,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
 
     return (
-        <div className='px-unit-md gap-unit-md flex flex-col pb-unit-lg'>
+        <div className='ps-unit-lg gap-unit-md flex flex-col pb-unit-lg'>
             <h2 className='text-2xl font-bold'>Participant details</h2>
 
             <div className='flex'>
