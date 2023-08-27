@@ -56,6 +56,57 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         );
     }, [props.participant]);
 
+    const lastSubmissionsTable = React.useMemo(() => {
+        if (!props.participant) return <></>;
+
+        const lastSubmissions = props.participant.lastSubmissions ? Object.entries(props.participant.lastSubmissions) : [];
+
+        return (
+            <Table
+                isStriped
+                isCompact
+                aria-label='participant last submissions'
+                classNames={{
+                    emptyWrapper: 'h-16 text-small'
+                }}
+            >
+                <TableHeader>
+                    <TableColumn
+
+                    >
+                        SURVEY
+                    </TableColumn>
+                    <TableColumn
+
+                    >
+                        DATE
+                    </TableColumn>
+                </TableHeader>
+                <TableBody items={lastSubmissions}
+                    emptyContent='No submissions'
+                >
+                    {(submission) => {
+                        let value = '';
+                        if (submission.length > 1) {
+                            const date = new Date(submission[1] * 1000);
+                            value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                        }
+                        return (
+                            <TableRow key={submission[0]}>
+                                <TableCell>
+                                    {submission[0]}
+                                </TableCell>
+                                <TableCell>
+                                    {value}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    }}
+                </TableBody>
+            </Table>
+        );
+    }, [props.participant]);
+
 
     if (!props.participant) {
         return (
@@ -157,7 +208,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
             <Divider />
             <div>
                 <h3 className='font-bold mb-unit-2'>Last submissions</h3>
-                todo
+                {lastSubmissionsTable}
             </div>
             <Divider />
             <div>
