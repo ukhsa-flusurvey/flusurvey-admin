@@ -1,7 +1,8 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import ParticipantOverviewScreen from "./ParticipantOverviewScreen";
 
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,7 @@ export default async function Page(props: PageProps) {
     }
 
     return (
-        <div className="py-unit-sm px-unit-lg">
+        <div className="pt-unit-sm px-unit-lg flex flex-col h-full bg-white/40">
             <Breadcrumbs
                 homeLink={`/tools/participants/${props.params.studyKey}`}
                 links={
@@ -34,8 +35,10 @@ export default async function Page(props: PageProps) {
                     ]
                 }
             />
-            <main className="py-unit-lg">
-                todo
+            <main className="pt-unit-lg grow" >
+                <ParticipantOverviewScreen
+                    studyKey={props.params.studyKey}
+                />
             </main>
         </div>
     );
