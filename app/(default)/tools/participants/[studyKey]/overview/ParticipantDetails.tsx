@@ -5,7 +5,7 @@ import { ParticipantState } from '@/utils/server/types/participantState';
 import { Card, CardBody, Chip, Divider, Snippet, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 
 import React from 'react';
-import { BsActivity, BsBoxArrowInRight, BsPerson, BsPersonVcard } from 'react-icons/bs';
+import { BsActivity, BsBookmarks, BsBoxArrowInRight, BsEnvelopePaper, BsFileEarmarkMedical, BsPerson, BsPersonVcard } from 'react-icons/bs';
 
 interface ParticipantDetailsProps {
     participant?: ParticipantState;
@@ -250,23 +250,35 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
             <Divider />
             <div>
-                <h3 className='font-bold mb-unit-2'>Flags</h3>
+                <h3 className='font-bold mb-unit-2 flex items-center gap-unit-sm'>
+                    <span className='text-default-400'><BsBookmarks /></span>
+                    Flags
+                </h3>
                 {flagsTable}
             </div>
 
             <Divider />
             <div>
-                <h3 className='font-bold mb-unit-2'>Assigned surveys</h3>
+                <h3 className='font-bold mb-unit-2 flex items-center gap-unit-sm'>
+                    <span className='text-default-400'><BsFileEarmarkMedical /></span>
+                    Assigned surveys
+                </h3>
                 todo
             </div>
             <Divider />
             <div>
-                <h3 className='font-bold mb-unit-2'>Last submissions</h3>
+                <h3 className='font-bold mb-unit-2 flex items-center gap-unit-sm'>
+                    <span className='text-default-400'><BsActivity /></span>
+                    Last submissions
+                </h3>
                 {lastSubmissionsTable}
             </div>
             <Divider />
             <div>
-                <h3 className='font-bold mb-unit-2'>Scheduled messages</h3>
+                <h3 className='font-bold mb-unit-2 flex items-center gap-unit-sm'>
+                    <span className='text-default-400'><BsEnvelopePaper /></span>
+                    Scheduled messages
+                </h3>
                 {scheduledMessagesTable}
             </div>
         </div>
