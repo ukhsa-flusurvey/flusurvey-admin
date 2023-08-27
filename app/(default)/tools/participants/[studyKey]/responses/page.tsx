@@ -5,9 +5,16 @@ import { redirect } from "next/navigation";
 import { getSurveyKeys } from "@/utils/server/studyAPI";
 import SurveyInfoDownloader from "./SurveyInfoDownloader";
 import ResponseDownloader from "./ResponseDownloader";
+import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
+
+export const metadata = {
+    title: pageTitle('Responses'),
+    description: 'Download responses from the study.',
+}
+
 
 interface PageProps {
     params: {

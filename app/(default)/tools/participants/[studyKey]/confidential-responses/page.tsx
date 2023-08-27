@@ -3,9 +3,15 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import ConfidentialResponseDownloader from "./ConfidentialResponseDownloader";
+import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
+
+export const metadata = {
+    title: pageTitle('Confidential Responses'),
+    description: 'Download confidential responses from the study.',
+}
 
 interface PageProps {
     params: {

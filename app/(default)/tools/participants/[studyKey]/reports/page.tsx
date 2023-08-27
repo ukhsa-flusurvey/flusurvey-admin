@@ -3,9 +3,16 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import ReportsDownloader from "./ReportsDownloader";
+import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
+
+export const metadata = {
+    title: pageTitle('Reports'),
+    description: 'Download participant reports from the study.',
+}
+
 
 interface PageProps {
     params: {
