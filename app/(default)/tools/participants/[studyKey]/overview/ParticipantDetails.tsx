@@ -2,8 +2,8 @@
 
 import AvatarFromId from '@/components/AvatarFromID';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { Card, CardBody, CardHeader, Chip, Divider, Snippet, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
-import { format } from 'date-fns';
+import { Card, CardBody, Chip, Divider, Snippet, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+
 import React from 'react';
 import { BsActivity, BsBoxArrowInRight, BsPerson, BsPersonVcard } from 'react-icons/bs';
 
@@ -11,7 +11,10 @@ interface ParticipantDetailsProps {
     participant?: ParticipantState;
 }
 
+
+
 const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
+    console.log(props.participant?.messages)
     const flagsTable = React.useMemo(() => {
         if (!props.participant) return <></>;
 
@@ -107,6 +110,57 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         );
     }, [props.participant]);
 
+    const scheduledMessagesTable = React.useMemo(() => {
+        if (!props.participant) return <></>;
+
+        const scheduledMessages = props.participant.messages ? props.participant.messages : [];
+
+        return (
+            <Table
+                isStriped
+                isCompact
+                aria-label='participant scheduled messages'
+                classNames={{
+                    emptyWrapper: 'h-16 text-small'
+                }}
+            >
+                <TableHeader>
+                    <TableColumn
+
+                    >
+                        MESSAGE TYPE
+                    </TableColumn>
+                    <TableColumn
+
+                    >
+                        DUE
+                    </TableColumn>
+                </TableHeader>
+                <TableBody items={scheduledMessages}
+                    emptyContent='No scheduled messages'
+                >
+                    {(message) => {
+
+
+                        const date = new Date(message.scheduledFor * 1000);
+                        const value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+                        return (
+                            <TableRow key={message.id}>
+                                <TableCell>
+                                    {message.type}
+                                </TableCell>
+                                <TableCell>
+                                    {value}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    }}
+                </TableBody>
+            </Table>
+        );
+    }, [props.participant]);
+
 
     if (!props.participant) {
         return (
@@ -131,7 +185,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
 
     return (
-        <div className='px-unit-md gap-unit-md flex flex-col'>
+        <div className='px-unit-md gap-unit-md flex flex-col pb-unit-lg'>
             <h2 className='text-2xl font-bold'>Participant details</h2>
 
             <div className='flex'>
@@ -213,7 +267,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
             <Divider />
             <div>
                 <h3 className='font-bold mb-unit-2'>Scheduled messages</h3>
-                todo
+                {scheduledMessagesTable}
             </div>
         </div>
     );
