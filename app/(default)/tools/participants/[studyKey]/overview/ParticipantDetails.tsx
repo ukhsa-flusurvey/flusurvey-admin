@@ -2,7 +2,7 @@
 
 import AvatarFromId from '@/components/AvatarFromID';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { Card, CardBody, CardHeader, Chip, Divider, Snippet } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip, Divider, Snippet, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { format } from 'date-fns';
 import React from 'react';
 import { BsActivity, BsBoxArrowInRight, BsPerson, BsPersonVcard } from 'react-icons/bs';
@@ -12,6 +12,50 @@ interface ParticipantDetailsProps {
 }
 
 const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
+    const flagsTable = React.useMemo(() => {
+        if (!props.participant) return <></>;
+
+        const flags = props.participant.flags ? Object.entries(props.participant.flags) : [];
+
+        return (
+            <Table
+                isStriped
+                isCompact
+                aria-label='participant flags'
+                classNames={{
+                    emptyWrapper: 'h-16 text-small'
+                }}
+            >
+                <TableHeader>
+                    <TableColumn
+
+                    >
+                        KEY
+                    </TableColumn>
+                    <TableColumn
+
+                    >
+                        VALUE
+                    </TableColumn>
+                </TableHeader>
+                <TableBody items={flags}
+                    emptyContent='No flags'
+                >
+                    {(flag) => (
+                        <TableRow key={flag[0]}>
+                            <TableCell>
+                                {flag[0]}
+                            </TableCell>
+                            <TableCell>
+                                {flag.length > 1 ? flag[1] : ''}
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        );
+    }, [props.participant]);
+
 
     if (!props.participant) {
         return (
@@ -33,6 +77,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
     }
 
     const lastActivity = props.participant.lastSubmissions ? Object.values(props.participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
+
 
     return (
         <div className='px-unit-md gap-unit-md flex flex-col'>
@@ -101,6 +146,23 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
             <Divider />
             <div>
                 <h3 className='font-bold mb-unit-2'>Flags</h3>
+                {flagsTable}
+            </div>
+
+            <Divider />
+            <div>
+                <h3 className='font-bold mb-unit-2'>Assigned surveys</h3>
+                todo
+            </div>
+            <Divider />
+            <div>
+                <h3 className='font-bold mb-unit-2'>Last submissions</h3>
+                todo
+            </div>
+            <Divider />
+            <div>
+                <h3 className='font-bold mb-unit-2'>Scheduled messages</h3>
+                todo
             </div>
         </div>
     );
