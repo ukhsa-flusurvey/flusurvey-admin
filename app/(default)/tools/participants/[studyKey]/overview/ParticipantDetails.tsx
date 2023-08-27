@@ -59,6 +59,77 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         );
     }, [props.participant]);
 
+    const assignedSurveysTable = React.useMemo(() => {
+        if (!props.participant) return <></>;
+
+        const assignedSurveys = props.participant.assignedSurveys ? props.participant.assignedSurveys.map((s, index) => {
+            return {
+                key: index,
+                ...s,
+            }
+        }) : [];
+
+        return (
+            <Table
+                isStriped
+                isCompact
+                aria-label='participant assigned surveys'
+                classNames={{
+                    emptyWrapper: 'h-16 text-small'
+                }}
+            >
+                <TableHeader>
+                    <TableColumn>
+                        SURVEY KEY
+                    </TableColumn>
+                    <TableColumn>
+                        CATEGORY
+                    </TableColumn>
+                    <TableColumn>
+                        FROM
+                    </TableColumn>
+                    <TableColumn>
+                        UNTIL
+                    </TableColumn>
+                </TableHeader>
+                <TableBody items={assignedSurveys}
+                    emptyContent='No assigned surveys'
+                >
+                    {(survey) => {
+                        let from = '';
+                        if (survey.validFrom) {
+                            const date = new Date(survey.validFrom * 1000);
+                            from = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                        }
+
+                        let until = '';
+                        if (survey.validUntil) {
+                            const date = new Date(survey.validUntil * 1000);
+                            until = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                        }
+
+                        return (
+                            <TableRow key={survey.key}>
+                                <TableCell>
+                                    {survey.surveyKey}
+                                </TableCell>
+                                <TableCell>
+                                    {survey.category}
+                                </TableCell>
+                                <TableCell>
+                                    {from}
+                                </TableCell>
+                                <TableCell>
+                                    {until}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    }}
+                </TableBody>
+            </Table>
+        );
+    }, [props.participant]);
+
     const lastSubmissionsTable = React.useMemo(() => {
         if (!props.participant) return <></>;
 
@@ -263,7 +334,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                     <span className='text-default-400'><BsFileEarmarkMedical /></span>
                     Assigned surveys
                 </h3>
-                todo
+                {assignedSurveysTable}
             </div>
             <Divider />
             <div>
