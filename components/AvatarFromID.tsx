@@ -1,6 +1,6 @@
 'use client'
 
-import { Spinner } from '@nextui-org/react';
+import { Skeleton } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 
@@ -53,8 +53,12 @@ function AvatarFromId({ userId, pixelSize }: {
     }, [userId]);
 
     if (!binaryString) {
-        return <Spinner
-            size='sm'
+        return <Skeleton
+            style={{
+                width: size * pixelSize + 4,
+                height: size * pixelSize + 4,
+            }}
+            className='rounded-md'
         />;
     }
 

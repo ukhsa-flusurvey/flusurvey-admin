@@ -2,6 +2,7 @@
 
 import AvatarFromId from '@/components/AvatarFromID';
 import { AuthAPIFetcher } from '@/utils/server/fetcher';
+import { shortenID } from '@/utils/shortenID';
 import { Button, Card, CardBody, CardHeader, Chip, Divider, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from '@nextui-org/react';
 import { format } from 'date-fns';
 import { signOut } from 'next-auth/react';
@@ -31,11 +32,6 @@ const columns = [
     { id: 'actions', label: 'Actions' },
 ];
 
-function shortenID(id: string) {
-    const maxLen = 16;
-    if (id.length <= maxLen) return id;
-    return id.substring(0, maxLen / 2) + '...' + id.substring(id.length - (maxLen / 2));
-}
 
 const fileDownload = async (fileInfo: FileInfo, studyKey: string) => {
     let searchParams = new URLSearchParams();
@@ -273,6 +269,7 @@ const ParticipantFileDownloader: React.FC<ParticipantFileDownloaderProps> = (pro
                 {errorComp}
 
                 <Table aria-label="File info table"
+                    isStriped
                     classNames={{
                         table: "min-h-[400px]",
                     }}
