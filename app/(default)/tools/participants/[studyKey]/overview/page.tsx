@@ -3,6 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import ParticipantOverviewScreen from "./ParticipantOverviewScreen";
+import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +13,12 @@ interface PageProps {
         studyKey: string;
     }
 }
+
+export const metadata = {
+    title: pageTitle('Participants overview'),
+    description: 'View and manage participants in your study.',
+}
+
 
 export default async function Page(props: PageProps) {
     const session = await getServerSession(authOptions);

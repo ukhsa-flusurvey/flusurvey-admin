@@ -1,9 +1,11 @@
 'use client'
 
+import AvatarFromId from '@/components/AvatarFromID';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { Divider, Snippet } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip, Divider, Snippet } from '@nextui-org/react';
+import { format } from 'date-fns';
 import React from 'react';
-import { BsPerson, BsPersonVcard } from 'react-icons/bs';
+import { BsActivity, BsBoxArrowInRight, BsPerson, BsPersonVcard } from 'react-icons/bs';
 
 interface ParticipantDetailsProps {
     participant?: ParticipantState;
@@ -30,33 +32,70 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         );
     }
 
+    const lastActivity = props.participant.lastSubmissions ? Object.values(props.participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
+
     return (
         <div className='px-unit-md gap-unit-md flex flex-col'>
             <h2 className='text-2xl font-bold'>Participant details</h2>
 
-            <div>
-                <h3 className='font-bold mb-unit-2'>General</h3>
-                <div className='flex gap-unit-sm'>
-                    <div className='grow'>
-                        <div className='text-small text-foreground mb-unit-1'>
-                            Participant ID
+            <div className='flex'>
+                <Card className='bg-white'>
+                    <CardBody>
+                        <div className='flex flex-col gap-unit-lg'>
+
+                            <div className='flex items-start gap-unit-md'>
+                                <div>
+                                    <AvatarFromId
+                                        userId={props.participant.id}
+                                        pixelSize={7}
+                                    />
+                                </div>
+                                <div className=''>
+                                    <div className='text-small text-foreground mb-unit-1'>
+                                        Participant ID
+                                    </div>
+                                    <Snippet
+                                        color='default'
+                                        symbol=''
+                                    >
+                                        {props.participant.id}
+                                    </Snippet>
+                                </div>
+                            </div>
+
+
+                            <div className='flex gap-unit-md items-end'>
+                                <div className=''>
+                                    <div className='text-small text-foreground mb-unit-1 flex items-center gap-1'>
+                                        <span className='text-default-400'><BsBoxArrowInRight /></span>
+                                        Joined
+                                    </div>
+                                    <div>
+                                        {(new Date(props.participant.enteredAt * 1000)).toLocaleDateString()}
+                                    </div>
+                                </div>
+                                <div className=''>
+                                    <div className='text-small text-foreground mb-unit-1 flex items-center gap-1'>
+                                        <span className='text-default-400'><BsActivity /></span>
+                                        Last activity
+                                    </div>
+                                    <div>
+                                        {lastActivity ? (new Date(lastActivity * 1000).toLocaleDateString()) : 'Never'}
+                                    </div>
+                                </div>
+                                <span className='grow'></span>
+                                <Chip
+                                    size='lg'
+                                    variant='flat'
+                                    color={props.participant.studyStatus === 'active' ? 'success' : (props.participant.studyStatus === 'accountDeleted' ? 'danger' : 'default')}
+                                >
+                                    {props.participant.studyStatus}
+                                </Chip>
+                            </div>
+
                         </div>
-                        <Snippet
-
-                            color='default'
-                            symbol=''
-                        >
-                            participantIDparticipantIDparticipantID
-                        </Snippet>
-                        <p>entered at todo</p>
-
-                    </div>
-                    <div>
-                        <p>avatar</p>
-                        <p>status</p>
-                    </div>
-                </div>
-
+                    </CardBody>
+                </Card>
             </div>
 
             <Divider />
