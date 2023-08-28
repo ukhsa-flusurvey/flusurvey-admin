@@ -8,7 +8,9 @@ export interface HeaderOverrides {
 }
 
 export interface EmailTemplate {
+    id?: string;
     messageType: string;
+    studyKey?: string;
     defaultLanguage: string;
     headerOverrides?: HeaderOverrides;
     translations: {

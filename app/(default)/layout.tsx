@@ -1,8 +1,6 @@
-import AuthProvider from '@/components/AuthProvider';
-import AppBar from '@/components/appbar/AppBar';
 import '@/styles/globals.css'
-
 import { Open_Sans } from 'next/font/google'
+import { Providers } from './providers';
 
 
 const open_sans = Open_Sans({
@@ -25,12 +23,10 @@ export default function RootLayout({
     return (
         <html lang="en" className={`${open_sans.variable} font-sans`}>
             <body>
-                <AuthProvider>
-                    <AppBar />
-                    <main className='h-screen pt-16'>
-                        {children}
-                    </main>
-                </AuthProvider>
+                <Providers>
+                    {children}
+
+                </Providers>
             </body>
         </html>
     );

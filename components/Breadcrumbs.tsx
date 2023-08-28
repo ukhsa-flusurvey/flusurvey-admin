@@ -1,24 +1,32 @@
 import Link from 'next/link';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
+import { BsHouseFill } from 'react-icons/bs';
 
-const Breadcrumbs = ({ links }: {
+const Breadcrumbs = ({ links, homeLink }: {
+    homeLink?: string;
     links: Array<{
-        title: string;
+        title: string | React.ReactNode;
         href?: string;
     }>
 }) => {
+    // insert home link
+    links.unshift({
+        href: homeLink,
+        title: <BsHouseFill />
+    });
+
     return (
         <nav className="flex items-center">
-            <ul className="flex">
+            <ul className="flex items-center">
                 {links.map((item, index) => (
-                    <li key={index} className="flex">
+                    <li key={index} className="flex items-center text-small">
                         {
                             item.href !== undefined ? <Link href={item.href}
-                                className="text-gray-500 hover:text-gray-700 hover:underline"
+                                className="text-default-600 hover:text-default-700 hover:underline"
                             >
                                 {item.title}
                             </Link> :
-                                <span className="text-gray-500">
+                                <span className="text-default-600">
                                     {item.title}
                                 </span>
                         }
