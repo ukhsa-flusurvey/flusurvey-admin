@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Sidebar, SidebarItem } from '../Sidebar';
-import { BsBoxArrowLeft, BsCardHeading, BsCloudUpload, BsFilePlay, BsFolder, BsListUl } from 'react-icons/bs';
+import { BsBoxArrowLeft, BsCloudUpload, BsFileEarmarkMedical, BsFilePlay, BsFolder, BsListUl } from 'react-icons/bs';
 import { Divider } from '@nextui-org/react';
 import { editorModes } from './utils';
 
@@ -17,8 +17,10 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
     onExit,
 }) => {
     return (
-        <div className='fixed inset-y-0'>
-            <Sidebar>
+        <div className='fixed inset-y-0 z-[50]'>
+            <Sidebar
+                className='border-default-400'
+            >
                 <SidebarItem
                     tooltip='File import/export'
                     isActive={mode === editorModes[0]}
@@ -35,7 +37,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                         setMode(editorModes[1]);
                     }}
                 >
-                    <BsCardHeading />
+                    <BsFileEarmarkMedical />
                 </SidebarItem>
 
                 <SidebarItem

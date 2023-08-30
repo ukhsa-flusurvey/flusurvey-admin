@@ -8,6 +8,7 @@ import PreviewMode from './views/PreviewMode';
 import SurveyItemsMode from './views/SurveyItemsMode';
 import SurveyPropsMode from './views/SurveyPropsMode';
 import FileMode from './views/FileMode';
+import { SurveyEditor as EditorInstance } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 
 
 interface SurveyEditorProps {
@@ -15,7 +16,43 @@ interface SurveyEditorProps {
 
 
 const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
-    const [mode, setMode] = React.useState(editorModes[0]);
+    const [mode, setMode] = React.useState(editorModes[2]);
+
+    const [editorInstance, setEditorInstance] = React.useState<EditorInstance>(new EditorInstance({
+        versionId: '',
+        surveyDefinition: {
+            key: 'surveyKey',
+            items: [
+                {
+                    key: 'surveyKey.group1',
+                    items: [
+                        {
+                            key: 'surveyKey.group1.item1',
+                        },
+                        {
+                            key: 'surveyKey.group1.group2',
+                            items: []
+                        }
+                    ],
+                },
+                {
+                    key: 'surveyKey.item4',
+
+                },
+                {
+                    key: 'surveyKey.item2',
+                    type: 'pageBreak',
+                },
+                {
+                    key: 'surveyKey.item3',
+                    type: 'surveyEnd'
+                },
+
+
+
+            ],
+        }
+    }));
 
 
     const onExit = () => {
@@ -33,7 +70,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <SurveyPropsMode />;
             break;
         case editorModes[2]:
-            mainContent = <SurveyItemsMode />;
+            mainContent = <SurveyItemsMode
+                editorInstance={editorInstance}
+            />;
             break;
         case editorModes[3]:
             mainContent = <PreviewMode />;
