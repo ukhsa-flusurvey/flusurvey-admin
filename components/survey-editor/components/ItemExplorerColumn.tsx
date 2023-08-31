@@ -1,17 +1,73 @@
 import { Button } from '@nextui-org/button';
 import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Kbd, Listbox, ListboxItem } from '@nextui-org/react';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BsArrowReturnLeft, BsCardHeading, BsChevronRight, BsClipboardPlus, BsCollection, BsCollectionFill, BsFileEarmarkPlus, BsPlus, BsPlusCircle, BsPlusSquare, BsQuestionSquare, BsStopCircle } from 'react-icons/bs';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from 'survey-engine/data_types';
 
 interface ItemExplorerColumnProps {
     itemGroup: SurveyGroupItem;
     onAddItem: (itemMode: string, path: string) => void;
+    onItemsReorder: (newGroup: SurveyGroupItem) => void;
+    onItemSelect?: (item: SurveyItem | null) => void;
 }
 
 const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
     const [selectedItem, setSelectedItem] = React.useState<SurveyItem | null>(null);
+
+    const dragItem = React.useRef<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+    const sourceListId = React.useRef<string | null>(null);
+
+    useEffect(() => {
+        if (selectedItem !== null) {
+            if (props.itemGroup.items.findIndex(i => i.key === selectedItem.key) === -1) {
+                setSelectedItem(null);
+            }
+        }
+    }, [props.itemGroup.items, selectedItem]);
+
+
+    const handleDragStart = (e: React.DragEvent<HTMLLIElement>, index: number) => {
+        // prevent drag start if already dragging in other list:
+        if (sourceListId.current !== null && sourceListId.current !== props.itemGroup.key) return;
+        sourceListId.current = props.itemGroup.key;
+
+        dragItem.current = index;
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLLIElement>, index: number) => {
+        if (sourceListId.current !== props.itemGroup.key) return;
+        e.preventDefault();
+        if (dragItem.current !== index) {
+            setDragOverIndex(index);
+        } else {
+            setDragOverIndex(null);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLLIElement>, index: number) => {
+        if (dragItem.current === null) return;
+        if (sourceListId.current !== props.itemGroup.key) return;
+
+        if (props.itemGroup.items.length - 1 < dragItem.current) return;
+        const draggedItem = props.itemGroup.items[dragItem.current];
+        const newItems = [...props.itemGroup.items];
+        newItems.splice(dragItem.current, 1);
+        newItems.splice(index, 0, draggedItem);
+
+        props.onItemsReorder({
+            ...props.itemGroup,
+            items: newItems,
+        })
+        setDragOverIndex(null);
+        sourceListId.current = null;  // Reset stored listId
+    };
+
+    const handleDragEnd = () => {
+        setDragOverIndex(null);
+    };
 
     let itemList: React.ReactNode = null;
     if (!props.itemGroup.items || props.itemGroup.items.length === 0) {
@@ -33,8 +89,10 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
                     const item = props.itemGroup.items.find(i => i.key === key);
                     if (item) {
                         setSelectedItem(item);
+                        props.onItemSelect && props.onItemSelect(item);
                     } else {
                         setSelectedItem(null);
+                        props.onItemSelect && props.onItemSelect(null);
                     }
                 }}
             >
@@ -62,10 +120,24 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
                                 'relative group',
                                 {
                                     'bg-primary-100': selectedItem?.key === item.key,
+                                    'bg-primary-50': dragOverIndex === index,
                                 }
                             )}
                             textValue={item.key}
+
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDrop={(e) => handleDrop(e, index)}
+                            onDragEnd={handleDragEnd}
                         >
+                            {(dragOverIndex === index && dragItem.current !== null && dragItem.current < index) && (
+                                <div className='absolute -bottom-1 left-0 w-full h-2 rounded-full bg-default-400/50 z-10' />
+                            )}
+                            {(dragOverIndex === index && dragItem.current !== null && dragItem.current > index) && (
+                                <div className='absolute -top-1 left-0 w-full h-2 rounded-full bg-default-400/50 z-10' />
+                            )}
+
                             {(item as SurveySingleItem).type === 'pageBreak' ? 'Page break' : item.key.split('.').pop()}
                         </ListboxItem>
                     )
@@ -140,14 +212,23 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
                 <ItemExplorerColumn
                     itemGroup={selectedItem as SurveyGroupItem}
                     onAddItem={props.onAddItem}
+                    onItemSelect={(item) => {
+                        props.onItemSelect && props.onItemSelect(item);
+                    }}
+                    onItemsReorder={(newGroup) => {
+                        const newItems = [...props.itemGroup.items];
+                        const index = newItems.findIndex(i => i.key === newGroup.key);
+                        if (index > -1) {
+                            newItems[index] = newGroup;
+                            setSelectedItem(newGroup)
+                            props.onItemsReorder({
+                                ...props.itemGroup,
+                                items: newItems,
+                            });
+                        }
+                    }}
                 />
             )}
-            {/*items.length > 1 && (
-                <ExplorerColumn
-                    items={newItems}
-                />
-            )*/}
-
         </div>
     );
 
