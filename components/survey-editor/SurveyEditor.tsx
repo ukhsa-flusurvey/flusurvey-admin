@@ -67,7 +67,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <FileMode />;
             break;
         case editorModes[1]:
-            mainContent = <SurveyPropsMode />;
+            mainContent = <SurveyPropsMode
+                editorInstance={editorInstance}
+            />;
             break;
         case editorModes[2]:
             mainContent = <SurveyItemsMode
