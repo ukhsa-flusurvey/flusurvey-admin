@@ -7,6 +7,7 @@ import NewItemDialog from '../components/NewItemDialog';
 import clsx from 'clsx';
 import ItemInspector from '../components/ItemInspector';
 import { SurveyItem } from 'survey-engine/data_types';
+import EditorMenu from '../components/EditorMenu';
 
 interface SurveyItemsModeProps {
     editorInstance: SurveyEditor;
@@ -26,10 +27,11 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
 
     return (<>
         <div className='relative h-screen'>
-            <div className='fixed top-0 h-12 w-full border-b border-red-600 z-10 bg-white'>
-                menu bar
-            </div>
-            <div className='flex pt-12 h-full relative '>
+            <EditorMenu
+                title='Survey Items'
+                editorInstance={props.editorInstance}
+            />
+            <div className='flex pt-12 h-full relative'>
                 <div className='overflow-x-scroll '>
                     <ItemExplorerColumn
                         itemGroup={props.editorInstance.getSurvey().surveyDefinition}
@@ -37,7 +39,6 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                             setSelectedItem(item);
                         }}
                         onAddItem={(actionKey, path) => {
-                            console.log('add item', actionKey, path);
                             if (actionKey === 'pageBreak') {
                                 props.editorInstance.addExistingSurveyItem(generatePageBreak(path), path);
                             } else {
@@ -56,9 +57,9 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                 </div>
                 <div className='grow'></div>
                 {selectedItem &&
-                    <div className={clsx('grow h-full flex min-w-[400px] border-l bg-yellow drop-shadow-[-4px_2px_5px_rgba(0,0,0,0.25)] z-10 transition ',
+                    <div className={clsx('grow h-full flex min-w-[400px] border-l bg-yellow drop-shadow-[-4px_2px_5px_rgba(0,0,0,0.25)] z-10 transition',
                         {
-                            'fixed right-0 top-12 left-24': isInspectorExpanded,
+                            'fixed right-0 top-0 pt-12 left-36': isInspectorExpanded,
                             'max-w-[500px] min-w-[500px]': !isInspectorExpanded,
                         }
                     )}>
@@ -88,7 +89,6 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                         // onItemDelete
                         // onMoveItem
                         />
-
                     </div>}
 
             </div>

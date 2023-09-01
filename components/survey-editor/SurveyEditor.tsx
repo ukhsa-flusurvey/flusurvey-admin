@@ -86,18 +86,18 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             break;
     }
 
-
     return (
-        <div className='relative'>
-            <SurveyEditorSidebar
-                currentMode={mode}
-                onModeChange={setMode}
-                onExit={onExit}
-            />
-            <div className='pl-14'>
-                {mainContent}
+        <div className='bg-center bg-cover bg-[url(/images/spaceship.png)]'>
+            <div className='bg-white/60 h-screen relative'>
+                <SurveyEditorSidebar
+                    currentMode={mode}
+                    onModeChange={setMode}
+                    onExit={onExit}
+                />
+                <div className='pl-14'>
+                    {mainContent}
+                </div>
             </div>
-
         </div>
     );
 };

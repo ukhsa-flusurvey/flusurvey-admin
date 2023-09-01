@@ -72,7 +72,7 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
     let itemList: React.ReactNode = null;
     if (!props.itemGroup.items || props.itemGroup.items.length === 0) {
         itemList = (
-            <div className=' py-unit-md flex flex-col items-center justify-center gap-unit-sm'>
+            <div className=' py-unit-md flex flex-col items-center justify-center gap-unit-sm  bg-white'>
                 <div className='text-small'>
                     <div className='text-default-400 text-xl flex justify-center mb-unit-1'>
                         <BsQuestionSquare />
@@ -84,6 +84,7 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
     } else {
         itemList = (
             <Listbox
+                className=' bg-white'
                 aria-label={`List of items in group ${props.itemGroup.key}`}
                 onAction={(key) => {
                     const item = props.itemGroup.items.find(i => i.key === key);
@@ -147,11 +148,12 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
     }
 
     return (
-        <div className='h-full flex '>
-            <div className='border-r border-default-400 min-w-[220px] overflow-y-scroll' >
-                <div className='font-mono bg-content2 px-unit-sm py-unit-1 text-small'>
+        <div className='h-full flex'>
+            <div className='border-r border-default-400 min-w-[220px] overflow-y-scroll bg-white/60' >
+                <div className='font-mono bg-primary-50 px-unit-sm py-unit-1 text-small'>
                     {props.itemGroup.key}
                 </div>
+                <Divider />
                 {itemList}
                 <Divider />
                 <div className='flex justify-center py-unit-sm'>

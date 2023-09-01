@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsAt, BsCardHeading, BsCollectionFill, BsHash, BsInfoCircle, BsKeyFill, BsStopCircle, BsX, BsXLg } from 'react-icons/bs';
+import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsAt, BsCardHeading, BsCollectionFill, BsHash, BsInfoCircle, BsKeyFill, BsStopCircle, BsTag, BsX, BsXLg } from 'react-icons/bs';
 import { Button } from '@nextui-org/button';
 import { Divider, Input, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
@@ -57,30 +57,38 @@ const KeyEditor: React.FC<{
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
 
-    return <div className='overflow-x-scroll'>
-        <div className='flex items-center'>
-            <span className='font-mono text-tiny text-default-400 pt-1'>
-                {parentKey}.
+    return <div>
+        <div className='flex items-center text-small font-bold'>
+            <span>
+                <BsTag className='text- text-default-500 me-2' />
             </span>
-            <Input
-                aria-label='Item key'
-                className='font-mono min-w-[200px] w-80'
-                variant='bordered'
-                size='lg'
-                placeholder='Enter a key for the item'
-                isRequired
-
-                validationState={itemKey.length === 0 ? 'invalid' : 'valid'}
-                value={itemKey}
-                onValueChange={(v) => {
-                    setErrorMsg(null);
-                    if (!onItemKeyChange([parentKey, itemKey].join('.'), [parentKey, v].join('.'))) {
-                        setErrorMsg('Key already exists. To avoid issues it is not possible to change the key to an existing one.');
-                    }
-                }}
-            />
+            Key:
         </div>
-        {errorMsg && <p className='text-danger-500 text-sm mt-1'>{errorMsg}</p>}
+        <div className='overflow-x-scroll'>
+            <div className='flex items-center'>
+                <span className='font-mono text-tiny text-default-400 pt-1'>
+                    {parentKey}.
+                </span>
+                <Input
+                    aria-label='Item key'
+                    className='font-mono min-w-[200px] w-80'
+                    variant='bordered'
+                    size='md'
+                    placeholder='Enter a key for the item'
+                    isRequired
+
+                    validationState={itemKey.length === 0 ? 'invalid' : 'valid'}
+                    value={itemKey}
+                    onValueChange={(v) => {
+                        setErrorMsg(null);
+                        if (!onItemKeyChange([parentKey, itemKey].join('.'), [parentKey, v].join('.'))) {
+                            setErrorMsg('Key already exists. To avoid issues it is not possible to change the key to an existing one.');
+                        }
+                    }}
+                />
+            </div>
+            {errorMsg && <p className='text-danger-500 text-sm mt-1'>{errorMsg}</p>}
+        </div>
     </div>
 }
 
@@ -139,56 +147,57 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
     const parentKey = selectedItem?.key.split('.').slice(0, -1).join('.');
 
     return (
-        <div className='w-full bg-background p-unit-sm space-y-unit-sm'>
-            <div className='flex gap-unit-sm items-center'>
-                {heading}
-                <span className='grow'></span>
-                <Tooltip
-                    content={props.isExpanded ? 'Collapse' : 'Expand'}
-                >
-                    <Button
-                        variant='light'
-                        isIconOnly
-                        size='sm'
-                        className='text-lg'
-                        type='button'
-                        onPress={() => {
-                            props.onExpandToggle(!props.isExpanded);
-                        }}
+        <div className='w-full bg-background overflow-y-scroll'>
+            <div className='sticky bg-white z-10 top-0 p-unit-sm border-b border-default-400 drop-sshadow'>
+                <div className='flex gap-unit-sm items-center  '>
+                    {heading}
+                    <span className='grow'></span>
+                    <Tooltip
+                        content={props.isExpanded ? 'Collapse' : 'Expand'}
                     >
-                        {props.isExpanded ? <BsArrowsAngleContract /> : <BsArrowsAngleExpand />}
-                    </Button>
-                </Tooltip>
-                <Tooltip
-                    content={'Close item'}
-                >
-                    <Button
-                        variant='light'
-                        isIconOnly
-                        size='sm'
-                        className='text-lg'
-                        type='button'
-                        onPress={() => {
-                            props.onClearSelection();
-                        }}
+                        <Button
+                            variant='light'
+                            isIconOnly
+                            size='sm'
+                            className='text-lg'
+                            type='button'
+                            onPress={() => {
+                                props.onExpandToggle(!props.isExpanded);
+                            }}
+                        >
+                            {props.isExpanded ? <BsArrowsAngleContract /> : <BsArrowsAngleExpand />}
+                        </Button>
+                    </Tooltip>
+                    <Tooltip
+                        content={'Close item'}
                     >
-                        <BsXLg />
-                    </Button>
-                </Tooltip>
+                        <Button
+                            variant='light'
+                            isIconOnly
+                            size='sm'
+                            className='text-lg'
+                            type='button'
+                            onPress={() => {
+                                props.onClearSelection();
+                            }}
+                        >
+                            <BsXLg />
+                        </Button>
+                    </Tooltip>
+                </div>
             </div>
+            <div className='py-unit-lg px-unit-sm space-y-unit-sm'>
 
-            <Divider /><div className='flex items-center'>
-                <span>
-                    <BsHash className='text-3xl text-default-400 me-2' />
-                </span>
+
                 <KeyEditor
                     parentKey={parentKey || ''}
                     itemKey={selectedItem?.key.split('.').slice(-1)[0] || ''}
                     onItemKeyChange={props.onItemKeyChange}
                 />
-            </div>
-            <Divider />
 
+                <Divider />
+
+            </div>
 
         </div>
     );
