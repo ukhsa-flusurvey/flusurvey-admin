@@ -14,7 +14,6 @@ interface ParticipantDetailsProps {
 
 
 const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
-    console.log(props.participant?.messages)
     const flagsTable = React.useMemo(() => {
         if (!props.participant) return <></>;
 

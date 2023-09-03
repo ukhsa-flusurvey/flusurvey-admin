@@ -27,7 +27,7 @@ export default async function Page(props: PageProps) {
     }
 
     return (
-        <div className="pt-unit-sm px-unit-lg flex flex-col h-full bg-white/40">
+        <div className="pt-unit-sm px-unit-lg flex flex-col min-h-full bg-white/70">
             <Breadcrumbs
                 homeLink={`/tools/participants/${props.params.studyKey}`}
                 links={
