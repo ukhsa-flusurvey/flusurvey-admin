@@ -62,63 +62,63 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                             }}
                         />
                         <div>
-                            <div className='py-unit-md'>
-                                <Select
-                                    label='Available for'
-                                    labelPlacement='outside'
-                                    description='Define who can access the survey.'
-                                    variant='bordered'
-                                    placeholder='Select an option'
-                                    selectedKeys={props.editorInstance.getSurvey().availableFor ? new Set([props.editorInstance.getSurvey().availableFor as string]) : new Set(['active_participants'])}
-                                    onSelectionChange={(keys) => {
-                                        const selectedKey = (keys as Set<React.Key>).values().next().value;
-                                        if (!selectedKey) {
-                                            return;
-                                        }
-                                        props.editorInstance.setAvailableFor(selectedKey);
-                                        setCounter(counter + 1);
-                                    }}
+
+                            <Select
+                                label='Available for'
+                                labelPlacement='outside'
+                                description='Define who can access the survey.'
+                                variant='bordered'
+                                placeholder='Select an option'
+                                selectedKeys={props.editorInstance.getSurvey().availableFor ? new Set([props.editorInstance.getSurvey().availableFor as string]) : new Set(['active_participants'])}
+                                onSelectionChange={(keys) => {
+                                    const selectedKey = (keys as Set<React.Key>).values().next().value;
+                                    if (!selectedKey) {
+                                        return;
+                                    }
+                                    props.editorInstance.setAvailableFor(selectedKey);
+                                    setCounter(counter + 1);
+                                }}
+                            >
+                                <SelectItem
+                                    value='public'
+                                    key={'public'}
+                                    description='Anyone can access the survey.'
                                 >
-                                    <SelectItem
-                                        value='public'
-                                        key={'public'}
-                                        description='Anyone can access the survey.'
-                                    >
-                                        Public
-                                    </SelectItem>
-                                    <SelectItem
-                                        key='temporary_participants'
-                                        description='The survey can be accessed by temporary or normal participants.'
-                                    >
-                                        Temporary participants
-                                    </SelectItem>
-                                    <SelectItem
-                                        key='active_participants'
-                                        description='The survey can be accessed by active participants of a study.'
-                                    >
-                                        Active participants
-                                    </SelectItem>
-                                    <SelectItem
-                                        key='participants_if_assigned'
-                                        description='Only participants who have this survey assigned can access it.'
-                                    >
-                                        Participants if assigned
-                                    </SelectItem>
-                                </Select>
-                            </div>
-                            <div className='mt-unit-md'>
-                                <Switch
-                                    id='require-login-before-submission'
-                                    isSelected={props.editorInstance.getSurvey().requireLoginBeforeSubmission}
-                                    onValueChange={(v) => {
-                                        props.editorInstance.setRequireLoginBeforeSubmission(v);
-                                        setCounter(counter + 1);
-                                    }}
+                                    Public
+                                </SelectItem>
+                                <SelectItem
+                                    key='temporary_participants'
+                                    description='The survey can be accessed by temporary or normal participants.'
                                 >
-                                    Require login before submission
-                                </Switch>
-                                <p className='text-default-400 text-tiny'>For surveys, that can be started without a participant, or with a temporary participant, this can be used to enforce login before submitting the responses.</p>
-                            </div>
+                                    Temporary participants
+                                </SelectItem>
+                                <SelectItem
+                                    key='active_participants'
+                                    description='The survey can be accessed by active participants of a study.'
+                                >
+                                    Active participants
+                                </SelectItem>
+                                <SelectItem
+                                    key='participants_if_assigned'
+                                    description='Only participants who have this survey assigned can access it.'
+                                >
+                                    Participants if assigned
+                                </SelectItem>
+                            </Select>
+
+
+                            <Switch
+                                id='require-login-before-submission'
+                                isSelected={props.editorInstance.getSurvey().requireLoginBeforeSubmission}
+                                onValueChange={(v) => {
+                                    props.editorInstance.setRequireLoginBeforeSubmission(v);
+                                    setCounter(counter + 1);
+                                }}
+                            >
+                                Require login before submission
+                            </Switch>
+                            <p className='text-default-400 text-tiny'>For surveys, that can be started without a participant, or with a temporary participant, this can be used to enforce login before submitting the responses.</p>
+
                         </div>
                     </div>
                 </TwoColumnsWithCards>
