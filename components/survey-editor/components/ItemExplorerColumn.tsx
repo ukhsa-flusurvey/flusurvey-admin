@@ -139,7 +139,7 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
                                 <div className='absolute -top-1 left-0 w-full h-2 rounded-full bg-default-400/50 z-10' />
                             )}
 
-                            {(item as SurveySingleItem).type === 'pageBreak' ? 'Page break' : item.key.split('.').pop()}
+                            {(item as SurveySingleItem).type === 'pageBreak' ? 'Page break' : item.key?.split('.').pop() || 'error retrieving key'}
                         </ListboxItem>
                     )
                 })}

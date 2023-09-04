@@ -1,8 +1,9 @@
 import React from 'react';
-import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsAt, BsCardHeading, BsCollectionFill, BsHash, BsInfoCircle, BsKeyFill, BsStopCircle, BsTag, BsX, BsXLg } from 'react-icons/bs';
+import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsAt, BsCardHeading, BsClipboard, BsCollectionFill, BsHash, BsInfoCircle, BsKeyFill, BsStopCircle, BsTag, BsThreeDotsVertical, BsTrash, BsX, BsXLg } from 'react-icons/bs';
 import { Button } from '@nextui-org/button';
-import { Divider, Input, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
+import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Input, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
+import MoveSurveyItemDialog from './MoveSurveyItemDialog';
 
 
 interface ItemInspectorProps {
@@ -11,8 +12,11 @@ interface ItemInspectorProps {
 
     selectedItem: SurveyItem | null;
     onClearSelection: () => void;
-
+    onDeleteItem: (
+        itemKey: string,
+    ) => void;
     onItemKeyChange: (oldKey: string, newKey: string) => boolean;
+    onWantsToMoveItem: (itemKey: string) => void;
 }
 
 const HeadingWithIcon: React.FC<{
@@ -47,6 +51,56 @@ const HeadingWithIcon: React.FC<{
             </PopoverContent>
         </Popover>
     </div>
+}
+
+const InspectorActionMenu: React.FC<{
+    onActionSelected?: (action: 'copy' | 'move' | 'delete') => void;
+}> = (props) => {
+    return (
+        <Dropdown
+            placement='bottom-end'
+
+        >
+            <DropdownTrigger>
+                <Button
+                    variant="light"
+                    isIconOnly
+                >
+                    <BsThreeDotsVertical />
+                </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Actions for the selected item"
+                onAction={(action) => {
+                    if (props.onActionSelected) {
+                        props.onActionSelected(action as 'copy' | 'move' | 'delete');
+                    }
+                }}
+            >
+                <DropdownSection aria-label='actions' showDivider>
+                    <DropdownItem
+                        key="copy"
+                        description='Copy the item to the clipboard'
+                        startContent={<BsClipboard className='text-default-500' />}
+                    >
+                        Copy
+                    </DropdownItem>
+                    <DropdownItem
+                        key="move"
+                        description='Move the item to another parent group'
+                        startContent={<BsArrowsMove className='text-default-500' />}
+                    >
+                        Move
+                    </DropdownItem>
+                </DropdownSection>
+                <DropdownItem key="delete" className="text-danger" color="danger"
+                    startContent={<BsTrash className='text-danger-200' />}
+                    description='Delete the item from the survey'
+                >
+                    Delete
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    )
 }
 
 const KeyEditor: React.FC<{
@@ -96,7 +150,6 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
     selectedItem,
     ...props
 }) => {
-
     const itemType: null | 'surveyEnd' | 'item' | 'group' | 'pageBreak' = React.useMemo(() => {
         if (!selectedItem) return null;
 
@@ -152,6 +205,28 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
                 <div className='flex gap-unit-sm items-center  '>
                     {heading}
                     <span className='grow'></span>
+                    <InspectorActionMenu
+                        onActionSelected={(action) => {
+                            switch (action) {
+                                case 'copy':
+                                    if (selectedItem) {
+                                        const content = JSON.stringify(selectedItem, undefined, 2)
+                                        navigator.clipboard.writeText(content);
+                                    }
+                                    break;
+                                case 'move':
+                                    if (selectedItem) {
+                                        props.onWantsToMoveItem(selectedItem.key);
+                                    }
+                                    break;
+                                case 'delete':
+                                    if (selectedItem && confirm('Are you sure you want to delete this item?')) {
+                                        props.onDeleteItem(selectedItem?.key || '');
+                                    }
+                                    break;
+                            }
+                        }}
+                    />
                     <Tooltip
                         content={props.isExpanded ? 'Collapse' : 'Expand'}
                     >
@@ -196,6 +271,8 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
                 />
 
                 <Divider />
+
+
 
             </div>
 
