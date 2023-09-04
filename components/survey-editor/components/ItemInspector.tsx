@@ -1,12 +1,12 @@
 import React from 'react';
-import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsCardHeading, BsClipboard, BsCollectionFill, BsInfoCircle, BsStopCircle, BsTag, BsThreeDotsVertical, BsTrash, BsXLg } from 'react-icons/bs';
+import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsCardHeading, BsClipboard, BsCollectionFill, BsInfoCircle, BsStopCircle, BsThreeDotsVertical, BsTrash, BsXLg } from 'react-icons/bs';
 import { Button } from '@nextui-org/button';
-import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Input, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
+import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
 import { ExpressionArg, LocalizedString, SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import SurveyEndAttributeEditor from './item-types/SurveyEndAttributeEditor';
-import { SurveyItems } from 'case-editor-tools/surveys';
 import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
+import KeyEditor from './KeyEditor';
 
 
 interface ItemInspectorProps {
@@ -107,48 +107,7 @@ const InspectorActionMenu: React.FC<{
     )
 }
 
-const KeyEditor: React.FC<{
-    parentKey: string;
-    itemKey: string;
-    onItemKeyChange: (oldKey: string, newKey: string) => boolean;
-}> = ({ parentKey, itemKey, onItemKeyChange }) => {
-    const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
-
-    return <div>
-        <div className='flex items-center text-small font-bold'>
-            <span>
-                <BsTag className='text- text-default-500 me-2' />
-            </span>
-            Key:
-        </div>
-        <div className='overflow-x-scroll'>
-            <div className='flex items-center'>
-                <span className='font-mono text-tiny text-default-400 pt-1'>
-                    {parentKey}.
-                </span>
-                <Input
-                    aria-label='Item key'
-                    className='font-mono min-w-[200px] w-80'
-                    variant='bordered'
-                    size='md'
-                    placeholder='Enter a key for the item'
-                    isRequired
-
-                    validationState={itemKey.length === 0 ? 'invalid' : 'valid'}
-                    value={itemKey}
-                    onValueChange={(v) => {
-                        setErrorMsg(null);
-                        if (!onItemKeyChange([parentKey, itemKey].join('.'), [parentKey, v].join('.'))) {
-                            setErrorMsg('Key already exists. To avoid issues it is not possible to change the key to an existing one.');
-                        }
-                    }}
-                />
-            </div>
-            {errorMsg && <p className='text-danger-500 text-sm mt-1'>{errorMsg}</p>}
-        </div>
-    </div>
-}
 
 const localisedStringToMap = (loc?: LocalizedString[]): Map<string, string> => {
     const map = new Map<string, string>();

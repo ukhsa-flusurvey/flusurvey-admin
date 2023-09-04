@@ -3,6 +3,10 @@ import { Group } from 'case-editor-tools/surveys/types';
 import React from 'react';
 import { BsInfoCircle } from 'react-icons/bs';
 import { SurveyItem } from 'survey-engine/data_types';
+import SurveyEndAttributeEditor, { SurveyEndAttributes } from './item-types/SurveyEndAttributeEditor';
+import KeyEditor from './KeyEditor';
+import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
+import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
 
 interface NewItemDialogProps {
     currentMode: {
@@ -22,17 +26,20 @@ class SimpleGroup extends Group {
     }
 }
 
+interface ModalContentProps {
+    onClose: () => void;
+    parentKey?: string;
+}
+
+interface ModalContentForGroupActionProps extends ModalContentProps {
+    onSubmit: (key: string) => void;
+}
 
 const ModalContentForGroupAction = ({
     parentKey,
     onSubmit,
     onClose
-}: {
-    parentKey: string;
-    onSubmit: (key: string) => void;
-    onClose: () => void;
-
-}) => {
+}: ModalContentForGroupActionProps) => {
     const [itemKey, setItemKey] = React.useState<string>('');
 
     return <form
@@ -95,6 +102,64 @@ const ModalContentForGroupAction = ({
     </form>
 }
 
+interface ModalContentForSurveyEndActionProps extends ModalContentProps {
+    onSubmit: (surveyEndAttributes: SurveyEndAttributes) => void;
+}
+
+const ModalContentForSurveyEndAction = (props: ModalContentForSurveyEndActionProps) => {
+    const [itemProps, setItemProps] = React.useState<SurveyEndAttributes>({
+        key: '',
+        content: new Map(),
+    });
+
+    return <>
+        <ModalHeader className='bg-content2'>
+            New Survey End
+        </ModalHeader>
+        <Divider />
+        <ModalBody className='py-unit-lg px-unit-md'>
+            <KeyEditor
+                parentKey={props.parentKey || ''}
+                itemKey={itemProps.key.split('.').pop() || ''}
+                onItemKeyChange={(_, key) => {
+                    setItemProps({
+                        ...itemProps,
+                        key: key,
+                    });
+                    return true;
+                }}
+            />
+            <Divider />
+            <SurveyEndAttributeEditor
+                attributes={itemProps}
+                onChange={(newProps) => {
+                    setItemProps(newProps);
+                }}
+            />
+        </ModalBody>
+        <Divider />
+        <ModalFooter className='bg-content2'>
+            <Button
+                variant='ghost'
+                color='danger'
+                onClick={props.onClose}
+                type='button'
+            >
+                Cancel
+            </Button>
+            <Button
+                color='primary'
+                type='button'
+                onPress={() => {
+                    props.onSubmit(itemProps);
+                }}
+            >
+                Create
+            </Button>
+        </ModalFooter>
+    </>
+}
+
 
 const NewItemDialog: React.FC<NewItemDialogProps> = ({
     currentMode,
@@ -123,6 +188,24 @@ const NewItemDialog: React.FC<NewItemDialogProps> = ({
                             onClose={onClose} />
                     )}
                 </ModalContent>
+            case 'surveyEnd':
+                return <ModalContent>
+                    {(onClose) => (
+                        <ModalContentForSurveyEndAction
+                            parentKey={parentKey}
+                            onSubmit={(surveyEndAtttributes) => {
+                                const editor = new ItemEditor(undefined, { itemKey: surveyEndAtttributes.key, type: 'surveyEnd', isGroup: false });
+                                editor.setTitleComponent(
+                                    generateTitleComponent(surveyEndAtttributes.content)
+                                );
+                                editor.setCondition(surveyEndAtttributes.condition);
+                                const se = editor.getItem();
+                                onCreateItem(se, parentKey);
+                            }}
+                            onClose={onClose}
+                        />
+                    )}
+                </ModalContent>
             default:
                 return <ModalContent>
                     {(onClose) => (
@@ -144,9 +227,15 @@ const NewItemDialog: React.FC<NewItemDialogProps> = ({
 
     return (
         <Modal isOpen={isOpen} onOpenChange={() => {
-            console.log('close modal');
             props.onClose();
-        }}>
+        }}
+            isDismissable={false}
+
+            scrollBehavior='outside'
+            className='rounded-medium overflow-hidden'
+            size='2xl'
+
+        >
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -160,36 +249,3 @@ const NewItemDialog: React.FC<NewItemDialogProps> = ({
 };
 
 export default NewItemDialog;
-
-/*
-<>
-<ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-                        <ModalBody>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Nullam pulvinar risus non risus hendrerit venenatis.
-                                Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Nullam pulvinar risus non risus hendrerit venenatis.
-                                Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                            </p>
-                            <p>
-                                Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit
-                                dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis.
-                                Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod.
-                                Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur
-                                proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                            </p>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="danger" variant="light" onPress={onClose}>
-                                Close
-                            </Button>
-                            <Button color="primary" onPress={onClose}>
-                                Action
-                            </Button>
-                        </ModalFooter>
-</>
-*/

@@ -5,7 +5,7 @@ import React from 'react';
 import { BsBraces, BsBracesAsterisk, BsCardText, BsTextarea } from 'react-icons/bs';
 import { Expression } from 'survey-engine/data_types';
 
-interface SurveyEndAttributes {
+export interface SurveyEndAttributes {
     key: string;
     content: Map<string, string>;
     condition?: Expression;

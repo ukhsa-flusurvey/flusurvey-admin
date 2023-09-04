@@ -112,17 +112,7 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
 
             </div>
         </div>
-        <NewItemDialog
-            currentMode={newItemDialogMode}
-            onCreateItem={(item, path) => {
-                props.editorInstance.addExistingSurveyItem(item, path);
-                setNewItemDialogMode(null);
-                setCounter(counter + 1);
-            }}
-            onClose={() => {
-                setNewItemDialogMode(null);
-            }}
-        />
+
         <MoveSurveyItemDialog
             isOpen={itemToMove !== null}
             onOpenChange={(isOpen) => {
@@ -162,6 +152,17 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                 setSelectedItem(null);
                 console.warn('references not checked')
                 setItemToMove(null);
+            }}
+        />
+        <NewItemDialog
+            currentMode={newItemDialogMode}
+            onCreateItem={(item, path) => {
+                props.editorInstance.addExistingSurveyItem(item, path);
+                setNewItemDialogMode(null);
+                setCounter(counter + 1);
+            }}
+            onClose={() => {
+                setNewItemDialogMode(null);
             }}
         />
     </>
