@@ -103,8 +103,10 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                                 setItemToMove({ ...selectedItem });
                                 setSelectedItem(null);
                             }}
-                        // onItemUpdate
-                        // onItemDelete
+                            onItemChange={(item) => {
+                                props.editorInstance.updateSurveyItem(item);
+                                setSelectedItem({ ...item });
+                            }}
                         />
                     </div>}
 

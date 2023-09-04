@@ -1,9 +1,12 @@
 import React from 'react';
-import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsAt, BsCardHeading, BsClipboard, BsCollectionFill, BsHash, BsInfoCircle, BsKeyFill, BsStopCircle, BsTag, BsThreeDotsVertical, BsTrash, BsX, BsXLg } from 'react-icons/bs';
+import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsCardHeading, BsClipboard, BsCollectionFill, BsInfoCircle, BsStopCircle, BsTag, BsThreeDotsVertical, BsTrash, BsXLg } from 'react-icons/bs';
 import { Button } from '@nextui-org/button';
 import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Input, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
-import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
-import MoveSurveyItemDialog from './MoveSurveyItemDialog';
+import { ExpressionArg, LocalizedString, SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
+import SurveyEndAttributeEditor from './item-types/SurveyEndAttributeEditor';
+import { SurveyItems } from 'case-editor-tools/surveys';
+import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
+import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 
 
 interface ItemInspectorProps {
@@ -17,6 +20,7 @@ interface ItemInspectorProps {
     ) => void;
     onItemKeyChange: (oldKey: string, newKey: string) => boolean;
     onWantsToMoveItem: (itemKey: string) => void;
+    onItemChange: (item: SurveyItem) => void;
 }
 
 const HeadingWithIcon: React.FC<{
@@ -146,8 +150,18 @@ const KeyEditor: React.FC<{
     </div>
 }
 
+const localisedStringToMap = (loc?: LocalizedString[]): Map<string, string> => {
+    const map = new Map<string, string>();
+    if (!loc) return map;
+    loc.forEach((item) => {
+        map.set(item.code, item.parts.map(p => (p as ExpressionArg).str).join(''));
+    });
+    return map;
+}
+
 const ItemInspector: React.FC<ItemInspectorProps> = ({
     selectedItem,
+    onItemChange,
     ...props
 }) => {
     const itemType: null | 'surveyEnd' | 'item' | 'group' | 'pageBreak' = React.useMemo(() => {
@@ -165,6 +179,39 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
                 return 'item';
         }
     }, [selectedItem]);
+
+    const attributeEditor = React.useMemo(() => {
+        if (!selectedItem) return null;
+
+        if (itemType === 'surveyEnd') {
+            // todo: item to attributes
+            const content = (selectedItem as SurveySingleItem).components?.items.find(item => item.role === 'title');
+            const attributes = {
+                key: selectedItem.key,
+                content: localisedStringToMap(content?.content as LocalizedString[]),
+            }
+            return <SurveyEndAttributeEditor
+                attributes={attributes}
+                onChange={(attributes) => {
+                    const editor = new ItemEditor(undefined, { itemKey: selectedItem.key, type: 'surveyEnd', isGroup: false });
+
+                    editor.setTitleComponent(
+                        generateTitleComponent(attributes.content)
+                    );
+
+                    // CONDITION
+                    editor.setCondition(attributes.condition);
+
+                    const se = editor.getItem();
+
+                    onItemChange(se);
+
+                }}
+            />
+        }
+
+        return null;
+    }, [itemType, selectedItem, onItemChange]);
 
     const heading = React.useMemo(() => {
         if (!itemType) return null;
@@ -272,7 +319,7 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
 
                 <Divider />
 
-
+                {attributeEditor}
 
             </div>
 
