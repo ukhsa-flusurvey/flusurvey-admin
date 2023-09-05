@@ -150,6 +150,7 @@ const ModalContentForSurveyEndAction = (props: ModalContentForSurveyEndActionPro
             <Button
                 color='primary'
                 type='button'
+                isDisabled={!itemProps.key}
                 onPress={() => {
                     props.onSubmit(itemProps);
                 }}

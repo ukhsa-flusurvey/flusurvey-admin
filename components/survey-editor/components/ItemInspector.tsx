@@ -7,6 +7,9 @@ import SurveyEndAttributeEditor from './item-types/SurveyEndAttributeEditor';
 import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 import KeyEditor from './KeyEditor';
+import SurveyGroupItemAttributeEditor from './item-types/SurveyGroupItemAttributeEditor';
+import PageBreakAttributeEditor from './item-types/PageBreakAttributeEditor';
+import SurveySingleItemAttributeEditor from './item-types/SurveySingleItemAttributeEditor';
 
 
 interface ItemInspectorProps {
@@ -139,38 +142,6 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
         }
     }, [selectedItem]);
 
-    const attributeEditor = React.useMemo(() => {
-        if (!selectedItem) return null;
-
-        if (itemType === 'surveyEnd') {
-            // todo: item to attributes
-            const content = (selectedItem as SurveySingleItem).components?.items.find(item => item.role === 'title');
-            const attributes = {
-                key: selectedItem.key,
-                content: localisedStringToMap(content?.content as LocalizedString[]),
-            }
-            return <SurveyEndAttributeEditor
-                attributes={attributes}
-                onChange={(attributes) => {
-                    const editor = new ItemEditor(undefined, { itemKey: selectedItem.key, type: 'surveyEnd', isGroup: false });
-
-                    editor.setTitleComponent(
-                        generateTitleComponent(attributes.content)
-                    );
-
-                    // CONDITION
-                    editor.setCondition(attributes.condition);
-
-                    const se = editor.getItem();
-
-                    onItemChange(se);
-
-                }}
-            />
-        }
-
-        return null;
-    }, [itemType, selectedItem, onItemChange]);
 
     const heading = React.useMemo(() => {
         if (!itemType) return null;
@@ -204,6 +175,43 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
     }, [itemType]);
 
     const parentKey = selectedItem?.key.split('.').slice(0, -1).join('.');
+
+    const attributeEditor = React.useMemo(() => {
+        if (!selectedItem) return null;
+
+        if (itemType === 'surveyEnd') {
+            // todo: item to attributes
+            const content = (selectedItem as SurveySingleItem).components?.items.find(item => item.role === 'title');
+            const attributes = {
+                key: selectedItem.key,
+                content: localisedStringToMap(content?.content as LocalizedString[]),
+            }
+            return <SurveyEndAttributeEditor
+                attributes={attributes}
+                onChange={(attributes) => {
+                    const editor = new ItemEditor(undefined, { itemKey: selectedItem.key, type: 'surveyEnd', isGroup: false });
+                    editor.setTitleComponent(
+                        generateTitleComponent(attributes.content)
+                    );
+                    // CONDITION
+                    editor.setCondition(attributes.condition);
+                    const se = editor.getItem();
+                    onItemChange(se);
+                }}
+            />
+        } else if (itemType === 'item') {
+            return <SurveySingleItemAttributeEditor
+                surveyItem={selectedItem as SurveySingleItem}
+            />
+        } else if (itemType === 'group') {
+            return <SurveyGroupItemAttributeEditor
+            />
+        } else if (itemType === 'pageBreak') {
+            return <PageBreakAttributeEditor />;
+        } else {
+            return <p>Unexpected item type: {itemType}</p>
+        }
+    }, [itemType, selectedItem, onItemChange]);
 
     return (
         <div className='w-full bg-background overflow-y-scroll'>
@@ -267,14 +275,14 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
                     </Tooltip>
                 </div>
             </div>
-            <div className='py-unit-lg px-unit-sm space-y-unit-sm'>
-
-
-                <KeyEditor
-                    parentKey={parentKey || ''}
-                    itemKey={selectedItem?.key.split('.').slice(-1)[0] || ''}
-                    onItemKeyChange={props.onItemKeyChange}
-                />
+            <div className='py-unit-lg px-unit-sm'>
+                <div className='mb-unit-md'>
+                    <KeyEditor
+                        parentKey={parentKey || ''}
+                        itemKey={selectedItem?.key.split('.').slice(-1)[0] || ''}
+                        onItemKeyChange={props.onItemKeyChange}
+                    />
+                </div>
 
                 <Divider />
 
@@ -282,7 +290,7 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
 
             </div>
 
-        </div>
+        </div >
     );
 };
 
