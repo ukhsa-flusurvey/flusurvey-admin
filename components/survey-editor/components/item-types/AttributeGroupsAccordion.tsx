@@ -1,26 +1,64 @@
 import { Accordion, AccordionItem } from '@nextui-org/react';
 import React from 'react';
+import { Disclosure, Transition } from '@headlessui/react'
+import { BsChevronRight } from 'react-icons/bs';
+
+export interface AttributeGroup {
+    key: string;
+    title: string | React.ReactNode;
+    icon?: React.ReactNode;
+    content: React.ReactNode;
+}
 
 interface AttributeGroupsAccordionProps {
-    attributeGroups: Array<{
-        key: string;
-        title: string | React.ReactNode;
-        icon?: React.ReactNode;
-        content: React.ReactNode;
-    }>;
+    attributeGroups: Array<AttributeGroup>;
 }
 
 const AttributeGroupsAccordion: React.FC<AttributeGroupsAccordionProps> = (props) => {
     return (
-        <Accordion
-            className='p-0'
-            selectionMode='multiple'
-        >
+        <>
             {props.attributeGroups.map(group => (
-                <AccordionItem
+                <Disclosure
+                    key={group.key}
+                    as={'div'}
+                //className='p-0'
+                // selectionMode='multiple'
+
+                >
+                    <Disclosure.Button
+                        className='flex items-center gap-unit-sm py-unit-sm ui-not-open:border-b ui-not-open:border-default-200 w-full'
+                    >
+                        <span className='text-secondary-300'>
+                            {group.icon}
+                        </span>
+                        <span className='font-bold text-small text-start grow'>
+                            {group.title}
+                        </span>
+                        <span>
+                            <BsChevronRight className='text-secondary-300 ui-open:rotate-90 transition' />
+                        </span>
+                    </Disclosure.Button>
+                    <Transition
+                        enter="transition duration-100 ease-out"
+                        enterFrom="transform scale-95 opacity-0"
+                        enterTo="transform scale-100 opacity-100"
+                        leave="transition duration-75 ease-out"
+                        leaveFrom="transform scale-100 opacity-100"
+                        leaveTo="transform scale-95 opacity-0"
+                    >
+                        <Disclosure.Panel
+                            className='pb-unit-lg pt-unit-2'
+                        >
+                            <div className='space-unit-sm px-unit-sm border-s-4 border-secondary-200 '>
+                                {group.content}
+                            </div>
+                        </Disclosure.Panel>
+                    </Transition>
+                </Disclosure>
+                /*<AccordionItem
                     key={group.key}
                     title={group.title}
-                    startContent={<span className='text-default-400'>
+                    startContent={<span className='text-secondary-300'>
                         {group.icon}
                     </span>}
                     textValue={'accordion-item-' + group.key}
@@ -29,12 +67,14 @@ const AttributeGroupsAccordion: React.FC<AttributeGroupsAccordionProps> = (props
                         content: 'pb-unit-lg'
                     }}
                 >
-                    <div className='space-unit-sm px-unit-sm border-s border-secondary-200'>
+                    <div className='space-unit-sm px-unit-sm border-s-4 border-secondary-200'
+
+                    >
                         {group.content}
                     </div>
-                </AccordionItem>
+                </AccordionItem>*/
             ))}
-        </Accordion>
+        </>
     );
 };
 
