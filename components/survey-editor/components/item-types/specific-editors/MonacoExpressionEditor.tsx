@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@nextui-org/react';
 import React from 'react';
 import { BsCheck2, BsExclamationTriangleFill, BsX } from 'react-icons/bs';
 import * as yaml from 'js-yaml';
-import { Expression } from 'survey-engine/data_types';
+import { Expression, ExpressionArg, isExpression } from 'survey-engine/data_types';
 
 interface MonacoExpressionEditorProps {
     expression?: Expression;
@@ -13,6 +13,27 @@ interface MonacoExpressionEditorProps {
 const supportedExpressionNames = [
     'responseHasKeysAny',
 ]
+
+const checkExpression = (expression: any): boolean => {
+    if (!expression) return false;
+    if (typeof expression !== 'object') return false;
+    if (!expression.name) return false;
+    if (!expression.data) return false;
+
+    const argsOk = expression.data.every((d: ExpressionArg) => {
+        if (!d) return false;
+        if (typeof d !== 'object') return false;
+        if (!d.dtype && d.str) return true;
+        if (!d.dtype) return false;
+        if (d.dtype === 'exp') {
+            return checkExpression(d.exp);
+        }
+        return true;
+    });
+    if (!argsOk) return false;
+    return true;
+}
+
 
 const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) => {
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
@@ -38,7 +59,7 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                     <BsExclamationTriangleFill className='text-default-500' />
                 </span>
                 <span className='text-small'>
-                    This is a temporary editor UI for expressions. Define the expression in YAML format.
+                    This is a temporary editor UI for expressions where you can use YAML format to edit the raw data stored in the model.
                 </span>
             </div>
 
@@ -102,6 +123,12 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                         try {
                             yaml.loadAll(e, (doc) => {
                                 if (doc) {
+                                    const expression = doc as Expression;
+                                    if (!checkExpression(expression)) {
+                                        setContentAsExpression(undefined);
+                                        setErrorMsg('please check the syntax of the expression');
+                                        return;
+                                    }
                                     setContentAsExpression(doc as Expression);
                                     setErrorMsg(undefined);
                                 }
@@ -109,11 +136,11 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                         } catch (e) {
                             console.log(e);
                             setContentAsExpression(undefined);
-                            setErrorMsg('content could not be parsed');
+                            setErrorMsg('please check the syntax of the expression');
                         }
                     }}
                 />
-                {errorMsg && <p className='absolute bottom-0 bg-red-50/50 w-full text-center text-danger-500 text-sm py-1 px-unit-md font-bold'>{errorMsg}</p>}
+                {errorMsg && <p className='absolute bottom-0 bg-red-50/80 w-full text-center text-danger-500 text-sm py-1 px-unit-md font-bold'>{errorMsg}</p>}
             </div>
             {editorContent !== expressionAsYaml &&
                 <div className='flex justify-end'>
@@ -125,7 +152,10 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                             color='danger'
                             className='text-2xl'
                             onPress={() => {
-                                setEditorContent(expressionAsYaml);
+                                if (confirm('Are you sure you want to discard the changes?')) {
+                                    setEditorContent(expressionAsYaml);
+                                    setErrorMsg(undefined);
+                                }
                             }}
                         >
                             <BsX />
