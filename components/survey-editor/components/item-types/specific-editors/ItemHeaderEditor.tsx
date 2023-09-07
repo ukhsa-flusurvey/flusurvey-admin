@@ -31,6 +31,9 @@ const ItemHeaderEditor: React.FC<ItemHeaderEditorProps> = (props) => {
                 variant='bordered'
                 placeholder="Enter title here"
                 autoComplete='off'
+                classNames={{
+                    inputWrapper: 'bg-white'
+                }}
                 value={currentTitle || ''}
                 onValueChange={(value) => {
                     if (isSimpleTitle) {
@@ -84,6 +87,9 @@ const ItemHeaderEditor: React.FC<ItemHeaderEditorProps> = (props) => {
                 label="Subtitle"
                 variant='bordered'
                 autoComplete='off'
+                classNames={{
+                    inputWrapper: 'bg-white'
+                }}
                 placeholder="Enter subtitle here"
                 description="This text will be displayed below the title with a smaller font size."
                 value={props.genericProps.questionSubText?.get(selectedLanguage) || ''}

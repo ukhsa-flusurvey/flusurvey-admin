@@ -84,7 +84,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
     // console.log(itemProps);
 
     return (<>
-        <p className='font-bold py-2 bg-default-100 px-unit-sm rounded-medium my-2'>
+        <p className='font-bold py-2 my-2'>
             <span className='me-1 font-normal text-tiny block'>
                 Type:
             </span>

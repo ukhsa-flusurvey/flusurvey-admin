@@ -25,7 +25,7 @@ const AttributeGroupsAccordion: React.FC<AttributeGroupsAccordionProps> = (props
                     defaultOpen={group.defaultOpen}
                 >
                     <Disclosure.Button
-                        className='flex items-center gap-unit-sm py-unit-sm ui-not-open:border-b ui-not-open:border-default-200 w-full'
+                        className='flex items-center gap-unit-sm py-unit-sm border-b ui-not-open:border-default-200 w-full'
                     >
                         <span className='text-secondary-300'>
                             {group.icon}
@@ -48,7 +48,7 @@ const AttributeGroupsAccordion: React.FC<AttributeGroupsAccordionProps> = (props
                         <Disclosure.Panel
                             className='pb-unit-lg pt-unit-2'
                         >
-                            <div className='space-unit-sm px-unit-sm border-s-4 border-secondary-200 '>
+                            <div className='space-unit-sm px-unit-sm border-s-4 border-secondary-200 bg-default-50 py-unit-sm rounded-r-small shadow-md'>
                                 {group.content}
                             </div>
                         </Disclosure.Panel>

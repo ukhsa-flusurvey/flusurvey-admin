@@ -67,12 +67,12 @@ const InspectorActionMenu: React.FC<{
     return (
         <Dropdown
             placement='bottom-end'
-
         >
             <DropdownTrigger>
                 <Button
                     variant="light"
                     isIconOnly
+                    size='sm'
                 >
                     <BsThreeDotsVertical />
                 </Button>
@@ -214,75 +214,75 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
     return (
         <div className='w-full bg-background overflow-y-scroll'>
             <div className='sticky bg-white z-10 top-0 p-unit-sm border-b border-default-400 drop-sshadow'>
-                <div className='flex gap-unit-sm items-center  '>
-                    {heading}
-                    <span className='grow'></span>
-                    <InspectorActionMenu
-                        onActionSelected={(action) => {
-                            switch (action) {
-                                case 'copy':
-                                    if (selectedItem) {
-                                        const content = JSON.stringify(selectedItem, undefined, 2)
-                                        navigator.clipboard.writeText(content);
-                                    }
-                                    break;
-                                case 'move':
-                                    if (selectedItem) {
-                                        props.onWantsToMoveItem(selectedItem.key);
-                                    }
-                                    break;
-                                case 'delete':
-                                    if (selectedItem && confirm('Are you sure you want to delete this item?')) {
-                                        props.onDeleteItem(selectedItem?.key || '');
-                                    }
-                                    break;
-                            }
-                        }}
-                    />
-                    <Tooltip
-                        content={props.isExpanded ? 'Collapse' : 'Expand'}
-                    >
-                        <Button
-                            variant='light'
-                            isIconOnly
-                            size='sm'
-                            className='text-lg'
-                            type='button'
-                            onPress={() => {
-                                props.onExpandToggle(!props.isExpanded);
+                <div className='flex items-center overflow-x-scroll '>
+                    <div className='grow'>
+                        <KeyEditor
+                            parentKey={parentKey || ''}
+                            itemKey={selectedItem?.key.split('.').slice(-1)[0] || ''}
+                            onItemKeyChange={props.onItemKeyChange}
+                            requireChangeConfirm={true}
+                        />
+                    </div>
+
+                    <div className='border-l flex ms-2'>
+                        <InspectorActionMenu
+                            onActionSelected={(action) => {
+                                switch (action) {
+                                    case 'copy':
+                                        if (selectedItem) {
+                                            const content = JSON.stringify(selectedItem, undefined, 2)
+                                            navigator.clipboard.writeText(content);
+                                        }
+                                        break;
+                                    case 'move':
+                                        if (selectedItem) {
+                                            props.onWantsToMoveItem(selectedItem.key);
+                                        }
+                                        break;
+                                    case 'delete':
+                                        if (selectedItem && confirm('Are you sure you want to delete this item?')) {
+                                            props.onDeleteItem(selectedItem?.key || '');
+                                        }
+                                        break;
+                                }
                             }}
+                        />
+                        <Tooltip
+                            content={props.isExpanded ? 'Collapse' : 'Expand'}
                         >
-                            {props.isExpanded ? <BsArrowsAngleContract /> : <BsArrowsAngleExpand />}
-                        </Button>
-                    </Tooltip>
-                    <Tooltip
-                        content={'Close item'}
-                    >
-                        <Button
-                            variant='light'
-                            isIconOnly
-                            size='sm'
-                            className='text-lg'
-                            type='button'
-                            onPress={() => {
-                                props.onClearSelection();
-                            }}
+                            <Button
+                                variant='light'
+                                isIconOnly
+                                size='sm'
+                                // className='text-lg'
+                                type='button'
+                                onPress={() => {
+                                    props.onExpandToggle(!props.isExpanded);
+                                }}
+                            >
+                                {props.isExpanded ? <BsArrowsAngleContract /> : <BsArrowsAngleExpand />}
+                            </Button>
+                        </Tooltip>
+                        <Tooltip
+                            content={'Close item'}
                         >
-                            <BsXLg />
-                        </Button>
-                    </Tooltip>
+                            <Button
+                                variant='light'
+                                isIconOnly
+                                size='sm'
+                                // className='text-lg'
+                                type='button'
+                                onPress={() => {
+                                    props.onClearSelection();
+                                }}
+                            >
+                                <BsXLg />
+                            </Button>
+                        </Tooltip>
+                    </div>
                 </div>
             </div>
-            <div className='py-unit-lg px-unit-sm'>
-                <div className='mb-unit-md'>
-                    <KeyEditor
-                        parentKey={parentKey || ''}
-                        itemKey={selectedItem?.key.split('.').slice(-1)[0] || ''}
-                        onItemKeyChange={props.onItemKeyChange}
-                    />
-                </div>
-
-                <Divider />
+            <div className='pb-unit-lg px-unit-sm'>
 
                 {attributeEditor}
 

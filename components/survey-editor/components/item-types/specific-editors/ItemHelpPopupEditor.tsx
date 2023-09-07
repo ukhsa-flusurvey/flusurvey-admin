@@ -50,10 +50,12 @@ const HelpGroupEditor: React.FC<{
                             id={'help-item-class-name' + i}
                             autoComplete='off'
                             label='Class name'
+                            placeholder='Enter class name here to style the help item'
                             variant='bordered'
                             classNames={{
                                 inputWrapper: 'bg-white'
                             }}
+                            size='sm'
                             value={className || ''}
                             onValueChange={(value) => {
                                 const newContent = [...props.helpGroupContent];
