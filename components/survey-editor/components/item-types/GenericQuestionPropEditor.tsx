@@ -1,17 +1,16 @@
 import React from 'react';
 import AttributeGroupsAccordion, { AttributeGroup } from './AttributeGroupsAccordion';
-import { BsCheckCircle, BsChevronBarDown, BsChevronBarUp, BsEye, BsFileEarmarkCode, BsHSquare, BsSubscript } from 'react-icons/bs';
+import { BsCheckCircle, BsChevronBarDown, BsChevronBarUp, BsEye, BsFileEarmarkCode, BsHSquare, BsInfoCircle, BsSubscript } from 'react-icons/bs';
 import ItemConditionEditor from './ItemConditionEditor';
 import { GenericQuestionProps } from 'case-editor-tools/surveys/types';
-import { Input, Textarea } from '@nextui-org/input';
-import { Divider, Switch } from '@nextui-org/react';
-import LanguageSelector from '@/components/LanguageSelector';
 import ItemHeaderEditor from './specific-editors/ItemHeaderEditor';
+import ItemHelpPopupEditor from './specific-editors/ItemHelpPopupEditor';
 
 
 interface GenericQuestionPropEditorProps {
-    genericProps?: GenericQuestionProps;
+    genericProps: GenericQuestionProps;
     specificEditGroup: AttributeGroup;
+    onChange: (genericProps: GenericQuestionProps) => void;
 }
 
 
@@ -27,8 +26,25 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                 {
                     key: 'heading',
                     title: 'Header',
+                    defaultOpen: true,
                     icon: <BsHSquare />,
-                    content: <ItemHeaderEditor />
+                    content: <ItemHeaderEditor
+                        genericProps={genericProps}
+                        onChange={(newProps) => {
+                            props.onChange(newProps);
+                        }}
+                    />
+                },
+                {
+                    key: 'helpgroup',
+                    title: 'Help popup',
+                    icon: <BsInfoCircle />,
+                    content: <ItemHelpPopupEditor
+                        genericProps={genericProps}
+                        onChange={(newProps) => {
+                            props.onChange(newProps);
+                        }}
+                    />
                 },
                 {
                     key: 'startcontent',
@@ -76,11 +92,14 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     )
                 },
                 {
-                    key: 'metadata',
-                    title: 'Metadata',
+                    key: 'advnaced',
+                    title: 'Advanced',
                     icon: <BsFileEarmarkCode />,
                     content: (
-                        <div>todo</div>
+                        <div>
+                            <p>confidential mode</p>
+                            <p>metadata</p>
+                        </div>
                     )
                 },
             ]}

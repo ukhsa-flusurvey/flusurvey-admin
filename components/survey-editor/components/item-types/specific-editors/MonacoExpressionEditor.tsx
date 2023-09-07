@@ -74,7 +74,6 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                         },
                         rounedSelection: true,
                         suggestionDelay: 100,
-
                     }}
 
                     beforeMount={(monaco) => {
@@ -178,7 +177,8 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
                             <BsCheck2 />
                         </Button>
                     </Tooltip>
-                </div>}
+                </div>
+            }
         </div>
 
     );

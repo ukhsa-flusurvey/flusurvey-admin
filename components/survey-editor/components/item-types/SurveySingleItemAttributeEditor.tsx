@@ -62,7 +62,8 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
             </NotImplemented>)
         case 'singleChoice':
             return (<SingleChoiceAttributeEditor
-
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
             />)
         case 'multipleChoice':
             return (<NotImplemented>

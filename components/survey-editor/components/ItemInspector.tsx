@@ -2,7 +2,7 @@ import React from 'react';
 import { BsArrowReturnLeft, BsArrowsAngleContract, BsArrowsAngleExpand, BsArrowsMove, BsCardHeading, BsClipboard, BsCollectionFill, BsInfoCircle, BsStopCircle, BsThreeDotsVertical, BsTrash, BsXLg } from 'react-icons/bs';
 import { Button } from '@nextui-org/button';
 import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@nextui-org/react';
-import { ExpressionArg, LocalizedString, SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
+import { LocalizedString, SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import SurveyEndAttributeEditor from './item-types/SurveyEndAttributeEditor';
 import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
@@ -10,6 +10,7 @@ import KeyEditor from './KeyEditor';
 import SurveyGroupItemAttributeEditor from './item-types/SurveyGroupItemAttributeEditor';
 import PageBreakAttributeEditor from './item-types/PageBreakAttributeEditor';
 import SurveySingleItemAttributeEditor from './item-types/SurveySingleItemAttributeEditor';
+import { localisedStringToMap } from './item-types/utils';
 
 
 interface ItemInspectorProps {
@@ -111,15 +112,6 @@ const InspectorActionMenu: React.FC<{
 }
 
 
-
-const localisedStringToMap = (loc?: LocalizedString[]): Map<string, string> => {
-    const map = new Map<string, string>();
-    if (!loc) return map;
-    loc.forEach((item) => {
-        map.set(item.code, item.parts.map(p => (p as ExpressionArg).str).join(''));
-    });
-    return map;
-}
 
 const ItemInspector: React.FC<ItemInspectorProps> = ({
     selectedItem,

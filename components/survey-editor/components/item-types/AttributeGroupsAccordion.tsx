@@ -8,6 +8,7 @@ export interface AttributeGroup {
     title: string | React.ReactNode;
     icon?: React.ReactNode;
     content: React.ReactNode;
+    defaultOpen?: boolean;
 }
 
 interface AttributeGroupsAccordionProps {
@@ -21,9 +22,7 @@ const AttributeGroupsAccordion: React.FC<AttributeGroupsAccordionProps> = (props
                 <Disclosure
                     key={group.key}
                     as={'div'}
-                //className='p-0'
-                // selectionMode='multiple'
-
+                    defaultOpen={group.defaultOpen}
                 >
                     <Disclosure.Button
                         className='flex items-center gap-unit-sm py-unit-sm ui-not-open:border-b ui-not-open:border-default-200 w-full'
