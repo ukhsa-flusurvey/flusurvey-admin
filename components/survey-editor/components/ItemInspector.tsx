@@ -202,12 +202,18 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
         } else if (itemType === 'item') {
             return <SurveySingleItemAttributeEditor
                 surveyItem={selectedItem as SurveySingleItem}
+                onItemChange={onItemChange}
             />
         } else if (itemType === 'group') {
             return <SurveyGroupItemAttributeEditor
+                surveyItem={selectedItem as SurveyGroupItem}
+                onItemChange={onItemChange}
             />
         } else if (itemType === 'pageBreak') {
-            return <PageBreakAttributeEditor />;
+            return <PageBreakAttributeEditor
+                surveyItem={selectedItem as SurveyGroupItem}
+                onItemChange={onItemChange}
+            />;
         } else {
             return <p>Unexpected item type: {itemType}</p>
         }

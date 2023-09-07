@@ -2,11 +2,17 @@ import React from 'react';
 import AttributeGroupsAccordion from './AttributeGroupsAccordion';
 import { BsEye } from 'react-icons/bs';
 import ItemConditionEditor from './ItemConditionEditor';
+import { SurveyGroupItem } from 'survey-engine/data_types';
 
 interface SurveyGroupItemAttributeEditorProps {
+    surveyItem: SurveyGroupItem;
+    onItemChange: (item: SurveyGroupItem) => void;
 }
 
-const SurveyGroupItemAttributeEditor: React.FC<SurveyGroupItemAttributeEditorProps> = (props) => {
+const SurveyGroupItemAttributeEditor: React.FC<SurveyGroupItemAttributeEditorProps> = ({
+    surveyItem,
+    onItemChange,
+}) => {
     return (
         <AttributeGroupsAccordion
             attributeGroups={[
@@ -15,7 +21,13 @@ const SurveyGroupItemAttributeEditor: React.FC<SurveyGroupItemAttributeEditorPro
                     title: 'Condition',
                     icon: <BsEye />,
                     content: (
-                        <ItemConditionEditor />
+                        <ItemConditionEditor
+                            condition={surveyItem.condition}
+                            onChange={(condition) => {
+                                surveyItem.condition = condition;
+                                onItemChange(surveyItem);
+                            }}
+                        />
                     )
                 }
             ]}

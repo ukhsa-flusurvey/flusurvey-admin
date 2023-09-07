@@ -1,11 +1,13 @@
 import React from 'react';
 import AttributeGroupsAccordion, { AttributeGroup } from './AttributeGroupsAccordion';
-import { BsBraces, BsCardHeading, BsCheckCircle, BsChevronBarDown, BsChevronBarUp, BsEye, BsFileEarmarkCode, BsHSquare, BsSubscript, BsSuperscript, BsTypeH1 } from 'react-icons/bs';
+import { BsCheckCircle, BsChevronBarDown, BsChevronBarUp, BsEye, BsFileEarmarkCode, BsHSquare, BsSubscript } from 'react-icons/bs';
 import ItemConditionEditor from './ItemConditionEditor';
 import { GenericQuestionProps } from 'case-editor-tools/surveys/types';
 import { Input, Textarea } from '@nextui-org/input';
 import { Divider, Switch } from '@nextui-org/react';
 import LanguageSelector from '@/components/LanguageSelector';
+import ItemHeaderEditor from './specific-editors/ItemHeaderEditor';
+
 
 interface GenericQuestionPropEditorProps {
     genericProps?: GenericQuestionProps;
@@ -13,52 +15,10 @@ interface GenericQuestionPropEditorProps {
 }
 
 
-
 const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
     genericProps,
     ...props
 }) => {
-    const [testV, setTestV] = React.useState<string>('');
-
-    const headerEditor = (
-        <div className='flex flex-col gap-unit-sm'>
-            <LanguageSelector />
-            <Switch size='sm'>
-                Simple title
-            </Switch>
-            <Input
-                id='item-title'
-                label="Title"
-                variant='flat'
-                placeholder="Enter title here"
-                value={testV}
-                onValueChange={(v) => setTestV(v)}
-                description="This text will be displayed above the item."
-            />
-            <Divider />
-            <Input
-                id='item-subtitle'
-                label="Subtitle"
-                variant='flat'
-                placeholder="Enter subtitle here"
-                description="This text will be displayed below the title with a smaller font size."
-            />
-
-            <Switch size='sm'>
-                Use help popup
-            </Switch>
-            <Textarea
-                id='item-helpgroup'
-                label="Content for help"
-                variant='flat'
-                placeholder="Enter help content"
-
-            />
-            <Switch size='sm'>
-                Sticky header
-            </Switch>
-        </div>
-    );
 
 
     return (
@@ -68,7 +28,7 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     key: 'heading',
                     title: 'Header',
                     icon: <BsHSquare />,
-                    content: headerEditor
+                    content: <ItemHeaderEditor />
                 },
                 {
                     key: 'startcontent',
@@ -108,7 +68,11 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     title: 'Condition',
                     icon: <BsEye />,
                     content: (
-                        <ItemConditionEditor />
+                        <ItemConditionEditor
+                            onChange={() => {
+                                console.log('todo')
+                            }}
+                        />
                     )
                 },
                 {

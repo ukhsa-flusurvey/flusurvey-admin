@@ -62,7 +62,15 @@ const SurveyEndAttributeEditor: React.FC<SurveyEndAttributeEditorProps> = (props
                     title: 'Condition',
                     icon: <BsEye />,
                     content: (
-                        <ItemConditionEditor />
+                        <ItemConditionEditor
+                            condition={props.attributes.condition}
+                            onChange={(condition) => {
+                                props.onChange({
+                                    ...props.attributes,
+                                    condition: condition,
+                                });
+                            }}
+                        />
                     )
                 }
             ]}

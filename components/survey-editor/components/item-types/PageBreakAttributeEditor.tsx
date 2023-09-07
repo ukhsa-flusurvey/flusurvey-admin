@@ -2,11 +2,17 @@ import React from 'react';
 import AttributeGroupsAccordion from './AttributeGroupsAccordion';
 import { BsEye } from 'react-icons/bs';
 import ItemConditionEditor from './ItemConditionEditor';
+import { SurveySingleItem } from 'survey-engine/data_types';
 
 interface PageBreakAttributeEditorProps {
+    surveyItem: SurveySingleItem;
+    onItemChange: (item: SurveySingleItem) => void;
 }
 
-const PageBreakAttributeEditor: React.FC<PageBreakAttributeEditorProps> = (props) => {
+const PageBreakAttributeEditor: React.FC<PageBreakAttributeEditorProps> = ({
+    surveyItem,
+    onItemChange,
+}) => {
     return (
         <AttributeGroupsAccordion
             attributeGroups={[
@@ -15,7 +21,13 @@ const PageBreakAttributeEditor: React.FC<PageBreakAttributeEditorProps> = (props
                     title: 'Condition',
                     icon: <BsEye />,
                     content: (
-                        <ItemConditionEditor />
+                        <ItemConditionEditor
+                            condition={surveyItem.condition}
+                            onChange={(condition) => {
+                                surveyItem.condition = condition;
+                                onItemChange(surveyItem);
+                            }}
+                        />
                     )
                 }
             ]}

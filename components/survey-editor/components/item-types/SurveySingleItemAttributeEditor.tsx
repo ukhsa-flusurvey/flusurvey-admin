@@ -1,12 +1,12 @@
 import React from 'react';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import GenericQuestionPropEditor from './GenericQuestionPropEditor';
 import NotImplemented from '@/components/NotImplemented';
 import SingleChoiceAttributeEditor from './specific-editors/SingleChoiceAttributeEditor';
 
 
 interface SurveySingleItemAttributeEditorProps {
     surveyItem?: SurveySingleItem;
+    onItemChange: (item: SurveySingleItem) => void;
 }
 
 const determineItemType = (item: SurveySingleItem): string => {
