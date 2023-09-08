@@ -1,12 +1,13 @@
-import { Button, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { Button, Divider, Input, Listbox, ListboxItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { Group } from 'case-editor-tools/surveys/types';
 import React from 'react';
-import { BsInfoCircle } from 'react-icons/bs';
-import { SurveyItem } from 'survey-engine/data_types';
+import { Bs123, BsArrowsExpand, BsCalendar2, BsCardText, BsCheck2Square, BsClock, BsCreditCard2Front, BsInfoCircle, BsInputCursorText, BsMenuButton, BsSliders, BsTable, BsTextarea, BsTextareaResize, BsUiChecks, BsUiRadios, BsUiRadiosGrid } from 'react-icons/bs';
+import { SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import SurveyEndAttributeEditor, { SurveyEndAttributes } from './item-types/SurveyEndAttributeEditor';
 import KeyEditor from './KeyEditor';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
+import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 
 interface NewItemDialogProps {
     currentMode: {
@@ -161,6 +162,340 @@ const ModalContentForSurveyEndAction = (props: ModalContentForSurveyEndActionPro
     </>
 }
 
+interface ModalContentForSurveyItemActionProps extends ModalContentProps {
+    onSubmit: (item: SurveySingleItem) => void;
+}
+
+const surveyItemTypes = [
+    {
+        key: 'display',
+        label: 'Display',
+        description: 'Displays text, without response slots. For information or instructions.',
+        icon: <BsCardText />,
+    },
+    {
+        key: 'singleChoice',
+        label: 'Single choice',
+        description: 'Allows the participant to select one option from a list of options.',
+        icon: <BsUiRadios />,
+    },
+    {
+        key: 'multipleChoice',
+        label: 'Multiple choice',
+        description: 'Allows the participant to select multiple options from a list of options.',
+        icon: <BsUiChecks />,
+    },
+    {
+        key: 'dateInput',
+        label: 'Date input',
+        description: 'Allows the participant to enter a date.',
+        icon: <BsCalendar2 />,
+    },
+    {
+        key: 'timeInput',
+        label: 'Time input',
+        description: 'Allows the participant to enter a time.',
+        icon: <BsClock />,
+    },
+    {
+        key: 'textInput',
+        label: 'Text input',
+        description: 'Allows the participant to enter a text.',
+        icon: <BsInputCursorText />,
+    },
+    {
+        key: 'numericInput',
+        label: 'Numeric input',
+        description: 'Allows the participant to enter a number.',
+        icon: <Bs123 />,
+    },
+    {
+        key: 'responsiveSingleChoiceArray',
+        label: 'Single choice array',
+        description: 'A list of single choice questions (likert scale). Different view modes are available per screen size.',
+        icon: <BsUiRadiosGrid />,
+    },
+    {
+        key: 'responsiveBipolarLikertArray',
+        label: 'Bipolar likert array',
+        description: 'A list of bipolar likert scale questions. Different view modes are available per screen size.',
+        icon: <BsArrowsExpand className='rotate-90' />,
+    },
+    {
+        key: 'responsiveMatrix',
+        label: 'Matrix',
+        description: 'Response slots arranged in a matrix. Different view modes are available per screen size.',
+        icon: <BsTable />,
+    },
+    {
+        key: 'clozeQuestion',
+        label: 'Cloze question',
+        description: 'A cloze question with a list of text and response slots.',
+        icon: <BsCreditCard2Front />,
+    },
+    {
+        key: 'multilineTextInput',
+        label: 'Multiline text input',
+        description: 'Allows the participant to enter a text with multiple lines.',
+        icon: <BsTextareaResize />,
+    },
+
+    {
+        key: 'consent',
+        label: 'Consent',
+        description: 'Displays a consent form.',
+        icon: <BsCheck2Square />,
+    },
+    {
+        key: 'numericSlider',
+        label: 'Slider',
+        description: 'Allows the participant to select a value from a range.',
+        icon: <BsSliders />,
+    },
+    {
+        key: 'dropdown',
+        label: 'Dropdown',
+        description: 'Allows the participant to select one option from a list of options.',
+        icon: <BsMenuButton />,
+    }
+]
+
+const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionProps) => {
+    const [step, setStep] = React.useState<number>(0);
+
+    const [itemProps, setItemProps] = React.useState<{
+        key: string,
+        itemType: string,
+    }>({
+        key: '',
+        itemType: '',
+    });
+
+    const onTypeSelect = (type: string) => {
+        setItemProps({
+            ...itemProps,
+            itemType: type,
+        });
+        setStep(1);
+    }
+
+    if (step === 0) {
+        return <>
+            <ModalHeader className='bg-content2'>
+                What item type do you want to create?
+            </ModalHeader>
+            <Divider />
+            <ModalBody className='py-unit-lg px-unit-md'>
+                <Listbox
+                    items={surveyItemTypes}
+                    aria-label="Select an item type"
+                    color='primary'
+                    variant='flat'
+                    onAction={(key) => onTypeSelect(key as string)}
+                >
+                    {(item) => (
+                        <ListboxItem
+                            key={item.key}
+                            textValue={item.label}
+                            startContent={<span
+                                className='text-default-400 text-2xl me-2'
+                            >
+                                {item.icon}
+                            </span>}
+                            className='w-full'
+                        >
+                            <div className='font-bold text-large'>
+                                {item.label}
+                            </div>
+                            <div className='text-tiny'>
+                                {item.description}
+                            </div>
+                        </ListboxItem>
+                    )}
+                </Listbox>
+            </ModalBody >
+        </>
+    }
+
+
+    return <>
+        <ModalHeader className='bg-content2'>
+            {`New "${surveyItemTypes.find(t => t.key === itemProps.itemType)?.label}" item`}
+        </ModalHeader>
+        <Divider />
+        <ModalBody className='py-unit-lg px-unit-md'>
+            <KeyEditor
+                parentKey={props.parentKey || ''}
+                itemKey={itemProps.key.split('.').pop() || ''}
+                onItemKeyChange={(_, key) => {
+                    setItemProps({
+                        ...itemProps,
+                        key: key,
+                    });
+                    return true;
+                }}
+            />
+        </ModalBody>
+        <Divider />
+        <ModalFooter className='bg-content2'>
+            <Button
+                variant='ghost'
+                onPress={() => {
+                    setStep(0);
+                }}
+                type='button'
+            >
+                Back
+            </Button>
+            <Button
+                color='primary'
+                type='button'
+                isDisabled={!itemProps.key}
+                onPress={() => {
+                    let item: SurveySingleItem | undefined = undefined;
+                    switch (itemProps.itemType) {
+                        case 'display':
+                            item = SurveyItems.display({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                content: [],
+                            })
+                            break;
+                        case 'singleChoice':
+                            item = SurveyItems.singleChoice({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                responseOptions: [],
+                            });
+                            break;
+                        case 'multipleChoice':
+                            item = SurveyItems.multipleChoice({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                responseOptions: [],
+                            });
+                            break;
+                        case 'dateInput':
+                            item = SurveyItems.dateInput({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                dateInputMode: 'YMD',
+                            });
+                            break;
+                        case 'timeInput':
+                            item = SurveyItems.timeInput({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                            });
+                            break;
+                        case 'textInput':
+                            item = SurveyItems.textInput({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                            });
+                            break;
+                        case 'numericInput':
+                            item = SurveyItems.numericInput({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                inputLabel: new Map(),
+                            });
+                            break;
+                        case 'responsiveSingleChoiceArray':
+                            item = SurveyItems.responsiveSingleChoiceArray({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                defaultMode: 'table',
+                                rows: [],
+                                scaleOptions: [],
+                            });
+                            break;
+                        case 'responsiveBipolarLikertArray':
+                            item = SurveyItems.responsiveBipolarLikertArray({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                defaultMode: 'table',
+                                rows: [],
+                                scaleOptions: [],
+                            });
+                            break;
+                        case 'responsiveMatrix':
+                            item = SurveyItems.responsiveMatrix({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                columns: [],
+                                rows: [],
+                                responseType: 'dropdown',
+                            });
+                            break;
+                        case 'clozeQuestion':
+                            item = SurveyItems.clozeQuestion({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                items: [],
+                            });
+                            break;
+                        case 'multilineTextInput':
+                            item = SurveyItems.multilineTextInput({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                            });
+                            break;
+                        case 'consent':
+                            item = SurveyItems.consent({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                acceptBtn: new Map(),
+                                checkBoxLabel: new Map(),
+                                dialogContent: new Map(),
+                                dialogTitle: new Map(),
+                                rejectBtn: new Map(),
+                            });
+                            break;
+                        case 'numericSlider':
+                            item = SurveyItems.numericSlider({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                noResponseLabel: new Map(),
+                                sliderLabel: new Map(),
+                            });
+                            break;
+                        case 'dropdown':
+                            item = SurveyItems.dropDown({
+                                parentKey: props.parentKey || '',
+                                itemKey: itemProps.key,
+                                questionText: new Map(),
+                                responseOptions: [],
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                    if (item === undefined) {
+                        throw Error('Item type not implemented');
+                    }
+                    props.onSubmit(item);
+                }}
+            >
+                Create
+            </Button>
+        </ModalFooter>
+    </>
+}
+
 
 const NewItemDialog: React.FC<NewItemDialogProps> = ({
     currentMode,
@@ -202,6 +537,18 @@ const NewItemDialog: React.FC<NewItemDialogProps> = ({
                                 editor.setCondition(surveyEndAtttributes.condition);
                                 const se = editor.getItem();
                                 onCreateItem(se, parentKey);
+                            }}
+                            onClose={onClose}
+                        />
+                    )}
+                </ModalContent>
+            case 'item':
+                return <ModalContent>
+                    {(onClose) => (
+                        <ModalContentForSurveyItemAction
+                            parentKey={parentKey}
+                            onSubmit={(item) => {
+                                onCreateItem(item, parentKey);
                             }}
                             onClose={onClose}
                         />
