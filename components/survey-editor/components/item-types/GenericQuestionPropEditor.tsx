@@ -5,6 +5,7 @@ import ItemConditionEditor from './ItemConditionEditor';
 import { GenericQuestionProps } from 'case-editor-tools/surveys/types';
 import ItemHeaderEditor from './specific-editors/ItemHeaderEditor';
 import ItemHelpPopupEditor from './specific-editors/ItemHelpPopupEditor';
+import ItemFooterEditor from './specific-editors/ItemFooterEditor';
 
 
 interface GenericQuestionPropEditorProps {
@@ -68,7 +69,13 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     title: 'Footer',
                     icon: <BsSubscript />,
                     content: (
-                        <div>todo</div>
+                        <ItemFooterEditor
+                            genericProps={genericProps}
+                            onChange={(newProps) => {
+                                console.log(newProps)
+                                props.onChange(newProps);
+                            }}
+                        />
                     )
                 },
                 {

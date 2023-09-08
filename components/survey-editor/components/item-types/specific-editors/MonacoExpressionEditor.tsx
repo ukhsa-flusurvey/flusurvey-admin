@@ -54,7 +54,7 @@ const MonacoExpressionEditor: React.FC<MonacoExpressionEditorProps> = (props) =>
 
     return (
         <div>
-            <div className='flex items-center gap-unit-sm bg-content2 px-unit-sm py-2 rounded-small mb-unit-sm'>
+            <div className='flex items-center gap-unit-sm bg-content3 px-unit-sm py-2 rounded-small mb-unit-sm'>
                 <span>
                     <BsExclamationTriangleFill className='text-default-500' />
                 </span>

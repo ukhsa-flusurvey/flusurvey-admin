@@ -50,16 +50,16 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
         }
     });
 
+    const footNoteComp = surveyItem.components?.items.find(i => i.role === 'footnote')
+
     // TODO: top content
     // TODO: bottom content
-    // TODO: footnotes
     // TODO: get condition
     // TODO: isRequired
     // TODO: validation
     // TODO: condition
     // TODO: confidential mode
     // TODO: metadata
-
 
     const itemProps: GenericQuestionProps = {
         parentKey: parentKey,
@@ -68,6 +68,7 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
         questionSubText: subTitle,
         titleClassName: titleClassName,
         helpGroupContent: helpgroup,
+        footnoteText: footNoteComp ? localisedStringToMap(footNoteComp.content as LocalizedString[]) : undefined,
     };
 
     return itemProps;
