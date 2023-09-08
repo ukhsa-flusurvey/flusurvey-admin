@@ -6,6 +6,7 @@ import { GenericQuestionProps } from 'case-editor-tools/surveys/types';
 import ItemHeaderEditor from './specific-editors/ItemHeaderEditor';
 import ItemHelpPopupEditor from './specific-editors/ItemHelpPopupEditor';
 import ItemFooterEditor from './specific-editors/ItemFooterEditor';
+import ItemComponentsEditor from './specific-editors/ItemComponentsEditor';
 
 
 interface GenericQuestionPropEditorProps {
@@ -52,7 +53,15 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     title: 'Start content',
                     icon: <BsChevronBarUp />,
                     content: (
-                        <div>todo</div>
+                        <ItemComponentsEditor
+                            components={genericProps.topDisplayCompoments}
+                            onChange={(components) => {
+                                props.onChange({
+                                    ...genericProps,
+                                    topDisplayCompoments: components,
+                                });
+                            }}
+                        />
                     )
                 },
                 props.specificEditGroup,
@@ -61,7 +70,15 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     title: 'End content',
                     icon: <BsChevronBarDown />,
                     content: (
-                        <div>todo</div>
+                        <ItemComponentsEditor
+                            components={genericProps.bottomDisplayCompoments}
+                            onChange={(components) => {
+                                props.onChange({
+                                    ...genericProps,
+                                    bottomDisplayCompoments: components,
+                                });
+                            }}
+                        />
                     )
                 },
                 {
@@ -72,7 +89,6 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                         <ItemFooterEditor
                             genericProps={genericProps}
                             onChange={(newProps) => {
-                                console.log(newProps)
                                 props.onChange(newProps);
                             }}
                         />

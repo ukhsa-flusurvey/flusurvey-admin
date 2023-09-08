@@ -2,7 +2,7 @@ import React from 'react';
 import GenericQuestionPropEditor from '../GenericQuestionPropEditor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 import { BsBraces } from 'react-icons/bs';
-import { ItemGroupComponent, LocalizedString, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
+import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
 import { DateDisplayComponentProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
 import { localisedStringToMap } from '../utils';
 
@@ -10,6 +10,7 @@ interface SingleChoiceAttributeEditorProps {
     surveyItem: SurveySingleItem;
     onItemChange: (item: SurveySingleItem) => void;
 }
+
 
 const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestionProps => {
     const keyParts = surveyItem.key.split('.');
@@ -52,8 +53,32 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
 
     const footNoteComp = surveyItem.components?.items.find(i => i.role === 'footnote')
 
-    // TODO: top content
-    // TODO: bottom content
+    const responseGroupIndex = surveyItem.components?.items.findIndex(i => i.role === 'responseGroup') || 0;
+
+    let topDisplayCompoments: ItemComponent[] | undefined = [];
+    let bottomDisplayCompoments: ItemComponent[] | undefined = [];
+    const ignoreRoles = ['responseGroup', 'title', 'helpGroup', 'footnote'];
+    surveyItem.components?.items.forEach((comp, index) => {
+        if (ignoreRoles.includes(comp.role)) {
+            return;
+        }
+        if (index < responseGroupIndex) {
+            topDisplayCompoments?.push(comp);
+        }
+        if (index > responseGroupIndex) {
+            bottomDisplayCompoments?.push(comp);
+        }
+    });
+
+    if (topDisplayCompoments.length === 0) {
+        topDisplayCompoments = undefined;
+    }
+    if (bottomDisplayCompoments.length === 0) {
+        bottomDisplayCompoments = undefined;
+    }
+
+
+
     // TODO: get condition
     // TODO: isRequired
     // TODO: validation
@@ -69,6 +94,8 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
         titleClassName: titleClassName,
         helpGroupContent: helpgroup,
         footnoteText: footNoteComp ? localisedStringToMap(footNoteComp.content as LocalizedString[]) : undefined,
+        topDisplayCompoments: topDisplayCompoments,
+        bottomDisplayCompoments: bottomDisplayCompoments,
     };
 
     return itemProps;
