@@ -324,6 +324,20 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
         </ModalHeader>
         <Divider />
         <ModalBody className='py-unit-lg px-unit-md'>
+            <div className='flex items-center p-unit-sm gap-unit-sm bg-secondary-50 rounded-medium'>
+                <span>
+                    <BsInfoCircle className='text-secondary-300 text-2xl me-2' />
+                </span>
+                <div>
+                    <p className='mb-2 font-bold'>
+                        Set a key for the new item. The key must be unique within the parent group.
+                    </p>
+                    <p>
+                        You can edit the other properties of the item after creation through the item inspector view.
+                    </p>
+                </div>
+            </div>
+            <p className='font-bold'>Key:</p>
             <KeyEditor
                 parentKey={props.parentKey || ''}
                 itemKey={itemProps.key.split('.').pop() || ''}
