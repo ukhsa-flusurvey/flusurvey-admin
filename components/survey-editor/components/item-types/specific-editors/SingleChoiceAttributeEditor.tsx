@@ -11,6 +11,45 @@ interface SingleChoiceAttributeEditorProps {
     onItemChange: (item: SurveySingleItem) => void;
 }
 
+export const parseAdvancedContentProps = (items: ItemComponent[]): Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> => {
+    return items.map((i: any) => {
+        const className = i.style?.find((s: any) => s.key === 'className')?.value;
+        if (i.content === undefined
+            || i.content.length === 0
+            || i.content[0].parts === undefined
+            || i.content[0].parts.length === 0
+        ) {
+            return {
+                className: className,
+                content: new Map([]),
+            }
+        }
+
+        if (i.role === 'text') {
+            // check if expression
+            if (i.content[0].parts[0].dtype === 'exp') {
+                return {
+                    className: className,
+                    expression: i.content[0].parts[0].exp,
+                    languageCodes: i.content.map((c: any) => c.code),
+                }
+            }
+            // if not, then assume simple formatted text
+            return {
+                className: className,
+                content: localisedStringToMap(i.content as LocalizedString[])
+            }
+        } else if (i.role === 'dateDisplay') {
+            return {
+                className: className,
+                date: i.content[0].parts[0].exp,
+                dateFormat: i.style?.find((s: any) => s.key === 'dateFormat')?.value,
+                languageCodes: i.content.map((c: any) => c.code),
+            }
+        }
+        return i;
+    });
+}
 
 const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestionProps => {
     const keyParts = surveyItem.key.split('.');
@@ -22,43 +61,7 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
     if (titleComp) {
         if ((titleComp as ItemGroupComponent).items !== undefined) {
             // map items to styled text components and date display components
-            questionText = (titleComp as ItemGroupComponent).items.map((i: any) => {
-                const className = i.style?.find((s: any) => s.key === 'className')?.value;
-                if (i.content === undefined
-                    || i.content.length === 0
-                    || i.content[0].parts === undefined
-                    || i.content[0].parts.length === 0
-                ) {
-                    return {
-                        className: className,
-                        content: new Map([]),
-                    }
-                }
-
-                if (i.role === 'text') {
-                    // check if expression
-                    if (i.content[0].parts[0].dtype === 'exp') {
-                        return {
-                            className: className,
-                            expression: i.content[0].parts[0].exp,
-                            languageCodes: i.content.map((c: any) => c.code),
-                        }
-                    }
-                    // if not, then assume simple formatted text
-                    return {
-                        className: className,
-                        content: localisedStringToMap(i.content as LocalizedString[])
-                    }
-                } else if (i.role === 'dateDisplay') {
-                    return {
-                        className: className,
-                        date: i.content[0].parts[0].exp,
-                        dateFormat: i.style?.find((s: any) => s.key === 'dateFormat')?.value,
-                        languageCodes: i.content.map((c: any) => c.code),
-                    }
-                }
-                return i;
-            });
+            questionText = parseAdvancedContentProps((titleComp as ItemGroupComponent).items)
         } else {
             questionText = localisedStringToMap(titleComp.content as LocalizedString[]);
         }

@@ -1,12 +1,15 @@
 import { Dropdown, DropdownMenu, DropdownItem, Button, DropdownTrigger, Input, Textarea, Switch } from '@nextui-org/react';
 import React from 'react';
 import { BsChevronDown, BsExclamationDiamond, BsFonts, BsMarkdown, BsPlusCircleDotted, BsTrash } from 'react-icons/bs';
-import { Expression, ItemComponent } from 'survey-engine/data_types';
+import { Expression, ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';
 import MonacoExpressionEditor from './MonacoExpressionEditor';
 import LanguageSelector from '@/components/LanguageSelector';
 import { localisedStringToMap } from '../utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
+import AdvancedContentMonacoEditor from './AdvancedContentMonacoEditor';
+import { DateDisplayComponentProp, ExpressionDisplayProp, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
+import { parseAdvancedContentProps } from './SingleChoiceAttributeEditor';
 
 
 interface ItemComponentsEditorProps {
@@ -158,7 +161,10 @@ const TextComponentEditor: React.FC<CompEditorProps> = ({
 }) => {
     const className = component.style?.find(s => s.key === 'className')?.value;
 
-    // const isSimpleContent = component as C
+    console.log(component)
+
+    const isSimpleText = component.content !== undefined && (component as ItemGroupComponent).items === undefined;
+
 
     const contentMap = localisedStringToMap(component.content as any);
     const content = contentMap?.get(currentLang) || '';
@@ -202,50 +208,87 @@ const TextComponentEditor: React.FC<CompEditorProps> = ({
                     })
                 }}
             />
-            <Input
-                autoComplete='off'
-                label='Content'
-                placeholder='Error content'
-                variant='bordered'
-                size='sm'
-                classNames={{
-                    inputWrapper: 'bg-white'
-                }}
-                className='font-mono'
-                value={content || ''}
-                onValueChange={(value) => {
-                    const newContent = new Map(contentMap);
-                    newContent.set(currentLang, value);
-                    onChange({
-                        ...component,
-                        content: generateLocStrings(newContent),
-                    })
-                }}
-            />
-            <Input
-                label='Class name'
-                placeholder='CSS class name'
-                variant='bordered'
-                size='sm'
-                classNames={{
-                    inputWrapper: 'bg-white'
-                }}
-                value={className || ''}
-                onValueChange={(value) => {
-                    const newStyle = component.style?.filter(s => s.key !== 'className') || [];
-                    newStyle.push({
-                        key: 'className',
-                        value: value,
-                    })
-                    onChange({
-                        ...component,
-                        style: newStyle,
-                    })
-                }}
-            />
+            {isSimpleText ? <>
+                <Input
+                    autoComplete='off'
+                    label='Content'
+                    placeholder='Content of the text component'
+                    variant='bordered'
+                    size='sm'
+                    classNames={{
+                        inputWrapper: 'bg-white'
+                    }}
+                    className='font-mono'
+                    value={content || ''}
+                    onValueChange={(value) => {
+                        const newContent = new Map(contentMap);
+                        newContent.set(currentLang, value);
+                        onChange({
+                            ...component,
+                            content: generateLocStrings(newContent),
+                        })
+                    }}
+                />
+                <Input
+                    label='Class name'
+                    placeholder='CSS class name'
+                    variant='bordered'
+                    size='sm'
+                    classNames={{
+                        inputWrapper: 'bg-white'
+                    }}
+                    value={className || ''}
+                    onValueChange={(value) => {
+                        const newStyle = component.style?.filter(s => s.key !== 'className') || [];
+                        newStyle.push({
+                            key: 'className',
+                            value: value,
+                        })
+                        onChange({
+                            ...component,
+                            style: newStyle,
+                        })
+                    }}
+                />
+            </> :
+                <>
+                    <AdvancedContentMonacoEditor
+                        label='Content (advanced)'
+                        advancedContent={parseAdvancedContentProps((component as ItemGroupComponent).items) || []}
+                        onChange={(v) => {
+                            const newComp = ComponentGenerators.text({
+                                key: component.key,
+                                content: v as (StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp)[],
+                            }) as ItemGroupComponent;
+                            onChange({
+                                ...component,
+                                items: newComp.items,
+                            })
+                        }}
+                    />
+                </>
+            }
+
             <Switch
                 size='sm'
-            // isSelected={}
+                isSelected={!isSimpleText}
+                onValueChange={(v) => {
+                    if (v) {
+                        onChange({
+                            ...component,
+                            items: [],
+                            content: undefined,
+                        })
+                    } else {
+                        if (confirm('This will clear the content, are you sure you want to proceed?')) {
+                            onChange({
+                                ...component,
+                                items: undefined,
+                                content: generateLocStrings(new Map([])),
+                            })
+                        }
+                    }
+                }}
             >
                 Use advanced content
             </Switch>
@@ -397,9 +440,6 @@ const ItemComponentsEditor: React.FC<ItemComponentsEditorProps> = ({
     components,
 }) => {
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
-
-    console.log(components)
-
 
     const addNewComponentMenu = React.useMemo(() => {
         return <Dropdown>

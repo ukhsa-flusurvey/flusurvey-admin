@@ -2500,10 +2500,10 @@ caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001517, caniuse-lite@^1.0.300015
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001523.tgz#b838f70b1a98c556776b998fafb47d2b64146d4f"
   integrity sha512-I5q5cisATTPZ1mc588Z//pj/Ox80ERYDfR71YnvY7raS/NOk8xXlZcB0sF7JdqaV//kOaa6aus7lRfpdnt1eBA==
 
-case-editor-tools@^1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/case-editor-tools/-/case-editor-tools-1.6.2.tgz#d9f95ab14840b74cd9238a4c587dfbbf76b14b44"
-  integrity sha512-bIQwDUcBkYYmpt5MCbbfasWFyobKrtlwBkmCz6+OO0LEUV+Fy6qieHjXmsXiwmazEBqVOTUu96NUUcBjSWO+lA==
+case-editor-tools@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/case-editor-tools/-/case-editor-tools-1.6.3.tgz#6e991d9c19ef940fa53ce33b07d90d5b321c8e70"
+  integrity sha512-46HoXFvdYhb4ydw+C/s46RIhDw6Dbu9t4IaEJ6ulp6ojYbgl7PQk6oVbhtUlXXXh9nPJ1PILgeeTfYr4eSZoiQ==
   dependencies:
     survey-engine "^1.2.0"
 
