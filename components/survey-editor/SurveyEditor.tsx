@@ -50,7 +50,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             />;
             break;
         case editorModes[3]:
-            mainContent = <PreviewMode />;
+            mainContent = <PreviewMode
+                editorInstance={editorInstance}
+            />;
             break;
         case editorModes[4]:
             mainContent = <PublishMode />;

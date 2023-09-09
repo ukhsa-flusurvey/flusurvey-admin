@@ -2,7 +2,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { Divider, Input, Switch } from '@nextui-org/react';
 import React from 'react';
 import AdvancedContentMonacoEditor from './AdvancedContentMonacoEditor';
-import { DateDisplayComponentProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
+import { DateDisplayComponentProp, ExpressionDisplayProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
 
 interface ItemHeaderEditorProps {
     genericProps: GenericQuestionProps;
@@ -49,12 +49,12 @@ const ItemHeaderEditor: React.FC<ItemHeaderEditorProps> = (props) => {
             {!isSimpleTitle &&
                 <AdvancedContentMonacoEditor
                     label='Title (advanced)'
-                    advancedContent={props.genericProps.questionText as (StyledTextComponentProp | DateDisplayComponentProp)[]}
+                    advancedContent={props.genericProps.questionText as (StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp)[]}
                     onChange={(v) => {
                         if (!isSimpleTitle) {
                             props.onChange({
                                 ...props.genericProps,
-                                questionText: v as (StyledTextComponentProp | DateDisplayComponentProp)[],
+                                questionText: v as (StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp)[],
                             })
                         }
                     }}

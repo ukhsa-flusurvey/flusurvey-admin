@@ -3,7 +3,7 @@ import GenericQuestionPropEditor from '../GenericQuestionPropEditor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 import { BsBraces } from 'react-icons/bs';
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
-import { DateDisplayComponentProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
+import { DateDisplayComponentProp, ExpressionDisplayProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
 import { localisedStringToMap } from '../utils';
 
 interface SingleChoiceAttributeEditorProps {
@@ -17,21 +17,44 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
     const itemKey = keyParts.pop() || '';
     const parentKey = keyParts.join('.');
 
-    let questionText: Map<string, string> | Array<StyledTextComponentProp | DateDisplayComponentProp> = new Map([]);
+    let questionText: Map<string, string> | Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> = new Map([]);
     const titleComp = surveyItem.components?.items.find(i => i.role === 'title');
     if (titleComp) {
         if ((titleComp as ItemGroupComponent).items !== undefined) {
             // map items to styled text components and date display components
             questionText = (titleComp as ItemGroupComponent).items.map((i: any) => {
-                if (i.content !== undefined) {
+                const className = i.style?.find((s: any) => s.key === 'className')?.value;
+                if (i.content === undefined
+                    || i.content.length === 0
+                    || i.content[0].parts === undefined
+                    || i.content[0].parts.length === 0
+                ) {
                     return {
-                        className: i.style?.find((s: any) => s.key === 'className')?.value,
+                        className: className,
+                        content: new Map([]),
+                    }
+                }
+
+                if (i.role === 'text') {
+                    // check if expression
+                    if (i.content[0].parts[0].dtype === 'exp') {
+                        return {
+                            className: className,
+                            expression: i.content[0].parts[0].exp,
+                            languageCodes: i.content.map((c: any) => c.code),
+                        }
+                    }
+                    // if not, then assume simple formatted text
+                    return {
+                        className: className,
                         content: localisedStringToMap(i.content as LocalizedString[])
                     }
-                } else if (i.date !== undefined) {
-                    console.warn('todo: needs to implement mapping of date display component')
+                } else if (i.role === 'dateDisplay') {
                     return {
-                        ...i,
+                        className: className,
+                        date: i.content[0].parts[0].exp,
+                        dateFormat: i.style?.find((s: any) => s.key === 'dateFormat')?.value,
+                        languageCodes: i.content.map((c: any) => c.code),
                     }
                 }
                 return i;

@@ -150,7 +150,7 @@ const MarkdownComponentEditor: React.FC<CompEditorProps> = ({
     </div>
 }
 
-const ErrorComponentEditor: React.FC<CompEditorProps> = ({
+const TextComponentEditor: React.FC<CompEditorProps> = ({
     currentLang,
     component,
     onChange,
@@ -158,6 +158,141 @@ const ErrorComponentEditor: React.FC<CompEditorProps> = ({
 }) => {
     const className = component.style?.find(s => s.key === 'className')?.value;
 
+    // const isSimpleContent = component as C
+
+    const contentMap = localisedStringToMap(component.content as any);
+    const content = contentMap?.get(currentLang) || '';
+
+    return <div className='border border-default-400 rounded-small px-unit-4 py-unit-2'>
+        <div className='flex items-center'>
+            <span className='text-default-400 grow'>
+                <BsFonts />
+            </span>
+            <Button
+                isIconOnly
+                size='sm'
+                variant='light'
+                color='danger'
+                onPress={() => {
+                    if (confirm('Are you sure you want to remove this component?')) {
+                        onDelete();
+                    }
+                }}
+            >
+                <BsTrash />
+            </Button>
+        </div>
+        <div className='space-y-unit-sm'>
+            <Input
+                label='Key'
+                autoComplete='off'
+                labelPlacement='outside-left'
+                placeholder='Enter key here'
+                variant='bordered'
+                size='sm'
+                className='w-40'
+                classNames={{
+                    inputWrapper: 'bg-white'
+                }}
+                value={component.key}
+                onValueChange={(value) => {
+                    onChange({
+                        ...component,
+                        key: value,
+                    })
+                }}
+            />
+            <Input
+                autoComplete='off'
+                label='Content'
+                placeholder='Error content'
+                variant='bordered'
+                size='sm'
+                classNames={{
+                    inputWrapper: 'bg-white'
+                }}
+                className='font-mono'
+                value={content || ''}
+                onValueChange={(value) => {
+                    const newContent = new Map(contentMap);
+                    newContent.set(currentLang, value);
+                    onChange({
+                        ...component,
+                        content: generateLocStrings(newContent),
+                    })
+                }}
+            />
+            <Input
+                label='Class name'
+                placeholder='CSS class name'
+                variant='bordered'
+                size='sm'
+                classNames={{
+                    inputWrapper: 'bg-white'
+                }}
+                value={className || ''}
+                onValueChange={(value) => {
+                    const newStyle = component.style?.filter(s => s.key !== 'className') || [];
+                    newStyle.push({
+                        key: 'className',
+                        value: value,
+                    })
+                    onChange({
+                        ...component,
+                        style: newStyle,
+                    })
+                }}
+            />
+            <Switch
+                size='sm'
+            // isSelected={}
+            >
+                Use advanced content
+            </Switch>
+
+            <Switch
+                isSelected={component.displayCondition !== undefined}
+                size='sm'
+                onValueChange={(v) => {
+                    if (v) {
+                        onChange({
+                            ...component,
+                            displayCondition: {
+                                name: 'todo',
+                            },
+                        })
+                    } else {
+                        if (confirm('Are you sure you want to remove the condition?')) {
+                            onChange({
+                                ...component,
+                                displayCondition: undefined,
+                            })
+                        }
+                    }
+                }}
+            >
+                Use condition when to show
+            </Switch>
+            {component.displayCondition !== undefined &&
+                <MonacoExpressionEditor
+                    expression={component.displayCondition as (Expression | undefined)}
+                    onChange={(exp) => {
+                        onChange({
+                            ...component,
+                            displayCondition: exp,
+                        })
+                    }}
+                />}
+        </div>
+    </div>
+}
+
+const ErrorComponentEditor: React.FC<CompEditorProps> = ({
+    currentLang,
+    component,
+    onChange,
+    onDelete,
+}) => {
     const contentMap = localisedStringToMap(component.content as any);
     const content = contentMap?.get(currentLang) || '';
 
@@ -209,7 +344,6 @@ const ErrorComponentEditor: React.FC<CompEditorProps> = ({
                 classNames={{
                     inputWrapper: 'bg-white'
                 }}
-                className='font-mono'
                 value={content || ''}
                 onValueChange={(value) => {
                     const newContent = new Map(contentMap);
@@ -294,6 +428,11 @@ const ItemComponentsEditor: React.FC<ItemComponentsEditorProps> = ({
                             onChange([...components || [], newcomp]);
                             break;
                         case 'text':
+                            const newComp = ComponentGenerators.text({
+                                key: 'newtext' + (components?.length || 0),
+                                content: new Map(),
+                            });
+                            onChange([...components || [], newComp]);
                             break;
                         case 'error':
                             const newErrorComp: ItemComponent = {
@@ -346,6 +485,22 @@ const ItemComponentsEditor: React.FC<ItemComponentsEditorProps> = ({
                 switch (c.role) {
                     case 'markdown':
                         return <MarkdownComponentEditor
+                            currentLang={selectedLanguage}
+                            key={i.toFixed()}
+                            component={c}
+                            onChange={(newComp) => {
+                                const newComps = [...components];
+                                newComps[i] = newComp;
+                                onChange(newComps);
+                            }}
+                            onDelete={() => {
+                                const newComps = [...components];
+                                newComps.splice(i, 1);
+                                onChange(newComps);
+                            }}
+                        />
+                    case 'text':
+                        return <TextComponentEditor
                             currentLang={selectedLanguage}
                             key={i.toFixed()}
                             component={c}

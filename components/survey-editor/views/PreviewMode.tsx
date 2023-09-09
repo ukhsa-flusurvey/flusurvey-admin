@@ -1,11 +1,36 @@
 import React from 'react';
 
+import SurveyView from '@/components/survey-viewer/survey-renderer/SurveyView/SurveyView';
+import { SurveyEditor } from 'case-editor-tools/surveys/survey-editor/survey-editor';
+import LanguageSelector from '@/components/LanguageSelector';
+
 interface PreviewModeProps {
+    editorInstance: SurveyEditor;
 }
 
 const PreviewMode: React.FC<PreviewModeProps> = (props) => {
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
     return (
-        <p>PreviewMode</p>
+        <div className='relative p-unit-lg'>
+            <LanguageSelector
+                onLanguageChange={(lang) => setSelectedLanguage(lang)}
+            />
+            <SurveyView
+                survey={props.editorInstance.getSurvey()}
+                backBtnText='Back'
+                invalidResponseText='Invalid response'
+                languageCode={selectedLanguage}
+                nextBtnText='Next'
+                submitBtnText='Submit'
+                onSubmit={(response) => {
+                    console.log(response);
+
+                }}
+
+
+
+            />
+        </div>
     );
 };
 

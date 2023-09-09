@@ -2,22 +2,21 @@ import React from 'react';
 import { Editor } from '@monaco-editor/react';
 import { Button, Tooltip } from '@nextui-org/react';
 import { BsCheck2, BsExclamationTriangleFill, BsX } from 'react-icons/bs';
-import { DateDisplayComponentProp, OptionDef, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
+import { DateDisplayComponentProp, ExpressionDisplayProp, OptionDef, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
 import * as yaml from 'js-yaml';
 
 interface AdvancedContentMonacoEditorProps {
     label: string;
-    advancedContent: Array<StyledTextComponentProp | DateDisplayComponentProp> | Array<OptionDef>
-    onChange: (newContent: Array<StyledTextComponentProp | DateDisplayComponentProp> | Array<OptionDef>) => void;
+    advancedContent: Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> | Array<OptionDef>
+    onChange: (newContent: Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> | Array<OptionDef>) => void;
 }
-
 
 
 const AdvancedContentMonacoEditor: React.FC<AdvancedContentMonacoEditorProps> = (props) => {
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
 
     const [editorContent, setEditorContent] = React.useState<string | undefined>(undefined);
-    const [codeAsAdvancedContent, setCodeAsAdvancedContent] = React.useState<Array<StyledTextComponentProp | DateDisplayComponentProp> | Array<OptionDef> | undefined>(undefined);
+    const [codeAsAdvancedContent, setCodeAsAdvancedContent] = React.useState<Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> | Array<OptionDef> | undefined>(undefined);
 
     const contentAsYaml = React.useMemo(() => {
         if (props.advancedContent.length === 0) {
@@ -31,6 +30,9 @@ const AdvancedContentMonacoEditor: React.FC<AdvancedContentMonacoEditorProps> = 
                 }
             }
             if (c.date !== undefined) {
+                return c
+            }
+            if (c.expression !== undefined) {
                 return c
             }
             if (c.role !== undefined) {
@@ -81,7 +83,7 @@ const AdvancedContentMonacoEditor: React.FC<AdvancedContentMonacoEditorProps> = 
                         try {
                             yaml.loadAll(e, (doc) => {
                                 if (doc) {
-                                    const content = doc as Array<StyledTextComponentProp | DateDisplayComponentProp> | Array<OptionDef>;
+                                    const content = doc as Array<StyledTextComponentProp | DateDisplayComponentProp | ExpressionDisplayProp> | Array<OptionDef>;
                                     if (!content || !Array.isArray(content)) {
                                         setErrorMsg('please check the syntax of the content');
                                         return
@@ -95,7 +97,6 @@ const AdvancedContentMonacoEditor: React.FC<AdvancedContentMonacoEditorProps> = 
                                         }
                                         return c;
                                     });
-
                                     setCodeAsAdvancedContent(mappedContent);
                                     setErrorMsg(undefined);
                                 }
