@@ -5,6 +5,7 @@ import { BsBraces } from 'react-icons/bs';
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
 import { DateDisplayComponentProp, ExpressionDisplayProp, GenericQuestionProps, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
 import { localisedStringToMap } from '../utils';
+import MonacoResponseGroupContentEditor from './MonacoResponseGroupContentEditor';
 
 interface SingleChoiceAttributeEditorProps {
     surveyItem: SurveySingleItem;
@@ -137,6 +138,10 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
     const itemProps = surveyItemToGenericProps(surveyItem);
     // console.log(itemProps);
 
+    const mainResponseSlot = surveyItem.components?.items.find(i => i.role === 'responseGroup');
+
+    console.log(mainResponseSlot)
+
     return (<>
         <p className='font-bold py-2 my-2'>
             <span className='me-1 font-normal text-tiny block'>
@@ -154,7 +159,33 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                     title: 'Response options',
                     icon: <BsBraces />,
                     content: (
-                        <div>todo</div>
+                        <MonacoResponseGroupContentEditor
+                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'scg', role: 'singleChoiceGroup', items: [] }}
+                            onChange={(newItemComponent) => {
+                                if (!surveyItem || !surveyItem.components) {
+                                    console.warn('no survey item or components when trying to save response group content')
+                                    return;
+                                }
+                                const rgI = surveyItem.components?.items.findIndex(i => i.role === 'responseGroup');
+                                if (rgI < 0) {
+                                    surveyItem.components?.items.push({
+                                        key: 'rg',
+                                        role: 'responseGroup',
+                                        items: [
+                                            newItemComponent,
+                                        ],
+                                    });
+                                } else {
+                                    (surveyItem.components.items[rgI] as ItemGroupComponent).items = [
+                                        { ...newItemComponent },
+                                    ]
+
+                                }
+                                onItemChange({
+                                    ...surveyItem,
+                                })
+                            }}
+                        />
                     )
                 }
             }
@@ -164,7 +195,10 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                     ...newProps,
                     responseOptions: []
                 });
-                onItemChange(newItem);
+                // keep response group
+                onItemChange({
+                    ...newItem,
+                });
             }}
         />
     </>

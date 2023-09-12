@@ -346,6 +346,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         ...itemProps,
                         key: key,
                     });
+                    console.log(key);
                     return true;
                 }}
             />
@@ -367,18 +368,19 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                 isDisabled={!itemProps.key}
                 onPress={() => {
                     let item: SurveySingleItem | undefined = undefined;
+                    const newItemKey = itemProps.key.split('.').pop() || 'unknownKey';
                     switch (itemProps.itemType) {
                         case 'display':
                             item = SurveyItems.display({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 content: [],
                             })
                             break;
                         case 'singleChoice':
                             item = SurveyItems.singleChoice({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 responseOptions: [],
                             });
@@ -386,7 +388,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'multipleChoice':
                             item = SurveyItems.multipleChoice({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 responseOptions: [],
                             });
@@ -394,7 +396,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'dateInput':
                             item = SurveyItems.dateInput({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 dateInputMode: 'YMD',
                             });
@@ -402,21 +404,21 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'timeInput':
                             item = SurveyItems.timeInput({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                             });
                             break;
                         case 'textInput':
                             item = SurveyItems.textInput({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                             });
                             break;
                         case 'numericInput':
                             item = SurveyItems.numericInput({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 inputLabel: new Map(),
                             });
@@ -424,7 +426,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'responsiveSingleChoiceArray':
                             item = SurveyItems.responsiveSingleChoiceArray({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 defaultMode: 'table',
                                 rows: [],
@@ -434,7 +436,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'responsiveBipolarLikertArray':
                             item = SurveyItems.responsiveBipolarLikertArray({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 defaultMode: 'table',
                                 rows: [],
@@ -444,7 +446,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'responsiveMatrix':
                             item = SurveyItems.responsiveMatrix({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 columns: [],
                                 rows: [],
@@ -454,7 +456,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'clozeQuestion':
                             item = SurveyItems.clozeQuestion({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 items: [],
                             });
@@ -462,14 +464,14 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'multilineTextInput':
                             item = SurveyItems.multilineTextInput({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                             });
                             break;
                         case 'consent':
                             item = SurveyItems.consent({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 acceptBtn: new Map(),
                                 checkBoxLabel: new Map(),
@@ -481,7 +483,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'numericSlider':
                             item = SurveyItems.numericSlider({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 noResponseLabel: new Map(),
                                 sliderLabel: new Map(),
@@ -490,7 +492,7 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                         case 'dropdown':
                             item = SurveyItems.dropDown({
                                 parentKey: props.parentKey || '',
-                                itemKey: itemProps.key,
+                                itemKey: newItemKey,
                                 questionText: new Map(),
                                 responseOptions: [],
                             });

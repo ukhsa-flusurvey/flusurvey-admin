@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@nextui-org/react';
 import React from 'react';
 import { BsCheck2, BsExclamationTriangleFill, BsX } from 'react-icons/bs';
 import * as yaml from 'js-yaml';
-import { Expression, ExpressionArg, isExpression } from 'survey-engine/data_types';
+import { Expression, ExpressionArg } from 'survey-engine/data_types';
 
 interface MonacoExpressionEditorProps {
     expression?: Expression;
