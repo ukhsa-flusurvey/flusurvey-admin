@@ -8,7 +8,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 <ParticipantsAppbarBase />
             </div>
             <Suspense>
-                <div className=" pt-16  h-full">
+                <div className="pt-16 h-full">
                     {children}
                 </div>
             </Suspense>

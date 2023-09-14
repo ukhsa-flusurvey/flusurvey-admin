@@ -118,7 +118,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                                 textValue={p.id}
                                 className={clsx({ 'bg-primary-200/60 text-primary': selectedParticipantId === p.id })}
                                 startContent={<div className='flex items-center'>
-                                    <AvatarFromId userId={p.id}
+                                    <AvatarFromId userId={p.participantId}
                                         pixelSize={3}
                                     />
                                 </div>}
@@ -128,7 +128,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                             >
                                 <div>
                                     <div className='font-mono'>
-                                        {shortenID(p.id, 16)}
+                                        {shortenID(p.participantId, 16)}
                                     </div>
                                     <div className='flex justify-between items-center'>
                                         <div className='text-default-600 text-tiny grow flex items-center gap-1'>
