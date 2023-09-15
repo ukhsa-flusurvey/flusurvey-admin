@@ -4,7 +4,7 @@ import { Accordion, AccordionItem, Divider, Textarea } from '@nextui-org/react';
 import React from 'react';
 import { BsBraces, BsBracesAsterisk, BsCardText, BsEye, BsTextarea } from 'react-icons/bs';
 import { Expression } from 'survey-engine/data_types';
-import AttributeGroupsAccordion from './AttributeGroupsAccordion';
+import AttributeGroupsAccordion from './specific-editors/AttributeGroupsAccordion';
 import ItemConditionEditor from './ItemConditionEditor';
 
 export interface SurveyEndAttributes {

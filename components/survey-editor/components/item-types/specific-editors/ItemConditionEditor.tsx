@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import MonacoExpressionEditor from './specific-editors/MonacoExpressionEditor';
+import MonacoExpressionEditor from './MonacoExpressionEditor';
 import { Expression } from 'survey-engine/data_types';
 import { Button } from '@nextui-org/button';
 import { BsCode, BsPlusCircleDotted, BsXCircle } from 'react-icons/bs';

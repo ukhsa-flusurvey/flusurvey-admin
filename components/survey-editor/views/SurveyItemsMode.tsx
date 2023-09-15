@@ -104,7 +104,21 @@ const SurveyItemsMode: React.FC<SurveyItemsModeProps> = (props) => {
                                 setSelectedItem(null);
                             }}
                             onItemChange={(item) => {
-                                props.editorInstance.updateSurveyItem(item);
+                                // find parent item
+                                const parentKey = item.key.split('.').slice(0, -1).join('.');
+                                const parentItem = props.editorInstance.findSurveyItem(parentKey);
+                                if (!parentItem) {
+                                    alert('parent item not found');
+                                    return;
+                                };
+                                // replace item in parent
+                                const i = (parentItem as SurveyGroupItem).items.findIndex(i => i.key === item.key);
+                                if (i < 0) {
+                                    alert('item not found in parent');
+                                    return;
+                                }
+                                (parentItem as SurveyGroupItem).items[i] = item;
+
                                 setSelectedItem({ ...item });
                             }}
                         />

@@ -1,5 +1,5 @@
 import React from 'react';
-import GenericQuestionPropEditor from '../GenericQuestionPropEditor';
+import GenericQuestionPropEditor from './GenericQuestionPropEditor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 import { BsBraces } from 'react-icons/bs';
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
@@ -104,14 +104,9 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
         bottomDisplayCompoments = undefined;
     }
 
-
-
-    // TODO: get condition
-    // TODO: isRequired
-    // TODO: validation
-    // TODO: condition
-    // TODO: confidential mode
-    // TODO: metadata
+    const indexOfSimpleRequiredValidation = surveyItem.validations ? surveyItem.validations?.findIndex(v => ['r', 'r1'].includes(v.key)) : -1
+    const isRequired = indexOfSimpleRequiredValidation > -1;
+    const customValidations = surveyItem.validations?.filter((v, index) => index !== indexOfSimpleRequiredValidation);
 
     const itemProps: GenericQuestionProps = {
         parentKey: parentKey,
@@ -123,6 +118,11 @@ const surveyItemToGenericProps = (surveyItem: SurveySingleItem): GenericQuestion
         footnoteText: footNoteComp ? localisedStringToMap(footNoteComp.content as LocalizedString[]) : undefined,
         topDisplayCompoments: topDisplayCompoments,
         bottomDisplayCompoments: bottomDisplayCompoments,
+        condition: surveyItem.condition,
+        metadata: surveyItem.metadata,
+        confidentialMode: surveyItem.confidentialMode,
+        customValidations: customValidations,
+        isRequired: isRequired,
     };
 
     return itemProps;
@@ -139,8 +139,6 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
     // console.log(itemProps);
 
     const mainResponseSlot = surveyItem.components?.items.find(i => i.role === 'responseGroup');
-
-    console.log(mainResponseSlot)
 
     return (<>
         <p className='font-bold py-2 my-2'>
@@ -194,8 +192,17 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                 const newItem = SurveyItems.singleChoice({
                     ...newProps,
                     responseOptions: []
-                });
+                }) as SurveySingleItem;
+
                 // keep response group
+                const rg = surveyItem.components?.items.find(i => i.role === 'responseGroup');
+
+                const rgIndex = (newItem as SurveySingleItem).components?.items.findIndex(i => i.role === 'responseGroup');
+
+                if (rgIndex && rg && newItem.components !== undefined) {
+                    newItem.components.items[rgIndex] = rg;
+                }
+
                 onItemChange({
                     ...newItem,
                 });

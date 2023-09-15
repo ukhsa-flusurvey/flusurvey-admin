@@ -3,10 +3,11 @@ import AttributeGroupsAccordion, { AttributeGroup } from './AttributeGroupsAccor
 import { BsCheckCircle, BsChevronBarDown, BsChevronBarUp, BsEye, BsFileEarmarkCode, BsHSquare, BsInfoCircle, BsSubscript } from 'react-icons/bs';
 import ItemConditionEditor from './ItemConditionEditor';
 import { GenericQuestionProps } from 'case-editor-tools/surveys/types';
-import ItemHeaderEditor from './specific-editors/ItemHeaderEditor';
-import ItemHelpPopupEditor from './specific-editors/ItemHelpPopupEditor';
-import ItemFooterEditor from './specific-editors/ItemFooterEditor';
-import ItemComponentsEditor from './specific-editors/ItemComponentsEditor';
+import ItemHeaderEditor from './ItemHeaderEditor';
+import ItemHelpPopupEditor from './ItemHelpPopupEditor';
+import ItemFooterEditor from './ItemFooterEditor';
+import ItemComponentsEditor from './ItemComponentsEditor';
+import ItemValidationEditor from './ItemValidationEditor';
 
 
 interface GenericQuestionPropEditorProps {
@@ -99,7 +100,12 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     title: 'Validations',
                     icon: <BsCheckCircle />,
                     content: (
-                        <div>todo</div>
+                        <ItemValidationEditor
+                            genericProps={genericProps}
+                            onChange={(newProps) => {
+                                props.onChange(newProps);
+                            }}
+                        />
                     )
                 },
                 {
@@ -108,14 +114,18 @@ const GenericQuestionPropEditor: React.FC<GenericQuestionPropEditorProps> = ({
                     icon: <BsEye />,
                     content: (
                         <ItemConditionEditor
-                            onChange={() => {
-                                console.log('todo')
+                            condition={genericProps.condition}
+                            onChange={(condition) => {
+                                props.onChange({
+                                    ...genericProps,
+                                    condition: condition,
+                                });
                             }}
                         />
                     )
                 },
                 {
-                    key: 'advnaced',
+                    key: 'advanced',
                     title: 'Advanced',
                     icon: <BsFileEarmarkCode />,
                     content: (

@@ -135,37 +135,6 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
     }, [selectedItem]);
 
 
-    const heading = React.useMemo(() => {
-        if (!itemType) return null;
-
-        switch (itemType) {
-            case 'group':
-                return <HeadingWithIcon
-                    icon={<BsCollectionFill className='text-xl text-primary-300' />}
-                    text='Group'
-                    infoText='This is a group component. It is used to group items together, e.g. if they have the same dependencies or they always appear together.'
-                />
-            case 'pageBreak':
-                return <HeadingWithIcon
-                    icon={<BsArrowReturnLeft className='text-xl text-secondary-300' />}
-                    text='Page Break'
-                    infoText='This is a page break component. It is used to separate the survey into pages.'
-                />
-            case 'surveyEnd':
-                return <HeadingWithIcon
-                    icon={<BsStopCircle className='text-xl text-danger-300' />}
-                    text='Survey End'
-                    infoText='You can control with this component what text should appear next to the submit button.'
-                />
-            default:
-                return <HeadingWithIcon
-                    icon={<BsCardHeading className='text-xl text-default-400' />}
-                    text='Survey Item'
-                    infoText='This is a survey item. It is used to ask questions or display information.'
-                />
-        }
-    }, [itemType]);
-
     const parentKey = selectedItem?.key.split('.').slice(0, -1).join('.');
 
     const attributeEditor = React.useMemo(() => {

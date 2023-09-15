@@ -1,7 +1,7 @@
 import React from 'react';
-import AttributeGroupsAccordion from './AttributeGroupsAccordion';
+import AttributeGroupsAccordion from './specific-editors/AttributeGroupsAccordion';
 import { BsEye } from 'react-icons/bs';
-import ItemConditionEditor from './ItemConditionEditor';
+import ItemConditionEditor from './specific-editors/ItemConditionEditor';
 import { SurveyGroupItem } from 'survey-engine/data_types';
 
 interface SurveyGroupItemAttributeEditorProps {
