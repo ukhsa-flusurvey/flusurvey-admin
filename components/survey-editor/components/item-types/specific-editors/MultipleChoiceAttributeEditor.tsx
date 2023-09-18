@@ -6,13 +6,13 @@ import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { surveyItemToGenericProps } from '../utils';
 import MonacoResponseGroupContentEditor from './MonacoResponseGroupContentEditor';
 
-interface SingleChoiceAttributeEditorProps {
+interface MultipleChoiceAttributeEditorProps {
     surveyItem: SurveySingleItem;
     onItemChange: (item: SurveySingleItem) => void;
 }
 
 
-const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = ({
+const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps> = ({
     surveyItem,
     onItemChange,
 }) => {
@@ -28,7 +28,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
             <span className='me-1 font-normal text-tiny block'>
                 Type:
             </span>
-            Single choice
+            Multiple choice
         </p>
         <GenericQuestionPropEditor
             genericProps={
@@ -41,7 +41,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                     icon: <BsBraces />,
                     content: (
                         <MonacoResponseGroupContentEditor
-                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'scg', role: 'singleChoiceGroup', items: [] }}
+                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'mcg', role: 'multipleChoiceGroup', items: [] }}
                             onChange={(newItemComponent) => {
                                 if (!surveyItem || !surveyItem.components) {
                                     console.warn('no survey item or components when trying to save response group content')
@@ -72,7 +72,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
             }
             onChange={(newProps) => {
 
-                const newItem = SurveyItems.singleChoice({
+                const newItem = SurveyItems.multipleChoice({
                     ...newProps,
                     responseOptions: []
                 }) as SurveySingleItem;
@@ -95,4 +95,4 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
     );
 };
 
-export default SingleChoiceAttributeEditor;
+export default MultipleChoiceAttributeEditor;

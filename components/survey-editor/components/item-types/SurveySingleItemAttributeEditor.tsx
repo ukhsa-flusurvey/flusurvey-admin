@@ -2,6 +2,7 @@ import React from 'react';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import NotImplemented from '@/components/NotImplemented';
 import SingleChoiceAttributeEditor from './specific-editors/SingleChoiceAttributeEditor';
+import MultipleChoiceAttributeEditor from './specific-editors/MultipleChoiceAttributeEditor';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -32,6 +33,7 @@ const determineItemType = (item: SurveySingleItem): string => {
 
     const mainResponseItem = mainResponseItems[0];
 
+    // TODO: handle other response item types
     switch (mainResponseItem.role) {
         case 'input':
             return 'textInput';
@@ -66,9 +68,10 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
                 onItemChange={props.onItemChange}
             />)
         case 'multipleChoice':
-            return (<NotImplemented>
-                Editor for {itemType}
-            </NotImplemented>)
+            return (<MultipleChoiceAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
         case 'display':
             return (<NotImplemented>
                 Editor for {itemType}

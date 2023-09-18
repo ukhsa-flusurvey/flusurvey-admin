@@ -182,7 +182,7 @@ const ItemInspector: React.FC<ItemInspectorProps> = ({
 
     return (
         <div className='w-full bg-background overflow-y-scroll'>
-            <div className='sticky bg-white z-10 top-0 p-unit-sm border-b border-default-400 drop-sshadow'>
+            <div className='sticky bg-white z-20 top-0 p-unit-sm border-b border-default-400'>
                 <div className='flex items-center overflow-x-scroll '>
                     <div className='grow'>
                         <KeyEditor

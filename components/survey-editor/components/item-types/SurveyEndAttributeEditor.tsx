@@ -5,7 +5,7 @@ import React from 'react';
 import { BsBraces, BsBracesAsterisk, BsCardText, BsEye, BsTextarea } from 'react-icons/bs';
 import { Expression } from 'survey-engine/data_types';
 import AttributeGroupsAccordion from './specific-editors/AttributeGroupsAccordion';
-import ItemConditionEditor from './ItemConditionEditor';
+import ItemConditionEditor from './specific-editors/ItemConditionEditor';
 
 export interface SurveyEndAttributes {
     key: string;

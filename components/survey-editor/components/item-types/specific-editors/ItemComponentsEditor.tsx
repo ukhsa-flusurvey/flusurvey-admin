@@ -9,7 +9,7 @@ import { localisedStringToMap } from '../utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import AdvancedContentMonacoEditor from './AdvancedContentMonacoEditor';
 import { DateDisplayComponentProp, ExpressionDisplayProp, StyledTextComponentProp } from 'case-editor-tools/surveys/types';
-import { parseAdvancedContentProps } from './SingleChoiceAttributeEditor';
+import { parseAdvancedContentProps } from '../utils';
 
 
 interface ItemComponentsEditorProps {
