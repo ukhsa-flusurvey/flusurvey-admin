@@ -7,6 +7,9 @@ import MatrixAttributeEditor from './question-types/MatrixAttributeEditor';
 import SliderNumericAttributeEditor from './question-types/SliderNumeric';
 import DateInputAttributeEditor from './question-types/DateInput';
 import DisplayItemAttributeEditor from './question-types/DisplayItemAttributeEditor';
+import TimeInputAttributeEditor from './question-types/TimeInput';
+import TextInputAttributeEditor from './question-types/TextInput';
+import NumericInputAttributeEditor from './question-types/NumericInput';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -49,6 +52,10 @@ const determineItemType = (item: SurveySingleItem): string => {
             return 'matrix';
         case 'sliderNumeric':
             return 'sliderNumeric';
+        case 'dateInput':
+            return 'dateInput';
+        case 'timeInput':
+            return 'timeInput';
         default:
             console.warn('Unknown response item role: ', mainResponseItem.role);
             return mainResponseItem.role;
@@ -72,9 +79,15 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
                 onItemChange={props.onItemChange}
             />)
         case 'textInput':
-            return (<NotImplemented>
-                Editor for {itemType}
-            </NotImplemented>)
+            return (<TextInputAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'numberInput':
+            return (<NumericInputAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
         case 'singleChoice':
             return (<SingleChoiceAttributeEditor
                 surveyItem={props.surveyItem}
@@ -87,6 +100,11 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
             />)
         case 'dateInput':
             return (<DateInputAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'timeInput':
+            return (<TimeInputAttributeEditor
                 surveyItem={props.surveyItem}
                 onItemChange={props.onItemChange}
             />)
