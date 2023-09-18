@@ -10,6 +10,8 @@ import DisplayItemAttributeEditor from './question-types/DisplayItemAttributeEdi
 import TimeInputAttributeEditor from './question-types/TimeInput';
 import TextInputAttributeEditor from './question-types/TextInput';
 import NumericInputAttributeEditor from './question-types/NumericInput';
+import DropdownGroupAttributeEditor from './question-types/DropdownGroup';
+import MultilineTextinputAttributeEditor from './question-types/MultilineTextinput';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -44,6 +46,12 @@ const determineItemType = (item: SurveySingleItem): string => {
     switch (mainResponseItem.role) {
         case 'input':
             return 'textInput';
+        case 'multilineTextInput':
+            return 'multilineTextInput';
+        case 'numberInput':
+            return 'numberInput';
+        case 'dropDownGroup':
+            return 'dropdownGroup';
         case 'singleChoiceGroup':
             return 'singleChoice';
         case 'multipleChoiceGroup':
@@ -110,6 +118,16 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
             />)
         case 'sliderNumeric':
             return (<SliderNumericAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'dropdownGroup':
+            return (<DropdownGroupAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'multilineTextInput':
+            return (<MultilineTextinputAttributeEditor
                 surveyItem={props.surveyItem}
                 onItemChange={props.onItemChange}
             />)
