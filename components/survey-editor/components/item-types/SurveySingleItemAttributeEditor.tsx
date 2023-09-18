@@ -6,6 +6,7 @@ import MultipleChoiceAttributeEditor from './question-types/MultipleChoiceAttrib
 import MatrixAttributeEditor from './question-types/MatrixAttributeEditor';
 import SliderNumericAttributeEditor from './question-types/SliderNumeric';
 import DateInputAttributeEditor from './question-types/DateInput';
+import DisplayItemAttributeEditor from './question-types/DisplayItemAttributeEditor';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -66,9 +67,10 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
 
     switch (itemType) {
         case 'display':
-            return (<NotImplemented>
-                Editor for {itemType}
-            </NotImplemented>)
+            return (<DisplayItemAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
         case 'textInput':
             return (<NotImplemented>
                 Editor for {itemType}
