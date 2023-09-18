@@ -1,8 +1,11 @@
 import React from 'react';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import NotImplemented from '@/components/NotImplemented';
-import SingleChoiceAttributeEditor from './specific-editors/SingleChoiceAttributeEditor';
-import MultipleChoiceAttributeEditor from './specific-editors/MultipleChoiceAttributeEditor';
+import SingleChoiceAttributeEditor from './question-types/SingleChoiceAttributeEditor';
+import MultipleChoiceAttributeEditor from './question-types/MultipleChoiceAttributeEditor';
+import MatrixAttributeEditor from './question-types/MatrixAttributeEditor';
+import SliderNumericAttributeEditor from './question-types/SliderNumeric';
+import DateInputAttributeEditor from './question-types/DateInput';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -41,6 +44,10 @@ const determineItemType = (item: SurveySingleItem): string => {
             return 'singleChoice';
         case 'multipleChoiceGroup':
             return 'multipleChoice';
+        case 'matrix':
+            return 'matrix';
+        case 'sliderNumeric':
+            return 'sliderNumeric';
         default:
             console.warn('Unknown response item role: ', mainResponseItem.role);
             return mainResponseItem.role;
@@ -58,6 +65,10 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
     const itemType = determineItemType(props.surveyItem);
 
     switch (itemType) {
+        case 'display':
+            return (<NotImplemented>
+                Editor for {itemType}
+            </NotImplemented>)
         case 'textInput':
             return (<NotImplemented>
                 Editor for {itemType}
@@ -72,10 +83,22 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
                 surveyItem={props.surveyItem}
                 onItemChange={props.onItemChange}
             />)
-        case 'display':
-            return (<NotImplemented>
-                Editor for {itemType}
-            </NotImplemented>)
+        case 'dateInput':
+            return (<DateInputAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'sliderNumeric':
+            return (<SliderNumericAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'matrix':
+            return (<MatrixAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+
         default:
             return <p className='p-unit-md text-danger'>
                 Unknown item type: {itemType}

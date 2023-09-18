@@ -1,18 +1,18 @@
 import React from 'react';
-import GenericQuestionPropEditor from './GenericQuestionPropEditor';
+import GenericQuestionPropEditor from '../specific-editors/GenericQuestionPropEditor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 import { BsBraces } from 'react-icons/bs';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { surveyItemToGenericProps } from '../utils';
-import MonacoResponseGroupContentEditor from './MonacoResponseGroupContentEditor';
+import MonacoResponseGroupContentEditor from '../specific-editors/MonacoResponseGroupContentEditor';
 
-interface SingleChoiceAttributeEditorProps {
+interface MatrixAttributeEditorProps {
     surveyItem: SurveySingleItem;
     onItemChange: (item: SurveySingleItem) => void;
 }
 
 
-const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = ({
+const MatrixAttributeEditor: React.FC<MatrixAttributeEditorProps> = ({
     surveyItem,
     onItemChange,
 }) => {
@@ -28,7 +28,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
             <span className='me-1 font-normal text-tiny block'>
                 Type:
             </span>
-            Single choice
+            Matrix
         </p>
         <GenericQuestionPropEditor
             genericProps={
@@ -41,7 +41,7 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                     icon: <BsBraces />,
                     content: (
                         <MonacoResponseGroupContentEditor
-                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'scg', role: 'singleChoiceGroup', items: [] }}
+                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'mat', role: 'matrix', items: [] }}
                             onChange={(newItemComponent) => {
                                 if (!surveyItem || !surveyItem.components) {
                                     console.warn('no survey item or components when trying to save response group content')
@@ -71,28 +71,30 @@ const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = 
                 }
             }
             onChange={(newProps) => {
+                alert('not implemented yet');
+                // TODO
+                /*
+                                const newItem = SurveyItems.customQuestion ({
+                                    ...newProps,
 
-                const newItem = SurveyItems.singleChoice({
-                    ...newProps,
-                    responseOptions: []
-                }) as SurveySingleItem;
+                                }) as SurveySingleItem;
 
-                // keep response group
-                const rg = surveyItem.components?.items.find(i => i.role === 'responseGroup');
+                                // keep response group
+                                const rg = surveyItem.components?.items.find(i => i.role === 'responseGroup');
 
-                const rgIndex = (newItem as SurveySingleItem).components?.items.findIndex(i => i.role === 'responseGroup');
+                                const rgIndex = (newItem as SurveySingleItem).components?.items.findIndex(i => i.role === 'responseGroup');
 
-                if (rgIndex && rg && newItem.components !== undefined) {
-                    newItem.components.items[rgIndex] = rg;
-                }
+                                if (rgIndex && rg && newItem.components !== undefined) {
+                                    newItem.components.items[rgIndex] = rg;
+                                }
 
-                onItemChange({
-                    ...newItem,
-                });
+                                onItemChange({
+                                    ...newItem,
+                                });*/
             }}
         />
     </>
     );
 };
 
-export default SingleChoiceAttributeEditor;
+export default MatrixAttributeEditor;

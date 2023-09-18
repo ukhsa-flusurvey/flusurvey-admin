@@ -1,18 +1,18 @@
 import React from 'react';
-import GenericQuestionPropEditor from './GenericQuestionPropEditor';
+import GenericQuestionPropEditor from '../specific-editors/GenericQuestionPropEditor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
 import { BsBraces } from 'react-icons/bs';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { surveyItemToGenericProps } from '../utils';
-import MonacoResponseGroupContentEditor from './MonacoResponseGroupContentEditor';
+import MonacoResponseGroupContentEditor from '../specific-editors/MonacoResponseGroupContentEditor';
 
-interface MultipleChoiceAttributeEditorProps {
+interface SingleChoiceAttributeEditorProps {
     surveyItem: SurveySingleItem;
     onItemChange: (item: SurveySingleItem) => void;
 }
 
 
-const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps> = ({
+const SingleChoiceAttributeEditor: React.FC<SingleChoiceAttributeEditorProps> = ({
     surveyItem,
     onItemChange,
 }) => {
@@ -28,7 +28,7 @@ const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps
             <span className='me-1 font-normal text-tiny block'>
                 Type:
             </span>
-            Multiple choice
+            Single choice
         </p>
         <GenericQuestionPropEditor
             genericProps={
@@ -41,7 +41,7 @@ const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps
                     icon: <BsBraces />,
                     content: (
                         <MonacoResponseGroupContentEditor
-                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'mcg', role: 'multipleChoiceGroup', items: [] }}
+                            itemComponent={mainResponseSlot ? { ...(mainResponseSlot as ItemGroupComponent).items[0] } : { key: 'scg', role: 'singleChoiceGroup', items: [] }}
                             onChange={(newItemComponent) => {
                                 if (!surveyItem || !surveyItem.components) {
                                     console.warn('no survey item or components when trying to save response group content')
@@ -72,7 +72,7 @@ const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps
             }
             onChange={(newProps) => {
 
-                const newItem = SurveyItems.multipleChoice({
+                const newItem = SurveyItems.singleChoice({
                     ...newProps,
                     responseOptions: []
                 }) as SurveySingleItem;
@@ -95,4 +95,4 @@ const MultipleChoiceAttributeEditor: React.FC<MultipleChoiceAttributeEditorProps
     );
 };
 
-export default MultipleChoiceAttributeEditor;
+export default SingleChoiceAttributeEditor;
