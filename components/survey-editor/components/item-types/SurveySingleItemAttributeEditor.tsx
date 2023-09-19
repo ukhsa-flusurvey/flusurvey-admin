@@ -12,6 +12,10 @@ import TextInputAttributeEditor from './question-types/TextInput';
 import NumericInputAttributeEditor from './question-types/NumericInput';
 import DropdownGroupAttributeEditor from './question-types/DropdownGroup';
 import MultilineTextinputAttributeEditor from './question-types/MultilineTextinput';
+import ConsentAttributeEditor from './question-types/ConsentAttributeEditor';
+import ResponsiveSingleChoiceArrayAttributeEditor from './question-types/ResponsiveSingleChoiceArrayAttributeEditor';
+import ResponsiveBipolarLikertScaleArrayAttributeEditor from './question-types/ResponsiveBipolarLikertAttributeEditor';
+import ResponsiveMatrixAttributeEditor from './question-types/ResponsiveMatrixAttributeEditor';
 
 
 interface SurveySingleItemAttributeEditorProps {
@@ -56,6 +60,14 @@ const determineItemType = (item: SurveySingleItem): string => {
             return 'singleChoice';
         case 'multipleChoiceGroup':
             return 'multipleChoice';
+        case 'responsiveSingleChoiceArray':
+            return 'responsiveSingleChoiceArray';
+        case 'responsiveSingleChoiceArray':
+            return 'responsiveSingleChoiceArray';
+        case 'responsiveBipolarLikertScaleArray':
+            return 'responsiveBipolarLikertScaleArray';
+        case 'responsiveMatrix':
+            return 'responsiveMatrix';
         case 'matrix':
             return 'matrix';
         case 'sliderNumeric':
@@ -64,6 +76,8 @@ const determineItemType = (item: SurveySingleItem): string => {
             return 'dateInput';
         case 'timeInput':
             return 'timeInput';
+        case 'consent':
+            return 'consent';
         default:
             console.warn('Unknown response item role: ', mainResponseItem.role);
             return mainResponseItem.role;
@@ -131,12 +145,31 @@ const SurveySingleItemAttributeEditor: React.FC<SurveySingleItemAttributeEditorP
                 surveyItem={props.surveyItem}
                 onItemChange={props.onItemChange}
             />)
+        case 'responsiveSingleChoiceArray':
+            return (<ResponsiveSingleChoiceArrayAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'responsiveBipolarLikertScaleArray':
+            return (<ResponsiveBipolarLikertScaleArrayAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
+        case 'responsiveMatrix':
+            return (<ResponsiveMatrixAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
         case 'matrix':
             return (<MatrixAttributeEditor
                 surveyItem={props.surveyItem}
                 onItemChange={props.onItemChange}
             />)
-
+        case 'consent':
+            return (<ConsentAttributeEditor
+                surveyItem={props.surveyItem}
+                onItemChange={props.onItemChange}
+            />)
         default:
             return <p className='p-unit-md text-danger'>
                 Unknown item type: {itemType}
