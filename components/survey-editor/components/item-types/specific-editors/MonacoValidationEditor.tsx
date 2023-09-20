@@ -50,7 +50,6 @@ const MonacoValidationEditor: React.FC<MonacoValidationEditorProps> = (props) =>
                             enabled: false,
                         },
                         roundedSelection: true,
-                        suggestionDelay: 100,
                     }}
                     language='yaml'
                     onChange={(e) => {
