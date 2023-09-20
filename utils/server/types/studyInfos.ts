@@ -17,12 +17,17 @@ export interface Study {
     props: {
         name: LocalizedString[];
         description: LocalizedString[];
-        tags: LocalizedString[][];
+        tags: Array<{ label: LocalizedString[] }>;
         systemDefaultStudy: boolean;
     }
     configs: {
         idMappingMethod: string;
         participantFileUploadRule: Expression;
     }
+    stats: {
+        participantCount: number;
+        tempParticipantCount: number;
+        responseCount: number;
+    };
     rules: Expression[];
 }

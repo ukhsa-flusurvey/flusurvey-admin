@@ -1,13 +1,17 @@
 import { getServerSession } from "next-auth/next";
-import { NextRequest } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { getCASEManagementAPIURL, getTokenHeader } from "@/utils/server/api";
 
 export async function GET(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
-    console.log(segments.join('/'));
     const session = await getServerSession(authOptions);
     if (!session || session.error || session.accessToken === undefined) {
-        throw new Error("Not authenticated");
+        console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
+        return new NextResponse(
+            JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     const url = getCASEManagementAPIURL(segments.join('/'))
@@ -17,9 +21,12 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
 
     const apiResponse = await fetch(url.toString(), {
         headers: { ...getTokenHeader(session.accessToken) },
+        next: {
+            revalidate: 0,
+        }
     });
 
-    const resp = new Response(apiResponse.body, {
+    const resp = new NextResponse(apiResponse.body, {
         status: apiResponse.status,
         headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
     });
@@ -31,7 +38,11 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
 export async function POST(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await getServerSession(authOptions);
     if (!session || session.error || session.accessToken === undefined) {
-        throw new Error("Not authenticated");
+        console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
+        return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     const url = getCASEManagementAPIURL(segments.join('/'))
@@ -41,9 +52,12 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
         headers: { ...getTokenHeader(session.accessToken) },
         method: 'POST',
         body: JSON.stringify(body),
+        next: {
+            revalidate: 0,
+        }
     });
 
-    const resp = new Response(apiResponse.body, {
+    const resp = new NextResponse(apiResponse.body, {
         status: apiResponse.status,
         headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
     });
@@ -54,7 +68,11 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
 export async function DELETE(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await getServerSession(authOptions);
     if (!session || session.error || session.accessToken === undefined) {
-        throw new Error("Not authenticated");
+        console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
+        return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     const url = getCASEManagementAPIURL(segments.join('/'))
@@ -63,7 +81,7 @@ export async function DELETE(request: NextRequest, { params: { segments } }: { p
         method: 'DELETE',
     });
 
-    const resp = new Response(apiResponse.body, {
+    const resp = new NextResponse(apiResponse.body, {
         status: apiResponse.status,
         headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
     });

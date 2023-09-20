@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from 'react';
 import LoginForm from './LoginForm';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
 
 interface LoginProps {
@@ -26,7 +26,6 @@ const Login: React.FC<LoginProps> = (props) => {
 
     const callBackURL = searchParams.get('callbackUrl') || '/';
 
-
     const handleLogin = async () => {
         setIsLoading(true);
         try {
@@ -38,29 +37,27 @@ const Login: React.FC<LoginProps> = (props) => {
                 callbackUrl: callBackURL as string,
             });
             if (!res) {
-                return
+                throw new Error('No response from server');
             }
-            if (res.ok === false || res.error !== null) {
+            if (res.ok === false) {
                 setError(true);
-
-            } else {
-                if (res.url) {
-                    const to = res.url;
-                    startTransition(() => {
-                        router.refresh();
-                        router.replace(to);
-                    })
-
+            } else if (res.error !== undefined && res.error !== null) {
+                if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
+                    setError(false);
+                    setIsSecondFactor(true);
+                } else {
+                    setError(true);
                 }
-                setError(false);
+                // success
             }
-            if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
-                setError(false);
-                setIsSecondFactor(true);
+            if (res.url) {
+                const url = res.url;
+                startTransition(() => {
+                    router.push(url);
+                });
             }
-
-        } catch (error) {
-            console.log(error)
+        } catch (error: any) {
+            console.log(error.message)
         } finally {
             setIsLoading(false);
         }

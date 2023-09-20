@@ -1,17 +1,24 @@
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Login from "@/components/auth/Login";
+import { Card, CardBody } from "@nextui-org/card";
 
 export default async function Page() {
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
     return (
-        <div className='h-full bg-slate-100 '>
-            <div className='h-full bg-repeat bg-[length:350px_350px] bg-[url(/images/random-shapes.svg)] bg-cyan-800 w-full flex flex-col align-middle'>
-                <div className='p-6 m-auto sm:w-[500px] bg-white rounded'>
+
+        <div className="w-full h-screen flex items-center justify-center bg-cover bg-center bg-[url(/images/chart-illustration.png)] p-unit-2">
+            <Card
+                isBlurred
+                className="bg-content2/80 w-full h-full sm:h-auto sm:w-[610px]"
+                shadow="sm"
+            >
+                <CardBody className="p-unit-md sm:p-unit-xl flex flex-col gap-unit-xl justify-center">
                     <CaseAdminHeader
-                        appName={process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools'}
+                        appName={appName}
                     />
                     <Login />
-                </div>
-            </div>
+                </CardBody>
+            </Card>
         </div>
     )
 }
