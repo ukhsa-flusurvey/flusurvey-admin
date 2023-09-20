@@ -47,7 +47,6 @@ const MonacoResponseGroupContentEditor: React.FC<MonacoResponseGroupContentEdito
                             enabled: false,
                         },
                         roundedSelection: true,
-                        suggestionDelay: 100,
                     }}
                     language='yaml'
                     onChange={(e) => {
