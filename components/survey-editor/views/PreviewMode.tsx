@@ -11,25 +11,27 @@ interface PreviewModeProps {
 const PreviewMode: React.FC<PreviewModeProps> = (props) => {
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
     return (
-        <div className='relative p-unit-lg'>
+        <div className='relative p-unit-lg bg-white'>
             <LanguageSelector
                 onLanguageChange={(lang) => setSelectedLanguage(lang)}
             />
-            <SurveyView
-                survey={props.editorInstance.getSurvey()}
-                backBtnText='Back'
-                invalidResponseText='Invalid response'
-                languageCode={selectedLanguage}
-                nextBtnText='Next'
-                submitBtnText='Submit'
-                onSubmit={(response) => {
-                    console.log(response);
+            <div className='pt-unit-lg max-w-[600px] '>
+                <SurveyView
+                    survey={props.editorInstance.getSurvey()}
+                    backBtnText='Back'
+                    invalidResponseText='Invalid response'
+                    languageCode={selectedLanguage}
+                    nextBtnText='Next'
+                    submitBtnText='Submit'
+                    onSubmit={(response) => {
+                        console.log(response);
 
-                }}
+                    }}
 
 
 
-            />
+                />
+            </div>
         </div>
     );
 };
