@@ -46,7 +46,7 @@ const MonacoResponseGroupContentEditor: React.FC<MonacoResponseGroupContentEdito
                         minimap: {
                             enabled: false,
                         },
-                        rounedSelection: true,
+                        roundedSelection: true,
                         suggestionDelay: 100,
                     }}
                     language='yaml'
