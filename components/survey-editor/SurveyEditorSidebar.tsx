@@ -26,6 +26,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
         switch (mode) {
             case 'file':
                 return <SidebarItem
+                    key={mode}
                     tooltip='File import/export'
                     isActive={currentMode === 'file'}
                     onPress={() => {
@@ -37,6 +38,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 </SidebarItem>
             case 'props':
                 return <SidebarItem
+                    key={mode}
                     tooltip='Survey properties'
                     isActive={currentMode === 'props'}
                     onPress={() => {
@@ -48,6 +50,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 </SidebarItem>
             case 'items':
                 return <SidebarItem
+                    key={mode}
                     tooltip='Survey items'
                     isActive={currentMode === 'items'}
                     onPress={() => {
@@ -59,6 +62,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 </SidebarItem>
             case 'preview':
                 return <SidebarItem
+                    key={mode}
                     tooltip='Preview'
                     isActive={currentMode === 'preview'}
                     onPress={() => {
@@ -70,6 +74,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 </SidebarItem>
             case 'publish':
                 return <SidebarItem
+                    key={mode}
                     tooltip='Publish'
                     isActive={currentMode === 'publish'}
                     onPress={() => {
@@ -90,8 +95,6 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 className='border-default-400'
             >
                 {editorModes.map(mode => getItem(mode.mode, mode.isDisabled))}
-
-
                 <span className='grow'></span>
                 <Divider />
                 <SidebarItem
