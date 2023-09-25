@@ -39,6 +39,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 editorInstance={editorInstance}
                 onLoadNewSurvey={(survey) => {
                     setEditorInstance(new EditorInstance(survey));
+                    setMode('props');
                 }}
             />;
             break;
