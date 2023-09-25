@@ -1,7 +1,7 @@
 import { Button, Divider, Input, Listbox, ListboxItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { Group } from 'case-editor-tools/surveys/types';
 import React from 'react';
-import { Bs123, BsArrowsExpand, BsCalendar2, BsCardText, BsCheck2Square, BsClock, BsCreditCard2Front, BsInfoCircle, BsInputCursorText, BsMenuButton, BsSliders, BsTable, BsTextarea, BsTextareaResize, BsUiChecks, BsUiRadios, BsUiRadiosGrid } from 'react-icons/bs';
+import { Bs123, BsArrowsExpand, BsCalendar3, BsCardText, BsCheck2Square, BsCheckSquare, BsCircle, BsClock, BsCreditCard2Front, BsInfoCircle, BsInputCursorText, BsMenuButton, BsSliders, BsTable, BsTextareaResize, BsUiRadiosGrid } from 'react-icons/bs';
 import { SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import SurveyEndAttributeEditor, { SurveyEndAttributes } from './item-types/SurveyEndAttributeEditor';
 import KeyEditor from './KeyEditor';
@@ -166,7 +166,7 @@ interface ModalContentForSurveyItemActionProps extends ModalContentProps {
     onSubmit: (item: SurveySingleItem) => void;
 }
 
-const surveyItemTypes = [
+export const surveyItemTypes = [
     {
         key: 'display',
         label: 'Display',
@@ -177,19 +177,19 @@ const surveyItemTypes = [
         key: 'singleChoice',
         label: 'Single choice',
         description: 'Allows the participant to select one option from a list of options.',
-        icon: <BsUiRadios />,
+        icon: <BsCircle />,
     },
     {
         key: 'multipleChoice',
         label: 'Multiple choice',
         description: 'Allows the participant to select multiple options from a list of options.',
-        icon: <BsUiChecks />,
+        icon: <BsCheckSquare />,
     },
     {
         key: 'dateInput',
         label: 'Date input',
         description: 'Allows the participant to enter a date.',
-        icon: <BsCalendar2 />,
+        icon: <BsCalendar3 />,
     },
     {
         key: 'timeInput',

@@ -23,7 +23,7 @@ interface SurveySingleItemAttributeEditorProps {
     onItemChange: (item: SurveySingleItem) => void;
 }
 
-const determineItemType = (item: SurveySingleItem): string => {
+export const determineItemType = (item: SurveySingleItem): string => {
     if (!item.components?.items || item.components.items.length === 0) {
         console.warn('No components found for item: ', item.key);
         return 'unknown';
