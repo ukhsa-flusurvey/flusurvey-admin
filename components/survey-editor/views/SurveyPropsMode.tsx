@@ -2,12 +2,13 @@ import LanguageSelector from '@/components/LanguageSelector';
 import NotImplemented from '@/components/NotImplemented';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { getLocalizedString } from '@/utils/getLocalisedString';
-import { Card, Input, Select, SelectItem, Switch, Tab, Tabs } from '@nextui-org/react';
+import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { SurveyEditor } from 'case-editor-tools/surveys/survey-editor/survey-editor';
-import React from 'react';
-import { BsArrowRight, BsEye, BsPen, BsPerson } from 'react-icons/bs';
-import { ExpressionArg, LocalizedString } from 'survey-engine/data_types';
+import React, { useEffect } from 'react';
+import { BsArrowRight, BsCheck, BsPencil, BsPerson, BsX } from 'react-icons/bs';
+import { ExpressionArg, LocalizedString, SurveyProps } from 'survey-engine/data_types';
 import EditorMenu from '../components/EditorMenu';
+
 
 
 interface SurveyPropsModeProps {
@@ -28,13 +29,224 @@ const getMissingLanguagesForProps = (studyProps: any): string[] => {
     return missingLanguages;
 }
 
+const SurveyCardEditor: React.FC<{
+    surveyProps: SurveyProps,
+    onChanges: (props: SurveyProps) => void,
+}> = (props) => {
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
+    const [currenctSurveyProps, setCurrentSurveyProps] = React.useState<SurveyProps>(props.surveyProps);
+    const [editMode, setEditMode] = React.useState(false);
+
+    useEffect(() => {
+        setCurrentSurveyProps(props.surveyProps);
+    }, [props.surveyProps])
+
+    const missingLanguages = getMissingLanguagesForProps(currenctSurveyProps);
+
+
+    return <div className='space-y-unit-md'>
+        <div className='flex justify-end'>
+            <LanguageSelector
+                onLanguageChange={(lang) => {
+                    setSelectedLanguage(lang);
+                }}
+                showBadgeForLanguages={missingLanguages}
+            />
+        </div>
+        {editMode ?
+            (
+                <div className='flex flex-col gap-y-unit-sm'>
+                    <h3 className='text-large font-bold mb-1'>Edit card values:</h3>
+
+                    <Input
+                        id='survey-name'
+                        label='Name'
+                        labelPlacement='outside'
+                        placeholder='Enter a name for the survey'
+                        variant='bordered'
+                        description='A short title for the survey card.'
+                        classNames={{
+                            inputWrapper: 'bg-white'
+                        }}
+                        value={getLocalizedString(currenctSurveyProps.name, selectedLanguage) || ''}
+                        onValueChange={(v) => {
+                            const currentName = currenctSurveyProps.name;
+                            if (!currentName) {
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    name: [{
+                                        code: selectedLanguage, parts: [
+                                            { str: v, dtype: 'str' }
+                                        ]
+                                    }]
+                                }));
+                            } else {
+                                const i = currentName.findIndex((l) => l.code === selectedLanguage);
+                                if (i === -1) {
+                                    currentName.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+                                } else {
+                                    ((currentName[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                }
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    name: currentName as LocalizedString[]
+                                }));
+                            }
+                        }}
+                    />
+
+                    <Input
+                        id='survey-typical-duration'
+                        label='Typical duration'
+                        labelPlacement='outside'
+                        placeholder='Enter a typical duration for the survey'
+                        variant='bordered'
+                        description='You can mention the typical duration of the survey here.'
+                        classNames={{
+                            inputWrapper: 'bg-white'
+                        }}
+                        value={getLocalizedString(currenctSurveyProps.typicalDuration, selectedLanguage) || ''}
+                        onValueChange={(v) => {
+                            const current = currenctSurveyProps.typicalDuration;
+                            if (!current) {
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    typicalDuration: [{
+                                        code: selectedLanguage, parts: [
+                                            { str: v, dtype: 'str' }
+                                        ]
+                                    }]
+                                }));
+                            } else {
+                                const i = current.findIndex((l) => l.code === selectedLanguage);
+                                if (i === -1) {
+                                    current.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+                                } else {
+                                    ((current[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                }
+
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    typicalDuration: current
+                                }));
+                            }
+                        }}
+                    />
+
+                    <Input
+                        id='survey-description'
+                        label='Description'
+                        labelPlacement='outside'
+                        placeholder='Enter a description for the survey'
+                        variant='bordered'
+                        description='A short description of the survey.'
+                        classNames={{
+                            inputWrapper: 'bg-white'
+                        }}
+                        value={getLocalizedString(currenctSurveyProps.description, selectedLanguage) || ''}
+                        onValueChange={(v) => {
+                            const current = currenctSurveyProps.description;
+                            if (!current) {
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    description: [{
+                                        code: selectedLanguage, parts: [
+                                            { str: v, dtype: 'str' }
+                                        ]
+                                    }]
+                                }));
+                            } else {
+                                const i = current.findIndex((l) => l.code === selectedLanguage);
+                                if (i === -1) {
+                                    current.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+                                } else {
+                                    ((current[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                }
+                                setCurrentSurveyProps((prev) => ({
+                                    ...prev,
+                                    description: current,
+                                }));
+                            }
+                        }}
+
+                    />
+
+                    <div className='flex gap-unit-sm'>
+                        <Button
+                            variant='light'
+                            color='danger'
+                            startContent={<BsX />}
+                            onPress={() => {
+                                setEditMode(false);
+                                setCurrentSurveyProps(props.surveyProps);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant='flat'
+                            color='primary'
+                            startContent={<BsCheck />}
+                            onPress={() => {
+                                props.onChanges(currenctSurveyProps);
+                                setEditMode(false);
+                            }}
+                        >
+                            Apply
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <div className=''>
+                    <h3 className='text-large font-bold mb-1'>Card preview:</h3>
+
+                    <div className='bg-content3 p-unit-sm rounded-small  mb-unit-sm'>
+                        <p className='font-bold'>
+                            <span className="text-xl">
+                                {getLocalizedString(currenctSurveyProps.name, selectedLanguage) || '<Survey name>'}
+                            </span>
+                            <span className={'ms-1 text-normal font-normal text-black/60'}>
+                                {getLocalizedString(currenctSurveyProps.typicalDuration, selectedLanguage) || '<Typical duration>'}
+                            </span>
+                        </p>
+                        <p className="italic">
+                            {getLocalizedString(currenctSurveyProps.description, selectedLanguage) || '<Survey description>'}
+                        </p>
+                        <div className='flex justify-end items-center mt-2 '>
+                            <div className={'flex items-center bg-white rounded-small p-unit-2'}>
+                                <div className='bg-white'>
+                                    <BsPerson />
+                                </div>
+                                <span className='ms-2 inline-block truncate max-w-[200px]'>
+                                    {'Participant'}
+                                </span>
+                                <BsArrowRight className='ms-2' />
+                            </div>
+                        </div>
+                    </div>
+
+                    <Button
+                        variant='flat'
+                        //size='sm'
+                        color='primary'
+                        onPress={() => {
+                            setEditMode(true);
+                        }}
+                        startContent={<BsPencil />}
+                    >
+                        Edit
+                    </Button>
+                </div>
+            )
+        }
+    </div>
+}
+
 
 const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
     const currentSurveyDefinition = props.editorInstance.getSurvey().surveyDefinition;
     const [counter, setCounter] = React.useState(0);
-    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
-    const missingLanguages = getMissingLanguagesForProps(props.editorInstance.getSurvey().props);
 
     return (
         <div className='max-h-screen overflow-y-scroll'>
@@ -122,175 +334,20 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                         </div>
                     </div>
                 </TwoColumnsWithCards>
+
                 <TwoColumnsWithCards
                     label='Survey card'
                     description='Content of the survey card that is shown in the survey list.'
                 >
-                    <div className='space-y-unit-md'>
-                        <div className='flex justify-end'>
-                            <LanguageSelector
-                                onLanguageChange={(lang) => {
-                                    setSelectedLanguage(lang);
-                                }}
-                                showBadgeForLanguages={missingLanguages}
-                            />
-                        </div>
-                        <div>
-                            <Tabs aria-label="Survey card props">
-                                <Tab key="editor"
-                                    title={
-                                        <div className='flex items-center gap-unit-2'>
-                                            <BsPen className='opacity-40' />
-                                            Edit
-                                        </div>
-                                    }
-                                >
-                                    <div className='h-72'>
-                                        <div className='flex flex-col gap-y-unit-sm'>
-                                            <Input
-                                                id='survey-name'
-                                                label='Name'
-                                                labelPlacement='outside'
-                                                placeholder='Enter a name for the survey'
-                                                variant='bordered'
-                                                description='A short title for the survey card.'
-                                                classNames={{
-                                                    inputWrapper: 'bg-white'
-                                                }}
-                                                value={getLocalizedString(props.editorInstance.getSurvey().props?.name, selectedLanguage) || ''}
-                                                onValueChange={(v) => {
-                                                    const currentName = props.editorInstance.getSurvey().props?.name;
-                                                    if (!currentName) {
-                                                        props.editorInstance.setSurveyName(
-                                                            [{
-                                                                code: selectedLanguage, parts: [
-                                                                    { str: v, dtype: 'str' }
-                                                                ]
-                                                            }]
-                                                        );
-                                                    } else {
-                                                        const i = currentName.findIndex((l) => l.code === selectedLanguage);
-                                                        if (i === -1) {
-                                                            currentName.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
-                                                        } else {
-                                                            ((currentName[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
-                                                        }
-                                                        props.editorInstance.setSurveyName(currentName as LocalizedString[]);
-                                                    }
-                                                    setCounter(counter + 1);
-                                                }}
-                                            />
-                                            <Input
-                                                id='survey-description'
-                                                label='Description'
-                                                labelPlacement='outside'
-                                                placeholder='Enter a description for the survey'
-                                                variant='bordered'
-                                                description='A short description of the survey.'
-                                                classNames={{
-                                                    inputWrapper: 'bg-white'
-                                                }}
-                                                value={getLocalizedString(props.editorInstance.getSurvey().props?.description, selectedLanguage) || ''}
-                                                onValueChange={(v) => {
-                                                    const current = props.editorInstance.getSurvey().props?.description;
-                                                    if (!current) {
-                                                        props.editorInstance.setSurveyDescription(
-                                                            [{
-                                                                code: selectedLanguage, parts: [
-                                                                    { str: v, dtype: 'str' }
-                                                                ]
-                                                            }]
-                                                        );
-                                                    } else {
-                                                        const i = current.findIndex((l) => l.code === selectedLanguage);
-                                                        if (i === -1) {
-                                                            current.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
-                                                        } else {
-                                                            ((current[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
-                                                        }
-                                                        props.editorInstance.setSurveyDescription(current as LocalizedString[]);
-                                                    }
-                                                    setCounter(counter + 1);
-                                                }}
-
-                                            />
-                                            <Input
-                                                id='survey-typical-duration'
-                                                label='Typical duration'
-                                                labelPlacement='outside'
-                                                placeholder='Enter a typical duration for the survey'
-                                                variant='bordered'
-                                                description='You can mention the typical duration of the survey here.'
-                                                classNames={{
-                                                    inputWrapper: 'bg-white'
-                                                }}
-                                                value={getLocalizedString(props.editorInstance.getSurvey().props?.typicalDuration, selectedLanguage) || ''}
-                                                onValueChange={(v) => {
-                                                    const current = props.editorInstance.getSurvey().props?.typicalDuration;
-                                                    if (!current) {
-                                                        props.editorInstance.setSurveyDuration(
-                                                            [{
-                                                                code: selectedLanguage, parts: [
-                                                                    { str: v, dtype: 'str' }
-                                                                ]
-                                                            }]
-                                                        );
-                                                    } else {
-                                                        const i = current.findIndex((l) => l.code === selectedLanguage);
-                                                        if (i === -1) {
-                                                            current.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
-                                                        } else {
-                                                            ((current[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
-                                                        }
-                                                        props.editorInstance.setSurveyDuration(current as LocalizedString[]);
-                                                    }
-                                                    setCounter(counter + 1);
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </Tab>
-                                <Tab key="preview" title={
-                                    <div className='flex items-center gap-unit-2'>
-                                        <BsEye className='opacity-40' />
-                                        Preview
-                                    </div>}
-                                >
-                                    <div className='h-72'>
-                                        <div className='flex flex-col h-full'>
-                                            <div>
-
-                                                <div className='bg-content3 p-unit-sm rounded-small max-w-[600px]'>
-                                                    <p className='font-bold'>
-                                                        <span className="text-xl">
-                                                            {getLocalizedString(props.editorInstance.getSurvey().props?.name, selectedLanguage) || '<Survey name>'}
-                                                        </span>
-                                                        <span className={'ms-1 text-normal font-normal text-black/60'}>
-                                                            {getLocalizedString(props.editorInstance.getSurvey().props?.typicalDuration, selectedLanguage) || '<Typical duration>'}
-                                                        </span>
-                                                    </p>
-                                                    <p className="italic">
-                                                        {getLocalizedString(props.editorInstance.getSurvey().props?.description, selectedLanguage) || '<Survey description>'}
-                                                    </p>
-                                                    <div className='flex justify-end items-center mt-2 '>
-                                                        <div className={'flex items-center bg-white rounded-small p-unit-2'}>
-                                                            <div className='bg-white'>
-                                                                <BsPerson />
-                                                            </div>
-                                                            <span className='ms-2 inline-block truncate max-w-[200px]'>
-                                                                {'Participant'}
-                                                            </span>
-                                                            <BsArrowRight className='ms-2' />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab>
-                            </Tabs>
-                        </div>
-                    </div>
+                    <SurveyCardEditor
+                        surveyProps={props.editorInstance.getSurvey().props || {}}
+                        onChanges={(surveyProps) => {
+                            props.editorInstance.setSurveyName(surveyProps.name as LocalizedString[]);
+                            props.editorInstance.setSurveyDescription(surveyProps.description as LocalizedString[]);
+                            props.editorInstance.setSurveyDuration(surveyProps.typicalDuration as LocalizedString[]);
+                            setCounter(counter + 1);
+                        }}
+                    />
                 </TwoColumnsWithCards>
                 <TwoColumnsWithCards
                     label='Runtime context'
