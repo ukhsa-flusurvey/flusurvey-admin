@@ -27,7 +27,7 @@ const SurveyItemIcon: React.FC<{ item: SurveyItem }> = ({ item }) => {
         const itemType = determineItemType(item as SurveySingleItem);
         const icon = surveyItemTypes.find(t => t.key === itemType)?.icon;
         if (icon) {
-            return icon;
+            return <span className='opacity-50'>{icon}</span>;
         }
     }
     return <BsCardHeading />;
@@ -105,8 +105,9 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
     } else {
         itemList = (
             <Listbox
-                className=' bg-white'
+                className='bg-white'
                 aria-label={`List of items in group ${props.itemGroup.key}`}
+
                 onAction={(key) => {
                     const item = props.itemGroup.items.find(i => i.key === key);
                     if (item) {
@@ -135,7 +136,7 @@ const ItemExplorerColumn: React.FC<ItemExplorerColumnProps> = (props) => {
                                 <BsChevronRight />
                             </span>}
                             className={clsx(
-                                'relative group',
+                                'relative group font-mono font-bold',
                                 {
                                     'bg-primary-100': selectedItem?.key === item.key,
                                     'bg-primary-50': dragOverIndex === index,
