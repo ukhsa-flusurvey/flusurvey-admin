@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import { BsArrowRight, BsCheck, BsPencil, BsPerson, BsX } from 'react-icons/bs';
 import { ExpressionArg, LocalizedString, SurveyProps } from 'survey-engine/data_types';
 import EditorMenu from '../components/EditorMenu';
+import SurveyMetadataEditor from '../components/SurveyMetadataEditor';
 
 
 
@@ -366,9 +367,13 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                     label='Metadata'
                     description='You can provide custom key-value pairs that will be stored with the survey definition.'
                 >
-                    <NotImplemented>
-                        add, edit, delete metadata (key value pairs)
-                    </NotImplemented>
+                    <SurveyMetadataEditor
+                        metadata={props.editorInstance.getSurvey().metadata || {}}
+                        onChange={(metadata) => {
+                            props.editorInstance.setMetadata(metadata);
+                            setCounter(counter + 1);
+                        }}
+                    />
                 </TwoColumnsWithCards>
             </div>
         </div>
