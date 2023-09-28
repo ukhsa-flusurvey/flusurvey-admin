@@ -1,6 +1,5 @@
 import React from 'react';
 import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import NotImplemented from '@/components/NotImplemented';
 import SingleChoiceAttributeEditor from './question-types/SingleChoiceAttributeEditor';
 import MultipleChoiceAttributeEditor from './question-types/MultipleChoiceAttributeEditor';
 import MatrixAttributeEditor from './question-types/MatrixAttributeEditor';
