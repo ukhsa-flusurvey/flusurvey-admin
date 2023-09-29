@@ -2,13 +2,14 @@ import LanguageSelector from '@/components/LanguageSelector';
 import NotImplemented from '@/components/NotImplemented';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { getLocalizedString } from '@/utils/getLocalisedString';
-import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react';
+import { Button, Divider, Input, Select, SelectItem, Switch } from '@nextui-org/react';
 import { SurveyEditor } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 import React, { useEffect } from 'react';
 import { BsArrowRight, BsCheck, BsPencil, BsPerson, BsX } from 'react-icons/bs';
 import { ExpressionArg, LocalizedString, SurveyProps } from 'survey-engine/data_types';
 import EditorMenu from '../components/EditorMenu';
 import SurveyMetadataEditor from '../components/SurveyMetadataEditor';
+import MonacoSurveyPrefillRuleEditor from '../components/MonacoSurveyPrefillRuleEditor';
 
 
 
@@ -227,9 +228,7 @@ const SurveyCardEditor: React.FC<{
                     </div>
 
                     <Button
-                        variant='flat'
-                        //size='sm'
-                        color='primary'
+                        color='default'
                         onPress={() => {
                             setEditMode(true);
                         }}
@@ -256,9 +255,12 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                 editorInstance={props.editorInstance}
             />
             <div className='pt-12 pb-unit-lg px-unit-lg'>
+                <h2 className='text-3xl font-bold mb-unit-md mt-unit-lg'>
+                    General
+                </h2>
                 <TwoColumnsWithCards
-                    label='General'
-                    description='Define the general properties of the survey.'
+                    label='Key & Availability'
+                    description='The survey will be referred to by the survey key. You can also define availability of the survey (who can access it) and whether login is required before submission'
                 >
                     <div className='space-y-unit-sm'>
                         <Input
@@ -274,7 +276,6 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                                 setCounter(counter + 1);
                             }}
                         />
-
 
                         <Select
                             label='Available for'
@@ -322,7 +323,7 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                         <div>
                             <Switch
                                 id='require-login-before-submission'
-                                isSelected={props.editorInstance.getSurvey().requireLoginBeforeSubmission}
+                                isSelected={props.editorInstance.getSurvey().requireLoginBeforeSubmission || false}
                                 onValueChange={(v) => {
                                     props.editorInstance.setRequireLoginBeforeSubmission(v);
                                     setCounter(counter + 1);
@@ -350,18 +351,19 @@ const SurveyPropsMode: React.FC<SurveyPropsModeProps> = (props) => {
                         }}
                     />
                 </TwoColumnsWithCards>
+                <Divider />
+                <h2 className='text-3xl font-bold mb-unit-md mt-unit-lg'>Advanced</h2>
                 <TwoColumnsWithCards
                     label='Runtime context'
-                    description='If defined these rules govern what extra information is passed with the survey definition, e.g., for prefilling questions or for the context object that can be used in conditions.'
+                    description='Define rules that so the server generates responses for the questionnaire to prefill certain answers.'
                 >
-                    <div className='space-y-unit-md'>
-                        <NotImplemented>
-                            preview of rules | expression editor for prefill rules
-                        </NotImplemented>
-                        <NotImplemented>
-                            preview of rules | expression editor for runtime context
-                        </NotImplemented>
-                    </div>
+                    <MonacoSurveyPrefillRuleEditor
+                        prefillRules={props.editorInstance.getSurvey().prefillRules || []}
+                        onPrefillRulesChange={(rules) => {
+                            props.editorInstance.setPrefillRules(rules);
+                            setCounter(counter + 1);
+                        }}
+                    />
                 </TwoColumnsWithCards>
                 <TwoColumnsWithCards
                     label='Metadata'

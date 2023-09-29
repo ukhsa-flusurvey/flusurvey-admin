@@ -188,8 +188,7 @@ const SurveyMetadataEditor: React.FC<SurveyMetadataEditorProps> = ({
                     setShowMetadataEditor(true);
                 }}
                 startContent={<BsPlus />}
-                variant='flat'
-                color='primary'
+                color='default'
             >
                 Add new entry
             </Button>
