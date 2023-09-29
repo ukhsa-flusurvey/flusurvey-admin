@@ -25,7 +25,7 @@ interface SurveySingleItemAttributeEditorProps {
 export const determineItemType = (item: SurveySingleItem): string => {
     if (!item.components?.items || item.components.items.length === 0) {
         console.warn('No components found for item: ', item.key);
-        return 'unknown';
+        return 'display';
     }
 
     const responseGroup = item.components.items.find(i => i.role === 'responseGroup');

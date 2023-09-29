@@ -8,6 +8,7 @@ import KeyEditor from './KeyEditor';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 import { ItemEditor } from 'case-editor-tools/surveys/survey-editor/item-editor';
 import { SurveyItems } from 'case-editor-tools/surveys/survey-items';
+import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';
 
 interface NewItemDialogProps {
     currentMode: {
@@ -374,7 +375,11 @@ const ModalContentForSurveyItemAction = (props: ModalContentForSurveyItemActionP
                             item = SurveyItems.display({
                                 parentKey: props.parentKey || '',
                                 itemKey: newItemKey,
-                                content: [],
+                                content: [
+                                    ComponentGenerators.markdown({
+                                        content: new Map(),
+                                    })
+                                ],
                             })
                             break;
                         case 'singleChoice':
