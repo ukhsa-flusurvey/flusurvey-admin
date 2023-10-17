@@ -6,6 +6,7 @@ import DangerZone from './DangerZone';
 import StudyRuleOverview from './StudyRuleOverview';
 import StudyMembersCard from './StudyMembersCard';
 import StudyNotificationSubsCard from './StudyNotificationSubsCard';
+import { Divider } from '@nextui-org/divider';
 
 
 interface StudyDashboardProps {
@@ -34,6 +35,7 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                 />
             </div>
             <div className='py-unit-lg'>
+                <Divider />
                 <DangerZone
                     studyKey={props.studyKey}
                 />
