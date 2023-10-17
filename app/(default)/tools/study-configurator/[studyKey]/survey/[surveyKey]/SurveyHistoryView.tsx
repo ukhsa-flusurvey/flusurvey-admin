@@ -8,6 +8,8 @@ import { BsAsterisk, BsCalendar2, BsCloudArrowUp, BsDownload, BsPencilSquare, Bs
 import { Survey } from 'survey-engine/data_types';
 import useSWR from 'swr';
 import UploadSurveyDialog from './UploadSurveyDialog';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface SurveyHistoryViewProps {
     studyKey: string;
@@ -17,6 +19,7 @@ interface SurveyHistoryViewProps {
 const SurveyHistoryView: React.FC<SurveyHistoryViewProps> = (props) => {
     const { data: surveyVersions, mutate, error, isLoading } = useSWR<{ surveyVersions?: Survey[] }>(`/api/case-management-api/v1/study/${props.studyKey}/survey/${props.surveyKey}/versions`, AuthAPIFetcher)
 
+    const router = useRouter();
     const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
 
     const surveyVersionTimeline = React.useMemo(() => {
@@ -97,6 +100,8 @@ const SurveyHistoryView: React.FC<SurveyHistoryViewProps> = (props) => {
                                                         alert('Failed to fetch survey data.');
                                                     })
 
+                                                } else if (key === 'open-in-editor') {
+                                                    router.push(`/tools/study-configurator/${props.studyKey}/survey/${props.surveyKey}/editor?version=${survey.versionId}`);
                                                 }
 
                                             }}
@@ -124,7 +129,7 @@ const SurveyHistoryView: React.FC<SurveyHistoryViewProps> = (props) => {
 
             </ol>
         </div>
-    }, [surveyVersions])
+    }, [props.studyKey, props.surveyKey, surveyVersions, router])
 
     if (error) {
         if (error.message === 'Unauthorized') {
@@ -161,7 +166,9 @@ const SurveyHistoryView: React.FC<SurveyHistoryViewProps> = (props) => {
                             startContent={<BsPencilSquare />}
                             color='primary'
                             variant='flat'
-                            isDisabled
+                            as={Link}
+                            isDisabled={isLoading || !surveyVersions || !surveyVersions.surveyVersions || surveyVersions?.surveyVersions?.length === 0}
+                            href={`/tools/study-configurator/${props.studyKey}/survey/${props.surveyKey}/editor?version=${surveyVersions?.surveyVersions?.[0]?.versionId}`}
                         >
                             Open Current Version in Editor
                         </Button>
