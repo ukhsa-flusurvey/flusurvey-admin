@@ -17,13 +17,11 @@ interface StudyDashboardProps {
 const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
     return (
         <>
-            <div className='grid grid-cols-2 gap-unit-lg'>
+            <div className='pb-unit-lg'>
                 <StudyOverview
                     study={props.study}
                 />
-
-            </div>
-            <div className='py-unit-lg'>
+                <Divider />
                 <SurveyOverview
                     studyKey={props.studyKey}
                 />
