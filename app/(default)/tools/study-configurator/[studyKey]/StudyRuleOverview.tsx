@@ -19,8 +19,6 @@ const StudyRuleOverview: React.FC<StudyRuleOverviewProps> = (props) => {
             <h3 className='mb-1 font-bold'>Links:</h3>
             <div className='grid grid-cols-2 gap-unit-md'>
                 <Button
-                    // variant="flat"
-
                     as={NextUILink}
                     href={`/tools/study-configurator/${props.studyKey}/rules`}
                     size='lg'
@@ -29,8 +27,6 @@ const StudyRuleOverview: React.FC<StudyRuleOverviewProps> = (props) => {
                     Go to study rules
                 </Button>
                 <Button
-                    // variant="bordered"
-                    // color="primary"
                     as={NextUILink}
                     href={`/tools/study-configurator/${props.studyKey}/actions`}
                     size='lg'
