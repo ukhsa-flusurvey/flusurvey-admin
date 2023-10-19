@@ -10,7 +10,7 @@ interface StudyMembersCardProps {
 const StudyMembersCard: React.FC<StudyMembersCardProps> = (props) => {
     return (
         <TwoColumnsWithCards
-            label='Study members'
+            label='Members'
             description='Which RESEARCHERS are allowed to access this study?'
         >
             <NotImplemented>

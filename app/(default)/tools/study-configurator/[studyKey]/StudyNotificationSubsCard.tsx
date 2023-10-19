@@ -10,7 +10,7 @@ interface StudyNotificationSubsCardProps {
 const StudyNotificationSubsCard: React.FC<StudyNotificationSubsCardProps> = (props) => {
     return (
         <TwoColumnsWithCards
-            label='Study notifications'
+            label='Notifications'
             description='Which email will receive notifications for which study events?'
         >
             <NotImplemented>

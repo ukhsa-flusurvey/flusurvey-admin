@@ -24,13 +24,12 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                 <SurveyOverview
                     studyKey={props.studyKey}
                 />
+            </div>
+            <div className='py-unit-lg'>
                 <StudyRuleOverview
                     studyKey={props.studyKey}
                 />
-
-
-            </div>
-            <div className='py-unit-lg'>
+                <Divider />
                 <StudyNotificationSubsCard
                     study={props.study}
                 />
