@@ -46,7 +46,7 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
             isBlurred
         >
             <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Actions</h3>
+                <h3 className='text-xl font-bold'>Upload new survey</h3>
             </CardHeader>
             <Divider />
             <CardBody className='max-h-[400px] overflow-y-scroll'>

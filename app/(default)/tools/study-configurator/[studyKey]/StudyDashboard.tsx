@@ -31,7 +31,7 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                 />
                 <Divider />
                 <StudyNotificationSubsCard
-                    study={props.study}
+                    studyKey={props.studyKey}
                 />
                 <Divider />
                 <StudyMembersCard
