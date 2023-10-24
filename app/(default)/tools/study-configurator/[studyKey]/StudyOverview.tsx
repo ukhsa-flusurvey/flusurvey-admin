@@ -1,9 +1,7 @@
 import { Study } from '@/utils/server/types/studyInfos';
-import { Card, CardBody, CardHeader } from '@nextui-org/card';
 import { Divider } from '@nextui-org/divider';
 import { Chip } from '@nextui-org/chip';
 import React from 'react';
-import { BsInfoCircle } from 'react-icons/bs';
 import DisplayTexts from './DisplayTexts';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 
@@ -88,7 +86,10 @@ const StudyOverview: React.FC<StudyOverviewProps> = (props) => {
                 label='Study card'
                 description='Preview or edit the study card. The study card is shown to participants in the app if the feature is supported by your instance.'
             >
-                <DisplayTexts study={props.study} />
+                <DisplayTexts
+                    studyKey={props.study.key}
+                    studyProps={props.study.props}
+                />
             </TwoColumnsWithCards>
         </>
     );
