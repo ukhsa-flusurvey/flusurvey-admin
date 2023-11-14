@@ -39,7 +39,7 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         id: 'survey-key-selector',
         type: 'list-selector',
         contextArrayKey: 'surveyKeys',
-        label: 'Survey key',
+        label: 'Available survey keys',
         icon: 'blocks',
         color: 'orange',
         categories: ['variables'],

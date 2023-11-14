@@ -1,6 +1,6 @@
-import SlotLabel from "./SlotLabel";
-import SlotTypeSelector, { SlotTypeGroup } from "./SlotTypeSelector";
-import { ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef } from "./utils";
+import SlotLabel from "../components/SlotLabel";
+import SlotTypeSelector, { SlotTypeGroup } from "../components/SlotTypeSelector";
+import { ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef } from "../utils";
 
 interface EmptySlotProps {
     slotDef: SlotDef;
@@ -14,30 +14,6 @@ interface EmptySlotProps {
 
 const EmptySlot: React.FC<EmptySlotProps> = (props) => {
     const groups: Array<SlotTypeGroup> = []
-
-    // add built-in types:
-    /*const builtIns: SlotTypeGroup = {
-        id: 'built-in',
-        label: 'Variables',
-        slotTypes: props.builtInSlotTypes.filter(st => props.slotDef.allowedTypes?.find(at => at.type === st.type))
-            .map((builtIn) => {
-                let label = builtIn.label;
-                if (builtIn.id === 'selector-from-context') {
-                    label =
-                }
-                return {
-                    id: builtIn.id,
-                    label: builtIn.label,
-                    icon: builtIn.icon,
-                    color: builtIn.color,
-                }
-            })
-
-    }
-    if (builtIns.slotTypes.length > 0) {
-        groups.push(builtIns)
-    }*/
-
 
     // add expression types:
     const allowExpressionTypes: string[] = [];

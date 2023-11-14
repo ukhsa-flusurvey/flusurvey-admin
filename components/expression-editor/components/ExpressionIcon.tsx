@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
-import { ColorVariant, IconVariant } from './utils';
+import { ColorVariant, IconVariant } from '../utils';
 import { Blocks, Box, Braces, Brackets, Calendar, CircleSlash2, Code, Database, Diamond, FormInput, FunctionSquare, LayoutList, Parentheses, Pyramid, Regex, Signpost, Split, Square, SquareCode, Tag, Terminal, TextCursor, Triangle, Variable } from 'lucide-react';
 
 interface ExpressionIconProps {

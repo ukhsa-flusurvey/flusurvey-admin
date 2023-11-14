@@ -83,7 +83,7 @@ interface SlotInputDefFormKeyValueFromContext extends SlotInputDefBase {
     filterForValueType?: string,
 }
 
-interface SlotInputDefSelectorFromContext extends SlotInputDefBase {
+export interface SlotInputDefSelectorFromContext extends SlotInputDefBase {
     type: 'list-selector'
     contextArrayKey: string,
     filterForItemType?: string, // array items only if they have this type
@@ -122,7 +122,7 @@ interface ContextObjectItem {
     }
 }
 
-interface ContextArrayItem {
+export interface ContextArrayItem {
     key: string;
     label: string;
     type?: string; // can be used to make items filterable

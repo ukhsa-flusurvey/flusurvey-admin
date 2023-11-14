@@ -5,11 +5,14 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ExpEditorContext, Expression, ExpressionArg, ExpressionCategory, ExpressionDef, SelectSlotType, SlotInputDef, lookupExpressionDef } from './utils';
-import ExpressionIcon from './ExpressionIcon';
-import EmptySlot from './EmptySlot';
-import SlotLabel from './SlotLabel';
+import ExpressionIcon from './components/ExpressionIcon';
+import EmptySlot from './slots/EmptySlot';
+import SlotLabel from './components/SlotLabel';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
-import ExpressionPreview from './ExpressionPreview';
+import ExpressionPreview from './slots/ExpressionPreview';
+import SlotFormEditor from './slots/SlotFormEditor';
+import BlockHeader from './components/BlockHeader';
+import Block from './components/Block';
 
 
 
@@ -118,7 +121,8 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                             }}
                         >
                             <SelectTrigger>
-                                <SelectValue placeholder="Select a value" />
+                                <SelectValue
+                                    placeholder="Select a value..." />
                             </SelectTrigger>
                             <SelectContent>
                                 {options?.map((option) => {
@@ -134,12 +138,22 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 const isExpression = expressionDef !== undefined;
 
                 if (!isExpression) {
-                    return <div key={index}>
-                        <SlotLabel label={slotDef.label} required={slotDef.required} />
-                        <div className={cn('border border-slate-200 rounded-md py-2 px-4')}>
-                            <p>todo: use current built-in type template for {currentSlotType}</p>
-                        </div>
-                    </div>
+                    return <SlotFormEditor
+                        currentSlotType={currentSlotType}
+                        slotDef={slotDef}
+                        key={index}
+                        builtInSlotTypeDefinitions={props.expRegistry.builtInSlotTypes}
+                        context={props.context}
+                        depth={props.depth}
+                        slotIndex={index}
+                        currentArgs={props.expressionValue.data}
+                        onArgsChange={(newArgs) => {
+                            props.onChange?.({
+                                ...props.expressionValue,
+                                data: newArgs
+                            })
+                        }}
+                    />
                 }
 
 
@@ -179,9 +193,8 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                         expRegistry={props.expRegistry}
                         depth={(props.depth || 0) + 1}
                     />
-                        : <div className={cn('border border-slate-300 bg-slate-100 rounded-md overflow-hidden', {
-                            'bg-slate-50': (props.depth || 0) % 2 === 0,
-                        })}>
+                        :
+                        <Block depth={props.depth}>
                             <ExpressionEditor
                                 expRegistry={props.expRegistry}
                                 expressionValue={currentExpression}
@@ -189,10 +202,10 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                 context={props.context}
                                 onChange={(newExpression) => {
                                     const currentData = props.expressionValue.data || [];
-                                    if (currentData.length < index) {
-                                        currentData.fill(undefined, currentData.length, index)
+                                    if (currentData.length < currentIndex) {
+                                        currentData.fill(undefined, currentData.length, currentIndex)
                                     }
-                                    currentData[index] = {
+                                    currentData[currentIndex] = {
                                         exp: newExpression as CaseExpression,
                                         dtype: 'exp'
                                     }
@@ -202,7 +215,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                     })
                                 }}
                             />
-                        </div>
+                        </Block>
                     }
                 </div>
             }
@@ -216,19 +229,11 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 'bg-slate-50 rounded-md overflow-hidden': (props.depth || 0) === 0,
             }
         )}>
-            <p className={cn(
-                'font-bold text-[12px] text-slate-700 font-mono tracking-wide flex gap-2 items-center px-2 py-1 bg-slate-200',
-                {
-                    'bg-orange-100': expressionDef.color === 'orange',
-                    'bg-blue-100': expressionDef.color === 'blue',
-                })}>
-                <ExpressionIcon icon={expressionDef.icon} color={expressionDef.color} />
-
-                <span>
-                    {expressionDef.label}
-                </span>
-
-            </p>
+            <BlockHeader
+                color={expressionDef.color}
+                icon={expressionDef.icon}
+                label={expressionDef.label}
+            />
             <div className='pl-7 mt-0 pr-2 pb-2'>
                 {renderedSlots}
             </div>

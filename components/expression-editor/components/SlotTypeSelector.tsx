@@ -1,13 +1,13 @@
 'use client'
 
 import React from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
+import { Button } from '../../ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../../ui/command';
 import { BsPlusCircleDotted } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import ExpressionIcon from './ExpressionIcon';
-import { ColorVariant, IconVariant } from './utils';
+import { ColorVariant, IconVariant } from '../utils';
 
 interface SlotType {
     id: string;
