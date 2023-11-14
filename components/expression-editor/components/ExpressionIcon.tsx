@@ -68,8 +68,14 @@ const ExpressionIcon: React.FC<ExpressionIconProps> = (props) => {
     return (
         <span className={cn(
             {
-                'text-orange-500': props.color === 'orange',
-                'text-blue-500': props.color === 'blue',
+                'text-orange-600': props.color === 'orange',
+                'text-blue-600': props.color === 'blue',
+                'text-green-700': props.color === 'green',
+                'text-yellow-700': props.color === 'yellow',
+                'text-purple-700': props.color === 'purple',
+                'text-teal-700': props.color === 'teal',
+                'text-cyan-800': props.color === 'cyan',
+                'text-lime-700': props.color === 'lime',
             })}>
             <span className='flex items-center justify-center w-4 h-4'>
                 {getIconNode(props.icon)}

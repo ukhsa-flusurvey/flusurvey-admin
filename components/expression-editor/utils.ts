@@ -58,7 +58,7 @@ export interface SlotDef {
 
 
 
-export type ColorVariant = 'blue' | 'orange';
+export type ColorVariant = 'blue' | 'green' | 'yellow' | 'purple' | 'teal' | 'cyan' | 'dark' | 'lime' | 'orange';
 export type IconVariant = 'braces' | 'function' | 'code' | 'box' | 'variable' | 'brackets' | 'regex' | 'square-code' | 'terminal' | 'signpost' | 'layout-list' |
     'tag' | 'calendar' | 'text-cursor' | 'form-input' | 'parentheses' | 'pyramid' | 'triangle' | 'square' | 'diamond' | 'database' | 'split' | 'circle-slash' | 'blocks';
 
