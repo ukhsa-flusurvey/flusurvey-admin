@@ -7,20 +7,8 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { BsPlusCircleDotted } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import ExpressionIcon from './ExpressionIcon';
-import { ColorVariant, IconVariant } from '../utils';
+import { SlotTypeGroup } from '../utils';
 
-interface SlotType {
-    id: string;
-    label: string;
-    icon?: IconVariant;
-    color?: ColorVariant;
-}
-
-export interface SlotTypeGroup {
-    id: string;
-    label: string;
-    slotTypes: SlotType[];
-}
 
 interface SlotTypeSelectorProps {
     groups: SlotTypeGroup[];

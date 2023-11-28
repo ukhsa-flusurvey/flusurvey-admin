@@ -12,7 +12,7 @@ interface BlockHeaderProps {
 const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     return (
         <div className={cn(
-            'font-bold text-[12px] text-slate-700 font-mono tracking-wide flex gap-2 items-center px-2 py-1 bg-slate-200',
+            'font-bold text-[12px] text-slate-700 font-mono tracking-wide flex gap-2 items-center px-2 py-1 bg-slate-200 z-20',
             {
                 'bg-blue-100': props.color === 'blue',
                 'bg-orange-200': props.color === 'orange',
@@ -29,7 +29,6 @@ const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
             <span>
                 {props.label}
             </span>
-
         </div>
     );
 };

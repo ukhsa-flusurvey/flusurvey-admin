@@ -13,6 +13,8 @@ import ExpressionPreview from './slots/ExpressionPreview';
 import SlotFormEditor from './slots/SlotFormEditor';
 import BlockHeader from './components/BlockHeader';
 import Block from './components/Block';
+import ListEditor from './slots/ListEditor';
+import { ContextMenuItem } from '../ui/context-menu';
 
 
 
@@ -53,9 +55,25 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 if (props.expressionValue.data && props.expressionValue.data.length > 0) {
                     currentArgValues.push(...props.expressionValue.data.slice(index))
                 }
-                return <div key={index}>
-                    todo: list item
-                </div>
+                return <ListEditor
+                    key={index}
+                    slotDef={slotDef}
+                    expRegistry={props.expRegistry}
+                    currentValues={props.expressionValue.data || []}
+                    onChangeValues={(newValues) => {
+                        const currentData = props.expressionValue.data || [];
+                        if (currentData.length < index) {
+                            currentData.fill(undefined, currentData.length, index)
+                        }
+                        // replace list from index
+                        currentData.splice(index, currentData.length - index, ...newValues)
+                        props.onChange?.({
+                            ...props.expressionValue,
+                            data: currentData
+                        })
+                    }}
+                    depth={props.depth}
+                />
             }
 
             const currentSlotTypes = props.expressionValue.metadata?.slotTypes || []
@@ -177,6 +195,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
 
                 return <div key={index}>
                     <SlotLabel label={slotDef.label} required={slotDef.required}
+                        depth={props.depth}
                         isHidden={isHidden}
                         toggleHide={() => {
                             console.log('toggle hide')
@@ -186,12 +205,20 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                 setHideSlotContent(prev => { return [...prev, index] })
                             }
                         }}
+                        contextMenuContent={
+                            <>
+                                <ContextMenuItem>Profile</ContextMenuItem>
+                                <ContextMenuItem>Billing</ContextMenuItem>
+                                <ContextMenuItem>Team</ContextMenuItem>
+                                <ContextMenuItem>Subscription</ContextMenuItem>
+                            </>
+                        }
                     />
 
                     {isHidden ? <ExpressionPreview
                         expressionValue={currentExpression}
                         expRegistry={props.expRegistry}
-                        depth={(props.depth || 0) + 1}
+                        depth={props.depth}
                     />
                         :
                         <Block depth={props.depth}>

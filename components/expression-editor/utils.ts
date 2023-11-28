@@ -132,5 +132,90 @@ export interface ExpEditorContext {
     [key: string]: ContextObjectItem | ContextArrayItem[];
 }
 
+interface SlotType {
+    id: string;
+    label: string;
+    icon?: IconVariant;
+    color?: ColorVariant;
+}
 
 
+export interface SlotTypeGroup {
+    id: string;
+    label: string;
+    slotTypes: SlotType[];
+}
+
+
+export const getRecommendedSlotTypes = (
+    slotDef: SlotDef,
+    expRegistry: {
+        expressionDefs: ExpressionDef[],
+        categories: ExpressionCategory[]
+        builtInSlotTypes: SlotInputDef[],
+    }
+): Array<SlotTypeGroup> => {
+    const groups: Array<SlotTypeGroup> = []
+
+    // add expression types:
+    const allowExpressionTypes: string[] = [];
+    const excludedExpressions: string[] = [];
+    let allowsExpressions = false;
+    slotDef.allowedTypes?.forEach((at) => {
+        if (at.type === 'expression') {
+            allowsExpressions = true;
+            if (at.allowedExpressionTypes !== undefined) {
+                allowExpressionTypes.push(...at.allowedExpressionTypes)
+            }
+            if (at.excludedExpressions !== undefined) {
+                excludedExpressions.push(...at.excludedExpressions)
+            }
+        }
+    })
+
+    expRegistry.categories.forEach((category) => {
+        const currentGroup: SlotTypeGroup = {
+            id: category.id,
+            label: category.label,
+            slotTypes: []
+        }
+
+        expRegistry.builtInSlotTypes.forEach((builtIn) => {
+            if (slotDef.allowedTypes?.find(at => at.type === builtIn.type)
+                && builtIn.categories?.includes(category.id)
+            ) {
+                currentGroup.slotTypes.push({
+                    id: builtIn.id,
+                    label: builtIn.label || builtIn.type,
+                    icon: builtIn.icon,
+                    color: builtIn.color,
+                })
+            }
+        })
+
+        if (allowsExpressions) {
+            // collect allowed types into groups from registry
+            expRegistry.expressionDefs.forEach((expDef) => {
+                if (
+                    expDef.categories.includes(category.id)
+                    && allowExpressionTypes.includes(expDef.returnType)
+                    && excludedExpressions.indexOf(expDef.id) === -1
+                ) {
+                    currentGroup.slotTypes.push({
+                        id: expDef.id,
+                        label: expDef.label,
+                        icon: expDef.icon,
+                        color: expDef.color
+                    })
+                }
+            })
+        }
+
+        if (currentGroup.slotTypes.length > 0) {
+            groups.push(currentGroup)
+        }
+    })
+
+
+    return groups;
+}
