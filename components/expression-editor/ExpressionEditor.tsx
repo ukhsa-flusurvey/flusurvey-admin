@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ExpEditorContext, Expression, ExpressionArg, ExpressionCategory, ExpressionDef, SelectSlotType, SlotInputDef, lookupExpressionDef } from './utils';
-import ExpressionIcon from './components/ExpressionIcon';
 import EmptySlot from './slots/EmptySlot';
 import SlotLabel from './components/SlotLabel';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
@@ -213,9 +212,31 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                     Copy
                                 </ContextMenuItem>
                                 <ContextMenuSeparator />
-                                <ContextMenuItem>
+                                <ContextMenuItem
+                                    onClick={() => {
+                                        const currentData = props.expressionValue.data || [];
+                                        if (currentData.length < currentIndex) {
+                                            currentData.fill(undefined, currentData.length, currentIndex)
+                                        }
+                                        const currentSlotTypes = props.expressionValue.metadata?.slotTypes || []
+                                        if (currentSlotTypes.length < index) {
+                                            currentSlotTypes.fill(undefined, currentSlotTypes.length, index)
+                                        }
+
+                                        currentSlotTypes[index] = undefined;
+                                        currentData[currentIndex] = undefined;
+                                        props.onChange?.({
+                                            ...props.expressionValue,
+                                            metadata: {
+                                                ...props.expressionValue.metadata,
+                                                slotTypes: currentSlotTypes
+                                            },
+                                            data: currentData
+                                        })
+                                    }}
+                                >
                                     <X className='w-4 h-4 mr-2 text-red-400' />
-                                    Delete Item
+                                    Clear Slot
                                 </ContextMenuItem>
                             </>
                         }
@@ -242,6 +263,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                         exp: newExpression as CaseExpression,
                                         dtype: 'exp'
                                     }
+
                                     props.onChange?.({
                                         ...props.expressionValue,
                                         data: currentData
