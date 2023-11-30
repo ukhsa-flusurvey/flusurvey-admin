@@ -214,6 +214,9 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                 <ContextMenuSeparator />
                                 <ContextMenuItem
                                     onClick={() => {
+                                        if (!confirm('Are you sure you want to delete this slot? This cannot be undone.')) {
+                                            return;
+                                        }
                                         const currentData = props.expressionValue.data || [];
                                         if (currentData.length < currentIndex) {
                                             currentData.fill(undefined, currentData.length, currentIndex)

@@ -96,7 +96,6 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                             })}>
                         </span>
                         {props.currentValues.length > 0 && <>
-
                             {listCircle}
                         </>}
                         <SlotTypeSelector
