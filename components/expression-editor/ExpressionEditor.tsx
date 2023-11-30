@@ -71,6 +71,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     key={index}
                     slotDef={slotDef}
                     expRegistry={props.expRegistry}
+                    context={props.context}
                     currentSlotValues={currentSlotValues}
                     onChangeValues={(newValues, newSlotTypes) => {
                         const currentData = props.expressionValue.data || [];

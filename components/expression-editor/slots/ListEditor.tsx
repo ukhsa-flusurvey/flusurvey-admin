@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExpressionArg, ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef, getRecommendedSlotTypes } from '../utils';
+import { ExpEditorContext, ExpressionArg, ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef, getRecommendedSlotTypes } from '../utils';
 import SlotTypeSelector from '../components/SlotTypeSelector';
 import SlotLabel from '../components/SlotLabel';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,8 @@ import { ChevronDown, ChevronUp, CircleEllipsis, Copy, X } from 'lucide-react';
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
 import ExpressionPreview from './ExpressionPreview';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
+import ExpressionEditor from '../ExpressionEditor';
+import Block from '../components/Block';
 
 
 interface ListEditorProps {
@@ -21,6 +23,7 @@ interface ListEditorProps {
         categories: ExpressionCategory[]
         builtInSlotTypes: SlotInputDef[],
     };
+    context?: ExpEditorContext;
     onChangeValues: (newValues: Array<ExpressionArg | undefined>, newSlotTypes: Array<string | undefined>) => void;
     depth?: number;
 }
@@ -76,7 +79,9 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                         return (
                             <li className="ml-[36px] relative" key={index.toFixed()}>
                                 {listCircle}
-                                <SlotLabel label={'Item ' + (index + 1)} required={props.slotDef.required}
+                                <SlotLabel
+                                    depth={props.depth}
+                                    label={'Item ' + (index + 1)} required={props.slotDef.required}
                                     isHidden={isHidden}
                                     toggleHide={() => {
                                         // console.log('toggle hide')
@@ -148,10 +153,25 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                     expressionValue={currentExpression}
                                     depth={props.depth}
                                 />}
-                                {!isHidden && <div>
-                                    <p>{currentSlot.slotType}</p>
-                                    make collapsible
-                                </div>}
+                                {!isHidden && <Block depth={props.depth}>
+                                    <ExpressionEditor
+                                        expRegistry={props.expRegistry}
+                                        expressionValue={currentExpression}
+                                        depth={(props.depth || 0) + 1}
+                                        context={props.context}
+                                        onChange={(newExpression) => {
+                                            const newValues = [...props.currentSlotValues].map((val, i) => val.value);
+                                            newValues[index] = {
+                                                exp: newExpression as CaseExpression,
+                                                dtype: 'exp'
+                                            }
+                                            props.onChangeValues(
+                                                newValues,
+                                                props.currentSlotValues.map((val, i) => val.slotType)
+                                            );
+                                        }}
+                                    />
+                                </Block>}
                             </li>
                         )
                     })}
