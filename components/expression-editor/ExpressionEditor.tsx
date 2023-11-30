@@ -52,23 +52,46 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
             const isListSlot = slotDef.isListSlot || false;
             if (isListSlot) {
                 const currentArgValues: Array<ExpressionArg | undefined> = []
-                if (props.expressionValue.data && props.expressionValue.data.length > 0) {
+                if (props.expressionValue.data && props.expressionValue.data.length > index) {
                     currentArgValues.push(...props.expressionValue.data.slice(index))
                 }
+                const currentSlotTypes: Array<string | undefined> = []
+                if (props.expressionValue.metadata?.slotTypes && props.expressionValue.metadata?.slotTypes.length > index) {
+                    currentSlotTypes.push(...props.expressionValue.metadata?.slotTypes.slice(index))
+                }
+
+                const currentSlotValues = currentArgValues.map((argValue, argIndex) => {
+                    return {
+                        slotType: currentSlotTypes.at(argIndex),
+                        value: argValue
+                    }
+                })
+
                 return <ListEditor
                     key={index}
                     slotDef={slotDef}
                     expRegistry={props.expRegistry}
-                    currentValues={props.expressionValue.data || []}
-                    onChangeValues={(newValues) => {
+                    currentSlotValues={currentSlotValues}
+                    onChangeValues={(newValues, newSlotTypes) => {
                         const currentData = props.expressionValue.data || [];
                         if (currentData.length < index) {
                             currentData.fill(undefined, currentData.length, index)
                         }
+
+                        const currentSlotTypes = props.expressionValue.metadata?.slotTypes || []
+                        if (currentSlotTypes.length < index) {
+                            currentSlotTypes.fill(undefined, currentSlotTypes.length, index)
+                        }
+
                         // replace list from index
                         currentData.splice(index, currentData.length - index, ...newValues)
+                        currentSlotTypes.splice(index, currentSlotTypes.length - index, ...newSlotTypes)
                         props.onChange?.({
                             ...props.expressionValue,
+                            metadata: {
+                                ...props.expressionValue.metadata,
+                                slotTypes: currentSlotTypes
+                            },
                             data: currentData
                         })
                     }}

@@ -6,16 +6,22 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, CircleEllipsis, Copy, X } from 'lucide-react';
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
+import ExpressionPreview from './ExpressionPreview';
+import { Expression as CaseExpression } from 'survey-engine/data_types';
+
 
 interface ListEditorProps {
     slotDef: SlotDef;
-    currentValues: Array<ExpressionArg | undefined>;
+    currentSlotValues: Array<{
+        slotType: string | undefined,
+        value: ExpressionArg | undefined,
+    }>;
     expRegistry: {
         expressionDefs: ExpressionDef[],
         categories: ExpressionCategory[]
         builtInSlotTypes: SlotInputDef[],
     };
-    onChangeValues: (newValues: Array<ExpressionArg | undefined>) => void;
+    onChangeValues: (newValues: Array<ExpressionArg | undefined>, newSlotTypes: Array<string | undefined>) => void;
     depth?: number;
 }
 
@@ -41,22 +47,35 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
             <SlotLabel label={props.slotDef.label} required={props.slotDef.required} />
             <div className='pl-[15px]'>
                 <ol className="relative border-l-2 border-neutral-300 space-y-[42px]">
-                    {props.currentValues.map((value, index) => {
-                        if (value === undefined) {
+                    {props.currentSlotValues.map((currentSlot, index) => {
+                        if (currentSlot === undefined) {
                             return <div key={index}>
                                 <p>undefined</p>
                             </div>
                         }
+                        const isExpanded = false;
+                        const currentSlotType = currentSlot.slotType;
+                        const expressionDef = props.expRegistry.expressionDefs.find((expDef) => expDef.id === currentSlotType)
+                        const currentArgValue = currentSlot.value;
+                        const isExpression = expressionDef !== undefined;
+                        if (!isExpression) {
+                            return <div key={index}>
+                                <p>not expression</p>
+                            </div>
+                        }
+
+                        let currentExpression: CaseExpression;
+                        if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
+                            currentExpression = currentArgValue.exp;
+                        } else {
+                            // TODO: create empty expression
+                            currentExpression = { name: expressionDef.id }
+                        }
+
+
                         return (
-                            <li className="ml-[36px] relative group" key={index.toFixed()}>
+                            <li className="ml-[36px] relative" key={index.toFixed()}>
                                 {listCircle}
-                                <Button
-                                    size='icon'
-                                    className='absolute right-2 top-2 hidden group-hover:flex'
-                                    variant='outline'
-                                >
-                                    <CircleEllipsis />
-                                </Button>
                                 <SlotLabel label={'Item ' + (index + 1)} required={props.slotDef.required}
                                     isHidden={true}
                                     toggleHide={() => { }}
@@ -67,24 +86,65 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                                 Copy
                                             </ContextMenuItem>
                                             <ContextMenuSeparator />
-                                            <ContextMenuItem disabled>
+                                            <ContextMenuItem disabled={index === 0}
+                                                onClick={() => {
+                                                    const newValues = [...props.currentSlotValues];
+                                                    const temp = newValues[index];
+                                                    newValues[index] = newValues[index - 1];
+                                                    newValues[index - 1] = temp;
+                                                    props.onChangeValues(
+                                                        newValues.map((value) => value?.value),
+                                                        newValues.map((value) => value?.slotType)
+                                                    );
+                                                }}
+                                            >
                                                 <ChevronUp className='w-4 h-4 mr-2 text-slate-400' />
                                                 Move Up
                                             </ContextMenuItem>
-                                            <ContextMenuItem>
+                                            <ContextMenuItem disabled={index === props.currentSlotValues.length - 1}
+                                                onClick={() => {
+                                                    const newValues = [...props.currentSlotValues];
+                                                    const temp = newValues[index];
+                                                    newValues[index] = newValues[index + 1];
+                                                    newValues[index + 1] = temp;
+                                                    props.onChangeValues(
+                                                        newValues.map((value) => value?.value),
+                                                        newValues.map((value) => value?.slotType)
+                                                    );
+                                                }}
+                                            >
                                                 <ChevronDown className='w-4 h-4 mr-2 text-slate-400' />
                                                 Move Down
                                             </ContextMenuItem>
                                             <ContextMenuSeparator />
-                                            <ContextMenuItem>
+                                            <ContextMenuItem
+                                                onClick={() => {
+                                                    if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                                                        return;
+                                                    }
+                                                    const newValues = [...props.currentSlotValues];
+                                                    newValues.splice(index, 1);
+                                                    props.onChangeValues(
+                                                        newValues.map((value) => value?.value),
+                                                        newValues.map((value) => value?.slotType)
+                                                    );
+                                                }}
+                                            >
                                                 <X className='w-4 h-4 mr-2 text-red-400' />
                                                 Delete Item
                                             </ContextMenuItem>
                                         </>
                                     }
                                 />
-                                <p>{value.str}</p>
-                                make them expandable
+                                {!isExpanded && <ExpressionPreview
+                                    expRegistry={props.expRegistry}
+                                    expressionValue={currentExpression}
+                                    depth={props.depth}
+                                />}
+                                {isExpanded && <div>
+                                    <p>{currentSlot.slotType}</p>
+                                    make collapsible
+                                </div>}
                             </li>
                         )
                     })}
@@ -95,20 +155,18 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                 'bg-slate-50': (props.depth || 0) % 2 !== 0,
                             })}>
                         </span>
-                        {props.currentValues.length > 0 && <>
+                        {props.currentSlotValues.length > 0 && <>
                             {listCircle}
                         </>}
                         <SlotTypeSelector
                             groups={getRecommendedSlotTypes(props.slotDef, props.expRegistry)}
-                            isRequired={props.currentValues.length < 1}
+                            isRequired={props.currentSlotValues.length < 1}
                             onSelect={(slotTypeId) => {
-                                console.log(slotTypeId)
-                                const currentData = props.currentValues || [];
-                                currentData.push({
-                                    str: 'test',
-                                    dtype: 'str'
-                                })
-                                props.onChangeValues(currentData)
+                                const currentSlotTypes = props.currentSlotValues.map((value) => value?.slotType);
+                                currentSlotTypes.push(slotTypeId);
+                                const currentValues = props.currentSlotValues.map((value) => value?.value);
+                                currentValues.push(undefined);
+                                props.onChangeValues(currentValues, currentSlotTypes);
 
                             }}
                         />
