@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ExpressionArg, ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef, getRecommendedSlotTypes } from '../utils';
 import SlotTypeSelector from '../components/SlotTypeSelector';
 import SlotLabel from '../components/SlotLabel';
@@ -26,9 +26,7 @@ interface ListEditorProps {
 }
 
 const ListEditor: React.FC<ListEditorProps> = (props) => {
-    console.log(props.slotDef)
-    //props.slotDef.label = ''
-    // props.slotDef.required = false
+    const [hideSlotContent, setHideSlotContent] = useState<Array<number>>([]);
 
     const listCircle = <span className={cn(
         "absolute flex items-center justify-center w-[20px] h-[20px]",
@@ -64,6 +62,8 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                             </div>
                         }
 
+                        const isHidden = hideSlotContent.includes(index);
+
                         let currentExpression: CaseExpression;
                         if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
                             currentExpression = currentArgValue.exp;
@@ -77,8 +77,15 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                             <li className="ml-[36px] relative" key={index.toFixed()}>
                                 {listCircle}
                                 <SlotLabel label={'Item ' + (index + 1)} required={props.slotDef.required}
-                                    isHidden={true}
-                                    toggleHide={() => { }}
+                                    isHidden={isHidden}
+                                    toggleHide={() => {
+                                        // console.log('toggle hide')
+                                        if (isHidden) {
+                                            setHideSlotContent(prev => prev.filter((i) => i !== index))
+                                        } else {
+                                            setHideSlotContent(prev => { return [...prev, index] })
+                                        }
+                                    }}
                                     contextMenuContent={
                                         <>
                                             <ContextMenuItem>
@@ -136,12 +143,12 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         </>
                                     }
                                 />
-                                {!isExpanded && <ExpressionPreview
+                                {isHidden && <ExpressionPreview
                                     expRegistry={props.expRegistry}
                                     expressionValue={currentExpression}
                                     depth={props.depth}
                                 />}
-                                {isExpanded && <div>
+                                {!isHidden && <div>
                                     <p>{currentSlot.slotType}</p>
                                     make collapsible
                                 </div>}

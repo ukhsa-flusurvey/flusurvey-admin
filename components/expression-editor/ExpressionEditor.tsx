@@ -212,16 +212,14 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     currentExpression = { name: expressionDef.id }
                 }
 
-                console.log(hideSlotContent)
                 const isHidden = hideSlotContent.includes(index);
-                console.log(isHidden)
 
                 return <div key={index}>
                     <SlotLabel label={slotDef.label} required={slotDef.required}
                         depth={props.depth}
                         isHidden={isHidden}
                         toggleHide={() => {
-                            console.log('toggle hide')
+                            // console.log('toggle hide')
                             if (isHidden) {
                                 setHideSlotContent(prev => prev.filter((i) => i !== index))
                             } else {
