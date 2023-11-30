@@ -14,7 +14,8 @@ import SlotFormEditor from './slots/SlotFormEditor';
 import BlockHeader from './components/BlockHeader';
 import Block from './components/Block';
 import ListEditor from './slots/ListEditor';
-import { ContextMenuItem } from '../ui/context-menu';
+import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
+import { Copy, X } from 'lucide-react';
 
 
 
@@ -207,10 +208,15 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                         }}
                         contextMenuContent={
                             <>
-                                <ContextMenuItem>Profile</ContextMenuItem>
-                                <ContextMenuItem>Billing</ContextMenuItem>
-                                <ContextMenuItem>Team</ContextMenuItem>
-                                <ContextMenuItem>Subscription</ContextMenuItem>
+                                <ContextMenuItem>
+                                    <Copy className='w-4 h-4 mr-2 text-slate-400' />
+                                    Copy
+                                </ContextMenuItem>
+                                <ContextMenuSeparator />
+                                <ContextMenuItem>
+                                    <X className='w-4 h-4 mr-2 text-red-400' />
+                                    Delete Item
+                                </ContextMenuItem>
                             </>
                         }
                     />

@@ -4,7 +4,8 @@ import SlotTypeSelector from '../components/SlotTypeSelector';
 import SlotLabel from '../components/SlotLabel';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { CircleEllipsis } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleEllipsis, Copy, X } from 'lucide-react';
+import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
 
 interface ListEditorProps {
     slotDef: SlotDef;
@@ -59,6 +60,28 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                 <SlotLabel label={'Item ' + (index + 1)} required={props.slotDef.required}
                                     isHidden={true}
                                     toggleHide={() => { }}
+                                    contextMenuContent={
+                                        <>
+                                            <ContextMenuItem>
+                                                <Copy className='w-4 h-4 mr-2 text-slate-400' />
+                                                Copy
+                                            </ContextMenuItem>
+                                            <ContextMenuSeparator />
+                                            <ContextMenuItem disabled>
+                                                <ChevronUp className='w-4 h-4 mr-2 text-slate-400' />
+                                                Move Up
+                                            </ContextMenuItem>
+                                            <ContextMenuItem>
+                                                <ChevronDown className='w-4 h-4 mr-2 text-slate-400' />
+                                                Move Down
+                                            </ContextMenuItem>
+                                            <ContextMenuSeparator />
+                                            <ContextMenuItem>
+                                                <X className='w-4 h-4 mr-2 text-red-400' />
+                                                Delete Item
+                                            </ContextMenuItem>
+                                        </>
+                                    }
                                 />
                                 <p>{value.str}</p>
                                 make them expandable
