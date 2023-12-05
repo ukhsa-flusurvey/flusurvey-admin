@@ -17,7 +17,7 @@ export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
                 ...getTokenHeader(session.accessToken)
             },
             next: {
-                revalidate: 10
+                revalidate: 0
             }
         });
 
