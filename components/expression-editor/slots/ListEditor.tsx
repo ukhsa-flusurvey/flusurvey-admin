@@ -3,13 +3,13 @@ import { ExpEditorContext, ExpressionArg, ExpressionCategory, ExpressionDef, Slo
 import SlotTypeSelector from '../components/SlotTypeSelector';
 import SlotLabel from '../components/SlotLabel';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, CircleEllipsis, Copy, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react';
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
 import ExpressionPreview from './ExpressionPreview';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
 import ExpressionEditor from '../ExpressionEditor';
 import Block from '../components/Block';
+import { useToast } from '@/components/ui/use-toast';
 
 
 interface ListEditorProps {
@@ -30,6 +30,7 @@ interface ListEditorProps {
 
 const ListEditor: React.FC<ListEditorProps> = (props) => {
     const [hideSlotContent, setHideSlotContent] = useState<Array<number>>([]);
+    const { toast } = useToast()
 
     const listCircle = <span className={cn(
         "absolute flex items-center justify-center w-[20px] h-[20px]",
@@ -54,7 +55,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                 <p>undefined</p>
                             </div>
                         }
-                        const isExpanded = false;
+
                         const currentSlotType = currentSlot.slotType;
                         const expressionDef = props.expRegistry.expressionDefs.find((expDef) => expDef.id === currentSlotType)
                         const currentArgValue = currentSlot.value;
@@ -75,7 +76,6 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                             currentExpression = { name: expressionDef.id }
                         }
 
-
                         return (
                             <li className="ml-[36px] relative" key={index.toFixed()}>
                                 {listCircle}
@@ -93,7 +93,19 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                     }}
                                     contextMenuContent={
                                         <>
-                                            <ContextMenuItem>
+                                            <ContextMenuItem
+                                                onClick={() => {
+                                                    const cbContent = {
+                                                        slotType: currentSlotType,
+                                                        value: currentArgValue
+                                                    }
+                                                    navigator.clipboard.writeText(JSON.stringify(cbContent));
+                                                    toast({
+                                                        title: 'Item copied to clipboard',
+                                                        duration: 3000
+                                                    })
+                                                }}
+                                            >
                                                 <Copy className='w-4 h-4 mr-2 text-slate-400' />
                                                 Copy
                                             </ContextMenuItem>
@@ -188,11 +200,34 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                         <SlotTypeSelector
                             groups={getRecommendedSlotTypes(props.slotDef, props.expRegistry)}
                             isRequired={props.currentSlotValues.length < 1}
-                            onSelect={(slotTypeId) => {
+                            onSelect={async (slotTypeId) => {
                                 const currentSlotTypes = props.currentSlotValues.map((value) => value?.slotType);
-                                currentSlotTypes.push(slotTypeId);
                                 const currentValues = props.currentSlotValues.map((value) => value?.value);
-                                currentValues.push(undefined);
+
+                                if (slotTypeId === 'clipboard') {
+                                    // paste item from clipboard
+                                    try {
+                                        const cbContent = await navigator.clipboard.readText();
+                                        const content = JSON.parse(cbContent);
+                                        if (!content || !content.slotType) {
+                                            toast({
+                                                title: 'Clipboard content is not valid',
+                                                duration: 3000,
+                                                variant: 'destructive'
+                                            })
+                                            return;
+                                        }
+                                        currentSlotTypes.push(content.slotType);
+                                        currentValues.push(content.value);
+                                    } catch (error) {
+                                        console.error(error)
+                                        return;
+                                    }
+                                } else {
+                                    currentSlotTypes.push(slotTypeId);
+                                    currentValues.push(undefined);
+
+                                }
                                 props.onChangeValues(currentValues, currentSlotTypes);
 
                             }}

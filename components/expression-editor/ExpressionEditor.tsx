@@ -15,6 +15,7 @@ import Block from './components/Block';
 import ListEditor from './slots/ListEditor';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { Copy, X } from 'lucide-react';
+import { useToast } from '../ui/use-toast';
 
 
 
@@ -33,6 +34,7 @@ interface ExpressionEditorProps {
 
 const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
     const [hideSlotContent, setHideSlotContent] = useState<Array<number>>([]);
+    const { toast } = useToast()
 
     const expressionDef = lookupExpressionDef(props.expressionValue.name, props.expRegistry.expressionDefs);
 
@@ -111,11 +113,45 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     key={index}
                     slotDef={slotDef}
                     expRegistry={props.expRegistry}
-                    onSelect={(slotTypeId) => {
+                    onSelect={async (slotTypeId) => {
                         const currentSlotTypes = props.expressionValue.metadata?.slotTypes || []
                         if (currentSlotTypes.length < index) {
                             currentSlotTypes.fill(undefined, currentSlotTypes.length, index)
                         }
+
+                        if (slotTypeId === 'clipboard') {
+                            // paste item from clipboard
+                            try {
+                                const cbContent = await navigator.clipboard.readText();
+                                const content = JSON.parse(cbContent);
+                                if (!content || !content.slotType || !content.value) {
+                                    toast({
+                                        title: 'Clipboard content is not valid',
+                                        duration: 3000,
+                                        variant: 'destructive'
+                                    })
+                                    return;
+                                }
+                                currentSlotTypes[index] = content.slotType;
+                                const currentData = props.expressionValue.data || [];
+                                if (currentData.length < index) {
+                                    currentData.fill(undefined, currentData.length, index)
+                                }
+                                currentData[index] = content.value;
+                                props.onChange?.({
+                                    ...props.expressionValue,
+                                    metadata: {
+                                        ...props.expressionValue.metadata,
+                                        slotTypes: currentSlotTypes
+                                    },
+                                    data: currentData
+                                })
+                            } catch (error) {
+                                console.error(error)
+                            }
+                            return;
+                        }
+
 
                         currentSlotTypes[index] = slotTypeId;
                         props.onChange?.({
@@ -229,7 +265,19 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                         }}
                         contextMenuContent={
                             <>
-                                <ContextMenuItem>
+                                <ContextMenuItem
+                                    onClick={() => {
+                                        const cbContent = {
+                                            slotType: currentSlotType,
+                                            value: currentArgValue
+                                        }
+                                        navigator.clipboard.writeText(JSON.stringify(cbContent));
+                                        toast({
+                                            title: 'Item copied to clipboard',
+                                            duration: 3000
+                                        })
+                                    }}
+                                >
                                     <Copy className='w-4 h-4 mr-2 text-slate-400' />
                                     Copy
                                 </ContextMenuItem>
@@ -319,98 +367,6 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
             </div>
         </div>
     )
-
-    /*
-
-        if (listType) {
-            if (props.slotValues.length === 0) {
-                return (
-                    <p>empty list type argument list</p>
-                )
-            }
-            return (
-                <div className='pl-[15px]'>
-                    <ol className="relative border-l-2 border-default-300 space-y-[42px]">
-
-                        <li className="ml-[36px] relative">
-                            {isLast &&
-                                <span className="absolute flex items-center justify-center w-6 h-full bg-white  -left-[40px] ring-white">
-                                </span>
-                            }
-
-                            <span className="absolute flex items-center justify-center w-[20px] h-[20px] bg-default-300 rounded-full -left-[47px] top-[2px] ring-2 ring-white">
-
-                            </span>
-
-                            <div className='flex gap-20  relative border border-gray-100 p-2 rounded-md'>
-                                test
-                            </div>
-                        </li>
-                        <li className="ml-[36px] relative">
-
-                            <span className="absolute flex items-center justify-center w-[20px] h-[20px] bg-default-300 rounded-full -left-[47px] top-[2px] ring-2 ring-white">
-
-                            </span>
-
-                            <div className='flex gap-20  relative border border-gray-100 p-2 rounded-md'>
-                                <SlotTypeSelector
-                                    groups={[
-                                        {
-                                            id: 'recents',
-                                            label: 'Recent',
-                                            slotTypes: [
-
-                                            ]
-                                        },
-                                        {
-                                            id: 'all',
-                                            label: 'All',
-                                            slotTypes: [
-                                                {
-                                                    id: 'test',
-                                                    label: 'Test'
-                                                },
-                                                {
-                                                    id: expressionDefs[0].name,
-                                                    label: expressionDefs[0].label
-                                                },
-                                            ]
-                                        }
-                                    ]}
-                                />
-                            </div>
-                        </li>
-                        <li className="ml-[36px] relative">
-
-
-                            <span className="absolute flex items-center justify-center w-[20px] h-[20px] bg-default-300 rounded-full -left-[47px] top-[2px] ring-2 ring-white">
-
-                            </span>
-
-                            <div className='flex gap-20  relative border border-gray-100 p-2 rounded-md'>
-                                test
-                            </div>
-                        </li>
-                        {props.test && <li className="ml-[36px] relative">
-
-                            <span className="absolute flex items-center justify-center w-6 h-full bg-white  -left-[40px] ring-white">
-                            </span>
-
-                            <span className="absolute flex items-center justify-center w-[20px] h-[20px] bg-default-300 rounded-full -left-[47px] top-[2px] ring-2 ring-white">
-
-                            </span>
-
-                            <div className='flex gap-20  relative border border-gray-100 p-2 rounded-md'>
-                                <ExpressionEditor slotValues={[]} />
-                            </div>
-                        </li>}
-                    </ol>
-                </div>
-
-            )
-        }*/
-
-
 };
 
 export default ExpressionEditor;

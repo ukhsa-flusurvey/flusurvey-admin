@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
 import { Button } from '../../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../../ui/command';
@@ -8,6 +8,7 @@ import { BsPlusCircleDotted } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import ExpressionIcon from './ExpressionIcon';
 import { SlotTypeGroup } from '../utils';
+import { Clipboard } from 'lucide-react';
 
 
 interface SlotTypeSelectorProps {
@@ -16,8 +17,41 @@ interface SlotTypeSelectorProps {
     isRequired: boolean;
 }
 
+const slotTypeForPasteIncluded = (groups: SlotTypeGroup[], slotTypeId: string): boolean => {
+    for (const group of groups) {
+        for (const slotType of group.slotTypes) {
+            if (slotType.id === slotTypeId) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
     const [open, setOpen] = React.useState(false)
+    const [hasClipboardData, setHasClipboardData] = React.useState(false)
+
+    useEffect(() => {
+        // has relevant clipboard data?
+        const cp = navigator.clipboard.readText();
+        cp.then((text) => {
+            try {
+                const content = JSON.parse(text);
+                // is clipboard content a valid expression?
+                if (!content || !content.slotType || !slotTypeForPasteIncluded(props.groups, content.slotType)) {
+                    setHasClipboardData(false)
+                    return;
+                }
+                setHasClipboardData(true)
+            } catch (error) {
+                setHasClipboardData(false)
+            }
+        }).catch(() => {
+            setHasClipboardData(false)
+        })
+    }, [open, props.groups])
+
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -44,6 +78,17 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                     <CommandInput placeholder="Select type..." />
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
+                        {hasClipboardData && <CommandItem
+                            onSelect={() => {
+                                props.onSelect('clipboard');
+                                setOpen(false)
+                            }}
+                        >
+                            <span className='flex items-center justify-center w-4 h-4 me-2 text-slate-600'>
+                                <Clipboard />
+                            </span>
+                            Paste from clipboard
+                        </CommandItem>}
                         {
                             props.groups.map((group) => {
                                 return (
