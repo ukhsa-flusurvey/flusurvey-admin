@@ -3,6 +3,7 @@ import React from 'react';
 import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef } from '../utils';
 import SlotLabel from '../components/SlotLabel';
 import SelectorFromContext from '../components/SelectorFromContext';
+import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -57,6 +58,49 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         str: value,
                         dtype: 'str'
                     }
+                    props.onArgsChange(currentData)
+                }}
+            />)
+        case 'key-value':
+            let currentKeyIndex = props.slotIndex;
+            let currentValueIndex = props.slotIndex + 1;
+            if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 1) {
+                currentKeyIndex = props.slotDef.argIndexes[0];
+                currentValueIndex = props.slotDef.argIndexes[1];
+            }
+
+            const currentKey = props.currentArgs?.at(currentKeyIndex)?.str;;
+            const currentValue = props.currentArgs?.at(currentValueIndex)?.str;;
+            return (<KeyValueSelectorFromContext
+                slotDef={props.slotDef}
+                context={props.context}
+                slotTypeDef={currentFormDef}
+                depth={props.depth}
+                currentValue={currentValue}
+                currentKey={currentKey}
+                onSelect={(key, value) => {
+                    const currentData = props.currentArgs || [];
+                    if (currentData.length < currentValueIndex) {
+                        currentData.fill(undefined, currentData.length, currentValueIndex)
+                    }
+                    if (key !== undefined) {
+                        currentData[currentKeyIndex] = {
+                            str: key,
+                            dtype: 'str'
+                        }
+                    } else {
+                        currentData[currentKeyIndex] = undefined;
+                        currentData[currentValueIndex] = undefined;
+                    }
+                    if (value !== undefined) {
+                        currentData[currentValueIndex] = {
+                            str: value,
+                            dtype: 'str'
+                        }
+                    } else {
+                        currentData[currentValueIndex] = undefined;
+                    }
+
                     props.onArgsChange(currentData)
                 }}
             />)

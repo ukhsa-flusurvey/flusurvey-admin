@@ -76,11 +76,10 @@ interface SlotInputDefSimple extends SlotInputDefBase {
     type: 'num' | 'str' | 'date' | 'time-delta';
 }
 
-interface SlotInputDefFormKeyValueFromContext extends SlotInputDefBase {
+export interface SlotInputDefFormKeyValueFromContext extends SlotInputDefBase {
     type: 'key-value';
     contextObjectKey: string,
-    filterForItemType?: string,
-    filterForValueType?: string,
+    filterForObjectType?: string,
 }
 
 export interface SlotInputDefSelectorFromContext extends SlotInputDefBase {
@@ -115,9 +114,9 @@ export const lookupExpressionDef = (name: string, registry: ExpressionDef[]): Ex
 }
 
 
-interface ContextObjectItem {
+export interface ContextObjectItem {
     [key: string]: {
-        value: string;
+        values: string[];
         type?: string;
     }
 }

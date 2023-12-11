@@ -41,9 +41,20 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         contextArrayKey: 'surveyKeys',
         label: 'Available survey keys',
         icon: 'blocks',
-        color: 'orange',
+        color: 'green',
+        categories: ['variables'],
+    },
+    {
+        id: 'participant-flag-selector',
+        type: 'key-value',
+        contextObjectKey: 'participantFlags',
+        // filterForObjectType: 'test1',
+        label: 'Available participant flags',
+        icon: 'tag',
+        color: 'green',
         categories: ['variables'],
     }
+
 ]
 
 const serverControlFlowExpressions: ExpressionDef[] = [

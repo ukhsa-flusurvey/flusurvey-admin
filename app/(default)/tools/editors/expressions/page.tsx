@@ -18,13 +18,13 @@ const Page: React.FC<PageProps> = (props) => {
     });
 
     const testContext: ExpEditorContext = {
-        participantFlag: {
+        participantFlags: {
             testFlagKey1: {
-                value: 'testFlagValue1',
+                values: ['testFlagValue1', 'testFlagValue2'],
                 type: 'test1'
             },
             testFlagKey2: {
-                value: 'testFlagValue2',
+                values: ['yes', 'no'],
                 type: 'test2'
             }
         },
