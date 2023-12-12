@@ -1,9 +1,8 @@
-import { cn } from '@/lib/utils';
 import React from 'react';
-import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef } from '../utils';
-import SlotLabel from '../components/SlotLabel';
+import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef, SlotInputDefFormKeyValueFromContext, SlotInputDefSelectorFromContext } from '../utils';
 import SelectorFromContext from '../components/SelectorFromContext';
 import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
+import SimpleTextInput from '../components/SimpleTextInput';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -14,6 +13,10 @@ interface SlotFormEditorProps {
     slotIndex: number;
     currentArgs?: Array<ExpressionArg | undefined>;
     onArgsChange: (newArgs: Array<ExpressionArg | undefined>) => void;
+}
+
+const isSingleValueSlot = (type: string) => {
+    return ['str', 'list-selector'].includes(type);
 }
 
 const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
@@ -28,86 +31,106 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
         )
     }
 
+    if (isSingleValueSlot(currentFormDef.type)) {
+        let currentIndex = props.slotIndex;
+        if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 0) {
+            currentIndex = props.slotDef.argIndexes[0];
+        }
+        const currentArgValue = props.currentArgs?.at(currentIndex);
 
-    //console.log(props.slotIndex)
-    //console.log(props.slotDef.argIndexes)
-    //console.log(props.currentArgs)
-
-
-    switch (currentFormDef.type) {
-        case 'list-selector':
-            let currentIndex = props.slotIndex;
-            if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 0) {
-                currentIndex = props.slotDef.argIndexes[0];
-            }
-            const currentArgValue = props.currentArgs?.at(currentIndex)?.str;
-
-            return (<SelectorFromContext
-                slotDef={props.slotDef}
-                context={props.context}
-                slotTypeDef={currentFormDef}
-                depth={props.depth}
-                currentValue={currentArgValue}
-                onSelect={(value) => {
-                    console.log(value)
-                    const currentData = props.currentArgs || [];
-                    if (currentData.length < currentIndex) {
-                        currentData.fill(undefined, currentData.length, currentIndex)
-                    }
-                    currentData[currentIndex] = {
-                        str: value,
-                        dtype: 'str'
-                    }
-                    props.onArgsChange(currentData)
-                }}
-            />)
-        case 'key-value':
-            let currentKeyIndex = props.slotIndex;
-            let currentValueIndex = props.slotIndex + 1;
-            if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 1) {
-                currentKeyIndex = props.slotDef.argIndexes[0];
-                currentValueIndex = props.slotDef.argIndexes[1];
-            }
-
-            const currentKey = props.currentArgs?.at(currentKeyIndex)?.str;;
-            const currentValue = props.currentArgs?.at(currentValueIndex)?.str;;
-            return (<KeyValueSelectorFromContext
-                slotDef={props.slotDef}
-                context={props.context}
-                slotTypeDef={currentFormDef}
-                depth={props.depth}
-                currentValue={currentValue}
-                currentKey={currentKey}
-                onSelect={(key, value) => {
-                    const currentData = props.currentArgs || [];
-                    if (currentData.length < currentValueIndex) {
-                        currentData.fill(undefined, currentData.length, currentValueIndex)
-                    }
-                    if (key !== undefined) {
-                        currentData[currentKeyIndex] = {
-                            str: key,
-                            dtype: 'str'
+        switch (currentFormDef.type) {
+            case 'list-selector':
+                return (<SelectorFromContext
+                    slotDef={props.slotDef}
+                    context={props.context}
+                    slotTypeDef={currentFormDef as SlotInputDefSelectorFromContext}
+                    depth={props.depth}
+                    currentValue={currentArgValue?.str}
+                    onSelect={(value) => {
+                        console.log(value)
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < currentIndex) {
+                            currentData.fill(undefined, currentData.length, currentIndex)
                         }
-                    } else {
-                        currentData[currentKeyIndex] = undefined;
-                        currentData[currentValueIndex] = undefined;
-                    }
-                    if (value !== undefined) {
-                        currentData[currentValueIndex] = {
+                        currentData[currentIndex] = {
                             str: value,
                             dtype: 'str'
                         }
-                    } else {
-                        currentData[currentValueIndex] = undefined;
-                    }
+                        props.onArgsChange(currentData)
+                    }}
+                />)
+            case 'str':
+                return <SimpleTextInput
+                    slotDef={props.slotDef}
+                    context={props.context}
+                    slotTypeDef={currentFormDef}
+                    depth={props.depth}
+                    currentValue={currentArgValue?.str}
+                    onSelect={(value) => {
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < props.slotIndex) {
+                            currentData.fill(undefined, currentData.length, props.slotIndex)
+                        }
+                        currentData[props.slotIndex] = {
+                            str: value,
+                            dtype: 'str'
+                        }
+                        props.onArgsChange(currentData)
+                    }}
+                />
+            default:
+                return <p>Slot type not supported: {props.currentSlotType} of type {currentFormDef.type}</p>
+        }
+    } else {
+        switch (currentFormDef.type) {
+            case 'key-value':
+                let currentKeyIndex = props.slotIndex;
+                let currentValueIndex = props.slotIndex + 1;
+                if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 1) {
+                    currentKeyIndex = props.slotDef.argIndexes[0];
+                    currentValueIndex = props.slotDef.argIndexes[1];
+                }
 
-                    props.onArgsChange(currentData)
-                }}
-            />)
-        default:
-            return (<p>
-                Slot type not supported: {props.currentSlotType} of type {currentFormDef.type}
-            </p>)
+                const currentKey = props.currentArgs?.at(currentKeyIndex)?.str;;
+                const currentValue = props.currentArgs?.at(currentValueIndex)?.str;;
+                return (<KeyValueSelectorFromContext
+                    slotDef={props.slotDef}
+                    context={props.context}
+                    slotTypeDef={currentFormDef as SlotInputDefFormKeyValueFromContext}
+                    depth={props.depth}
+                    currentValue={currentValue}
+                    currentKey={currentKey}
+                    onSelect={(key, value) => {
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < currentValueIndex) {
+                            currentData.fill(undefined, currentData.length, currentValueIndex)
+                        }
+                        if (key !== undefined) {
+                            currentData[currentKeyIndex] = {
+                                str: key,
+                                dtype: 'str'
+                            }
+                        } else {
+                            currentData[currentKeyIndex] = undefined;
+                            currentData[currentValueIndex] = undefined;
+                        }
+                        if (value !== undefined) {
+                            currentData[currentValueIndex] = {
+                                str: value,
+                                dtype: 'str'
+                            }
+                        } else {
+                            currentData[currentValueIndex] = undefined;
+                        }
+
+                        props.onArgsChange(currentData)
+                    }}
+                />)
+            default:
+                return (<p>
+                    Slot type not supported: {props.currentSlotType} of type {currentFormDef.type}
+                </p>)
+        }
     }
 };
 

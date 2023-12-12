@@ -72,7 +72,7 @@ interface SlotInputDefBase {
     icon?: IconVariant;
 }
 
-interface SlotInputDefSimple extends SlotInputDefBase {
+export interface SlotInputDefSimple extends SlotInputDefBase {
     type: 'num' | 'str' | 'date' | 'time-delta';
 }
 
