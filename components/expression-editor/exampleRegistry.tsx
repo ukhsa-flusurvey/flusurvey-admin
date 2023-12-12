@@ -36,6 +36,14 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         categories: ['variables'],
     },
     {
+        id: 'date-picker',
+        type: 'date',
+        icon: 'calendar',
+        label: 'Date picker',
+        color: 'lime',
+        categories: ['variables'],
+    },
+    {
         id: 'survey-key-selector',
         type: 'list-selector',
         contextArrayKey: 'surveyKeys',

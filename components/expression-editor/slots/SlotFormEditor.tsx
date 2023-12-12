@@ -3,6 +3,7 @@ import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef, SlotInputDefFor
 import SelectorFromContext from '../components/SelectorFromContext';
 import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
 import SimpleTextInput from '../components/SimpleTextInput';
+import DatePicker from '../components/DatePicker';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -16,7 +17,7 @@ interface SlotFormEditorProps {
 }
 
 const isSingleValueSlot = (type: string) => {
-    return ['str', 'list-selector'].includes(type);
+    return ['str', 'list-selector', 'date'].includes(type);
 }
 
 const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
@@ -62,11 +63,10 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
             case 'str':
                 return <SimpleTextInput
                     slotDef={props.slotDef}
-                    context={props.context}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}
                     currentValue={currentArgValue?.str}
-                    onSelect={(value) => {
+                    onValueChange={(value) => {
                         const currentData = props.currentArgs || [];
                         if (currentData.length < props.slotIndex) {
                             currentData.fill(undefined, currentData.length, props.slotIndex)
@@ -74,6 +74,24 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         currentData[props.slotIndex] = {
                             str: value,
                             dtype: 'str'
+                        }
+                        props.onArgsChange(currentData)
+                    }}
+                />
+            case 'date':
+                return <DatePicker
+                    slotDef={props.slotDef}
+                    slotTypeDef={currentFormDef}
+                    depth={props.depth}
+                    currentValue={currentArgValue?.num}
+                    onValueChange={(value) => {
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < props.slotIndex) {
+                            currentData.fill(undefined, currentData.length, props.slotIndex)
+                        }
+                        currentData[props.slotIndex] = {
+                            num: value,
+                            dtype: 'num'
                         }
                         props.onArgsChange(currentData)
                     }}

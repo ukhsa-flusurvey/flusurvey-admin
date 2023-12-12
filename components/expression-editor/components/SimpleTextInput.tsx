@@ -1,42 +1,40 @@
 import React from 'react';
-import { ExpEditorContext, SlotDef, SlotInputDefSimple } from '../utils';
-import SlotLabel from './SlotLabel';
-import Block from './Block';
-import BlockHeader from './BlockHeader';
+import { SlotDef, SlotInputDefSimple } from '../utils';
 import { Input } from '@/components/ui/input';
+import BuiltInSlotWrapper from './BuiltInSlotWrapper';
 
 interface SimpleTextInputProps {
     slotDef: SlotDef;
     slotTypeDef: SlotInputDefSimple;
-    context?: ExpEditorContext;
     depth?: number;
     currentValue?: string;
-    onSelect: (value: string) => void;
+    onValueChange: (value: string) => void;
 }
 
 const SimpleTextInput: React.FC<SimpleTextInputProps> = (props) => {
     return (
-        <div>
-            <SlotLabel label={props.slotDef.label} required={props.slotDef.required} />
-            <Block
-                depth={props.depth}
-                isInvalid={props.currentValue === undefined || props.currentValue === ''}
-            >
-                <BlockHeader
-                    color={props.slotTypeDef.color}
-                    icon={props.slotTypeDef.icon}
-                    label={props.slotTypeDef.label}
+        <BuiltInSlotWrapper
+            slotLabel={{
+                label: props.slotDef.label,
+                required: props.slotDef.required
+            }}
+            slotTypeDef={{
+                color: props.slotTypeDef.color,
+                icon: props.slotTypeDef.icon,
+                label: props.slotTypeDef.label
+            }}
+            depth={props.depth}
+            isInvalid={props.currentValue === undefined || props.currentValue === ''}
+        >
+            <div className='px-2 py-2'>
+                <Input
+                    value={props.currentValue || ''}
+                    placeholder='Enter a value...'
+                    onChange={(e) => props.onValueChange(e.target.value)}
                 />
+            </div>
+        </BuiltInSlotWrapper>
 
-                <div className='px-2 py-2'>
-                    <Input
-                        value={props.currentValue || ''}
-                        placeholder='Enter a value...'
-                        onChange={(e) => props.onSelect(e.target.value)}
-                    />
-                </div>
-            </Block>
-        </div>
     );
 };
 
