@@ -4,6 +4,7 @@ import SelectorFromContext from '../components/SelectorFromContext';
 import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
 import SimpleTextInput from '../components/SimpleTextInput';
 import DatePicker from '../components/DatePicker';
+import TimedeltaInput from '../components/TimedeltaInput';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -17,7 +18,7 @@ interface SlotFormEditorProps {
 }
 
 const isSingleValueSlot = (type: string) => {
-    return ['str', 'list-selector', 'date'].includes(type);
+    return ['str', 'list-selector', 'date', 'time-delta'].includes(type);
 }
 
 const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
@@ -80,6 +81,24 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                 />
             case 'date':
                 return <DatePicker
+                    slotDef={props.slotDef}
+                    slotTypeDef={currentFormDef}
+                    depth={props.depth}
+                    currentValue={currentArgValue?.num}
+                    onValueChange={(value) => {
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < props.slotIndex) {
+                            currentData.fill(undefined, currentData.length, props.slotIndex)
+                        }
+                        currentData[props.slotIndex] = {
+                            num: value,
+                            dtype: 'num'
+                        }
+                        props.onArgsChange(currentData)
+                    }}
+                />
+            case 'time-delta':
+                return <TimedeltaInput
                     slotDef={props.slotDef}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}

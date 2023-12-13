@@ -44,6 +44,14 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         categories: ['variables'],
     },
     {
+        id: 'time-delta-picker',
+        type: 'time-delta',
+        icon: "circle-slash",
+        label: 'Time delta picker',
+        color: 'lime',
+        categories: ['variables'],
+    },
+    {
         id: 'survey-key-selector',
         type: 'list-selector',
         contextArrayKey: 'surveyKeys',
