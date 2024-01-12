@@ -10,7 +10,7 @@ export default async function Page() {
     return (
         <div className="flex flex-col h-screen">
             <UserManagementAppbarBase />
-            <main className="bg-cover bg-center bg-[url(/images/abstract_gi.png)] grow w-full">
+            <main className="bg-cover bg-center bg-[url(/images/tree-on-hill.png)] grow w-full">
                 <div className="backdrop-blur-md bg-white/50 h-full w-full flex items-center justify-center">
                     <Card
                         className="bg-white/80"
