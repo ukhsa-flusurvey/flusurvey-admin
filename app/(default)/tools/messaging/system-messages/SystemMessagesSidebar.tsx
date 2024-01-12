@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import Link from "next/link";
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
-import { BsEnvelopeExclamation, BsEnvelopePlus, BsHouse, BsInputCursor, BsPersonCheck, BsPersonPlus, BsShieldCheck, BsShieldExclamation, BsTrash3 } from "react-icons/bs";
+import { BsEnvelopeExclamation, BsEnvelopePlus, BsExclamationCircle, BsHouse, BsInputCursor, BsPersonCheck, BsPersonPlus, BsShieldCheck, BsShieldExclamation, BsTrash3 } from "react-icons/bs";
+import { Recycle } from 'lucide-react';
 
 
 interface SystemMessagesSidebarProps {
@@ -77,6 +78,26 @@ const SystemMessagesSidebar: React.FC<SystemMessagesSidebarProps> = (props) => {
             >
                 <BsEnvelopeExclamation />
             </SidebarItem>
+
+            <SidebarItem
+                tooltip="Inactivity notice"
+                isActive={pathname === '/tools/messaging/system-messages/account-inactivity'}
+                href='/tools/messaging/system-messages/account-inactivity'
+                as={Link}
+            >
+                <BsExclamationCircle />
+            </SidebarItem>
+
+            <SidebarItem
+                tooltip="Account deleted after inactivity"
+                isActive={pathname === '/tools/messaging/system-messages/account-deleted-after-inactivity'}
+                href='/tools/messaging/system-messages/account-deleted-after-inactivity'
+                as={Link}
+            >
+                <Recycle />
+            </SidebarItem>
+
+
             <SidebarItem
                 tooltip="Account deleted"
                 isActive={pathname === '/tools/messaging/system-messages/account-deleted'}
