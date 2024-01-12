@@ -78,7 +78,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setLoginData, loginData, isLoadin
                             email: value
                         })
                     }}
-                    validationState={hasError ? 'invalid' : 'valid'}
+                    isInvalid={hasError}
                     errorMessage={hasError ? 'Wrong email or password' : ''}
                 />
 
