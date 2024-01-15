@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import "next-auth"
 
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginWithEmailRequest } from "./utils/server/api";
@@ -58,7 +59,52 @@ export const {
     providers: [
         CASECredentialProvider
     ],
+    pages: {
+        signIn: '/auth/login',
+    },
+    callbacks: {
+        async jwt({ token, user, account }) {
+            if (account) {
+                console.log(account, user)
+                return {
+                    ...token,
+                    accessToken: user.account.accessToken as string || '',
+                    //expiresAt: account.expiresAt,
+                    //refreshToken: account.refreshToken,
+                }
+            }
+            return token
+        },
+        async session({ session, token }) {
+            session.accessToken = token.accessToken;
+            return session
+        }
+    },
 })
+
+declare module "next-auth" {
+    interface User {
+        /** The user's postal address. */
+        account: {
+            accessToken: string;
+            expiresAt: Date;
+            refreshToken: string;
+        }
+    }
+
+    interface Session {
+        accessToken?: string
+    }
+
+}
+
+declare module "@auth/core/jwt" {
+    /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
+    interface JWT {
+        accessToken?: string
+    }
+}
+
 
 /*
 
@@ -106,12 +152,6 @@ if (CASEOAuthProvider) {
     providers.push(CASEOAuthProvider);
 }
 
-declare module "next-auth/" {
-    interface Session {
-        accessToken?: string
-        error?: "RefreshAccessTokenError" | "LoginFailed"
-    }
-}
 
 declare module "next-auth/jwt" {
     interface JWT {

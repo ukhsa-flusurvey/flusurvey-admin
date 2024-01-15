@@ -1,11 +1,13 @@
-import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { getCASEManagementAPIURL, getTokenHeader } from "@/utils/server/api";
+import { auth } from "@/auth";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    console.log(session)
+    if (!session || !session.accessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(
             JSON.stringify({ error: 'Unauthorized' }), {
