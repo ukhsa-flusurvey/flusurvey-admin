@@ -1,3 +1,14 @@
+import NextAuth from "next-auth"
+import GitHub from "next-auth/providers/github"
+
+export const {
+    handlers: { GET, POST },
+    auth,
+} = NextAuth({
+    providers: [GitHub],
+})
+
+/*
 import { renewTokenRequest } from "@/utils/server/api";
 import { AuthOptions } from "next-auth/";
 import { loginWithEmailRequest } from "@/utils/server/api";
@@ -182,3 +193,4 @@ export const authOptions = {
         warn: (...args) => console.warn(...args),
     }
 } as AuthOptions;
+*/
