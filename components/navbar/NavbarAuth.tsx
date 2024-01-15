@@ -1,25 +1,19 @@
-'use client'
-
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
     Link as NextUILink,
-    Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, NavbarItem, Spinner, Divider, DropdownSection
+    Button, NavbarItem, Spinner
 } from '@nextui-org/react';
-import { signOut, useSession } from 'next-auth/react';
+import { auth } from '@/auth';
+import UserButton from '../UserButton';
+
 
 interface NavbarAuthProps {
 }
 
-const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
-    const { data: sessionInfos, status } = useSession();
+const NavbarAuthContent = async () => {
+    const session = await auth()
 
-    if (status === 'loading') {
-        return (
-            <Spinner color='secondary' size='md' />
-        )
-    }
-
-    if (status === 'unauthenticated') {
+    if (!session) {
         return (
             <NavbarItem
             >
@@ -35,42 +29,19 @@ const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
         )
     }
 
-
     return (
-        <>
-            <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                    <Avatar
-                        isBordered
-                        as="button"
-                        className="transition-transform"
-                        color="secondary"
-                        name={sessionInfos?.user?.email || 'User'}
-                        size="sm"
-                    />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat">
-                    <DropdownSection showDivider>
-                        <DropdownItem key="profile" isReadOnly>
-                            <p className="">Signed in as</p>
-                            <p className="font-semibold">{sessionInfos?.user?.email}</p>
-                        </DropdownItem>
-                    </DropdownSection>
-                    <DropdownSection>
-                        <DropdownItem key="logout" color="danger"
-                            onClick={() => {
-                                signOut({
-                                    callbackUrl: '/'
-                                });
-                            }}
-                        >
-                            Log Out
-                        </DropdownItem>
-                    </DropdownSection>
-                </DropdownMenu>
-            </Dropdown>
-        </>
-    );
+        <UserButton
+            user={session.user}
+        />
+    )
+}
+
+const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
+    return (
+        <Suspense fallback={<div><Spinner color='secondary' size='md' /></div>}>
+            <NavbarAuthContent />
+        </Suspense>
+    )
 };
 
 export default NavbarAuth;
