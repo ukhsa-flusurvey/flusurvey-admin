@@ -3,8 +3,9 @@
 import React, { useState, useTransition } from 'react';
 import LoginForm from './LoginForm';
 import { signIn } from 'next-auth/react';
-import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
+import { login } from '@/actions/auth/login';
 
 interface LoginProps {
 }
@@ -29,19 +30,17 @@ const Login: React.FC<LoginProps> = (props) => {
     const handleLogin = async () => {
         setIsLoading(true);
         try {
-            const res = await signIn('case-credentials', {
+            const res = await login('credentials', {
                 email: loginData.email,
                 password: loginData.password,
-                redirect: false,
+                // redirect: false,
                 verificationCode: loginData.verificationCode,
-                callbackUrl: callBackURL as string,
+                redirectTo: callBackURL as string,
             });
             if (!res) {
                 throw new Error('No response from server');
             }
-            if (res.ok === false) {
-                setError(true);
-            } else if (res.error !== undefined && res.error !== null) {
+            if (res.error !== undefined && res.error !== null) {
                 if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
                     setError(false);
                     setIsSecondFactor(true);
@@ -49,12 +48,6 @@ const Login: React.FC<LoginProps> = (props) => {
                     setError(true);
                 }
                 // success
-            }
-            if (res.url) {
-                const url = res.url;
-                startTransition(() => {
-                    router.push(url);
-                });
             }
         } catch (error: any) {
             console.log(error.message)

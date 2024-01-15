@@ -25,7 +25,7 @@ const postToCASEManagementAPI = async (path: string, data: any, accessToken?: st
         body: JSON.stringify(data)
     });
     if (!response.ok || response.status > 299) {
-        throw response.json();
+        throw await response.json();
     }
     return await response.json();
 }

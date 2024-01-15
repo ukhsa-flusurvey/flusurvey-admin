@@ -1,44 +1,19 @@
 import NextAuth from "next-auth"
-import GitHub from "next-auth/providers/github"
 
-export const {
-    handlers: { GET, POST },
-    auth,
-    signIn,
-    signOut
-} = NextAuth({
-    providers: [GitHub],
-})
-
-/*
-import { renewTokenRequest } from "@/utils/server/api";
-import { AuthOptions } from "next-auth/";
-import { loginWithEmailRequest } from "@/utils/server/api";
-
-import CredentialsProvider from "next-auth/providers/credentials"
-import { Provider } from "next-auth/providers"
-import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
-
-interface CredentialsUser {
-    id: string;
-    email: string;
-    account: {
-        accessToken: string;
-        expiresAt: Date;
-        refreshToken: string;
-    };
-}
-
+import CredentialsProvider from "next-auth/providers/credentials";
+import { loginWithEmailRequest } from "./utils/server/api";
+import { ERROR_SECOND_FACTOR_NEEDED } from "./utils/server/types/authAPI";
 
 const CASECredentialProvider = CredentialsProvider({
-    id: "case-credentials",
+    id: "credentials",
     credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
         verificationCode: { label: "Verification Code", type: "text" },
     },
-    async authorize(credentials, req) {
+    async authorize(credentials: any, req) {
         if (!credentials || !credentials.email || !credentials.password) {
+            console.error('Missing credentials');
             return null;
         }
 
@@ -57,6 +32,7 @@ const CASECredentialProvider = CredentialsProvider({
             return {
                 id: response.user.id,
                 email: response.user.account.accountId,
+                name: response.user.account.accountId,
                 account: {
                     accessToken: response.token.accessToken,
                     expiresAt: new Date(now.getTime() + response.token.expiresIn * 60000),
@@ -64,11 +40,42 @@ const CASECredentialProvider = CredentialsProvider({
                 }
             };
         } catch (error: any) {
-            console.error('Unexpected error when logging in with credentials');
+            if (error.error) {
+                throw new Error(error.error);
+            }
+            console.error('Unexpected error when logging in with credentials: ', error);
             throw error;
         }
     },
 })
+
+export const {
+    handlers: { GET, POST },
+    auth,
+    signIn,
+    signOut
+} = NextAuth({
+    providers: [
+        CASECredentialProvider
+    ],
+})
+
+/*
+
+import { AuthOptions } from "next-auth/";
+import CredentialsProvider from "next-auth/providers/credentials"
+import { Provider } from "next-auth/providers"
+
+
+interface CredentialsUser {
+    id: string;
+    email: string;
+    account: {
+        accessToken: string;
+        expiresAt: Date;
+        refreshToken: string;
+    };
+}
 
 
 const CASEOAuthProvider = (process.env.OPENID_CONFIG && process.env.OAUTH_CLIENT_ID && process.env.OAUTH_CLIENT_SECRET) ? {
