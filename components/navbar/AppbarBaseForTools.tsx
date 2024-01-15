@@ -1,11 +1,9 @@
-'use client'
-
-import { Avatar, Button, Spinner, Tooltip } from '@nextui-org/react';
-import { useSession } from 'next-auth/react';
+import { Button, Tooltip } from '@nextui-org/react';
 import React from 'react';
 import NextUILink from 'next/link';
 import { BsXLg } from 'react-icons/bs';
 import clsx from 'clsx';
+import NavbarAuth from './NavbarAuth';
 
 interface AppbarBaseForToolsProps {
     toolName: string;
@@ -13,41 +11,6 @@ interface AppbarBaseForToolsProps {
     children?: React.ReactNode;
     isBordered?: boolean;
 }
-
-const AppbarAuth: React.FC = () => {
-    const { data: sessionInfos, status } = useSession();
-
-
-    if (status === 'loading') {
-        return (
-            <Spinner color='secondary' size='sm' />
-        )
-    }
-
-    if (status === 'unauthenticated') {
-        return null;
-    }
-
-    return (
-        <>
-            <Tooltip showArrow={true}
-                content={
-                    <div className="px-1 py-2">
-                        <p className="">Signed in as</p>
-                        <p className="font-semibold">{sessionInfos?.user?.email}</p>
-                    </div>
-                }>
-                <Avatar className='w-6 h-6 text-[0.6rem] bg-opacity-70 ring-opacity-70'
-                    color='secondary'
-                    isBordered
-                    name={sessionInfos?.user?.email || ''}
-
-                />
-            </Tooltip>
-        </>
-    );
-};
-
 
 const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
@@ -79,7 +42,7 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
 
 
                 <div className="flex gap-2 items-center">
-                    <AppbarAuth />
+                    <NavbarAuth />
                     <Tooltip showArrow={true} content="Return to main menu">
                         <Button
                             as={NextUILink}
