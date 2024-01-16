@@ -40,7 +40,7 @@ const TwoColumnsWithCards: React.FC<{
                 className='bg-white/70 flex-1'
                 isBlurred
             >
-                <CardBody>
+                <CardBody className="p-6">
                     {props.children}
                 </CardBody>
             </Card>

@@ -3,14 +3,48 @@
 import LanguageSelector from "@/components/LanguageSelector";
 import { getLocalizedString } from "@/utils/getLocalisedString";
 import { StudyProps } from "@/utils/server/types/studyInfos";
-import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/chip";
-import { Input } from "@nextui-org/react";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { BsCheck, BsPencil, BsPlus, BsX, BsXLg } from "react-icons/bs";
 import { ExpressionArg, LocalizedString } from "survey-engine/data_types";
 import { updateStudyProps } from "../../../../../actions/study/updateStudyProps";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+
+const StudyCardWithTags = ({
+    name, description, tags
+}: {
+    name?: string,
+    description?: string,
+    tags: Array<string | undefined>,
+}) => {
+    return (
+        <div className='bg-slate-200 px-6 py-4 rounded-lg'>
+            <p className='font-bold'>
+                <span className="text-xl">
+                    {name || '<study name>'}
+                </span>
+            </p>
+            <p className="italic">
+                {description || '<study description>'}
+            </p>
+            <div className='flex flex-wrap items-center mt-2 gap-3'>
+                {tags.length === 0 && <span className='text-gray-500 text-sm'>No tags defined</span>}
+                {tags.map((tag, index) => (
+                    <Badge
+                        key={index}
+                        variant={'primaryOutline'}
+                    >
+                        {tag || '<tag>'}
+                    </Badge>
+                ))}
+            </div>
+        </div>
+    )
+}
 
 const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ studyKey, studyProps }) => {
     const [currentStudyProps, setCurrentStudyProps] = React.useState<StudyProps>(studyProps);
@@ -47,106 +81,134 @@ const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ 
                     onLanguageChange={setSelectedLanguage}
                 />
             </div>
-            <div className="space-y-unit-sm">
-                <h3 className='text-large font-bold mb-1'>Edit display texts:</h3>
 
-                <Input
-                    id='study-name'
-                    label='Study Name'
-                    labelPlacement='outside'
-                    placeholder='Enter a name for the study'
-                    variant='bordered'
-                    description='A short title for the study card.'
-                    autoComplete="off"
-                    classNames={{
-                        inputWrapper: 'bg-white'
-                    }}
-                    value={name || ''}
-                    onValueChange={(v) => {
-                        const currentName = currentStudyProps.name;
-                        if (!currentName) {
-                            setCurrentStudyProps((prev) => ({
-                                ...prev,
-                                name: [{
-                                    code: selectedLanguage, parts: [
-                                        { str: v, dtype: 'str' }
-                                    ]
-                                }]
-                            }));
-                        } else {
-                            const i = currentName.findIndex((l) => l.code === selectedLanguage);
-                            if (i === -1) {
-                                currentName.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+            <div className="space-y-4">
+                <h3 className='text-xl font-bold mb-1'>Edit display texts:</h3>
+
+                <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="study-name"
+                    >
+                        Study Name
+                    </Label>
+                    <Input
+                        id='study-name'
+                        placeholder='Enter a name for the study'
+                        autoComplete="off"
+                        value={name || ''}
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            const currentName = currentStudyProps.name;
+                            if (!currentName) {
+                                setCurrentStudyProps((prev) => ({
+                                    ...prev,
+                                    name: [{
+                                        code: selectedLanguage, parts: [
+                                            { str: v, dtype: 'str' }
+                                        ]
+                                    }]
+                                }));
                             } else {
-                                ((currentName[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                const i = currentName.findIndex((l) => l.code === selectedLanguage);
+                                if (i === -1) {
+                                    currentName.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+                                } else {
+                                    ((currentName[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                }
+                                setCurrentStudyProps((prev) => ({
+                                    ...prev,
+                                    name: currentName as LocalizedString[]
+                                }));
                             }
-                            setCurrentStudyProps((prev) => ({
-                                ...prev,
-                                name: currentName as LocalizedString[]
-                            }));
-                        }
-                    }}
-                />
+                        }}
+                    />
+                    <p className="text-xs text-slate-400">A short title for the study card.</p>
+                </div>
 
-                <Input
-                    id='study-description'
-                    label='Study Description'
-                    labelPlacement='outside'
-                    placeholder='Enter a description for the study'
-                    variant='bordered'
-                    description='A description for the study card.'
-                    autoComplete="off"
-                    classNames={{
-                        inputWrapper: 'bg-white'
-                    }}
-                    value={description || ''}
-                    onValueChange={(v) => {
-                        const currentDescription = currentStudyProps.description;
-                        if (!currentDescription) {
-                            setCurrentStudyProps((prev) => ({
-                                ...prev,
-                                description: [{
-                                    code: selectedLanguage, parts: [
-                                        { str: v, dtype: 'str' }
-                                    ]
-                                }]
-                            }));
-                        } else {
-                            const i = currentDescription.findIndex((l) => l.code === selectedLanguage);
-                            if (i === -1) {
-                                currentDescription.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+
+                <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="study-name">
+                        Study Description
+                    </Label>
+                    <Input
+                        id='study-description'
+                        placeholder='Enter a description for the study'
+                        autoComplete="off"
+                        value={description || ''}
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            const currentDescription = currentStudyProps.description;
+                            if (!currentDescription) {
+                                setCurrentStudyProps((prev) => ({
+                                    ...prev,
+                                    description: [{
+                                        code: selectedLanguage, parts: [
+                                            { str: v, dtype: 'str' }
+                                        ]
+                                    }]
+                                }));
                             } else {
-                                ((currentDescription[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                const i = currentDescription.findIndex((l) => l.code === selectedLanguage);
+                                if (i === -1) {
+                                    currentDescription.push({ code: selectedLanguage, parts: [{ str: v, dtype: 'str' }] });
+                                } else {
+                                    ((currentDescription[i] as LocalizedString).parts[0] as ExpressionArg).str = v;
+                                }
+                                setCurrentStudyProps((prev) => ({
+                                    ...prev,
+                                    description: currentDescription as LocalizedString[]
+                                }));
                             }
-                            setCurrentStudyProps((prev) => ({
-                                ...prev,
-                                description: currentDescription as LocalizedString[]
-                            }));
-                        }
-                    }}
-                />
+                        }}
+                    />
+                    <p className="text-xs text-slate-400">A short title for the study card.</p>
+                </div>
 
+                <Separator />
                 <div>
-                    <h4 className="text-small mb-2">
-                        Tags:
+                    <h4 className="text-xl mb-3 flex items-center">
+                        <span className="grow">
+                            Tags:
+                        </span>
+                        <Button
+                            size="icon"
+                            variant="secondary"
+                            type="button"
+                            onClick={() => {
+                                setCurrentStudyProps((prev) => ({
+                                    ...prev,
+                                    tags: [
+                                        ...(prev.tags || []),
+                                        {
+                                            label: [{ code: selectedLanguage, parts: [{ str: '', dtype: 'str' }] }]
+                                        }
+                                    ]
+                                }))
+                            }}
+                        >
+                            <BsPlus className="size-6" />
+
+                        </Button>
                     </h4>
-                    <div className="flex flex-wrap gap-unit-md items-center">
-                        {tags.length === 0 && <span className='text-default-400 text-small'>No tags defined</span>}
+                    <div className="flex flex-col gap-3">
+                        {tags.length === 0 && <span className='text-gray-400 text-sm h-14 text-center flex items-center justify-center'>No tags defined</span>}
                         {tags.map((tag, index) => (
                             <div key={index}
-                                className="flex items-center border p-1 rounded-md bg-content2"
+                                className="flex items-center gap-3  px-3 py-2 rounded-lg bg-slate-50 border border-slate-200"
                             >
+                                <Label
+                                    htmlFor={`tag-${index}`}
+                                >
+                                    <span className='text-gray-500 text-sm text-nowrap'>
+                                        Tag {index + 1}
+                                    </span>
+                                </Label>
                                 <Input
                                     id={`tag-${index}`}
-                                    variant='bordered'
-                                    size='sm'
-                                    placeholder='Enter a tag'
+                                    placeholder='Enter a tag translation'
                                     autoComplete="off"
-                                    classNames={{
-                                        inputWrapper: 'bg-white'
-                                    }}
                                     value={tag || ''}
-                                    onValueChange={(v) => {
+                                    onChange={(e) => {
+                                        const v = e.target.value;
                                         const currentTags = currentStudyProps.tags;
                                         if (!currentTags) {
                                             setCurrentStudyProps((prev) => ({
@@ -172,13 +234,15 @@ const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ 
                                             }));
                                         }
                                     }}
+
                                 />
+
                                 <Button
-                                    isIconOnly
-                                    size="sm"
-                                    isDisabled={isPending}
-                                    variant="light"
-                                    onPress={() => {
+                                    size="icon"
+                                    disabled={isPending}
+                                    variant="ghost"
+                                    type="button"
+                                    onClick={() => {
                                         if (confirm('Are you sure you want to delete this tag?')) {
                                             setCurrentStudyProps((prev) => ({
                                                 ...prev,
@@ -195,92 +259,59 @@ const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ 
 
                             </div>
                         ))}
-                        <Button
-                            size="sm"
-                            variant="flat"
-                            startContent={<BsPlus />}
-                            onPress={() => {
-                                setCurrentStudyProps((prev) => ({
-                                    ...prev,
-                                    tags: [
-                                        ...(prev.tags || []),
-                                        {
-                                            label: [{ code: selectedLanguage, parts: [{ str: '', dtype: 'str' }] }]
-                                        }
-                                    ]
-                                }))
-                            }}
-                        >
-                            Add tag
-                        </Button>
+
                     </div>
                 </div>
+                <Separator />
 
-                <div className='flex gap-unit-sm'>
+                <div className='flex gap-3'>
                     <Button
-                        variant='light'
-                        color='danger'
-                        startContent={<BsX />}
-                        onPress={() => {
+                        variant={'ghost'}
+                        onClick={() => {
                             setEditMode(false);
                             setCurrentStudyProps(studyProps);
                         }}
                     >
+                        <BsX className="mr-2" />
                         Cancel
                     </Button>
                     <Button
-                        variant='flat'
-                        color='primary'
-                        startContent={<BsCheck />}
-                        isLoading={isPending}
-                        onPress={() => {
+                        disabled={isPending}
+                        onClick={() => {
                             onChange(currentStudyProps);
                             setEditMode(false);
                         }}
-                    >
+                    ><BsCheck
+                            className="mr-2"
+                        />
                         Apply
                     </Button>
                 </div>
             </div>
-        </div>
+        </div >
     }
 
     return (
-        <div>
+        <div className="space-y-6">
             <div className="flex justify-end">
                 <LanguageSelector
                     onLanguageChange={setSelectedLanguage}
                 />
             </div>
-            <div className='bg-content3 p-unit-sm rounded-small  my-unit-sm'>
-                <p className='font-bold'>
-                    <span className="text-xl">
-                        {name || '<study name>'}
-                    </span>
-                </p>
-                <p className="italic">
-                    {description || '<study description>'}
-                </p>
-                <div className='flex flex-wrap items-center mt-2 gap-unit-sm'>
-                    {tags.length === 0 && <span className='text-default-400 text-small'>No tags defined</span>}
-                    {tags.map((tag, index) => (
-                        <Chip key={index}
-                            variant='bordered'
-                            color='primary'
-                        >
-                            {tag || '<tag>'}
-                        </Chip>
-                    ))}
-                </div>
-            </div>
-            <div className="mt-unit-md">
+            <StudyCardWithTags
+                name={name}
+                description={description}
+                tags={tags}
+            />
+            <div className="">
                 <Button
-                    startContent={<BsPencil className="text-default-600" />}
-                    onPress={() => {
+                    onClick={() => {
                         setEditMode(!editMode);
                     }}
-                    isDisabled={isPending}
+                    disabled={isPending}
+                    variant='secondary'
                 >
+                    <BsPencil className="text-slate-600 mr-3" />
                     Edit Display Texts
                 </Button>
             </div>
