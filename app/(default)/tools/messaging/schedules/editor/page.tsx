@@ -2,7 +2,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import ScheduleEditor from "./ScheduleEditor";
 import { MessageSchedule } from "@/utils/server/types/messaging";
-import { getMessageSchedules } from "@/utils/server/messagingAPI";
+import { getMessageSchedules } from "@/lib/data/messagingAPI";
 
 
 export const dynamic = 'force-dynamic';

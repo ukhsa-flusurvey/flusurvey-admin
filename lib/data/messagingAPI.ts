@@ -1,12 +1,12 @@
-import 'server-only';
-import { EmailTemplate, MessageSchedule } from './types/messaging';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
-import { getCASEManagementAPIURL, getTokenHeader } from './api';
+'use server'
+
+import { EmailTemplate, MessageSchedule } from '../../utils/server/types/messaging';
+import { getCASEManagementAPIURL, getTokenHeader } from '../../utils/server/api';
+import { auth } from '@/auth';
 
 export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -47,8 +47,8 @@ export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
 }
 
 export const getMessageTemplates = async (): Promise<EmailTemplate[]> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
