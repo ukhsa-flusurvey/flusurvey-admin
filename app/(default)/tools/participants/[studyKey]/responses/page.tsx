@@ -1,7 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import { getSurveyKeys } from "@/lib/data/studyAPI";
 import SurveyInfoDownloader from "./SurveyInfoDownloader";
 import ResponseDownloader from "./ResponseDownloader";
@@ -23,11 +20,6 @@ interface PageProps {
 }
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect(`/auth/login?callbackUrl=/tools/participants`);
-    }
-
     let surveyKeys: string[] = [];
     try {
         const resp = await getSurveyKeys(props.params.studyKey)

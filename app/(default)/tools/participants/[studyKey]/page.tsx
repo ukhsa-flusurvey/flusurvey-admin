@@ -1,10 +1,7 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import LinkCard from "@/components/LinkCard";
 import { Card, CardHeader, CardBody } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
-import { getServerSession } from "next-auth/next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { BsCardText, BsFileEarmarkLock, BsFileEarmarkSpreadsheet, BsFolder2Open, BsPeople, BsX } from "react-icons/bs";
 import { Button } from "@nextui-org/button";
 import { pageTitle } from "@/utils/pageTitle";
@@ -23,10 +20,6 @@ interface PageProps {
 }
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect(`/auth/login?callbackUrl=/tools/participants/${props.params.studyKey}`);
-    }
 
     return (
         <main className="px-unit-lg">

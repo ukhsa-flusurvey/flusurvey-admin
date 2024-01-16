@@ -1,7 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import ParticipantFileDownloader from "./ParticipantFileDownloader";
 import { pageTitle } from "@/utils/pageTitle";
 
@@ -21,10 +18,6 @@ interface PageProps {
 }
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect(`/auth/login?callbackUrl=/tools/participants`);
-    }
 
     return (
         <div className="py-unit-sm px-unit-lg">
