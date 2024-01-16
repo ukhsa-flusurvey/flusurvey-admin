@@ -1,4 +1,3 @@
-import { ArrowLeftIcon, ChatBubbleBottomCenterTextIcon, ClockIcon, HomeIcon, InboxStackIcon } from "@heroicons/react/24/outline";
 import React from "react"
 import MessagingAppbarBase from "./MessagingAppbarBase";
 

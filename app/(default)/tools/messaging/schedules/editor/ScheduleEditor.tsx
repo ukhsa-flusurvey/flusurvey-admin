@@ -4,7 +4,7 @@ import { MessageSchedule } from '@/utils/server/types/messaging';
 import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Switch, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-import { deleteMessageSchedule, saveMessageSchedule } from './actions';
+import { deleteMessageSchedule, saveMessageSchedule } from '../../../../../../actions/messaging/schedules';
 import { BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from './utils';

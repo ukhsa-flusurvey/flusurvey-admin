@@ -1,20 +1,18 @@
-'use server';
+'use server'
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/auth";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { MessageSchedule } from "@/utils/server/types/messaging";
-import { getServerSession } from "next-auth/next";
+import { Study } from "@/utils/server/types/studyInfos";
 
 
-export const saveMessageSchedule = async (
-    messageSchedule: MessageSchedule
-) => {
-    const session = await getServerSession(authOptions);
+export const uploadMessageTemplate = async (template: any): Promise<Study> => {
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
-    const url = getCASEManagementAPIURL('/v1/messaging/auto-messages');
+
+    const url = getCASEManagementAPIURL(`/v1/messaging/email-templates`);
     const r = await fetch(url.toString(), {
         method: 'POST',
-        body: JSON.stringify({ 'autoMessage': messageSchedule }),
+        body: JSON.stringify({ template: template }),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
             'Content-Type': 'application/json'
@@ -23,20 +21,22 @@ export const saveMessageSchedule = async (
     });
     if (r.status !== 200) {
         console.error(await r.json());
-        throw new Error('Failed to save message schedule');
+        throw new Error('upload failed');
     }
     return r.json();
 }
 
-export const deleteMessageSchedule = async (
-    id: string
+export const deleteMessageTemplate = async (
+    messageType: string,
+    studyKey: string,
 ) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
-    const url = getCASEManagementAPIURL(`/v1/messaging/auto-message/${id}`);
+    const url = getCASEManagementAPIURL(`/v1/messaging/email-templates/delete`);
     const r = await fetch(url.toString(), {
-        method: 'DELETE',
+        method: 'POST',
+        body: JSON.stringify({ messageType, studyKey }),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
         },

@@ -1,11 +1,10 @@
-import { getServerSession } from "next-auth/next";
 import { NextRequest } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { getCASEManagementAPIURL, getTokenHeader } from "@/utils/server/api";
+import { auth } from "@/auth";
 
 export async function GET(request: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || !session.accessToken) {
         throw new Error("unauthenticated");
     }
 

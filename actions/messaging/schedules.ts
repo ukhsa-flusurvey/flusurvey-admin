@@ -1,19 +1,20 @@
-'use server'
+'use server';
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/auth";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { Study } from "@/utils/server/types/studyInfos";
-import { getServerSession } from "next-auth/next";
+import { MessageSchedule } from "@/utils/server/types/messaging";
 
 
-export const uploadMessageTemplate = async (template: any): Promise<Study> => {
-    const session = await getServerSession(authOptions);
+export const saveMessageSchedule = async (
+    messageSchedule: MessageSchedule
+) => {
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
-    const url = getCASEManagementAPIURL(`/v1/messaging/email-templates`);
+    const url = getCASEManagementAPIURL('/v1/messaging/auto-messages');
     const r = await fetch(url.toString(), {
         method: 'POST',
-        body: JSON.stringify({ template: template }),
+        body: JSON.stringify({ 'autoMessage': messageSchedule }),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
             'Content-Type': 'application/json'
@@ -22,22 +23,20 @@ export const uploadMessageTemplate = async (template: any): Promise<Study> => {
     });
     if (r.status !== 200) {
         console.error(await r.json());
-        throw new Error('upload failed');
+        throw new Error('Failed to save message schedule');
     }
     return r.json();
 }
 
-export const deleteMessageTemplate = async (
-    messageType: string,
-    studyKey: string,
+export const deleteMessageSchedule = async (
+    id: string
 ) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
-    const url = getCASEManagementAPIURL(`/v1/messaging/email-templates/delete`);
+    const url = getCASEManagementAPIURL(`/v1/messaging/auto-message/${id}`);
     const r = await fetch(url.toString(), {
-        method: 'POST',
-        body: JSON.stringify({ messageType, studyKey }),
+        method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
         },

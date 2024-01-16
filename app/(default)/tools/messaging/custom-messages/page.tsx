@@ -1,9 +1,6 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import { BsCodeSquare, BsPlus } from "react-icons/bs";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
@@ -16,10 +13,6 @@ interface PageProps {
 }
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect('/auth/login?callbackUrl=/tools/messaging/custom-messages');
-    }
 
     return (
         <div className="px-unit-lg h-full">
