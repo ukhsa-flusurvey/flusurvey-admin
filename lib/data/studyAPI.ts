@@ -1,14 +1,14 @@
-import 'server-only';
-import { getCASEManagementAPIURL, getTokenHeader } from "./api";
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
-import { Study } from './types/studyInfos';
+'use server'
+
+import { getCASEManagementAPIURL, getTokenHeader } from "../../utils/server/api";
+import { Study } from '../../utils/server/types/studyInfos';
 import { Survey } from 'survey-engine/data_types';
+import { auth } from '@/auth';
 
 
 export const getSurveysForStudy = async (studyKey: string) => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -36,8 +36,8 @@ export const getSurveysForStudy = async (studyKey: string) => {
 }
 
 export const getStudies = async (): Promise<{ studies?: Study[] }> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -66,8 +66,8 @@ export const getStudies = async (): Promise<{ studies?: Study[] }> => {
 
 
 export const getStudy = async (studyKey: string): Promise<Study> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -97,8 +97,8 @@ export const getStudy = async (studyKey: string): Promise<Study> => {
 export const getSurveyKeys = async (studyKey: string): Promise<{
     keys: string[]
 }> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -126,8 +126,8 @@ export const getSurveyKeys = async (studyKey: string): Promise<{
 }
 
 export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<Survey> => {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || session.accessToken === undefined) {
         throw new Error('Unauthorized');
     }
 

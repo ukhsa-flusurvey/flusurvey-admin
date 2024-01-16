@@ -3,7 +3,7 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import React, { useTransition } from 'react';
 import { BsExclamationTriangleFill } from 'react-icons/bs';
-import { deleteStudyAction } from './actionDeleteStudy';
+import { deleteStudyAction } from '../../../../../actions/study/delete';
 import { useRouter } from 'next/navigation';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 

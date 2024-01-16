@@ -4,7 +4,7 @@ import React, { useTransition } from 'react';
 // import StudyPropertyEditor from '../../../../../components/study-property-editor/StudyPropertyEditor';
 import { Study } from '@/utils/server/types/studyInfos';
 import { useRouter } from 'next/navigation';
-import { createStudy } from '@/app/(default)/tools/study-configurator/new/createStudyAction';
+import { createStudy } from '@/actions/study/create';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import NotImplemented from '@/components/NotImplemented';
 import { Button, Divider, Input, Switch, Textarea } from '@nextui-org/react';

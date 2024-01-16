@@ -1,6 +1,4 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import SurveyHistoryView from "./SurveyHistoryView";
 
 
@@ -15,10 +13,6 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession();
-    if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator');
-    }
 
     return (
         <div className="px-unit-lg bg-white/60 h-full">

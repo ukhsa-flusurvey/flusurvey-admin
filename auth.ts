@@ -80,6 +80,11 @@ export const {
             return session
         }
     },
+    logger: {
+        debug: (...args) => console.log(...args),
+        error: (...args) => console.error(...args),
+        warn: (...args) => console.warn(...args),
+    }
 })
 
 declare module "next-auth" {
@@ -102,28 +107,13 @@ declare module "@auth/core/jwt" {
     /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
     interface JWT {
         accessToken?: string
+        expires_at?: number
+        refresh_token?: string
     }
 }
 
 
 /*
-
-import { AuthOptions } from "next-auth/";
-import CredentialsProvider from "next-auth/providers/credentials"
-import { Provider } from "next-auth/providers"
-
-
-interface CredentialsUser {
-    id: string;
-    email: string;
-    account: {
-        accessToken: string;
-        expiresAt: Date;
-        refreshToken: string;
-    };
-}
-
-
 const CASEOAuthProvider = (process.env.OPENID_CONFIG && process.env.OAUTH_CLIENT_ID && process.env.OAUTH_CLIENT_SECRET) ? {
     id: "management-user-oauth",
     name: "Management User OAuth",

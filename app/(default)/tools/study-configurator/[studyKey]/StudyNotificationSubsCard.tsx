@@ -6,7 +6,7 @@ import { Button } from '@nextui-org/button';
 import { BsPlus, BsXLg } from 'react-icons/bs';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { Divider, Input, Spinner } from '@nextui-org/react';
-import { saveStudyNotifications } from './actionSaveStudyNotifications';
+import { saveStudyNotifications } from '../../../../../actions/study/saveStudyNotifications';
 import { AuthAPIFetcher } from '@/utils/server/fetcher';
 import useSWR from 'swr';
 

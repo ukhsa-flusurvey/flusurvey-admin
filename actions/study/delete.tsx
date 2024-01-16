@@ -1,12 +1,11 @@
 'use server';
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/auth";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { getServerSession } from "next-auth/next";
 
 
 export const deleteStudyAction = async (studyKey: string) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL(`/v1/study/${studyKey}`);

@@ -1,25 +1,23 @@
-'use server'
+'use server';
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/auth";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { getServerSession } from "next-auth/next";
-import { Expression } from "survey-engine/data_types";
+import { StudyProps } from "@/utils/server/types/studyInfos";
 
 
-export const uploadStudyRules = async (studyKey: string, rulesObj: {
-    rules: Expression[]
-}) => {
-    const session = await getServerSession(authOptions);
+
+export const updateStudyProps = async (studyKey: string, props: StudyProps) => {
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
 
-    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/rules`);
+    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/props`);
     const r = await fetch(url.toString(), {
         method: 'POST',
-        body: JSON.stringify(rulesObj),
         headers: {
             'Authorization': `Bearer ${session?.accessToken}`,
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify({ props }),
         next: { revalidate: 0 }
     });
     if (r.status !== 200) {

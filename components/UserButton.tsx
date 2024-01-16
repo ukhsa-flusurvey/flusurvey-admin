@@ -19,7 +19,7 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger >
                 <div className='flex gap-2 items-center'>
                     <Avatar className='size-8'>
                         <AvatarImage src={props.user?.image || ""} />
@@ -32,7 +32,7 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
                     </span>
                 </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align='end'>
                 <DropdownMenuItem
                     className='text-red-800'
                     disabled={isPending}

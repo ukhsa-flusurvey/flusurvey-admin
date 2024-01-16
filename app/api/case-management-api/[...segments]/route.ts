@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await auth();
-    console.log(session)
     if (!session || !session.accessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(
@@ -38,8 +37,8 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
 }
 
 export async function POST(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || !session.accessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
@@ -68,8 +67,8 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
 }
 
 export async function DELETE(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
-    const session = await getServerSession(authOptions);
-    if (!session || session.error || session.accessToken === undefined) {
+    const session = await auth();
+    if (!session || !session.accessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
