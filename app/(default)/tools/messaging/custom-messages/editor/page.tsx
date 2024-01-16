@@ -1,10 +1,9 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getMessageTemplates } from "@/utils/server/messagingAPI";
 import { EmailTemplate } from "@/utils/server/types/messaging";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import EmailTemplateConfigurator from "../../EmailTemplateConfigurator";
+import { redirect } from "next/navigation";
 
 
 export const dynamic = 'force-dynamic';
@@ -18,11 +17,6 @@ interface PageProps {
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect('/auth/login?callbackUrl=/tools/messaging/custom-messages');
-    }
-
     let templates: EmailTemplate[] = [];
     try {
         templates = await getMessageTemplates();

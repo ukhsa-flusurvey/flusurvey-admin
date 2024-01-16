@@ -10,7 +10,7 @@ import { decodeTemplate, encodeTemplate } from './schedules/editor/utils';
 import { BsCheck, BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useRouter } from 'next/navigation';
-import { deleteMessageTemplate, uploadMessageTemplate } from './actionsMessageTemplates';
+import { deleteMessageTemplate, uploadMessageTemplate } from '../../../../actions/messaging/messageTemplates';
 
 interface EmailTemplateConfiguratorProps {
     emailTemplateConfig?: EmailTemplate;

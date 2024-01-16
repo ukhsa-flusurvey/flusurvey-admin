@@ -1,18 +1,11 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import LinkCard from "@/components/LinkCard";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Divider } from "@nextui-org/divider";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import { BsCalendarWeek, BsCodeSquare, BsEnvelopePaper } from "react-icons/bs";
 
 
 
 export default async function Page() {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect('/auth/login?callbackUrl=/tools/messaging');
-    }
 
     return (
         <main className="px-unit-lg">
