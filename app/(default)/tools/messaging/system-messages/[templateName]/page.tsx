@@ -1,4 +1,4 @@
-import { getMessageTemplates } from "@/utils/server/messagingAPI";
+import { getMessageTemplates } from "@/lib/data/messagingAPI";
 import { EmailTemplate } from "@/utils/server/types/messaging";
 import EmailTemplateConfigurator from "../../EmailTemplateConfigurator";
 import { redirect } from "next/navigation";

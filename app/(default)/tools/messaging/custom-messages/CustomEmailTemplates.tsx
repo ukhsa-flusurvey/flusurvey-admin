@@ -71,7 +71,7 @@ const CustomEmailTemplates: React.FC<CustomEmailTemplatesProps> = (props) => {
     let errorComp: React.ReactNode = null;
     if (error) {
         if (error.message === 'Unauthorized') {
-            signOut({ callbackUrl: '/auth/login?callbackUrl=/tools/messaging/custom-templates' });
+            signOut({ callbackUrl: '/auth/login?callbackUrl=/tools/messaging/custom-messages' });
             return null;
         }
 
