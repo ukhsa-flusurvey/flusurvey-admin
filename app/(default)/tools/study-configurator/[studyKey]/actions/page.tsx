@@ -1,6 +1,4 @@
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
 import React from 'react';
 import StudyActionsCard from './StudyActionsCard';
 
@@ -13,11 +11,6 @@ interface PageProps {
 export const dynamic = 'force-dynamic';
 
 const Page: React.FC<PageProps> = async (props) => {
-    const session = await getServerSession();
-    if (!session || !session.user?.email) {
-        redirect(`/auth/login?callbackUrl=/tools/study-configurator/${props.params.studyKey}/rules`);
-    }
-
     return (
         <div className="px-unit-lg bg-white/60 h-full">
             <div className="py-unit-sm">

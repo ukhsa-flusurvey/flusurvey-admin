@@ -1,8 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import StudyDashboard from "./StudyDashboard";
-import { getStudy } from "@/utils/server/studyAPI";
+import { getStudy } from "@/lib/data/studyAPI";
 
 interface PageProps {
     params: {
@@ -14,10 +12,6 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession();
-    if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator');
-    }
 
     let study = await getStudy(props.params.studyKey);
     study = {

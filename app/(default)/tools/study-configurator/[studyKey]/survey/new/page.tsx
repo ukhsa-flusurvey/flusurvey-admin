@@ -1,8 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import CreateSurveyActionsCard from "./CreateSurveyActionsCard";
-import { getSurveyKeys } from "@/utils/server/studyAPI";
+import { getSurveyKeys } from "@/lib/data/studyAPI";
 import { Suspense } from "react";
 import { Spinner } from "@nextui-org/spinner";
 
@@ -17,11 +15,6 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession();
-    if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator');
-    }
-
     const surveyKeys = await getSurveyKeys(props.params.studyKey);
 
     return (

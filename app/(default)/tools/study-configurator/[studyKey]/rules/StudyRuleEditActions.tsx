@@ -7,7 +7,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { BsCloudArrowUp, BsPencilSquare, BsShuffle } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
 import { Expression, isExpression } from 'survey-engine/data_types';
-import { uploadStudyRules } from './actionUploadStudyRules';
+import { uploadStudyRules } from '../../../../../../actions/study/uploadStudyRules';
 
 
 interface StudyRuleEditActionsProps {

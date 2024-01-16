@@ -2,7 +2,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import { getSurveyKeys } from "@/utils/server/studyAPI";
+import { getSurveyKeys } from "@/lib/data/studyAPI";
 import SurveyInfoDownloader from "./SurveyInfoDownloader";
 import ResponseDownloader from "./ResponseDownloader";
 import { pageTitle } from "@/utils/pageTitle";

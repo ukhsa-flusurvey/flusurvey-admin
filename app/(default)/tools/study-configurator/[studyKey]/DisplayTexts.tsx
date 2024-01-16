@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { BsCheck, BsPencil, BsPlus, BsX, BsXLg } from "react-icons/bs";
 import { ExpressionArg, LocalizedString } from "survey-engine/data_types";
-import { updateStudyProps } from "./actionUpdateStudyProps";
+import { updateStudyProps } from "../../../../../actions/study/updateStudyProps";
 
 const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ studyKey, studyProps }) => {
     const [currentStudyProps, setCurrentStudyProps] = React.useState<StudyProps>(studyProps);

@@ -6,7 +6,7 @@ import React, { useState, useTransition } from 'react';
 import { BsBracesAsterisk, BsPlay, BsPlayBtn } from 'react-icons/bs';
 import { Expression, isExpression } from 'survey-engine/data_types';
 import { Progress } from "@nextui-org/react";
-import { runCustomRules } from './actionRunCustomRules';
+import { runCustomRules } from '../../../../../../actions/study/runCustomRules';
 
 
 interface StudyActionsCardProps {

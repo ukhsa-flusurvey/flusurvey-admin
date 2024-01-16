@@ -1,5 +1,5 @@
 import StudyCard from "@/components/StudyCard";
-import { getStudies } from "@/utils/server/studyAPI";
+import { getStudies } from "@/lib/data/studyAPI";
 import { Study } from "@/utils/server/types/studyInfos";
 import { redirect } from "next/navigation";
 import { BsJournalMedical } from "react-icons/bs";

@@ -7,7 +7,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { Survey } from 'survey-engine/data_types';
 import { BsCloudArrowUp, BsPencilSquare } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
-import { uploadSurvey } from '../surveyUploadAction';
+import { uploadSurvey } from '../../../../../../../actions/study/uploadSurvey';
 
 
 interface CreateSurveyActionsCardProps {

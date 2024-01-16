@@ -1,12 +1,12 @@
 'use server'
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/auth";
 import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { Study } from "@/utils/server/types/studyInfos";
-import { getServerSession } from "next-auth/next";
+
 
 export const createStudy = async (study: Study): Promise<Study> => {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session || !session.accessToken) throw new Error('unauthenticated');
     const url = getCASEManagementAPIURL('/v1/studies');
     const r = await fetch(url.toString(), {

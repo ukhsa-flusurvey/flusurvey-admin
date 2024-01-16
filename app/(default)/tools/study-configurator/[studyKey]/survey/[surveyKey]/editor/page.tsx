@@ -1,7 +1,5 @@
 import SurveyEditor from "@/components/survey-editor/SurveyEditor";
-import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { getSurveyVersion } from "@/utils/server/studyAPI";
-import { getServerSession } from "next-auth/next";
+import { getSurveyVersion } from "@/lib/data/studyAPI";
 import { redirect } from "next/navigation";
 
 interface PageProps {
@@ -18,10 +16,6 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession();
-    if (!session || !session.user?.email) {
-        redirect('/auth/login?callbackUrl=/tools/study-configurator');
-    }
 
     if (!props.searchParams.version) {
         redirect(`/tools/study-configurator/${props.params.studyKey}/survey/${props.params.surveyKey}`);
