@@ -1,10 +1,7 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
 import ParticipantOverviewScreen from "./ParticipantOverviewScreen";
 import { pageTitle } from "@/utils/pageTitle";
-import { Divider } from "@nextui-org/divider";
+
 
 
 export const dynamic = 'force-dynamic';
@@ -22,10 +19,6 @@ export const metadata = {
 
 
 export default async function Page(props: PageProps) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        redirect(`/auth/login?callbackUrl=/tools/participants`);
-    }
 
     return (
         <div className="relative h-full bg-white/70 w-full">
