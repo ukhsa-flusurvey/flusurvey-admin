@@ -25,7 +25,7 @@ const Login: React.FC<LoginProps> = (props) => {
     const [isSecondFactor, setIsSecondFactor] = useState(false);
     const [isError, setError] = useState(false);
 
-    const callBackURL = searchParams.get('callbackUrl') || '/';
+    const callBackURL = searchParams.get('callback') || '/';
 
     const handleLogin = async () => {
         setIsLoading(true);
