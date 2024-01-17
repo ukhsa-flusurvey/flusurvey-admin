@@ -12,7 +12,7 @@ import MessagingIcon from "@/components/tool-icons/MessagingIcon";
 import ServiceStatusIcon from "@/components/tool-icons/ServiceStatusIcon";
 import EditorsIcon from "@/components/tool-icons/EditorsIcons";
 
-
+export const revalidate = 3600;
 
 interface ToolCardProps {
     title: string;
