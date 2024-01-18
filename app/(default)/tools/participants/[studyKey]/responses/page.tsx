@@ -1,6 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSurveyKeys } from "@/lib/data/studyAPI";
-import SurveyInfoDownloader from "./SurveyInfoDownloader";
+import SurveyInfoDownloaderForm from "./SurveyInfoDownloader";
 import ResponseDownloaderForm from "./ResponseDownloader";
 import { pageTitle } from "@/utils/pageTitle";
 
@@ -52,10 +52,12 @@ export default async function Page(props: PageProps) {
                         studyKey={props.params.studyKey}
                         availableSurveys={surveyKeys}
                     />
-                    {/*<SurveyInfoDownloader
-                        studyKey={props.params.studyKey}
-                        availableSurveys={surveyKeys}
-                    />*/}
+                    <div>
+                        <SurveyInfoDownloaderForm
+                            studyKey={props.params.studyKey}
+                            availableSurveys={surveyKeys}
+                        />
+                    </div>
                 </div>
             </main>
         </div>

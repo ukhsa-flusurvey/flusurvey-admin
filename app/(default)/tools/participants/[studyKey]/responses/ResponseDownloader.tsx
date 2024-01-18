@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import LoadingButton from '@/components/LoadingButton';
 import FormDatepicker from '@/components/FormDatepicker';
 import { redirect } from 'next/navigation';
+import { logout } from '@/actions/auth/logout';
 
 interface ResponseDownloaderProps {
     studyKey: string;
@@ -62,7 +63,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
             const resp = await fetch(`/api/data/responses?studyKey=${props.studyKey}&surveyKey=${selectedSurveyKey}&from=${queryStartDate}&until=${queryEndDate}&format=${exportFormat}&keySeparator=${keySeparator}&useShortKeys=${useShortKeys}`)
             if (resp.status !== 200) {
                 if (resp.status === 401) {
-                    redirect(`/auth/login?callback=/tools/participants/${props.studyKey}/responses`);
+                    await logout()
                 }
                 const err = await resp.json();
                 setErrorMsg(err.error);
@@ -103,7 +104,9 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                     <FormItem>
                                         <FormLabel>Survey key</FormLabel>
 
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a survey" />
@@ -144,7 +147,9 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                     <FormItem>
                                         <FormLabel>Export format</FormLabel>
 
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a format" />
@@ -182,18 +187,18 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                 )}
                             />
 
-                            <div className='flex gap-3'>
+                            <div className='flex flex-col sm:flex-row gap-3'>
                                 <FormField
                                     control={form.control}
                                     name="from"
                                     render={({ field }) => (
                                         <FormItem className='grow'>
                                             <FormLabel>From</FormLabel>
-                                            <FormControl>
-                                                <div>
-                                                    <FormDatepicker field={field} />
-                                                </div>
-                                            </FormControl>
+
+                                            <div>
+                                                <FormDatepicker field={field} />
+                                            </div>
+
                                             <FormDescription className='text-xs'>
                                                 Download responses from this date.
                                             </FormDescription>
@@ -207,11 +212,9 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                     render={({ field }) => (
                                         <FormItem className='grow'>
                                             <FormLabel>Until</FormLabel>
-                                            <FormControl>
-                                                <div>
-                                                    <FormDatepicker field={field} />
-                                                </div>
-                                            </FormControl>
+                                            <div>
+                                                <FormDatepicker field={field} />
+                                            </div>
                                             <FormDescription className='text-xs'>
                                                 Download responses until this date.
                                             </FormDescription>
@@ -229,6 +232,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                         <div className='flex space-x-3 items-center'>
                                             <FormControl>
                                                 <Switch
+                                                    name={field.name}
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
                                                 />
@@ -262,7 +266,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                             type='submit'
                             isLoading={isPending}
                         >
-                            <Download className='size-4 me-3' />
+                            <Download className='size-4 me-2' />
                             Download
                         </LoadingButton>
                     </CardFooter>

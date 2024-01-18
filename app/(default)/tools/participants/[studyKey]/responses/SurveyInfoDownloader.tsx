@@ -1,181 +1,254 @@
-'use client'
+'use client';
 
-import LanguageSelector from '@/components/LanguageSelector';
-import React from 'react';
-import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
-import { Button, Checkbox, Divider, Select, SelectItem } from '@nextui-org/react';
-import { BsDownload } from 'react-icons/bs';
-import ErrorOrSuccessInlineAlert from '../../../../../../components/ErrorOrSuccessInlineAlert';
+import LoadingButton from "@/components/LoadingButton";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { AlertTriangle, CheckCircle, Download } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { logout } from "@/actions/auth/logout";
 
 interface SurveyInfoDownloaderProps {
     studyKey: string;
     availableSurveys: string[];
 }
 
+const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
+
+const formSchema = z.object({
+    surveyKey: z.string().min(1, { message: 'Please select a survey' }),
+    exportFormat: z.string(),
+    language: z.string().min(2),
+    shortKeys: z.boolean(),
+})
+
 const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
-    const [selectedSurveyKey, setSelectedSurveyKey] = React.useState<string>(props.availableSurveys[0] || '');
-    const [exportFormat, setExportFormat] = React.useState<string>('json');
-    const [language, setLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
-    const [useShortKeys, setUseShortKeys] = React.useState<boolean>(false);
     const [isPending, startTransition] = React.useTransition();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = React.useState<string | undefined>(undefined);
 
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            surveyKey: "",
+            exportFormat: "json",
+            language: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en',
+            shortKeys: true,
+        },
+    })
 
-    let cardContent = null;
-    if (props.availableSurveys.length === 0) {
-        cardContent = (<>
-            <div>No surveys available in this study</div>
-        </>
-        )
-    } else {
-        cardContent = (<fieldset>
-            <p className='text-tiny text-default-600 p-unit-sm bg-primary-50 rounded-small mb-unit-md'>
-                Download the history of the survey structure in a CSV or JSON format. This can be helpful when interpreting the response data.
-            </p>
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        setErrorMsg(undefined);
+        setSuccessMsg(undefined);
+        startTransition(async () => {
+            const selectedSurveyKey = values.surveyKey;
+            const exportFormat = values.exportFormat;
+            const language = values.language;
+            const useShortKeys = values.shortKeys;
 
-
-            <Select
-                id='survey-key-for-survey-info-downloader'
-                label='Survey key'
-                labelPlacement='outside'
-                variant='bordered'
-                placeholder='Select a survey'
-                classNames={{
-                    trigger: 'bg-white'
-                }}
-                description='Download survey info for this survey.'
-                selectedKeys={new Set([selectedSurveyKey || ''])}
-                onSelectionChange={(keys: Set<React.Key> | 'all') => {
-                    const selectedKey = (keys as Set<React.Key>).values().next().value;
-                    if (!selectedKey) return;
-                    setSelectedSurveyKey(selectedKey as string);
-                }}
-            >
-                {
-                    props.availableSurveys.map((surveyKey) => {
-                        return (
-                            <SelectItem
-                                key={surveyKey}
-                                value={surveyKey}
-                            >
-                                {surveyKey}
-                            </SelectItem>
-                        );
-                    })
+            const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/survey/${selectedSurveyKey}/survey-info${exportFormat === 'csv' ? '/csv' : ''}?lang=${language}&shortKeys=${useShortKeys}`)
+            if (resp.status !== 200) {
+                if (resp.status === 401) {
+                    await logout()
                 }
-            </Select>
-
-            <Select
-                id='export-format-for-survey-info-downloader'
-                label='Export format'
-                labelPlacement='outside'
-                variant='bordered'
-                placeholder='Select a format'
-                classNames={{
-                    trigger: 'bg-white'
-                }}
-                description='Select the format for the downloaded file.'
-                selectedKeys={new Set([exportFormat || ''])}
-                onSelectionChange={(keys: Set<React.Key> | 'all') => {
-                    const selectedKey = (keys as Set<React.Key>).values().next().value;
-                    if (!selectedKey) return;
-                    setExportFormat(selectedKey as string);
-                }}
-            >
-                <SelectItem
-                    key='json'
-                    value='json'
-                >
-                    JSON
-                </SelectItem>
-                <SelectItem
-                    key='csv'
-                    value='csv'
-                >
-                    CSV
-                </SelectItem>
-            </Select>
-
-            <div className=''>
-                <LanguageSelector onLanguageChange={(l) =>
-                    setLanguage(l)
-                } />
-            </div>
-            <div className='mt-unit-md'>
-                <Checkbox
-                    id='use-short-keys-for-survey-info-downloader'
-                    isSelected={useShortKeys}
-                    onValueChange={(v) => setUseShortKeys(v)}
-                >
-                    <span className=''>Use short keys</span>
-                </Checkbox>
-            </div>
-        </fieldset>
-        )
+                const err = await resp.json();
+                setErrorMsg(err.error);
+                return;
+            }
+            const blob = await resp.blob();
+            const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = (fileName || `${selectedSurveyKey}_info.${exportFormat}`).replaceAll('"', '');
+            link.click();
+            setSuccessMsg('Download successful.');
+        });
     }
 
     return (
-        <div>
-            <Card
-                fullWidth={false}
-                className="bg-white/60"
-                isBlurred
-                isFooterBlurred
-            >
-                <CardHeader className="bg-content2">
-                    <div>
-                        <h2 className="text-2xl font-bold flex items-center">
-                            Survey info downloader
-                        </h2>
-                    </div>
-                </CardHeader>
-                <Divider />
-                <CardBody className="bg-white">
-                    {cardContent}
-                    <ErrorOrSuccessInlineAlert
-                        errorMsg={errorMsg}
-                        successMsg={successMsg}
-                    />
-                </CardBody>
-                <Divider />
-                <CardFooter className='flex justify-end'>
-                    <Button
-                        variant="flat"
-                        color="primary"
-                        isLoading={isPending}
-                        startContent={<BsDownload />}
-                        isDisabled={props.availableSurveys.length === 0 || !selectedSurveyKey}
-                        onPress={async () => {
-                            setErrorMsg(undefined);
-                            setSuccessMsg(undefined);
-                            if (!selectedSurveyKey) {
-                                setErrorMsg('Please select a survey key.');
-                                return;
-                            }
-                            startTransition(async () => {
-                                const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/survey/${selectedSurveyKey}/survey-info${exportFormat === 'csv' ? '/csv' : ''}?lang=${language}&shortKeys=${useShortKeys}`)
-                                if (resp.status !== 200) {
-                                    const err = await resp.json();
-                                    setErrorMsg(err.error);
-                                    return;
-                                }
-                                const blob = await resp.blob();
-                                const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
-                                const link = document.createElement('a');
-                                link.href = window.URL.createObjectURL(blob);
-                                link.download = (fileName || `${selectedSurveyKey}_info.${exportFormat}`).replaceAll('"', '');
-                                link.click();
-                                setSuccessMsg('Download successful.');
-                            });
-                        }}
-                    >
-                        Get survey info
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
-    );
-};
+        <Card>
+            <CardHeader >
+                <CardTitle >
+                    Survey Info Downloader
+                </CardTitle>
+                <CardDescription>
+                    Download the history of the survey structure in a CSV or JSON format. This can be helpful when interpreting the response data.
+                </CardDescription>
+            </CardHeader>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <CardContent>
+                        <div className='space-y-6'>
+
+
+                            <FormField
+                                control={form.control}
+                                name="surveyKey"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Survey key</FormLabel>
+
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a survey" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    props.availableSurveys.length === 0 &&
+                                                    <SelectItem value="">No surveys available in this study</SelectItem>
+                                                }
+                                                {
+                                                    props.availableSurveys.map((surveyKey) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={surveyKey}
+                                                                value={surveyKey}
+                                                            >
+                                                                {surveyKey}
+                                                            </SelectItem>
+                                                        );
+                                                    })
+                                                }
+                                            </SelectContent>
+                                        </Select>
+
+                                        <FormDescription className='text-xs'>
+                                            Download version infos for this survey.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+
+                            <FormField
+                                control={form.control}
+                                name="exportFormat"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Export format</FormLabel>
+
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a format" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="csv">CSV</SelectItem>
+                                                <SelectItem value="json">JSON</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
+                                        <FormDescription className='text-xs'>
+                                            Select the format for the downloaded file.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Language</FormLabel>
+
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a language" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    languages.map((lang) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={lang}
+                                                                value={lang}
+                                                            >
+                                                                {lang}
+                                                            </SelectItem>
+                                                        );
+                                                    })
+                                                }
+                                            </SelectContent>
+                                        </Select>
+
+                                        <FormDescription className='text-xs'>
+                                            Content will be downloaded in this language if available.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="shortKeys"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <div className='flex space-x-3 items-center'>
+                                            <FormControl>
+                                                <Switch
+                                                    name={field.name}
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormLabel>Use short keys</FormLabel>
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {errorMsg && <p className='mt-6 flex gap-6 px-6 py-3 bg-red-100 rounded-lg text-red-600 items-center'>
+                            <span>
+                                <AlertTriangle className='size-5 ' />
+                            </span>
+                            {errorMsg}
+                        </p>}
+
+                        {successMsg && <p className='mt-6 flex gap-6 px-6 py-3 bg-green-100 rounded-lg text-green-600 items-center'>
+                            <span>
+                                <CheckCircle className='size-5' />
+                            </span>
+                            {successMsg}
+                        </p>}
+
+                    </CardContent>
+
+
+                    <CardFooter className='flex justify-end'>
+                        <LoadingButton
+                            type='submit'
+                            isLoading={isPending}
+                        >
+                            <Download className='size-4 me-2' />
+                            Download
+                        </LoadingButton>
+                    </CardFooter>
+                </form>
+            </Form>
+        </Card>
+    )
+}
 
 export default SurveyInfoDownloader;
