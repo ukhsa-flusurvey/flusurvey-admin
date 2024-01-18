@@ -1,7 +1,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSurveyKeys } from "@/lib/data/studyAPI";
 import SurveyInfoDownloader from "./SurveyInfoDownloader";
-import ResponseDownloader from "./ResponseDownloader";
+import ResponseDownloaderForm from "./ResponseDownloader";
 import { pageTitle } from "@/utils/pageTitle";
 
 
@@ -48,14 +48,14 @@ export default async function Page(props: PageProps) {
             />
             <main className="py-unit-lg">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-unit-lg">
-                    <ResponseDownloader
+                    <ResponseDownloaderForm
                         studyKey={props.params.studyKey}
                         availableSurveys={surveyKeys}
                     />
-                    <SurveyInfoDownloader
+                    {/*<SurveyInfoDownloader
                         studyKey={props.params.studyKey}
                         availableSurveys={surveyKeys}
-                    />
+                    />*/}
                 </div>
             </main>
         </div>

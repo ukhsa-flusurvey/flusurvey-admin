@@ -1,227 +1,273 @@
 'use client';
 
-import { addMonths, format } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import React from 'react';
-import { Card, CardBody, CardHeader, CardFooter } from '@nextui-org/card';
-import { Button, Checkbox, Divider, Input, Select, SelectItem } from '@nextui-org/react';
-import { BsDownload, BsFiletypeCsv, BsFiletypeJson } from 'react-icons/bs';
-import ErrorOrSuccessInlineAlert from '../../../../../../components/ErrorOrSuccessInlineAlert';
-
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertTriangle, CheckCircle, Download } from 'lucide-react';
+import { addDays } from 'date-fns';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import LoadingButton from '@/components/LoadingButton';
+import FormDatepicker from '@/components/FormDatepicker';
+import { redirect } from 'next/navigation';
 
 interface ResponseDownloaderProps {
     studyKey: string;
     availableSurveys: string[];
 }
 
-const dateToInputStr = (date: Date) => {
-    return format(date, 'yyyy-MM-dd\'T\'HH:mm')
-}
+const formSchema = z.object({
+    surveyKey: z.string().min(1, { message: 'Please select a survey' }),
+    exportFormat: z.string(),
+    keySeparator: z.string().min(1).max(1),
+    from: z.date(),
+    until: z.date(),
+    shortKeys: z.boolean(),
+})
 
 const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
-    const [selectedSurveyKey, setSelectedSurveyKey] = React.useState<string>(props.availableSurveys[0] || '');
-    const [exportFormat, setExportFormat] = React.useState<'long' | 'wide' | 'json'>('wide');
-    const [keySeparator, setKeySeparator] = React.useState<string>('-');
-    const [queryStartDate, setQueryStartDate] = React.useState<Date>(addMonths(new Date(), -1));
-    const [queryEndDate, setQueryEndDate] = React.useState<Date>(new Date());
-    const [useShortKeys, setUseShortKeys] = React.useState<boolean>(false);
     const [isPending, startTransition] = React.useTransition();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = React.useState<string | undefined>(undefined);
 
-    let cardContent = null;
-    if (props.availableSurveys.length === 0) {
-        cardContent = (<>
-            <div>No surveys available in this study</div>
-        </>
-        )
-    } else {
-        cardContent = (<fieldset className='flex flex-col'>
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            surveyKey: "",
+            exportFormat: "wide",
+            keySeparator: "-",
+            from: addDays(new Date(), -7),
+            until: new Date(),
+            shortKeys: true,
+        },
+    })
 
-            <Select
-                id='survey-key-for-response-downloader'
-                label='Survey key'
-                labelPlacement='outside'
-                variant='bordered'
-                placeholder='Select a survey'
-                classNames={{
-                    trigger: 'bg-white'
-                }}
-                description='Download survey info for this survey.'
-                selectedKeys={new Set([selectedSurveyKey || ''])}
-                onSelectionChange={(keys: Set<React.Key> | 'all') => {
-                    const selectedKey = (keys as Set<React.Key>).values().next().value;
-                    if (!selectedKey) return;
-                    setSelectedSurveyKey(selectedKey as string);
-                }}
-            >
-                {
-                    props.availableSurveys.map((surveyKey) => {
-                        return (
-                            <SelectItem
-                                key={surveyKey}
-                                value={surveyKey}
-                            >
-                                {surveyKey}
-                            </SelectItem>
-                        );
-                    })
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        setErrorMsg(undefined);
+        setSuccessMsg(undefined);
+
+        startTransition(async () => {
+
+            const selectedSurveyKey = values.surveyKey;
+            const exportFormat = values.exportFormat;
+            const keySeparator = values.keySeparator;
+            const queryStartDate = Math.round(values.from.getTime() / 1000);
+            const queryEndDate = Math.round(values.until.getTime() / 1000);
+            const useShortKeys = values.shortKeys;
+
+            const resp = await fetch(`/api/data/responses?studyKey=${props.studyKey}&surveyKey=${selectedSurveyKey}&from=${queryStartDate}&until=${queryEndDate}&format=${exportFormat}&keySeparator=${keySeparator}&useShortKeys=${useShortKeys}`)
+            if (resp.status !== 200) {
+                if (resp.status === 401) {
+                    redirect(`/auth/login?callback=/tools/participants/${props.studyKey}/responses`);
                 }
-            </Select>
+                const err = await resp.json();
+                setErrorMsg(err.error);
+                return;
+            }
+            const blob = await resp.blob();
+            const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = (fileName || 'responses.csv').replaceAll('"', '');
+            link.click();
+            setSuccessMsg('Downloaded successfully.');
+        })
 
-            <Select
-                id='export-format-for-responses-downloader'
-                label='Export format'
-                labelPlacement='outside'
-                variant='bordered'
-                placeholder='Select a format'
-                classNames={{
-                    trigger: 'bg-white'
-                }}
-                description='Select the format for the downloaded file.'
-                selectedKeys={new Set([exportFormat || ''])}
-                onSelectionChange={(keys: Set<React.Key> | 'all') => {
-                    const selectedKey = (keys as Set<React.Key>).values().next().value;
-                    if (!selectedKey) return;
-                    setExportFormat(selectedKey as 'long' | 'wide' | 'json');
-                }}
-            >
-                <SelectItem
-                    key='wide'
-                    value='wide'
-                    startContent={<BsFiletypeCsv className='text-2xl text-default-500' />}
-                >
-                    CSV (wide)
-                </SelectItem>
-                <SelectItem
-                    key='long'
-                    value='long'
-                    startContent={<BsFiletypeCsv className='text-2xl text-default-500' />}
-                >
-                    CSV (long)
-                </SelectItem>
-                <SelectItem
-                    key='json'
-                    value='json'
-                    startContent={<BsFiletypeJson className='text-2xl text-default-500' />}
-                >
-                    JSON
-                </SelectItem>
-            </Select>
 
-            <Input
-                id='key-separator-for-survey-responses-downloader'
-                type='text'
-                label='Key separator'
-                labelPlacement='outside'
-                variant='bordered'
-                placeholder='Enter a key separator'
-                description='This character will be used to separate parts the slot keys in the output.'
-                value={keySeparator}
-                maxLength={1}
-                onValueChange={(v) => {
-                    setKeySeparator(v);
-                }}
-            />
-
-            <div className='flex gap-unit-md py-unit-md'>
-                <Input
-                    id='query-start-date-for-survey-responses-downloader'
-                    type='datetime-local'
-                    label='From'
-                    labelPlacement='outside'
-                    variant='bordered'
-                    placeholder='Select a date'
-                    description='Download responses from this date.'
-                    value={dateToInputStr(queryStartDate)}
-                    onValueChange={(v) => {
-                        setQueryStartDate(new Date(v));
-                    }}
-                />
-                <Input
-                    id='query-end-date-for-survey-responses-downloader'
-                    type='datetime-local'
-                    label='Until'
-                    labelPlacement='outside'
-                    variant='bordered'
-                    placeholder='Select a date'
-                    description='Download responses until this date.'
-                    value={dateToInputStr(queryEndDate)}
-                    onValueChange={(v) => {
-                        setQueryEndDate(new Date(v));
-                    }}
-                />
-
-            </div>
-            <div className=''>
-                <Checkbox
-                    id='use-short-keys-for-survey-responses-downloader'
-                    isSelected={useShortKeys}
-                    onValueChange={(v) => setUseShortKeys(v)}
-                >
-                    <span className=''>Use short keys</span>
-                </Checkbox>
-            </div>
-        </fieldset>)
     }
 
     return (
-        <Card
-            fullWidth={false}
-            className="bg-white/60"
-            isBlurred
-            isFooterBlurred
-        >
-            <CardHeader className="bg-content2">
-                <div>
-                    <h2 className="text-2xl font-bold flex items-center">
-                        Response downloader
-                    </h2>
-                </div>
+        <Card>
+            <CardHeader >
+                <CardTitle >
+                    Response Downloader
+                </CardTitle>
+                <CardDescription>
+                    Query and download responses to your device.
+                </CardDescription>
+
             </CardHeader>
-            <Divider />
-            <CardBody className="bg-white">
-                {cardContent}
-                <ErrorOrSuccessInlineAlert
-                    errorMsg={errorMsg}
-                    successMsg={successMsg}
-                />
-            </CardBody>
-            <Divider />
-            <CardFooter className='flex justify-end'>
-                <Button
-                    variant="flat"
-                    color="primary"
-                    isLoading={isPending}
-                    startContent={<BsDownload />}
-                    isDisabled={props.availableSurveys.length === 0 || !selectedSurveyKey}
-                    onPress={async () => {
-                        setErrorMsg(undefined);
-                        startTransition(async () => {
-                            try {
-                                const resp = await fetch(`/api/data/responses?studyKey=${props.studyKey}&surveyKey=${selectedSurveyKey}&from=${Math.round(queryStartDate.getTime() / 1000)}&until=${Math.round(queryEndDate.getTime() / 1000)}&format=${exportFormat}&keySeparator=${keySeparator}&useShortKeys=${useShortKeys}`)
-                                if (resp.status !== 200) {
-                                    const err = await resp.json();
-                                    setErrorMsg(err.error);
-                                    //setErrorMsg(await resp.text());
-                                    return;
-                                }
-                                const blob = await resp.blob();
-                                const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
-                                const link = document.createElement('a');
-                                link.href = window.URL.createObjectURL(blob);
-                                link.download = (fileName || 'responses.csv').replaceAll('"', '');
-                                link.click();
-                                setSuccessMsg('Downloaded successfully.');
-                            } catch (e: any) {
-                                console.error(e)
-                                setErrorMsg(e.message);
-                            }
-                        })
-                    }}
-                >
-                    Get responses
-                </Button>
-            </CardFooter>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <CardContent>
+                        <div className='space-y-6'>
+
+                            <FormField
+                                control={form.control}
+                                name="surveyKey"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Survey key</FormLabel>
+
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a survey" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    props.availableSurveys.length === 0 &&
+                                                    <SelectItem value="">No surveys available in this study</SelectItem>
+                                                }
+                                                {
+                                                    props.availableSurveys.map((surveyKey) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={surveyKey}
+                                                                value={surveyKey}
+                                                            >
+                                                                {surveyKey}
+                                                            </SelectItem>
+                                                        );
+                                                    })
+                                                }
+                                            </SelectContent>
+                                        </Select>
+
+                                        <FormDescription className='text-xs'>
+                                            Download responses for this survey.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="exportFormat"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Export format</FormLabel>
+
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a format" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="wide">CSV (wide)</SelectItem>
+                                                <SelectItem value="long">CSV (long)</SelectItem>
+                                                <SelectItem value="json">JSON</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
+                                        <FormDescription className='text-xs'>
+                                            Select the format for the downloaded file.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="keySeparator"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Key separator</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter key separator" {...field} />
+                                        </FormControl>
+                                        <FormDescription className='text-xs'>
+                                            This character will be used to separate parts the slot keys in the output.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className='flex gap-3'>
+                                <FormField
+                                    control={form.control}
+                                    name="from"
+                                    render={({ field }) => (
+                                        <FormItem className='grow'>
+                                            <FormLabel>From</FormLabel>
+                                            <FormControl>
+                                                <div>
+                                                    <FormDatepicker field={field} />
+                                                </div>
+                                            </FormControl>
+                                            <FormDescription className='text-xs'>
+                                                Download responses from this date.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="until"
+                                    render={({ field }) => (
+                                        <FormItem className='grow'>
+                                            <FormLabel>Until</FormLabel>
+                                            <FormControl>
+                                                <div>
+                                                    <FormDatepicker field={field} />
+                                                </div>
+                                            </FormControl>
+                                            <FormDescription className='text-xs'>
+                                                Download responses until this date.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="shortKeys"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <div className='flex space-x-3 items-center'>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormLabel>Use short keys</FormLabel>
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
+
+                        {errorMsg && <p className='mt-6 flex gap-6 px-6 py-3 bg-red-100 rounded-lg text-red-600 items-center'>
+                            <span>
+                                <AlertTriangle className='size-5 ' />
+                            </span>
+                            {errorMsg}
+                        </p>}
+
+                        {successMsg && <p className='mt-6 flex gap-6 px-6 py-3 bg-green-100 rounded-lg text-green-600 items-center'>
+                            <span>
+                                <CheckCircle className='size-5' />
+                            </span>
+                            {successMsg}
+                        </p>}
+                    </CardContent>
+
+                    <CardFooter className='flex justify-end'>
+                        <LoadingButton
+                            type='submit'
+                            isLoading={isPending}
+                        >
+                            <Download className='size-4 me-3' />
+                            Download
+                        </LoadingButton>
+                    </CardFooter>
+                </form>
+            </Form>
         </Card>
     );
 };
