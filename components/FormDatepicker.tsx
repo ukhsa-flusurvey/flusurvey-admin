@@ -9,6 +9,7 @@ import { Calendar } from './ui/calendar';
 
 interface FormDatepickerProps {
     field: {
+        name: string;
         value: Date | undefined;
         onChange: (date?: Date) => void;
     };
@@ -39,6 +40,7 @@ const FormDatepicker: React.FC<FormDatepickerProps> = ({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
+                    id={field.name}
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
