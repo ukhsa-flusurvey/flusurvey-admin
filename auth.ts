@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import "next-auth"
 
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginWithEmailRequest } from "./utils/server/api";
+import { loginWithEmailRequest, renewTokenRequest } from "./utils/server/api";
 import { ERROR_SECOND_FACTOR_NEEDED } from "./utils/server/types/authAPI";
 
 const CASECredentialProvider = CredentialsProvider({
@@ -65,12 +65,38 @@ export const {
     callbacks: {
         async jwt({ token, user, account }) {
             if (account) {
-                console.log(account, user)
-                return {
-                    ...token,
-                    accessToken: user.account.accessToken as string || '',
-                    //expiresAt: account.expiresAt,
-                    //refreshToken: account.refreshToken,
+                if (account.provider === 'credentials') {
+                    // console.log(account, user)
+                    return {
+                        ...token,
+                        accessToken: user.account.accessToken as string || '',
+                        expiresAt: user.account.expiresAt.getTime(),
+                        refreshToken: user.account.refreshToken,
+                    }
+                }
+            } else if (token.expiresAt !== undefined && Date.now() < token.expiresAt) {
+                // If the access token has not expired yet, return it
+                return token
+            } else {
+                console.log('refreshing token');
+                if (!token.refreshToken || !token.accessToken) {
+                    return {
+                        error: 'RefreshAccessTokenError' as const,
+                    }
+                }
+                try {
+                    const response = await renewTokenRequest(token.refreshToken, token.accessToken);
+                    return {
+                        ...token,
+                        accessToken: response.accessToken,
+                        expiresAt: new Date().getTime() + response.expiresIn * 60000,
+                        refreshToken: response.refreshToken,
+                    }
+                } catch (error) {
+                    console.error(error);
+                    return {
+                        error: 'RefreshAccessTokenError' as const,
+                    }
                 }
             }
             return token
@@ -107,8 +133,9 @@ declare module "@auth/core/jwt" {
     /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
     interface JWT {
         accessToken?: string
-        expires_at?: number
-        refresh_token?: string
+        expiresAt?: number
+        refreshToken?: string
+        error?: "RefreshAccessTokenError" | "LoginFailed"
     }
 }
 
@@ -152,84 +179,16 @@ declare module "next-auth/jwt" {
     }
 }
 
-export const authOptions = {
+
     providers: providers,
     pages: {
         signIn: '/auth/login',
     },
     callbacks: {
-        async jwt({ token, user, account }) {
-            if (account) {
-                // Save the access token and refresh token in the JWT on the initial login
-                if (account.provider === 'case-credentials') {
-                    if (!user) {
-                        return {
-                            ...token,
-                            error: 'LoginFailed' as const,
-                        };
-                    }
-                    const currentUser = user as CredentialsUser;
-                    console.log(currentUser.account.expiresAt.getTime(),)
-                    return {
-                        email: currentUser.email,
-                        access_token: currentUser.account.accessToken,
-                        expires_at: currentUser.account.expiresAt.getTime(),
-                        refresh_token: currentUser.account.refreshToken,
-
-                    };
-                }
-
-                console.log(account);
-                console.log(user);
-                return {
-                    // email: account.email,
-                    access_token: account.access_token,
-                    expires_at: account.expires_at,
-                    refresh_token: account.refresh_token,
-                }
-
-            } else if (token.expires_at !== undefined && token.expires_at > 0 && Date.now() < token.expires_at) {
-                // If the access token has not expired yet, return it
-                return token
-            } else {
-                console.log('refreshing token');
-                // If the access token has expired, try to refresh it
-                if (!token.refresh_token || !token.access_token) {
-                    return {
-                        // ...token,
-                        error: 'RefreshAccessTokenError' as const,
-                    }
-                }
-                try {
-                    const response = await renewTokenRequest(token.refresh_token, token.access_token);
-                    return {
-                        ...token,
-                        access_token: response.accessToken,
-                        expires_at: new Date().getTime() + response.expiresIn * 60000,
-                        refresh_token: response.refreshToken,
-                    }
-                } catch (error) {
-                    console.error(error);
-                    return {
-                        // ...token,
-                        error: 'RefreshAccessTokenError' as const,
-                    }
-                }
-
-                return token;
-            }
-        },
         session({ session, token }) {
             session.accessToken = token.access_token;
             session.error = token.error
             return session
         },
-
     },
-    logger: {
-        debug: (...args) => console.log(...args),
-        error: (...args) => console.error(...args),
-        warn: (...args) => console.warn(...args),
-    }
-} as AuthOptions;
 */
