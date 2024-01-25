@@ -1,7 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ParticipantOverviewScreen from "./ParticipantOverviewScreen";
-import { pageTitle } from "@/utils/pageTitle";
-
 
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +11,7 @@ interface PageProps {
 }
 
 export const metadata = {
-    title: pageTitle('Participants overview'),
+    title: 'Participants overview',
     description: 'View and manage participants in your study.',
 }
 

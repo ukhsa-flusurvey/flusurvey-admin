@@ -1,12 +1,11 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ConfidentialResponseDownloader from "./ConfidentialResponseDownloader";
-import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: pageTitle('Confidential Responses'),
+    title: 'Confidential Responses',
     description: 'Download confidential responses from the study.',
 }
 

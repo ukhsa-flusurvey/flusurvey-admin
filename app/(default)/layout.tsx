@@ -10,7 +10,10 @@ const open_sans = Open_Sans({
 
 
 export const metadata = {
-    title: process.env.NEXT_PUBLIC_APP_NAME || '',
+    title: {
+        default: process.env.NEXT_PUBLIC_APP_NAME || 'Case Admin',
+        template: `%s | ${process.env.NEXT_PUBLIC_APP_NAME || 'Case Admin'} `,
+    },
     description: 'This is the CASE admin tool, to manage studies, surveys, messages and participants.'
 };
 

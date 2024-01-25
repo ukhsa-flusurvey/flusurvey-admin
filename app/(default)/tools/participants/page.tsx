@@ -4,13 +4,12 @@ import { Spinner } from "@nextui-org/spinner";
 import { Suspense } from "react";
 
 import StudySelector from "./StudySelector";
-import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: pageTitle('Study Selector'),
+    title: 'Study Selector',
     description: 'Select a study to view participants.',
 }
 
