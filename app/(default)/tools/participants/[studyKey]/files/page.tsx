@@ -1,12 +1,11 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ParticipantFileDownloader from "./ParticipantFileDownloader";
-import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: pageTitle('Participant Files'),
+    title: 'Participant Files',
     description: 'Download participant from the study.',
 }
 

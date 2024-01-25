@@ -2,13 +2,12 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSurveyKeys } from "@/lib/data/studyAPI";
 import SurveyInfoDownloaderForm from "./SurveyInfoDownloader";
 import ResponseDownloaderForm from "./ResponseDownloader";
-import { pageTitle } from "@/utils/pageTitle";
 
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: pageTitle('Responses'),
+    title: 'Responses',
     description: 'Download responses from the study.',
 }
 

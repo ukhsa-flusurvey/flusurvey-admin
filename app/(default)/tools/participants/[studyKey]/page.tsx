@@ -4,12 +4,12 @@ import { Divider } from "@nextui-org/divider";
 import Link from "next/link";
 import { BsCardText, BsFileEarmarkLock, BsFileEarmarkSpreadsheet, BsFolder2Open, BsPeople, BsX } from "react-icons/bs";
 import { Button } from "@nextui-org/button";
-import { pageTitle } from "@/utils/pageTitle";
+
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: pageTitle('Participants Menu'),
+    title: 'Participants Menu',
 }
 
 
