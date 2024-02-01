@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import ExpressionIcon from './ExpressionIcon';
 import { SlotTypeGroup } from '../utils';
 import { Clipboard } from 'lucide-react';
+import { useClipboardValue } from '@/hooks/useClipboardValue';
 
 
 interface SlotTypeSelectorProps {
@@ -31,13 +32,18 @@ const slotTypeForPasteIncluded = (groups: SlotTypeGroup[], slotTypeId: string): 
 const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
     const [open, setOpen] = React.useState(false)
     const [hasClipboardData, setHasClipboardData] = React.useState(false)
+    const [clipboardValue, readClipboard] = useClipboardValue();
+
 
     useEffect(() => {
-        // has relevant clipboard data?
-        const cp = navigator.clipboard.readText();
-        cp.then((text) => {
+        readClipboard();
+    }, [open, props.groups, readClipboard])
+
+    useEffect(() => {
+        console.log(clipboardValue)
+        if (clipboardValue) {
             try {
-                const content = JSON.parse(text);
+                const content = JSON.parse(clipboardValue);
                 // is clipboard content a valid expression?
                 if (!content || !content.slotType || !slotTypeForPasteIncluded(props.groups, content.slotType)) {
                     setHasClipboardData(false)
@@ -47,10 +53,8 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
             } catch (error) {
                 setHasClipboardData(false)
             }
-        }).catch(() => {
-            setHasClipboardData(false)
-        })
-    }, [open, props.groups])
+        }
+    }, [clipboardValue, props.groups])
 
 
     return (

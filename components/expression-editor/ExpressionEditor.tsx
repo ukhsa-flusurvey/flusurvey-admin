@@ -16,6 +16,8 @@ import ListEditor from './slots/ListEditor';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { Copy, X } from 'lucide-react';
 import { useToast } from '../ui/use-toast';
+import { useCopyToClipboard } from 'usehooks-ts';
+import { useClipboardValue } from '@/hooks/useClipboardValue';
 
 
 
@@ -35,6 +37,8 @@ interface ExpressionEditorProps {
 const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
     const [hideSlotContent, setHideSlotContent] = useState<Array<number>>([]);
     const { toast } = useToast()
+    const [copiedText, copy] = useCopyToClipboard();
+    const [clipboardValue, readClipboard] = useClipboardValue();
 
     const expressionDef = lookupExpressionDef(props.expressionValue.name, props.expRegistry.expressionDefs);
 
@@ -124,6 +128,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                             try {
                                 const cbContent = await navigator.clipboard.readText();
                                 const content = JSON.parse(cbContent);
+                                console.log(content)
                                 if (!content || !content.slotType || !content.value) {
                                     toast({
                                         title: 'Clipboard content is not valid',
@@ -271,7 +276,8 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                                             slotType: currentSlotType,
                                             value: currentArgValue
                                         }
-                                        navigator.clipboard.writeText(JSON.stringify(cbContent));
+                                        //navigator.clipboard.writeText(JSON.stringify(cbContent));
+                                        copy(JSON.stringify(cbContent));
                                         toast({
                                             title: 'Item copied to clipboard',
                                             duration: 3000
