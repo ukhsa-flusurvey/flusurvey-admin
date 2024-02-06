@@ -1,6 +1,7 @@
 import { auth } from "./auth"
 import { AuthPages, PUBLIC_ROUTES } from "./routes";
 
+
 export default auth((req) => {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
@@ -19,14 +20,14 @@ export default auth((req) => {
     }
 
     if (isPublicRoute) {
-        return null;
+        return;
     }
 
     if (isAuthRoute) {
         if (isLoggedIn) {
             return Response.redirect(new URL('/', nextUrl));
         }
-        return null;
+        return;
     }
 
     if (!isLoggedIn) {
@@ -34,8 +35,8 @@ export default auth((req) => {
         return Response.redirect(redirectUrl);
     }
 
-    // TODO: handle admin routes
 })
+
 
 export const config = {
     matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
