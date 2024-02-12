@@ -3,8 +3,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Environment variables
 
 ```
-NEXTAUTH_URL=<url-to-your-app>
-NEXTAUTH_SECRET=<supersecretvalue>
+# --> needs to be removed
+# NEXTAUTH_URL=<url-to-your-app>
+
+
+# --> replaced by "AUTH_SECRET"
+# NEXTAUTH_SECRET=<supersecretvalue>
+AUTH_SECRET=<supersecretvalue>
+
 
 NEXT_PUBLIC_DEFAULT_LANGUAGE=nl
 NEXT_PUBLIC_APP_NAME=<app name>
