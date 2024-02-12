@@ -32,6 +32,7 @@ const NavbarAuthContent = async () => {
     return (
         <UserButton
             user={session.user}
+            expires={session.tokenExpiresAt}
         />
     )
 }

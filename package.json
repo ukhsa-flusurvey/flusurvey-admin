@@ -9,7 +9,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@fontsource/open-sans": "^5.0.22",
+		"@fontsource/open-sans": "^5.0.23",
 		"@headlessui/react": "^1.7.18",
 		"@headlessui/tailwindcss": "^0.2.0",
 		"@heroicons/react": "^2.1.1",
@@ -27,9 +27,9 @@
 		"@radix-ui/react-slot": "^1.0.2",
 		"@radix-ui/react-switch": "^1.0.3",
 		"@radix-ui/react-toast": "^1.1.5",
-		"@types/node": "20.11.16",
+		"@types/node": "20.11.17",
 		"@types/react": "18.2.55",
-		"@types/react-dom": "18.2.18",
+		"@types/react-dom": "18.2.19",
 		"case-editor-tools": "^1.6.5",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
@@ -40,9 +40,10 @@
 		"framer-motion": "^11.0.3",
 		"fuse.js": "^7.0.0",
 		"js-yaml": "^4.1.0",
-		"lucide-react": "^0.323.0",
+		"lucide-react": "^0.325.0",
+		"monaco-editor": "^0.46.0",
 		"next": "14.1.0",
-		"next-auth": "^5.0.0-beta.8",
+		"next-auth": "^5.0.0-beta.9",
 		"react": "18.2.0",
 		"react-beforeunload": "^2.6.0",
 		"react-day-picker": "^8.10.0",
@@ -59,7 +60,7 @@
 		"tailwind-merge": "^2.2.1",
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "5.3.3",
-		"usehooks-ts": "^2.12.1",
+		"usehooks-ts": "^2.14.0",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
@@ -67,7 +68,7 @@
 		"@types/js-yaml": "^4.0.9",
 		"@types/react-beforeunload": "^2.1.5",
 		"autoprefixer": "^10.4.17",
-		"postcss": "^8.4.34",
+		"postcss": "^8.4.35",
 		"tailwindcss": "^3.4.1"
 	}
 }

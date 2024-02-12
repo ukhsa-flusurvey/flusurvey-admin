@@ -103,6 +103,7 @@ export const {
         },
         async session({ session, token }) {
             session.accessToken = token.accessToken;
+            session.tokenExpiresAt = token.expiresAt;
             return session
         }
     },
@@ -125,6 +126,7 @@ declare module "next-auth" {
 
     interface Session {
         accessToken?: string
+        tokenExpiresAt?: number;
     }
 
 }
@@ -170,25 +172,4 @@ if (CASEOAuthProvider) {
 }
 
 
-declare module "next-auth/jwt" {
-    interface JWT {
-        access_token?: string
-        expires_at?: number
-        refresh_token?: string
-        error?: "RefreshAccessTokenError" | "LoginFailed"
-    }
-}
-
-
-    providers: providers,
-    pages: {
-        signIn: '/auth/login',
-    },
-    callbacks: {
-        session({ session, token }) {
-            session.accessToken = token.access_token;
-            session.error = token.error
-            return session
-        },
-    },
 */
