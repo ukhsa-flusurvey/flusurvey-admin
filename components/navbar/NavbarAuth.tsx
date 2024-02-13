@@ -1,10 +1,9 @@
 import React, { Suspense } from 'react';
-import {
-    Link as NextUILink,
-    Button, NavbarItem, Spinner
-} from '@nextui-org/react';
 import { auth } from '@/auth';
 import UserButton from '../UserButton';
+import { Button } from '../ui/button';
+import Link from 'next/link';
+import { BeatLoader } from 'react-spinners';
 
 
 interface NavbarAuthProps {
@@ -15,17 +14,17 @@ const NavbarAuthContent = async () => {
 
     if (!session) {
         return (
-            <NavbarItem
+
+            <Button
+                variant="secondary"
+                asChild
             >
-                <Button
-                    variant="flat"
-                    radius="sm"
-                    as={NextUILink}
+                <Link
                     href='/auth/login'
                 >
                     Login
-                </Button>
-            </NavbarItem>
+                </Link>
+            </Button>
         )
     }
 
@@ -39,7 +38,7 @@ const NavbarAuthContent = async () => {
 
 const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
     return (
-        <Suspense fallback={<div><Spinner color='secondary' size='md' /></div>}>
+        <Suspense fallback={<div><BeatLoader color='secondary' size='md' /></div>}>
             <NavbarAuthContent />
         </Suspense>
     )

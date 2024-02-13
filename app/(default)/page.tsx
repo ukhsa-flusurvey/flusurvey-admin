@@ -1,6 +1,5 @@
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Container from "@/components/Container";
-import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import { Card, CardBody } from "@nextui-org/card";
 import Image from 'next/image';
 import { Link as NextUILink } from '@nextui-org/link'
@@ -54,24 +53,23 @@ export default async function Page() {
 
     return (
         <main className="h-screen flex flex-col">
-            <Navbar isBordered
-                maxWidth="full"
-                shouldHideOnScroll
+            <nav
+                className="border-b border-neutral-400 flex items-center w-full py-3"
             >
                 <Container className="flex grow">
-                    <NavbarBrand
-                        className="flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-unit-2"
+                    <div
+                        className="grow flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-unit-2"
                     >
                         <p className='font-normal text-cyan-800 text-tiny'>CASE ADMIN</p>
                         <p className='font-semibold tracking-wider text-small'>{appName}</p>
 
-                    </NavbarBrand>
+                    </div>
 
-                    <NavbarContent justify="end">
+                    <div>
                         <NavbarAuth />
-                    </NavbarContent>
+                    </div>
                 </Container>
-            </Navbar>
+            </nav>
 
             <div className="relative w-full h-80 py-unit-lg ">
                 <Image
