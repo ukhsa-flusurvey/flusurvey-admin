@@ -33,7 +33,7 @@ const PreviewMode: React.FC<PreviewModeProps> = (props) => {
                     invalidResponseText='Invalid response'
                     languageCode={selectedLanguage}
                     nextBtnText='Next'
-                    submitBtnText='Submit'
+                    submitBtnText='Save responses'
                     showKeys={showKeys}
                     onSubmit={(response) => {
                         console.log(response);
