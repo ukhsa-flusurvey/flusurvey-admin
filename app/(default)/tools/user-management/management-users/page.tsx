@@ -1,4 +1,7 @@
+import { Suspense } from "react";
 import TabNav from "../_components/tab-nav";
+import ManagementUsers from "./_components/ManagementUsers";
+import ManagementUsersLoader from "./_components/ManagementUsersLoader";
 
 export default function Page() {
 
@@ -7,10 +10,14 @@ export default function Page() {
             <TabNav
                 activeTab={'management-users'}
             />
-            <h1>TODO page for: app/(default)/tools/user-management/management-users/page.tsx</h1>
-            <main>
-                <p>TODO: Implement page content</p>
-            </main>
+            <div className="flex w-full">
+                <Suspense
+                    fallback={<ManagementUsersLoader />}
+                >
+                    <ManagementUsers />
+                </Suspense>
+            </div>
+
         </div>
     );
 }
