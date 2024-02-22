@@ -28,15 +28,13 @@ const Login: React.FC<LoginProps> = (props) => {
         })
     }, [callBackURL])
 
-
-
     return (
         <div>
             <div className='text-center mb-6'>
-                <p className='text-sm'>
-                    After you login, you will be redirected to
+                <p className='text-sm mb-1'>
+                    After you login, you will be redirected to:
                 </p>
-                <p className='font-mono'>
+                <p className='font-mono p-2 bg-black/10 rounded-md'>
                     {callBackURL}
                 </p>
 
