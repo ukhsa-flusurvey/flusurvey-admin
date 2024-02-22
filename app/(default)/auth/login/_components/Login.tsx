@@ -4,8 +4,8 @@ import React, { useEffect, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
-import LoadingButton from '../LoadingButton';
 import { ShieldCheck } from 'lucide-react';
+import LoadingButton from '@/components/LoadingButton';
 
 
 interface LoginProps {
@@ -19,12 +19,12 @@ const Login: React.FC<LoginProps> = (props) => {
     const callBackURL = searchParams.get('callback') || '/';
 
     const loginWithMsEntraID = async (redirectTo: string) => {
-        await signIn('ms-entra-id', { redirectTo: redirectTo });
+        await signIn('ms-entra-id', { callbackUrl: redirectTo });
     }
 
     useEffect(() => {
-        startTransition(() => {
-            loginWithMsEntraID(callBackURL as string);
+        startTransition(async () => {
+            await loginWithMsEntraID(callBackURL as string);
         })
     }, [callBackURL])
 

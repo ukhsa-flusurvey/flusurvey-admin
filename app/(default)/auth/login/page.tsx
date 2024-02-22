@@ -1,6 +1,5 @@
-import { login } from "@/actions/auth/login";
 import CaseAdminHeader from "@/components/CaseAdminHeader";
-import Login from "@/components/auth/Login";
+import Login from "@/app/(default)/auth/login/_components/Login";
 import { Card, CardBody } from "@nextui-org/card";
 import { Suspense } from "react";
 
