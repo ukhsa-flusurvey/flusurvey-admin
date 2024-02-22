@@ -8,7 +8,6 @@ import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
 import ParticipantsIcon from "@/components/tool-icons/ParticipantsIcon";
 import UserManagementIcon from "@/components/tool-icons/UserManagementIcon";
 import MessagingIcon from "@/components/tool-icons/MessagingIcon";
-import ServiceStatusIcon from "@/components/tool-icons/ServiceStatusIcon";
 import EditorsIcon from "@/components/tool-icons/EditorsIcons";
 
 export const revalidate = 3600;
@@ -135,12 +134,6 @@ export default async function Page() {
                             description='Access standalone editors for surveys, rules and messages. (Load from and save on your local drive)'
                             href='/tools/editors'
                             icon={<EditorsIcon size="lg" />}
-                        />
-                        <ToolCard
-                            title='Service status'
-                            description='Overview showing if the application can connect to the backend services.'
-                            href='/service-status'
-                            icon={<ServiceStatusIcon size="lg" />}
                         />
                     </div>
                 </Container>
