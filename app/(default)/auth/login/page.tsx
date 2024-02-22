@@ -1,9 +1,11 @@
+import { login } from "@/actions/auth/login";
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Login from "@/components/auth/Login";
 import { Card, CardBody } from "@nextui-org/card";
 import { Suspense } from "react";
 
 export default async function Page() {
+
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
     return (
 

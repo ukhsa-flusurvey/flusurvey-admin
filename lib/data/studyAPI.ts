@@ -8,7 +8,7 @@ import { auth } from '@/auth';
 
 export const getSurveysForStudy = async (studyKey: string) => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -17,7 +17,7 @@ export const getSurveysForStudy = async (studyKey: string) => {
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 10
@@ -37,7 +37,7 @@ export const getSurveysForStudy = async (studyKey: string) => {
 
 export const getStudies = async (): Promise<{ studies?: Study[] }> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -46,7 +46,7 @@ export const getStudies = async (): Promise<{ studies?: Study[] }> => {
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 10
@@ -67,7 +67,7 @@ export const getStudies = async (): Promise<{ studies?: Study[] }> => {
 
 export const getStudy = async (studyKey: string): Promise<Study> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -76,7 +76,7 @@ export const getStudy = async (studyKey: string): Promise<Study> => {
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 0
@@ -98,7 +98,7 @@ export const getSurveyKeys = async (studyKey: string): Promise<{
     keys: string[]
 }> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -107,7 +107,7 @@ export const getSurveyKeys = async (studyKey: string): Promise<{
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 10
@@ -127,7 +127,7 @@ export const getSurveyKeys = async (studyKey: string): Promise<{
 
 export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<Survey> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -135,7 +135,7 @@ export const getSurveyVersion = async (studyKey: string, surveyKey: string, vers
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 10

@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 
 export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -14,7 +14,7 @@ export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 0
@@ -48,7 +48,7 @@ export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
 
 export const getMessageTemplates = async (): Promise<EmailTemplate[]> => {
     const session = await auth();
-    if (!session || session.accessToken === undefined) {
+    if (!session || session.CASEaccessToken === undefined) {
         throw new Error('Unauthorized');
     }
 
@@ -56,7 +56,7 @@ export const getMessageTemplates = async (): Promise<EmailTemplate[]> => {
     const response = await fetch(url,
         {
             headers: {
-                ...getTokenHeader(session.accessToken)
+                ...getTokenHeader(session.CASEaccessToken)
             },
             next: {
                 revalidate: 10

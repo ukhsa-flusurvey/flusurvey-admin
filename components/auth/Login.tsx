@@ -1,70 +1,56 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
-import LoginForm from './LoginForm';
+import React, { useEffect, useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ERROR_SECOND_FACTOR_NEEDED } from '@/utils/server/types/authAPI';
-import { login } from '@/actions/auth/login';
+import LoadingButton from '../LoadingButton';
+import { ShieldCheck } from 'lucide-react';
+
 
 interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = (props) => {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [loginData, setLoginData] = useState({
-        email: '',
-        password: '',
-        verificationCode: ''
-    });
-
-    const [isSecondFactor, setIsSecondFactor] = useState(false);
-    const [isError, setError] = useState(false);
 
     const callBackURL = searchParams.get('callback') || '/';
 
-    const handleLogin = async () => {
-        setIsLoading(true);
-        try {
-            const res = await login('credentials', {
-                email: loginData.email,
-                password: loginData.password,
-                // redirect: false,
-                verificationCode: loginData.verificationCode,
-                redirectTo: callBackURL as string,
-            });
-            if (!res) {
-                throw new Error('No response from server');
-            }
-            if (res.error !== undefined && res.error !== null) {
-                if (res.error === ERROR_SECOND_FACTOR_NEEDED) {
-                    setError(false);
-                    setIsSecondFactor(true);
-                } else {
-                    setError(true);
-                }
-                // success
-            }
-        } catch (error: any) {
-            console.log(error.message)
-        } finally {
-            setIsLoading(false);
-        }
+    const loginWithMsEntraID = async (redirectTo: string) => {
+        await signIn('ms-entra-id', { redirectTo: redirectTo });
     }
 
+    useEffect(() => {
+        startTransition(() => {
+            loginWithMsEntraID(callBackURL as string);
+        })
+    }, [callBackURL])
+
+
+
     return (
-        <LoginForm
-            isLoading={isLoading || isPending}
-            isSecondFactor={isSecondFactor}
-            loginData={loginData}
-            handleLogin={handleLogin}
-            setLoginData={setLoginData}
-            hasError={isError}
-        />
+        <div>
+            <div className='text-center mb-6'>
+                <p className='text-sm'>
+                    After you login, you will be redirected to
+                </p>
+                <p className='font-mono'>
+                    {callBackURL}
+                </p>
+
+            </div>
+            <LoadingButton
+                isLoading={isPending}
+                onClick={() => loginWithMsEntraID(callBackURL)}
+                className='text-lg w-full'
+                variant='default'
+            >
+                <ShieldCheck className='size-6' />
+                Login with your Organisation Account
+            </LoadingButton>
+        </div>
     );
 };
 

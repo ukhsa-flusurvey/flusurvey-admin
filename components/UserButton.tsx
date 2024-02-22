@@ -23,12 +23,12 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
             const interval = setInterval(async () => {
                 if (!expirationTime) return;
 
-                const now = (new Date()).getTime();
+                const now = (new Date()).getTime() / 1000;
                 const timeDifference = expirationTime - now;
                 if (timeDifference > 0) {
-                    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                    const hours = Math.floor((timeDifference % (60 * 60 * 24)) / (60 * 60));
+                    const minutes = Math.floor((timeDifference % (60 * 60)) / 60);
+                    const seconds = Math.floor((timeDifference % 60));
                     setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
                 } else {
                     setRemainingTime('Session expired');

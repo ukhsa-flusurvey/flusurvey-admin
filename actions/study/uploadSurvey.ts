@@ -7,14 +7,14 @@ import { Survey } from "survey-engine/data_types";
 
 export const uploadSurvey = async (studyKey: string, survey: Survey) => {
     const session = await auth();
-    if (!session || !session.accessToken) throw new Error('unauthenticated');
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/surveys`);
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify({ survey: survey }),
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
             'Content-Type': 'application/json'
         },
         next: { revalidate: 0 }

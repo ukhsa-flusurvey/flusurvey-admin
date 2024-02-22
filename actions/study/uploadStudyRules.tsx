@@ -10,14 +10,14 @@ export const uploadStudyRules = async (studyKey: string, rulesObj: {
 }) => {
     const session = await auth();
 
-    if (!session || !session.accessToken) throw new Error('unauthenticated');
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/rules`);
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify(rulesObj),
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
             'Content-Type': 'application/json'
         },
         next: { revalidate: 0 }

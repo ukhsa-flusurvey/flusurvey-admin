@@ -38,7 +38,7 @@ const NavbarAuthContent = async () => {
 
 const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
     return (
-        <Suspense fallback={<div><BeatLoader color='secondary' size='md' /></div>}>
+        <Suspense fallback={<div><BeatLoader /></div>}>
             <NavbarAuthContent />
         </Suspense>
     )

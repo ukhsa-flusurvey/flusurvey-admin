@@ -30,6 +30,62 @@ const postToCASEManagementAPI = async (path: string, data: any, accessToken?: st
     return await response.json();
 }
 
+interface IdPLoginMsg {
+    instanceId: string;
+    sub: string;
+    name?: string;
+    email?: string;
+    roles?: string[];
+    renewToken?: string;
+}
+
+
+export const signInWithIdPRequest = async (creds: IdPLoginMsg): Promise<{
+    sessionID: string;
+    accessToken: string;
+    expiresAt: number;
+    isAdmin: boolean;
+}> => {
+    return postToCASEManagementAPI('/v1/auth/signin-with-idp', creds);
+}
+
+export const getRenewTokenRequest = async (accessToken: string, sessionId: string): Promise<{
+    renewToken: string;
+}> => {
+    const url = getCASEManagementAPIURL(`/v1/auth/renew-token/${sessionId}`);
+    const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+            ...getTokenHeader(accessToken),
+        }
+    });
+    if (!response.ok || response.status > 299) {
+        throw await response.json();
+    }
+    return await response.json();
+}
+
+export const extendSessionRequest = async (accessToken: string, newRenewToken: string): Promise<{
+    sessionID: string;
+    accessToken: string;
+    expiresAt: number;
+    isAdmin: boolean;
+}> => {
+    const url = getCASEManagementAPIURL('/v1/auth/extend-session');
+    const response = await fetch(url.toString(), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getTokenHeader(accessToken)
+        },
+        body: JSON.stringify({ renewToken: newRenewToken })
+    });
+    if (!response.ok || response.status > 299) {
+        throw await response.json();
+    }
+    return await response.json();
+}
+
 
 /*const caseAdminAPIInstance = axios.create({
     baseURL: process.env.MANAGEMENT_API_URL ? process.env.MANAGEMENT_API_URL : '',

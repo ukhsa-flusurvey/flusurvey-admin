@@ -9,14 +9,14 @@ export const saveMessageSchedule = async (
     messageSchedule: MessageSchedule
 ) => {
     const session = await auth();
-    if (!session || !session.accessToken) throw new Error('unauthenticated');
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL('/v1/messaging/auto-messages');
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify({ 'autoMessage': messageSchedule }),
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
             'Content-Type': 'application/json'
         },
         next: { revalidate: 0 }
@@ -32,13 +32,13 @@ export const deleteMessageSchedule = async (
     id: string
 ) => {
     const session = await auth();
-    if (!session || !session.accessToken) throw new Error('unauthenticated');
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL(`/v1/messaging/auto-message/${id}`);
     const r = await fetch(url.toString(), {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
         },
         next: { revalidate: 0 }
     });
