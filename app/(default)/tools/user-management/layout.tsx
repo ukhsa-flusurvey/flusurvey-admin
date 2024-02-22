@@ -11,7 +11,7 @@ export default function Layout({
     return (
         <div className="flex flex-col h-screen">
             <UserManagementAppbarBase />
-            <div className="bg-cover bg-center bg-[url(/images/tree-on-hill.png)] grow w-full">
+            <div className="bg-cover bg-center bg-[url(/images/tree-on-hill.png)] grow w-full p-6">
                 {children}
             </div>
         </div>
