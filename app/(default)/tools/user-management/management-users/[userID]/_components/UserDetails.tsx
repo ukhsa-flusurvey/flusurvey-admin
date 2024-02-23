@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
-import { Circle, HelpCircle, UserRound } from 'lucide-react';
+import { HelpCircle, UserRound } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -101,8 +101,6 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
                         </div>
 
                         <Separator />
-
-
 
                         <div>
                             <div className='text-xs font-bold flex items-center gap-2'>
