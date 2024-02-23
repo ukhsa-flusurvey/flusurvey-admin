@@ -1,13 +1,15 @@
 import UserManagementAppbarBase from "./UserManagementAppbarBase";
 
+export const metadata = {
+    title: 'User Management',
+    description: 'Manage users and service accounts and their permissions.',
+}
+
 export default function Layout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-
-    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
-
     return (
         <div className="flex flex-col h-screen">
             <UserManagementAppbarBase />

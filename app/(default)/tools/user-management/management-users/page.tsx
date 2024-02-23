@@ -3,8 +3,9 @@ import TabNav from "../_components/tab-nav";
 import ManagementUsers from "./_components/ManagementUsers";
 import ManagementUsersLoader from "./_components/ManagementUsersLoader";
 
-export default function Page() {
+export const dynamic = 'force-dynamic';
 
+export default function Page() {
     return (
         <div className="space-y-6">
             <TabNav
