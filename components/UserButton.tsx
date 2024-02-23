@@ -7,6 +7,7 @@ import { User } from 'next-auth';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { LogOutIcon, MoreVertical, UserRound } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
+import { usePathname } from 'next/navigation';
 
 
 interface UserButtonProps {
@@ -17,6 +18,7 @@ interface UserButtonProps {
 const UserButton: React.FC<UserButtonProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [remainingTime, setRemainingTime] = useState<string | null>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         if (props.expires !== null) {
@@ -33,14 +35,15 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
                     setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
                 } else {
                     setRemainingTime('Session expired');
-                    await logout();
+                    const redirectTo = `/auth/login?callback=${pathname}&auto-login=false`;
+                    await logout(redirectTo);
                     clearInterval(interval);
                 }
             }, 1000);
 
             return () => clearInterval(interval);
         }
-    }, [props.expires]);
+    }, [props.expires, pathname]);
 
     if (!props.user) return null;
 

@@ -17,16 +17,18 @@ const Login: React.FC<LoginProps> = (props) => {
 
 
     const callBackURL = searchParams.get('callback') || '/';
+    const autoLoginOff = searchParams.get('auto-login') === 'false';
 
     const loginWithMsEntraID = async (redirectTo: string) => {
         await signIn('ms-entra-id', { callbackUrl: redirectTo });
     }
 
     useEffect(() => {
+        if (autoLoginOff) return;
         startTransition(async () => {
             await loginWithMsEntraID(callBackURL as string);
         })
-    }, [callBackURL])
+    }, [callBackURL, autoLoginOff])
 
     return (
         <div>
