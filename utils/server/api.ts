@@ -35,6 +35,7 @@ interface IdPLoginMsg {
     sub: string;
     name?: string;
     email?: string;
+    imageURL?: string;
     roles?: string[];
     renewToken?: string;
 }

@@ -60,6 +60,7 @@ export const {
                             sub: user.sub,
                             name: user.name || undefined,
                             email: user.email || undefined,
+                            imageURL: user.image || undefined,
                             roles: user.roles,
                             renewToken: account.refresh_token
                         })

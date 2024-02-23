@@ -3,6 +3,7 @@ import CardWrapper from './CardWrapper';
 
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { auth } from '@/auth';
+import ListItem, { ManagementUser } from './ListItem';
 
 interface ManagementUsersProps {
 }
@@ -20,19 +21,58 @@ const getManagementUsers = async () => {
             revalidate: 0,
         }
     );
-    return resp;
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch management users: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }
 
 const ManagementUsers: React.FC<ManagementUsersProps> = async (props) => {
 
     // const users = await
     // throw new Error('Not implemented');
-    const users = await getManagementUsers();
-    console.log(users);
+    const response = await getManagementUsers();
+
+    const error = response.error;
+
+    if (error) {
+        return (
+            <CardWrapper>
+                <div className='px-6 py-3 bg-red-100 rounded-md text-red-700'>
+                    <h3 className='font-bold'>Unexpected error: </h3>
+                    {error}
+                </div>
+            </CardWrapper>
+        );
+    }
+
+    if (!response.users || response.users.length === 0) {
+        return (
+            <CardWrapper>
+                <div className='px-6 py-3 bg-yellow-100 rounded-md text-yellow-700'>
+                    <h3 className='font-bold'>No users found</h3>
+                </div>
+            </CardWrapper>
+        );
+    }
+
+    const users = response.users.map((user: any): ManagementUser => {
+        return {
+            ...user,
+            lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : undefined,
+            createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
+        }
+    })
 
     return (
         <CardWrapper>
-            todo: user list
+            <ul
+                className='divide-y-1 divide-black/10'
+            >
+                {users.map((user: any) => (
+                    <ListItem key={user.id} user={user} />
+                ))}
+            </ul>
         </CardWrapper>
     );
 };
