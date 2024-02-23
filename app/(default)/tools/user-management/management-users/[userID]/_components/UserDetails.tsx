@@ -40,7 +40,6 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
 
     if (error) {
         redirect('/tools/user-management/management-users');
-        return null;
     }
 
     const user = {
@@ -82,20 +81,20 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
 
                         </div>
 
-                        <div className='flex gap-6'>
+                        <div className='flex gap-6 justify-between'>
                             <div>
-                                <p className='text-xs font-bold'>
+                                <p className='text-xs'>
                                     Created at:
                                 </p>
-                                <p className='text-neutral-700'>
+                                <p className='text-neutral-700 font-semibold border border-black/20 p-1 px-2 mt-1 text-sm rounded-md'>
                                     {user.createdAt?.toLocaleString()}
                                 </p>
                             </div>
                             <div>
-                                <p className='text-xs font-bold'>
+                                <p className='text-xs'>
                                     Last login at:
                                 </p>
-                                <p className='text-neutral-700'>
+                                <p className='text-neutral-700 font-semibold border border-black/20 p-1 px-2 mt-1 text-sm rounded-md'>
                                     {user.lastLoginAt?.toLocaleString()}
                                 </p>
                             </div>
@@ -119,7 +118,7 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-                            <p className='text-neutral-700 font-mono'>
+                            <p className='text-neutral-700 font-mono border border-black/20 p-1 px-2 mt-1 text-sm rounded-md'>
                                 {user.sub}
                             </p>
                         </div>
@@ -138,7 +137,7 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-                            <p className='text-neutral-700 font-mono'>
+                            <p className='text-neutral-700 font-mono border border-black/20 p-1 px-2 mt-1 text-sm rounded-md'>
                                 {user.id}
                             </p>
                         </div>
