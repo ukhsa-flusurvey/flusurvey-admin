@@ -31,10 +31,10 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
         status: apiResponse.status,
         headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
     });
-
     return resp;
 
 }
+
 
 export async function POST(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await auth();

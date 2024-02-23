@@ -19,22 +19,22 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
     return (
         <TooltipProvider>
             <nav className={clsx(
-                'bg-content2 z-40',
+                'z-40',
                 {
                     'border-b border-b-default': props.isBordered,
                     'py-unit-sm': props.children === undefined,
                     'pt-unit-sm': props.children !== undefined
                 }
             )}>
-                <div className="flex items-center px-unit-lg flex-wrap">
+                <div className="flex items-center px-6 flex-wrap">
                     <div
-                        className="flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-unit-2"
+                        className="flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-3"
                     >
-                        <p className='font-normal text-cyan-800 text-tiny'>CASE ADMIN</p>
-                        <p className='font-semibold tracking-wider text-small'>{appName}</p>
+                        <p className='font-normal text-cyan-800 text-xs'>CASE ADMIN</p>
+                        <p className='font-semibold tracking-wider text-sm'>{appName}</p>
                     </div>
 
-                    <div className='flex grow gap-unit-sm justify-center items-center'>
+                    <div className='flex grow gap-3 justify-center items-center'>
                         {props.toolIcon}
                         <h1 className="text-center font-bold text-xl">
                             {props.toolName}
