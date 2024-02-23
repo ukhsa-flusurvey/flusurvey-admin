@@ -1,10 +1,11 @@
 import { auth } from "./auth"
-import { AuthPages, PUBLIC_ROUTES } from "./routes";
+import { ADMIN_ROUTES, AuthPages, PUBLIC_ROUTES } from "./routes";
 
 
 export default auth((req) => {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
+    const isAdmin = req.auth?.isAdmin;
 
     const isPublicRoute = PUBLIC_ROUTES.some((route) => {
         if (route.exact) {
@@ -23,6 +24,13 @@ export default auth((req) => {
         return;
     }
 
+    const isAdminRoute = ADMIN_ROUTES.some((route) => {
+        if (route.exact) {
+            return route.path === nextUrl.pathname;
+        }
+        return nextUrl.pathname.startsWith(route.path);
+    });
+
     if (isAuthRoute) {
         if (isLoggedIn) {
             return Response.redirect(new URL('/', nextUrl));
@@ -35,6 +43,9 @@ export default auth((req) => {
         return Response.redirect(redirectUrl);
     }
 
+    if (isAdminRoute && !isAdmin) {
+        return Response.redirect(new URL('/auth/admin-account-required', nextUrl));
+    }
 })
 
 

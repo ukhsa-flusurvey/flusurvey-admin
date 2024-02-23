@@ -43,7 +43,11 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
         return null;
     }
 
-    const user = resp.user;
+    const user = {
+        ...resp.user,
+        createdAt: new Date(resp.user.createdAt),
+        lastLoginAt: new Date(resp.user.lastLoginAt),
+    };
 
     return (
         <TooltipProvider>
