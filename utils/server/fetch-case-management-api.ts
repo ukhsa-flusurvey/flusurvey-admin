@@ -5,11 +5,15 @@ import { getCASEManagementAPIURL, getTokenHeader } from "./api";
 export const fetchCASEManagementAPI = async (
     pathname: string,
     accessToken: string,
-    headers: { [key: string]: string } = {},
-    method: string = 'GET',
-    body?: BodyInit,
-    revalidate: number = 0,
+    requestOptions?: {
+        headers?: { [key: string]: string },
+        method?: string,
+        body?: BodyInit,
+        revalidate: number,
+    }
 ) => {
+    const { headers, method = 'GET', body, revalidate = 0 } = requestOptions || {};
+
     const url = getCASEManagementAPIURL(pathname);
     const response = await fetch(url, {
         method,
