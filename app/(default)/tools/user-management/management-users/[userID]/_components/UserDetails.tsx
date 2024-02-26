@@ -104,7 +104,7 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
 
                         <div>
                             <div className='text-xs font-bold flex items-center gap-2'>
-                                sub:
+                                sub from IdP:
                                 <Tooltip delayDuration={0}>
                                     <TooltipTrigger>
                                         <HelpCircle className='size-4 text-neutral-500' />

@@ -5,6 +5,10 @@ import { HelpCircle } from 'lucide-react';
 import React from 'react';
 import AddPermissionDialog from './AddPermissionDialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import PermissionActions from './PermissionActions';
+import { auth } from '@/auth';
+import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+
 
 interface PermissionsProps {
     userId: string;
@@ -43,11 +47,32 @@ const CardWrapper: React.FC<{
     );
 }
 
-const Permissions: React.FC<PermissionsProps> = async (props) => {
-    // TODO: load permissions
+const getPermissions = async (userId: string) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/management-users/' + userId + '/permissions';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch management user's permissions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
 
-    const permissions: any[] = [];
-    const error = undefined;
+const Permissions: React.FC<PermissionsProps> = async (props) => {
+    const resp = await getPermissions(props.userId);
+
+    console.log(resp)
+
+    const permissions = resp.permissions;
+    const error = resp.error;
     if (error) {
         return (
             <CardWrapper>
@@ -77,25 +102,39 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">Invoice</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Method</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
+                        <TableHead>Resource Type</TableHead>
+                        <TableHead>Resource Key</TableHead>
+                        <TableHead>Action</TableHead>
+                        <TableHead>Limiter</TableHead>
+                        <TableHead className='text-end'></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
+                    {permissions.map((permission: any) => (
+                        <TableRow key={permission.id}>
+                            <TableCell>
+                                {permission.resourceType}
+                            </TableCell>
+                            <TableCell>
+                                {permission.resourceKey}
+                            </TableCell>
+                            <TableCell>
+                                {permission.action}
+                            </TableCell>
+                            <TableCell>
+                                {permission.limiter}
+                            </TableCell>
+                            <TableCell>
+                                <PermissionActions permission={permission} />
+                            </TableCell>
+                        </TableRow>
+                    ))}
 
-                    <TableRow>
-                        <TableCell className="font-medium">INV001</TableCell>
-                        <TableCell>Paid</TableCell>
-                        <TableCell>Credit Card</TableCell>
-                        <TableCell className="text-right">$250.00</TableCell>
-                    </TableRow>
                 </TableBody>
             </Table>
 
             <AddPermissionDialog />
-        </CardWrapper>
+        </CardWrapper >
     );
 };
 
