@@ -13,6 +13,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { createPermissionForManagementUser } from '@/actions/user-management/permissions';
+import { toast } from 'sonner';
+
+
 
 interface ResourcePermission {
     actions: {
@@ -65,8 +69,8 @@ const formSchema = z.object({
 })
 
 interface AddPermissionDialogProps {
+    userId: string;
 }
-
 
 
 const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
@@ -75,6 +79,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     const [isPending, startTransition] = useTransition();
     const [resourceIdList, setResourceIdList] = React.useState<string[] | undefined>(undefined)
     const [selectedResourcePermissionInfo, setSelectedResourcePermissionInfo] = React.useState<ResourcePermission | undefined>(undefined)
+    const [error, setError] = React.useState<string | undefined>(undefined)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -87,10 +92,26 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log('submit')
-        console.log(values)
+        setError(undefined)
+        startTransition(async () => {
+            const resp = await createPermissionForManagementUser(
+                props.userId,
+                values.resourceType,
+                values.resourceId,
+                values.action,
+                values.limiter
+            )
+            if (resp.error) {
+                setError(resp.error)
+                return
+            }
+
+            toast('Permission added')
+
+            if (dialogCloseRef.current) {
+                dialogCloseRef.current.click()
+            }
+        })
     }
 
 
@@ -315,6 +336,14 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                         {actionFormField()}
 
                         {limiterFormField()}
+
+                        {error && <p
+                            role='alert'
+                            className='text-red-600 text-sm font-bold'
+                        >
+                            {error}
+                        </p>}
+
 
                         <DialogFooter>
                             <DialogClose

@@ -91,7 +91,9 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                     <h3 className='font-bold'>No permissions added</h3>
                 </div>
 
-                <AddPermissionDialog />
+                <AddPermissionDialog
+                    userId={props.userId}
+                />
             </CardWrapper>
         );
     }
@@ -133,7 +135,9 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                 </TableBody>
             </Table>
 
-            <AddPermissionDialog />
+            <AddPermissionDialog
+                userId={props.userId}
+            />
         </CardWrapper >
     );
 };
