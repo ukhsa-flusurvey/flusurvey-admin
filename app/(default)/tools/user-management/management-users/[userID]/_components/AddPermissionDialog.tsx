@@ -34,7 +34,7 @@ interface PermissionInfos {
     };
 }
 
-const permissionInfos: PermissionInfos = {
+export const permissionInfos: PermissionInfos = {
     "messaging": {
         resources: {
             "email-templates": {

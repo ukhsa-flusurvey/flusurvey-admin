@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import UserDetails, { UserDetailsSkeleton } from "./_components/UserDetails";
 import Permissions, { PermissionsSkeleton } from "./_components/Permissions";
 import DeleteUserCard from "./_components/DeleteUserCard";
-import { Toaster } from "sonner";
 
 
 export default function Page({
@@ -58,8 +57,6 @@ export default function Page({
             </Suspense>
 
             <DeleteUserCard userId={userID} />
-
-            <Toaster />
         </div>
     );
 }

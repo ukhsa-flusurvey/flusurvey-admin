@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import UserManagementAppbarBase from "./UserManagementAppbarBase";
 
 export const metadata = {
@@ -16,6 +17,7 @@ export default function Layout({
             <div className="bg-cover bg-center bg-[url(/images/tree-on-hill.png)] grow w-full p-6">
                 {children}
             </div>
+            <Toaster />
         </div>
     )
 }

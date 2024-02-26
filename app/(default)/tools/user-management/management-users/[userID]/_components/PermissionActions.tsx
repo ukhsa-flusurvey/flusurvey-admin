@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { toast } from 'sonner';
+import UpdatePermissionLimiterDialog from './UpdatePermissionLimiterDialog';
 
 interface PermissionActionsProps {
     userId: string;
@@ -30,13 +31,19 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
 
     return (
         <div className='gap-2 flex justify-end items-center'>
-            {!isPending && <><Button
-                variant={'ghost'}
-                size={'icon'}
-                className='size-8'
-            >
-                <Pencil className='size-4' />
-            </Button>
+            {!isPending && <>
+                <UpdatePermissionLimiterDialog
+                    userID={props.userId}
+                    permission={props.permission}
+                >
+                    <Button
+                        variant={'ghost'}
+                        size={'icon'}
+                        className='size-8'
+                    >
+                        <Pencil className='size-4' />
+                    </Button>
+                </UpdatePermissionLimiterDialog>
                 <Button
                     variant={'ghost'}
                     size={'icon'}
