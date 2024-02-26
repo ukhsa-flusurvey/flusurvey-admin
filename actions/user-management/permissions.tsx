@@ -56,3 +56,29 @@ export const deletePermissionForManagementUser = async (
     revalidatePath('/tools/user-management');
     return resp.body;
 }
+
+export const updatePermissionLimiterForManagementUser = async (
+    userID: string,
+    permissionID: string,
+    limiter: string
+) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, body: { error: 'Unauthorized' } };
+    }
+
+    const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}/permissions/${permissionID}/limiter`,
+        session.CASEaccessToken,
+        {
+            method: 'PUT',
+            body: JSON.stringify({
+                limiter
+            }),
+            revalidate: 0,
+        });
+    if (resp.status !== 200) {
+        return { error: `Failed to update permissions: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/user-management');
+    return resp.body;
+}
