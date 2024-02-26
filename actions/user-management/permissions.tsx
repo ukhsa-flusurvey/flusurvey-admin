@@ -34,3 +34,25 @@ export const createPermissionForManagementUser = async (
     revalidatePath('/tools/user-management');
     return resp.body;
 }
+
+export const deletePermissionForManagementUser = async (
+    userID: string,
+    permissionID: string
+) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, body: { error: 'Unauthorized' } };
+    }
+
+    const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}/permissions/${permissionID}`,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        });
+    if (resp.status !== 200) {
+        return { error: `Failed to delete permissions: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/user-management');
+    return resp.body;
+}

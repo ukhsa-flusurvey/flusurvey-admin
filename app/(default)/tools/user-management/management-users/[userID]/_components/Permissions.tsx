@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import PermissionActions from './PermissionActions';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import { Badge } from '@/components/ui/badge';
 
 
 interface PermissionsProps {
@@ -69,8 +70,6 @@ const getPermissions = async (userId: string) => {
 const Permissions: React.FC<PermissionsProps> = async (props) => {
     const resp = await getPermissions(props.userId);
 
-    console.log(resp)
-
     const permissions = resp.permissions;
     const error = resp.error;
     if (error) {
@@ -101,11 +100,10 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
 
     return (
         <CardWrapper>
-            <Table>
+            <Table className='bg-white rounded-lg overflow-hidden'>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead>Resource Type</TableHead>
-                        <TableHead>Resource Key</TableHead>
+                    <TableRow className='bg-slate-50'>
+                        <TableHead>Resource</TableHead>
                         <TableHead>Action</TableHead>
                         <TableHead>Limiter</TableHead>
                         <TableHead className='text-end'></TableHead>
@@ -114,20 +112,28 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                 <TableBody>
                     {permissions.map((permission: any) => (
                         <TableRow key={permission.id}>
-                            <TableCell>
-                                {permission.resourceType}
+                            <TableCell className=''>
+                                <Badge
+                                    variant={'outline'}
+                                >
+                                    {permission.resourceType}
+                                </Badge>
+                                <p className='font-bold px-3 mt-1'>{permission.resourceKey}</p>
+
                             </TableCell>
-                            <TableCell>
-                                {permission.resourceKey}
-                            </TableCell>
+
                             <TableCell>
                                 {permission.action}
                             </TableCell>
-                            <TableCell>
+                            <TableCell
+                                className='text-xs font-mono'
+                            >
                                 {permission.limiter}
                             </TableCell>
                             <TableCell>
-                                <PermissionActions permission={permission} />
+                                <PermissionActions
+                                    userId={props.userId}
+                                    permission={permission} />
                             </TableCell>
                         </TableRow>
                     ))}
