@@ -1,54 +1,34 @@
 import NextAuth from "next-auth"
 import "next-auth"
 
-import CredentialsProvider from "next-auth/providers/credentials";
-import { loginWithEmailRequest, renewTokenRequest } from "./utils/server/api";
-import { ERROR_SECOND_FACTOR_NEEDED } from "./utils/server/types/authAPI";
+import { Provider } from "next-auth/providers"
+import AzureADProvider from "next-auth/providers/azure-ad";
+import { extendSessionRequest, getRenewTokenRequest, signInWithIdPRequest } from "./utils/server/api";
+import { RenewAzureToken } from "./utils/auth";
 
-const CASECredentialProvider = CredentialsProvider({
-    id: "credentials",
-    credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-        verificationCode: { label: "Verification Code", type: "text" },
-    },
-    async authorize(credentials: any, req) {
-        if (!credentials || !credentials.email || !credentials.password) {
-            console.error('Missing credentials');
-            return null;
+
+const MsEntraIDProvider = AzureADProvider({
+    id: "ms-entra-id",
+    name: "Management User Azure AD",
+    clientId: process.env.AZURE_AD_CLIENT_ID,
+    clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+    tenantId: process.env.AZURE_AD_TENANT_ID,
+    authorization: { params: { scope: "openid email profile offline_access" } },
+    profile: (profile) => {
+        return {
+            sub: profile.sub,
+            name: profile.name,
+            roles: profile.roles,
+            email: profile.email,
+            image: profile.picture,
         }
-
-        try {
-            const response = await loginWithEmailRequest({
-                email: credentials.email,
-                password: credentials.password,
-                verificationCode: credentials.verificationCode,
-                instanceId: process.env.INSTANCE_ID ? process.env.INSTANCE_ID : 'default',
-            });
-            if (response.secondFactorNeeded) {
-                throw new Error(ERROR_SECOND_FACTOR_NEEDED);
-            }
-
-            const now = new Date();
-            return {
-                id: response.user.id,
-                email: response.user.account.accountId,
-                name: response.user.account.accountId,
-                account: {
-                    accessToken: response.token.accessToken,
-                    expiresAt: new Date(now.getTime() + response.token.expiresIn * 60000),
-                    refreshToken: response.token.refreshToken,
-                }
-            };
-        } catch (error: any) {
-            if (error.error) {
-                throw new Error(error.error);
-            }
-            console.error('Unexpected error when logging in with credentials: ', error);
-            throw error;
-        }
-    },
+    }
 })
+
+
+const providers: Provider[] = [
+    MsEntraIDProvider
+]
 
 export const {
     handlers: { GET, POST },
@@ -56,59 +36,109 @@ export const {
     signIn,
     signOut
 } = NextAuth({
-    providers: [
-        CASECredentialProvider
-    ],
+    providers: providers,
+    trustHost: true,
+    session: {
+        strategy: "jwt",
+    },
     pages: {
         signIn: '/auth/login',
     },
     callbacks: {
         async jwt({ token, user, account }) {
             if (account) {
-                if (account.provider === 'credentials') {
-                    // console.log(account, user)
-                    return {
-                        ...token,
-                        accessToken: user.account.accessToken as string || '',
-                        expiresAt: user.account.expiresAt.getTime(),
-                        refreshToken: user.account.refreshToken,
+                token.provider = account.provider;
+                if (account.provider === 'ms-entra-id') {
+                    if (!user.sub) {
+                        return {
+                            error: 'LoginFailed' as const
+                        }
+                    }
+
+                    try {
+                        const response = await signInWithIdPRequest({
+                            instanceId: process.env.INSTANCE_ID ? process.env.INSTANCE_ID : 'default',
+                            sub: user.sub,
+                            name: user.name || undefined,
+                            email: user.email || undefined,
+                            imageURL: user.image || undefined,
+                            roles: user.roles,
+                            renewToken: account.refresh_token
+                        })
+                        token.CASESessionID = response.sessionID
+                        token.CASEaccessToken = response.accessToken
+                        token.expiresAt = response.expiresAt
+                        token.renewSessionAt = Math.floor((response.expiresAt + (Date.now() / 1000)) / 2)
+                        token.isAdmin = response.isAdmin
+                    } catch (e) {
+                        console.error(e)
+                        return {
+                            error: 'LoginFailed' as const
+                        }
+                    }
+                    token.user = {
+                        name: user.name,
+                        email: user.email,
+                        image: user.image
+                    }
+                    return token
+                }
+            } else if (token.renewSessionAt !== undefined && Date.now() > token.renewSessionAt * 1000) {
+                if (token.provider === 'ms-entra-id') {
+                    console.log('refreshing token');
+
+                    if (!token.CASEaccessToken || !token.CASESessionID) {
+                        console.log(token)
+                        console.error('No token or session id found')
+                        return {
+                            ...token,
+                            error: 'RefreshAccessTokenError' as const,
+                        }
+                    }
+
+                    // get refresh token from CASE session
+                    try {
+                        const resp = await getRenewTokenRequest(token.CASEaccessToken, token.CASESessionID)
+
+                        if (!resp.renewToken) {
+                            return token;
+                        }
+
+                        // renew token by azure ad
+                        const refreshTokenResp = await RenewAzureToken(resp.renewToken);
+                        const newRenewToken = refreshTokenResp.refresh_token;
+
+                        if (!newRenewToken) {
+                            return token;
+                        }
+
+                        // get new JWT from CASE backend
+                        const newTokenResp = await extendSessionRequest(token.CASEaccessToken, newRenewToken);
+                        token.CASEaccessToken = newTokenResp.accessToken;
+                        token.CASESessionID = newTokenResp.sessionID;
+                        token.expiresAt = newTokenResp.expiresAt;
+                        token.renewSessionAt = Math.floor((newTokenResp.expiresAt + (Date.now() / 1000)) / 2);
+                        token.isAdmin = newTokenResp.isAdmin;
+
+                        return token;
+                    } catch (e) {
+                        // console.error(e)
+                        return token;
                     }
                 }
-            } else if (token.expiresAt !== undefined && Date.now() < token.expiresAt) {
-                // If the access token has not expired yet, return it
                 return token
-            } else {
-                console.log('refreshing token');
-                if (!token.refreshToken || !token.accessToken) {
-                    return {
-                        error: 'RefreshAccessTokenError' as const,
-                    }
-                }
-                try {
-                    const response = await renewTokenRequest(token.refreshToken, token.accessToken);
-                    return {
-                        ...token,
-                        accessToken: response.accessToken,
-                        expiresAt: new Date().getTime() + response.expiresIn * 60000,
-                        refreshToken: response.refreshToken,
-                    }
-                } catch (error) {
-                    console.error(error);
-                    return {
-                        error: 'RefreshAccessTokenError' as const,
-                    }
-                }
             }
             return token
         },
         async session({ session, token }) {
-            session.accessToken = token.accessToken;
+            session.CASEaccessToken = token.CASEaccessToken;
             session.tokenExpiresAt = token.expiresAt;
+            session.isAdmin = token.isAdmin;
             return session
         }
     },
     logger: {
-        debug: (...args) => console.log(...args),
+        //debug: (...args) => console.log(...args),
         error: (...args) => console.error(...args),
         warn: (...args) => console.warn(...args),
     }
@@ -116,16 +146,14 @@ export const {
 
 declare module "next-auth" {
     interface User {
-        /** The user's postal address. */
-        account: {
-            accessToken: string;
-            expiresAt: Date;
-            refreshToken: string;
-        }
+        sub?: string;
+        roles?: string[];
     }
 
     interface Session {
-        accessToken?: string
+        CASESessionID?: string;
+        CASEaccessToken?: string;
+        isAdmin?: boolean;
         tokenExpiresAt?: number;
     }
 
@@ -134,42 +162,12 @@ declare module "next-auth" {
 declare module "@auth/core/jwt" {
     /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
     interface JWT {
-        accessToken?: string
+        provider?: string
+        CASEaccessToken?: string
+        CASESessionID?: string
         expiresAt?: number
-        refreshToken?: string
+        renewSessionAt?: number
+        isAdmin?: boolean
         error?: "RefreshAccessTokenError" | "LoginFailed"
     }
 }
-
-
-/*
-const CASEOAuthProvider = (process.env.OPENID_CONFIG && process.env.OAUTH_CLIENT_ID && process.env.OAUTH_CLIENT_SECRET) ? {
-    id: "management-user-oauth",
-    name: "Management User OAuth",
-    type: "oauth",
-    wellKnown: process.env.OPENID_CONFIG,
-    clientId: process.env.OAUTH_CLIENT_ID,
-    clientSecret: process.env.OAUTH_CLIENT_SECRET,
-    authorization: { params: { scope: "openid email profile" } },
-    idToken: true,
-
-    profile(profile) {
-        return {
-            id: profile.sub,
-            name: profile.name,
-            email: profile.email,
-        }
-    },
-
-} as Provider : null;
-
-const providers: Provider[] = [
-    CASECredentialProvider,
-];
-
-if (CASEOAuthProvider) {
-    providers.push(CASEOAuthProvider);
-}
-
-
-*/

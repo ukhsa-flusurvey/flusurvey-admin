@@ -6,35 +6,29 @@ import { revalidatePath } from "next/cache";
 
 
 export const login = async (
-    type: 'credentials',
+    type: string,
     payload?: any
 ) => {
-    if (type === 'credentials') {
-        try {
-            await signIn(type, payload);
-        } catch (error: any) {
-            if (error instanceof Error) {
-                const { type, cause } = error as AuthError;
-                switch (type) {
-                    case "CredentialsSignin":
-                        return {
-                            success: false,
-                            error: "Invalid credentials."
-                        }
-                    case "CallbackRouteError":
-                        return {
-                            success: false,
-                            error: cause?.err?.toString()
-                        }
-                    default:
-                        throw error;
-                }
+    try {
+        await signIn(type, payload);
+    } catch (error: any) {
+        if (error instanceof Error) {
+            const { type, cause } = error as AuthError;
+            console.log(error);
+            switch (type) {
+                case "CallbackRouteError":
+                    return {
+                        success: false,
+                        error: cause?.err?.toString()
+                    }
+                default:
+                    return {
+                        success: false,
+                        error: error.message
+                    }
             }
         }
-    } else {
-        throw new Error(`Unsupported login type: ${type}`);
     }
-
     revalidatePath('/');
     return {
         success: true,

@@ -5,7 +5,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { logout } from '@/actions/auth/logout';
 import { User } from 'next-auth';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { LogOutIcon, UserRound } from 'lucide-react';
+import { LogOutIcon, MoreVertical, UserRound } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
+import { usePathname } from 'next/navigation';
 
 
 interface UserButtonProps {
@@ -16,6 +18,7 @@ interface UserButtonProps {
 const UserButton: React.FC<UserButtonProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [remainingTime, setRemainingTime] = useState<string | null>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         if (props.expires !== null) {
@@ -23,23 +26,24 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
             const interval = setInterval(async () => {
                 if (!expirationTime) return;
 
-                const now = (new Date()).getTime();
+                const now = (new Date()).getTime() / 1000;
                 const timeDifference = expirationTime - now;
                 if (timeDifference > 0) {
-                    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                    const hours = Math.floor((timeDifference % (60 * 60 * 24)) / (60 * 60));
+                    const minutes = Math.floor((timeDifference % (60 * 60)) / 60);
+                    const seconds = Math.floor((timeDifference % 60));
                     setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
                 } else {
                     setRemainingTime('Session expired');
-                    await logout();
+                    const redirectTo = `/auth/login?callback=${pathname}&auto-login=false`;
+                    await logout(redirectTo);
                     clearInterval(interval);
                 }
             }, 1000);
 
             return () => clearInterval(interval);
         }
-    }, [props.expires]);
+    }, [props.expires, pathname]);
 
     if (!props.user) return null;
 
@@ -57,9 +61,13 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
                         <p className='max-w-[156px] truncate text-start text-sm'>
                             {props.user?.name}
                         </p>
-                        <p className='text-start text-xs text-neutral-500'>
+                        {remainingTime && (<p className='text-start text-xs text-neutral-500 min-h-4'>
                             {remainingTime}
-                        </p>
+                        </p>)}
+                        {!remainingTime && <Skeleton className='h-4 w-20' />}
+                    </div>
+                    <div>
+                        <MoreVertical className='size-4' />
                     </div>
                 </div>
             </DropdownMenuTrigger>
@@ -71,9 +79,10 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
                     <p className='text-end text-xs text-neutral-500' >
                         Session expires in:
                     </p>
-                    <p className='text-end text-xs '>
+                    {remainingTime && (<p className='text-end text-xs'>
                         {remainingTime}
-                    </p>
+                    </p>)}
+                    {!remainingTime && <div className='flex justify-end'><Skeleton className='h-4 w-20' /></div>}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -94,3 +103,20 @@ const UserButton: React.FC<UserButtonProps> = (props) => {
 };
 
 export default UserButton;
+
+const UserButtonSkeleton: React.FC = () => {
+    return (
+        <div className='flex gap-2 items-center'>
+            <Skeleton className='size-8 rounded-full' />
+            <div className='hidden sm:block space-y-1'>
+                <Skeleton className='h-4 w-20' />
+                <Skeleton className='h-3 w-20' />
+            </div>
+            <div>
+                <Skeleton className='size-4' />
+            </div>
+        </div>
+    );
+};
+
+export { UserButtonSkeleton };

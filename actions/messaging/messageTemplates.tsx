@@ -7,14 +7,18 @@ import { Study } from "@/utils/server/types/studyInfos";
 
 export const uploadMessageTemplate = async (template: any): Promise<Study> => {
     const session = await auth();
+<<<<<<< HEAD
     if (!session || !session.accessToken) throw new Error('unauthenticated');
+=======
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
+>>>>>>> e7b79e68dbf987e8fc33e9a27b546da199398b25
 
     const url = getCASEManagementAPIURL(`/v1/messaging/email-templates`);
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify({ template: template }),
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
             'Content-Type': 'application/json'
         },
         next: { revalidate: 0 }
@@ -31,14 +35,14 @@ export const deleteMessageTemplate = async (
     studyKey: string,
 ) => {
     const session = await auth();
-    if (!session || !session.accessToken) throw new Error('unauthenticated');
+    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
 
     const url = getCASEManagementAPIURL(`/v1/messaging/email-templates/delete`);
     const r = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify({ messageType, studyKey }),
         headers: {
-            'Authorization': `Bearer ${session?.accessToken}`,
+            'Authorization': `Bearer ${session?.CASEaccessToken}`,
         },
         next: { revalidate: 0 }
     });

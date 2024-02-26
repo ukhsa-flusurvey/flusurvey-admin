@@ -1,0 +1,166 @@
+import { updatePermissionLimiterForManagementUser } from '@/actions/user-management/permissions';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { permissionInfos } from './AddPermissionDialog';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import LoadingButton from '@/components/LoadingButton';
+import { Badge } from '@/components/ui/badge';
+
+
+interface UpdatePermissionLimiterDialogProps {
+    userID: string;
+    permission: any;
+    children: React.ReactNode;
+}
+
+const formSchema = z.object({
+    limiter: z.string()
+})
+
+const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps> = (props) => {
+    const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
+
+    const [isPending, startTransition] = useTransition();
+
+    const [error, setError] = React.useState<string | undefined>(undefined)
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            limiter: props.permission.limiter
+        },
+    })
+
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        setError(undefined)
+        startTransition(async () => {
+            const resp = await updatePermissionLimiterForManagementUser(
+                props.userID,
+                props.permission.id,
+                values.limiter
+            )
+            if (resp.error) {
+                setError(resp.error)
+                return
+            }
+
+            toast.success('Permission limiter updated')
+
+            if (dialogCloseRef.current) {
+                dialogCloseRef.current.click()
+            }
+        })
+    }
+
+
+    const limiterFormField = () => {
+        let hint = '';
+        const resourceType = props.permission.resourceType;
+        if (resourceType === 'study') {
+            hint = permissionInfos.study.resources["*"].actions[props.permission.action].limiterHint;
+        } else {
+            hint = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].limiterHint;
+        }
+        return <FormField
+            control={form.control}
+            name="limiter"
+            render={({ field }) => {
+                return <FormItem>
+                    <FormLabel>Limiter</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder='Resource and action specific limiter'
+
+                            {...field}
+                        />
+                    </FormControl>
+                    <FormDescription>
+                        {hint}
+                    </FormDescription>
+                    <FormMessage />
+
+                </FormItem>
+            }}
+        />
+    }
+
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                {props.children}
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        Change Permission Limiter
+                    </DialogTitle>
+                </DialogHeader>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}
+                        className='space-y-6'
+                    >
+                        <div>
+                            <Badge
+                                variant={'outline'}
+                            >
+                                {props.permission.resourceType}
+                            </Badge>
+                            <p className='font-bold px-3 mt-1'>{props.permission.resourceKey}</p>
+                        </div>
+
+                        <div>
+                            <p className='text-sm'>Action:</p>
+                            <p className='font-bold'>
+                                {props.permission.action}
+                            </p>
+                        </div>
+
+                        {limiterFormField()}
+
+                        {error && <p
+                            role='alert'
+                            className='text-red-600 text-sm font-bold'
+                        >
+                            {error}
+                        </p>}
+
+
+                        <DialogFooter>
+                            <DialogClose
+                                // className='hidden'
+                                ref={dialogCloseRef}
+                                asChild
+                            >
+                                <Button
+                                    variant={'outline'}
+                                    type='button'
+                                >
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+
+                            <LoadingButton
+                                isLoading={isPending}
+                                type='submit'
+
+                            >
+                                Save
+                            </LoadingButton>
+                        </DialogFooter>
+                    </form>
+
+                </Form>
+
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+export default UpdatePermissionLimiterDialog;

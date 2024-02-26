@@ -1,9 +1,8 @@
 import React, { Suspense } from 'react';
 import { auth } from '@/auth';
-import UserButton from '../UserButton';
+import UserButton, { UserButtonSkeleton } from '../UserButton';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { BeatLoader } from 'react-spinners';
 
 
 interface NavbarAuthProps {
@@ -38,7 +37,9 @@ const NavbarAuthContent = async () => {
 
 const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
     return (
-        <Suspense fallback={<div><BeatLoader color='secondary' size='md' /></div>}>
+        <Suspense fallback={<div>
+            <UserButtonSkeleton />
+        </div>}>
             <NavbarAuthContent />
         </Suspense>
     )

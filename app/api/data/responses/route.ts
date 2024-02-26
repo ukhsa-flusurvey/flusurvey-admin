@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 
 export async function GET(request: NextRequest) {
     const session = await auth();
-    if (!session || !session.accessToken) {
+    if (!session || !session.CASEaccessToken) {
         throw new Error("unauthenticated");
     }
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     const r = await fetch(url.toString(), {
         method: 'GET',
-        headers: { ...getTokenHeader(session.accessToken) },
+        headers: { ...getTokenHeader(session.CASEaccessToken) },
         next: { revalidate: 30 }
     });
     if (r.status !== 200) {

@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await auth();
-    if (!session || !session.accessToken) {
+    if (!session || !session.CASEaccessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(
             JSON.stringify({ error: 'Unauthorized' }), {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
     })
 
     const apiResponse = await fetch(url.toString(), {
-        headers: { ...getTokenHeader(session.accessToken) },
+        headers: { ...getTokenHeader(session.CASEaccessToken) },
         next: {
             revalidate: 0,
         }
@@ -31,14 +31,14 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
         status: apiResponse.status,
         headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
     });
-
     return resp;
 
 }
 
+
 export async function POST(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await auth();
-    if (!session || !session.accessToken) {
+    if (!session || !session.CASEaccessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
     const body = await request.json();
 
     const apiResponse = await fetch(url.toString(), {
-        headers: { ...getTokenHeader(session.accessToken) },
+        headers: { ...getTokenHeader(session.CASEaccessToken) },
         method: 'POST',
         body: JSON.stringify(body),
         next: {
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest, { params: { segments } }: { par
 
 export async function DELETE(request: NextRequest, { params: { segments } }: { params: { segments: string[] } }) {
     const session = await auth();
-    if (!session || !session.accessToken) {
+    if (!session || !session.CASEaccessToken) {
         console.error(`Unauthorized access to case-api: ${request.nextUrl.toString()}`)
         return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
@@ -78,7 +78,7 @@ export async function DELETE(request: NextRequest, { params: { segments } }: { p
 
     const url = getCASEManagementAPIURL(segments.join('/'))
     const apiResponse = await fetch(url.toString(), {
-        headers: { ...getTokenHeader(session.accessToken) },
+        headers: { ...getTokenHeader(session.CASEaccessToken) },
         method: 'DELETE',
     });
 
