@@ -43,12 +43,9 @@ export default auth((req) => {
         return Response.redirect(redirectUrl);
     }
 
-<<<<<<< HEAD
-=======
     if (isAdminRoute && !isAdmin) {
         return Response.redirect(new URL('/auth/admin-account-required', nextUrl));
     }
->>>>>>> e7b79e68dbf987e8fc33e9a27b546da199398b25
 })
 
 
