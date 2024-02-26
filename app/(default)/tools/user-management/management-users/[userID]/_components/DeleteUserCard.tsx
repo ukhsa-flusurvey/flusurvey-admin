@@ -1,9 +1,12 @@
 'use client'
 
+import { deleteManagementUser } from '@/actions/user-management/management-users';
 import LoadingButton from '@/components/LoadingButton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import React from 'react';
+import { toast } from 'sonner';
 
 interface DeleteUserCardProps {
     userId: string;
@@ -16,7 +19,13 @@ const DeleteUserCard: React.FC<DeleteUserCardProps> = (props) => {
         if (!confirm('Are you sure you want to delete this user?')) return;
 
         startTransition(async () => {
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            const resp = await deleteManagementUser(props.userId);
+            if (resp.error) {
+                toast.error(resp.error);
+                return;
+            }
+            toast.success('User deleted');
+            redirect('/tools/user-management/management-users');
         });
     }
 
