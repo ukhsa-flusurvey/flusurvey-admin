@@ -51,7 +51,7 @@ export const permissionInfos: PermissionInfos = {
             "*": {
                 actions: {
                     "upload_survey": {
-                        limiterHint: 'Comma separated list of survey keys'
+                        limiterHint: 'To specify which surveys the user can upload, use the format [{"surveyKey": "<sk1>"}]'
                     }
                 }
             }
