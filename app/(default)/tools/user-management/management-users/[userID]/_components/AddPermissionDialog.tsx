@@ -65,7 +65,17 @@ const formSchema = z.object({
     resourceType: z.enum(["study", "messaging"]),
     resourceId: z.string().min(1).trim(),
     action: z.string().min(1),
-    limiter: z.string()
+    limiter: z.string().refine((value) => {
+        if (value === "") {
+            return true
+        }
+        try {
+            JSON.parse(value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    })
 })
 
 interface AddPermissionDialogProps {
@@ -99,7 +109,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                 values.resourceType,
                 values.resourceId,
                 values.action,
-                values.limiter
+                values.limiter === "" ? undefined : JSON.parse(values.limiter),
             )
             if (resp.error) {
                 setError(resp.error)
