@@ -2,6 +2,11 @@ import SystemMessagesSidebar from "./_components/SystemMessagesSidebar";
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+    title: "System Email Templates",
+    description: "Configure email templates for system messages, like signup, password reset, etc.",
+}
+
 export default function Layout({
     children,
 }: {

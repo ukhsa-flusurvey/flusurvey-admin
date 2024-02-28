@@ -1,3 +1,8 @@
+export const metadata = {
+    title: "Global Email Templates",
+    description: "Configure email templates for global messages, like newsletters, etc.",
+}
+
 export default function Page() {
 
     return (

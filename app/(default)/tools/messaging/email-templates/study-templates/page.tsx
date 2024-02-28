@@ -1,3 +1,8 @@
+export const metadata = {
+    title: "Study Email Templates",
+    description: "Configure email templates for study messages, like invitations, reminders, etc.",
+}
+
 export default function Page() {
 
     return (
