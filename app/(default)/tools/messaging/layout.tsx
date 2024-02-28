@@ -11,7 +11,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <div className="h-screen flex flex-col">
             <MessagingAppbarBase />
             <div className="bg-cover bg-center bg-[url(/images/foldedpaper_pattern.png)] grow">
-                <div className="w-full h-full bg-white/20">
+                <div className="w-full h-full">
                     {children}
                 </div>
             </div>

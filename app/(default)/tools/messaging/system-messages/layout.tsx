@@ -1,5 +1,5 @@
 import React from 'react';
-import SystemMessagesSidebar from './SystemMessagesSidebar';
+import SystemMessagesSidebar from '../email-templates/system-templates/_components/SystemMessagesSidebar';
 
 interface LayoutProps {
     children: React.ReactNode;

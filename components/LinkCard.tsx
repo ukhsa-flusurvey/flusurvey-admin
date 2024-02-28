@@ -1,30 +1,34 @@
 import React from 'react'
-import { BsChevronRight } from 'react-icons/bs'
-import { Card } from '@nextui-org/card'
 import Link from 'next/link'
+import { Card } from './ui/card'
+import { ChevronRight } from 'lucide-react'
 
 
 
 const LinkCard = (props: { href: string, title: string, description: string, icon: React.ReactNode }) => {
-    return (<Card
-        isPressable
-        as={Link}
-        href={props.href}
-        className="bg-white hover:bg-content2"
-    >
-        <div className="p-unit-md flex items-center">
-            <div className="me-unit-md text-default-400 text-3xl">
-                {props.icon}
-            </div>
-            <div className="grow">
-                <h3 className="font-bold text-large">{props.title}</h3>
-                <p className="text-default-600 text-small">{props.description}</p>
-            </div>
-            <div >
-                <BsChevronRight />
-            </div>
-        </div>
-    </Card>)
+    return (
+        <Link
+            href={props.href}
+            prefetch={false}
+        >
+            <Card
+                className="bg-white hover:bg-slate-50 cursor-pointer transition-colors duration-200 ease-in-out"
+
+            >
+                <div className="p-3 flex items-center gap-3">
+                    <div className="text-default-400">
+                        {props.icon}
+                    </div>
+                    <div className="grow">
+                        <h3 className="font-semibold text-lg">{props.title}</h3>
+                        <p className="text-neutral-600 text-xs">{props.description}</p>
+                    </div>
+                    <div >
+                        <ChevronRight className="text-neutral-400 size-5" />
+                    </div>
+                </div>
+            </Card>
+        </Link>)
 }
 
 export default LinkCard;
