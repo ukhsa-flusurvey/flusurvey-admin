@@ -7,6 +7,7 @@ import React, { useTransition } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { toast } from 'sonner';
 import UpdatePermissionLimiterDialog from './UpdatePermissionLimiterDialog';
+import { getIfHideLimiter } from './AddPermissionDialog';
 
 interface PermissionActionsProps {
     userId: string;
@@ -29,10 +30,12 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
         }
     }
 
+    const hideLimiterUpdater = getIfHideLimiter(props.permission.resourceType, props.permission.resourceKey, props.permission.action)
+
     return (
         <div className='gap-2 flex justify-end items-center'>
             {!isPending && <>
-                <UpdatePermissionLimiterDialog
+                {!hideLimiterUpdater && <UpdatePermissionLimiterDialog
                     userID={props.userId}
                     permission={props.permission}
                 >
@@ -43,7 +46,7 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
                     >
                         <Pencil className='size-4' />
                     </Button>
-                </UpdatePermissionLimiterDialog>
+                </UpdatePermissionLimiterDialog>}
                 <Button
                     variant={'ghost'}
                     size={'icon'}

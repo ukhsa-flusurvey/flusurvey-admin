@@ -21,7 +21,8 @@ import { toast } from 'sonner';
 interface ResourcePermission {
     actions: {
         [key: string]: {
-            limiterHint: string;
+            hideLimiter?: boolean;
+            limiterHint?: string;
         };
     };
 };
@@ -37,10 +38,17 @@ interface PermissionInfos {
 export const permissionInfos: PermissionInfos = {
     "messaging": {
         resources: {
-            "email-templates": {
+            "global-email-templates": {
                 actions: {
-                    "edit": {
-                        limiterHint: 'To specify which email templates the user can read, use the format [{"messageType": "<mtyp>", "studyKey": "<optional>"}]'
+                    "*": {
+                        hideLimiter: true,
+                    }
+                }
+            },
+            "study-email-templates": {
+                actions: {
+                    "*": {
+                        hideLimiter: true,
                     }
                 }
             }
@@ -58,6 +66,11 @@ export const permissionInfos: PermissionInfos = {
         }
     }
 }
+
+export const getIfHideLimiter = (resourceType: string, resourceId: string, action: string) => {
+    return permissionInfos[resourceType].resources[resourceId].actions[action].hideLimiter;
+}
+
 
 
 
@@ -128,7 +141,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     const resourceIdFormField = () => {
         if (resourceIdList === undefined) {
             return (<div>
-                <p className='text-sm mb-1.5'>Resource ID</p>
+                <p className='text-sm mb-1.5'>Resource Key</p>
                 <p className='text-sm px-3 py-2 text-neutral-400 border rounded-md -'>
                     Select a resource type first
                 </p>
@@ -141,7 +154,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                 name="resourceId"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Resource Type</FormLabel>
+                        <FormLabel>Resource Key</FormLabel>
                         <FormControl>
                             <Input placeholder='Study key'
                                 {...field}
@@ -240,7 +253,9 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
         )
     }
 
+
     const limiterFormField = () => {
+
         if (form.getValues('action') === "") {
             return (<div>
                 <p className='text-sm mb-1.5'>Limiter</p>
@@ -251,6 +266,11 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
         }
 
         const hint = selectedResourcePermissionInfo?.actions[form.getValues('action')].limiterHint;
+        const hideLimiter = getIfHideLimiter(form.getValues('resourceType'), form.getValues('resourceId'), form.getValues('action'));
+
+        if (hideLimiter) {
+            return null
+        }
 
         return <FormField
             control={form.control}

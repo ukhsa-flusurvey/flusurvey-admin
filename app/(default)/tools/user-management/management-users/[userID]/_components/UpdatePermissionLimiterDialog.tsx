@@ -71,11 +71,14 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
 
     const limiterFormField = () => {
         let hint = '';
+        let canEdit = true;
         const resourceType = props.permission.resourceType;
         if (resourceType === 'study') {
-            hint = permissionInfos.study.resources["*"].actions[props.permission.action].limiterHint;
+            hint = permissionInfos.study.resources["*"].actions[props.permission.action].limiterHint || '';
+            canEdit = permissionInfos.study.resources["*"].actions[props.permission.action].hideLimiter !== true;
         } else {
-            hint = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].limiterHint;
+            hint = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].limiterHint || '';
+            canEdit = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].hideLimiter !== true;
         }
         return <FormField
             control={form.control}
@@ -84,7 +87,9 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
                 return <FormItem>
                     <FormLabel>Limiter</FormLabel>
                     <FormControl>
-                        <Textarea placeholder='Resource and action specific limiter'
+                        <Textarea
+                            disabled={!canEdit}
+                            placeholder='Resource and action specific limiter'
                             rows={5}
                             {...field}
                         />
