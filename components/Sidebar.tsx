@@ -1,18 +1,45 @@
-import { Button } from '@nextui-org/button';
 import clsx from 'clsx';
 import React from 'react';
+import { Button } from './ui/button';
+import Link from 'next/link';
+
+
+interface SidebarLinkItemProps {
+    children?: React.ReactNode;
+    className?: string;
+    tooltip?: string;
+    href: string;
+    isActive?: boolean;
+    isDisabled?: boolean;
+}
+
+export const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
+    href,
+    ...props
+}) => {
+    return (
+        <SidebarItem
+            {...props}
+        >
+            <Link
+                href={href}
+                prefetch={false}
+            >
+                {props.children}
+            </Link>
+        </SidebarItem>
+    );
+}
+
 
 interface SidebarItemProps {
     children?: React.ReactNode;
     className?: string;
     tooltip?: string;
-    as?: any;
-    href?: string;
-    onPress?: () => void;
+    onClick?: () => void;
     isActive?: boolean;
     isDisabled?: boolean;
 }
-
 
 
 export const SidebarItem: React.FC<SidebarItemProps> = (props) => {
@@ -23,14 +50,14 @@ export const SidebarItem: React.FC<SidebarItemProps> = (props) => {
 
         )}>
             <div className={clsx(
-                'w-full h-full flex items-center justify-center  p-unit-1',
+                'w-full h-full flex items-center justify-center  p-1',
                 {
-                    'bg-default-200': props.isActive,
+                    'bg-slate-200': props.isActive,
                 }
             )}
 
             >
-                <div className={clsx('absolute bg-primary h-full w-[5px] left-0 top-0',
+                <div className={clsx('absolute bg-cyan-800 h-full w-[5px] left-0 top-0',
                     {
                         'hidden': !props.isActive,
                     }
@@ -38,24 +65,24 @@ export const SidebarItem: React.FC<SidebarItemProps> = (props) => {
                 <Button
                     type='button'
                     className={clsx(
-                        'w-12 h-12 text-2xl rounded-full hover:rounded-medium transition-all duration-200',
+                        'w-12 h-12 text-2xl rounded-full hover:rounded-md transition-all duration-200',
                         {
-                            'rounded-medium': props.isActive,
+                            'rounded-md': props.isActive,
                         }
                     )}
-                    variant='light'
-                    isIconOnly
-                    as={props.as}
-                    href={props.href}
-                    onPress={props.onPress}
-                    isDisabled={props.isDisabled}
+                    variant='ghost'
+                    size={'icon'}
+                    asChild
+                    onClick={props.onClick}
+                    disabled={props.isDisabled}
                 >
+
                     {props.children}
                 </Button>
             </div>
             {props.tooltip &&
-                <div className={clsx('absolute w-auto p-unit-2 m-unit-2 min-w-max left-14 rounded-small shadow-small text-small font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100',
-                    'bg-content1 z-50 h-10'
+                <div className={clsx('absolute w-auto px-3 py-1 m-2 min-w-max left-14 rounded-sm shadow-sm text-sm font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100',
+                    'bg-slate-100 z-50 h-10 flex items-center'
                 )}>
                     {props.tooltip}
                 </div>
@@ -73,7 +100,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = (props) => {
     return (
         <nav className={clsx(
-            'h-full border-r border-default-300 z-30 bg-content2',
+            'h-full border-r border-black/20 z-30 bg-white',
             props.className
         )}>
             <ul className='flex flex-col h-full items-center z-30'>

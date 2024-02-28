@@ -1,8 +1,15 @@
+import { ArrowLeft } from "lucide-react";
+
 export default function Page() {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/messaging/email-templates/system-templates/page.tsx</h1>
+        <div className="flex items-center p-12 justify-center">
+            <p className="bg-white/80 backdrop-blur-md  p-6 text-2xl rounded-lg flex items-center">
+                <span>
+                    <ArrowLeft className="size-8 me-3" />
+                </span>
+                Select a template from the left to view its content or edit it.
+            </p>
         </div>
     );
 }

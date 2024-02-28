@@ -1,8 +1,24 @@
-export default function Page() {
+import { Suspense } from "react";
+import EmailTemplateConfig, { EmailTemplateConfigSkeleton } from "../../_components/EmailTemplateConfig";
+
+export const dynamic = 'force-dynamic';
+
+interface PageProps {
+    params: {
+        messageType: string;
+    }
+}
+
+export default function Page(props: PageProps) {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/messaging/email-templates/system-templates/[messageType]/page.tsx</h1>
-        </div>
+        <main className="p-6">
+            <Suspense fallback={<EmailTemplateConfigSkeleton />}>
+                <EmailTemplateConfig
+                    messageType={props.params.messageType}
+                    isSystemTemplate={true}
+                />
+            </Suspense>
+        </main>
     );
 }

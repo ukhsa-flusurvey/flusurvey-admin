@@ -35,10 +35,7 @@ export default async function Page(props: PageProps) {
 
     return (
         <div className="flex h-full w-full p-unit-lg">
-            <EmailTemplateConfigurator
-                emailTemplateConfig={currentTemplate}
-                isSystemTemplate={true}
-            />
+
         </div>
     )
 }
