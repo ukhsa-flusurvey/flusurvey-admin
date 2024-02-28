@@ -1,7 +1,8 @@
 import React from 'react';
 import EmailTemplateConfigurator from '../../EmailTemplateConfigurator';
 import { EmailTemplate } from '@/utils/server/types/messaging';
-import { Cog } from 'lucide-react';
+import { AlertTriangle, Cog } from 'lucide-react';
+import ErrorAlert from '@/components/ErrorAlert';
 
 interface EmailTemplateConfigProps {
     messageType?: string;
@@ -13,7 +14,7 @@ interface EmailTemplateConfigProps {
 const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) => {
 
     // simulate loading by 5 seconds
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
 
     if (props.templateId) {
@@ -27,6 +28,19 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
             <p>Error - no id or type</p>
         );
     }
+
+    const error = 'Unauthorized';
+    if (error) {
+        return (
+            <ErrorAlert
+                title="Error while loading template:"
+                error={error}
+                hint="If this is an unexpected, check you connection and try again. Try to refresh the page or log out and log in again. If the problem persists, contact support."
+            />
+        );
+    }
+
+
     let currentTemplate: EmailTemplate | undefined = undefined;
     if (!currentTemplate) {
         currentTemplate = {
