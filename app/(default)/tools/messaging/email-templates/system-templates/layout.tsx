@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import SystemMessagesSidebar from "./_components/SystemMessagesSidebar";
 
 export const dynamic = 'force-dynamic';
@@ -23,6 +24,7 @@ export default function Layout({
 
             <div className="grow overflow-hidden">
                 {children}
+                <Toaster />
             </div>
         </div>
     );
