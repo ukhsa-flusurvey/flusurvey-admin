@@ -81,10 +81,7 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
         );
     }
 
-    console.log(resp)
-
-
-    let currentTemplate: EmailTemplate | undefined = undefined;
+    let currentTemplate: EmailTemplate | undefined = resp.template;
     if (!currentTemplate) {
         currentTemplate = {
             messageType: props.messageType || '',
