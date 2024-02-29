@@ -51,6 +51,13 @@ export const permissionInfos: PermissionInfos = {
                         hideLimiter: true,
                     }
                 }
+            },
+            "scheduled-emails": {
+                actions: {
+                    "*": {
+                        hideLimiter: true,
+                    }
+                }
             }
         }
     },
@@ -58,9 +65,37 @@ export const permissionInfos: PermissionInfos = {
         resources: {
             "*": {
                 actions: {
-                    "upload_survey": {
+                    "*": { hideLimiter: true },
+                    "create-study": { hideLimiter: true },
+                    "manage-study-permissions": { hideLimiter: true },
+                    "read-study-config": { hideLimiter: true },
+                    "update-study-props": { hideLimiter: true },
+                    "update-study-status": { hideLimiter: true },
+                    "delete-study": { hideLimiter: true },
+                    "create-survey": { hideLimiter: true },
+                    "update-survey": {
                         limiterHint: 'To specify which surveys the user can upload, use the format [{"surveyKey": "<sk1>"}]'
-                    }
+                    },
+                    "unpublish-survey": {
+                        limiterHint: 'To specify which surveys the user can unpublish, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "delete-survey-version": {
+                        limiterHint: 'To specify which surveys the user can delete, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "update-study-rules": { hideLimiter: true },
+                    "run-study-action": { hideLimiter: true },
+                    "update-notification-subscriptions": { hideLimiter: true },
+                    "get-responses": {
+                        limiterHint: 'To specify which responses the user can access, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "delete-responses": { hideLimiter: true },
+                    "get-confidential-responses": { hideLimiter: true },
+                    "get-files": { hideLimiter: true },
+                    "get-participant-states": { hideLimiter: true },
+                    "get-reports": {
+                        limiterHint: 'To specify which reports the user can access, use the format [{"reportKey": "<rk1>"}]'
+                    },
+                    "delete-reports": { hideLimiter: true },
                 }
             }
         }
@@ -239,7 +274,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                                 >
                                     <SelectValue placeholder="Select an action" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className='max-h-80'>
                                     {actionList.map((action) => (
                                         <SelectItem key={action} value={action}>{action}</SelectItem>
                                     ))}
