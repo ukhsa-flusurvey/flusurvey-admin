@@ -78,8 +78,6 @@ const getSchedules = async () => {
 const ScheduledEmails: React.FC<ScheduleListProps> = async (props) => {
     const resp = await getSchedules();
 
-    console.log('resp', resp);
-
     let schedules: Array<MessageSchedule> = resp.schedules;
     const error = resp.error;
 

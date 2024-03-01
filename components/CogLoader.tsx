@@ -7,7 +7,7 @@ interface CogLoadersProps {
     label: string;
 }
 
-const CogLoaders: React.FC<CogLoadersProps> = (props) => {
+const CogLoader: React.FC<CogLoadersProps> = (props) => {
     return (
         <div className={cn(
             'animate-pulse px-6 py-3 rounded-md bg-white',
@@ -23,4 +23,4 @@ const CogLoaders: React.FC<CogLoadersProps> = (props) => {
     );
 };
 
-export default CogLoaders;
+export default CogLoader;

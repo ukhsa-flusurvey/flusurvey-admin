@@ -275,7 +275,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     <div className='flex items-center gap-unit-md'>
                         <div className='shrink-0'>
                             <Switch
-                                isSelected={schedule.until !== undefined}
+                                isSelected={schedule.until !== null && schedule.until !== undefined && schedule.until !== 0}
                                 onValueChange={(value) => {
                                     setSchedule((s) => {
                                         const newSchedule = { ...s };
@@ -366,7 +366,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
                 <div className=''>
                     <Switch
-                        isSelected={schedule.template.headerOverrides !== undefined}
+                        isSelected={schedule.template.headerOverrides !== null && schedule.template.headerOverrides !== undefined}
                         onValueChange={(value) => {
                             if (!value && schedule.template.headerOverrides !== undefined && (
                                 schedule.template.headerOverrides.from ||
