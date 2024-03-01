@@ -1,3 +1,8 @@
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
+import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
+
 export const metadata = {
     title: "Global Email Templates",
     description: "Configure email templates for global messages, like newsletters, etc.",
@@ -6,8 +11,30 @@ export const metadata = {
 export default function Page() {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/messaging/email-templates/global-templates/page.tsx</h1>
+        <div className="px-6">
+            <div className="pt-3 flex gap-8">
+                <Breadcrumbs
+                    links={
+                        [
+                            {
+                                title: 'Messaging Tools',
+                                href: '/tools/messaging',
+                            },
+                            {
+                                title: 'Global Email Templates',
+                            },
+                        ]
+                    }
+                />
+            </div>
+            <main className="py-6">
+                <div className="flex">
+                    <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
+                        <GlobalEmailTemplates />
+                    </Suspense>
+                </div>
+            </main>
+
         </div>
     );
 }
