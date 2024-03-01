@@ -20,7 +20,17 @@ interface UpdatePermissionLimiterDialogProps {
 }
 
 const formSchema = z.object({
-    limiter: z.string()
+    limiter: z.string().refine((value) => {
+        if (value === "") {
+            return true
+        }
+        try {
+            JSON.parse(value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    })
 })
 
 const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps> = (props) => {
@@ -33,7 +43,7 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            limiter: props.permission.limiter
+            limiter: JSON.stringify(props.permission.limiter, null, 1)
         },
     })
 
@@ -43,7 +53,7 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
             const resp = await updatePermissionLimiterForManagementUser(
                 props.userID,
                 props.permission.id,
-                values.limiter
+                values.limiter === "" ? undefined : JSON.parse(values.limiter)
             )
             if (resp.error) {
                 setError(resp.error)
@@ -61,11 +71,14 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
 
     const limiterFormField = () => {
         let hint = '';
+        let canEdit = true;
         const resourceType = props.permission.resourceType;
         if (resourceType === 'study') {
-            hint = permissionInfos.study.resources["*"].actions[props.permission.action].limiterHint;
+            hint = permissionInfos.study.resources["*"].actions[props.permission.action].limiterHint || '';
+            canEdit = permissionInfos.study.resources["*"].actions[props.permission.action].hideLimiter !== true;
         } else {
-            hint = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].limiterHint;
+            hint = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].limiterHint || '';
+            canEdit = permissionInfos[resourceType].resources[props.permission.resourceKey].actions[props.permission.action].hideLimiter !== true;
         }
         return <FormField
             control={form.control}
@@ -74,8 +87,10 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
                 return <FormItem>
                     <FormLabel>Limiter</FormLabel>
                     <FormControl>
-                        <Textarea placeholder='Resource and action specific limiter'
-
+                        <Textarea
+                            disabled={!canEdit}
+                            placeholder='Resource and action specific limiter'
+                            rows={5}
                             {...field}
                         />
                     </FormControl>

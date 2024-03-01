@@ -21,7 +21,8 @@ import { toast } from 'sonner';
 interface ResourcePermission {
     actions: {
         [key: string]: {
-            limiterHint: string;
+            hideLimiter?: boolean;
+            limiterHint?: string;
         };
     };
 };
@@ -37,10 +38,24 @@ interface PermissionInfos {
 export const permissionInfos: PermissionInfos = {
     "messaging": {
         resources: {
-            "email-templates": {
+            "global-email-templates": {
                 actions: {
-                    "edit": {
-                        limiterHint: 'To specify which email templates the user can read, use the format [{"messageType": "<mtyp>", "studyKey": "<optional>"}]'
+                    "*": {
+                        hideLimiter: true,
+                    }
+                }
+            },
+            "study-email-templates": {
+                actions: {
+                    "*": {
+                        hideLimiter: true,
+                    }
+                }
+            },
+            "scheduled-emails": {
+                actions: {
+                    "*": {
+                        hideLimiter: true,
                     }
                 }
             }
@@ -50,14 +65,47 @@ export const permissionInfos: PermissionInfos = {
         resources: {
             "*": {
                 actions: {
-                    "upload_survey": {
-                        limiterHint: 'Comma separated list of survey keys'
-                    }
+                    "*": { hideLimiter: true },
+                    "create-study": { hideLimiter: true },
+                    "manage-study-permissions": { hideLimiter: true },
+                    "read-study-config": { hideLimiter: true },
+                    "update-study-props": { hideLimiter: true },
+                    "update-study-status": { hideLimiter: true },
+                    "delete-study": { hideLimiter: true },
+                    "create-survey": { hideLimiter: true },
+                    "update-survey": {
+                        limiterHint: 'To specify which surveys the user can upload, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "unpublish-survey": {
+                        limiterHint: 'To specify which surveys the user can unpublish, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "delete-survey-version": {
+                        limiterHint: 'To specify which surveys the user can delete, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "update-study-rules": { hideLimiter: true },
+                    "run-study-action": { hideLimiter: true },
+                    "update-notification-subscriptions": { hideLimiter: true },
+                    "get-responses": {
+                        limiterHint: 'To specify which responses the user can access, use the format [{"surveyKey": "<sk1>"}]'
+                    },
+                    "delete-responses": { hideLimiter: true },
+                    "get-confidential-responses": { hideLimiter: true },
+                    "get-files": { hideLimiter: true },
+                    "get-participant-states": { hideLimiter: true },
+                    "get-reports": {
+                        limiterHint: 'To specify which reports the user can access, use the format [{"reportKey": "<rk1>"}]'
+                    },
+                    "delete-reports": { hideLimiter: true },
                 }
             }
         }
     }
 }
+
+export const getIfHideLimiter = (resourceType: string, resourceId: string, action: string) => {
+    return permissionInfos[resourceType].resources[resourceId].actions[action].hideLimiter;
+}
+
 
 
 
@@ -65,7 +113,17 @@ const formSchema = z.object({
     resourceType: z.enum(["study", "messaging"]),
     resourceId: z.string().min(1).trim(),
     action: z.string().min(1),
-    limiter: z.string()
+    limiter: z.string().refine((value) => {
+        if (value === "") {
+            return true
+        }
+        try {
+            JSON.parse(value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    })
 })
 
 interface AddPermissionDialogProps {
@@ -99,7 +157,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                 values.resourceType,
                 values.resourceId,
                 values.action,
-                values.limiter
+                values.limiter === "" ? undefined : JSON.parse(values.limiter),
             )
             if (resp.error) {
                 setError(resp.error)
@@ -118,7 +176,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     const resourceIdFormField = () => {
         if (resourceIdList === undefined) {
             return (<div>
-                <p className='text-sm mb-1.5'>Resource ID</p>
+                <p className='text-sm mb-1.5'>Resource Key</p>
                 <p className='text-sm px-3 py-2 text-neutral-400 border rounded-md -'>
                     Select a resource type first
                 </p>
@@ -131,7 +189,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                 name="resourceId"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Resource Type</FormLabel>
+                        <FormLabel>Resource Key</FormLabel>
                         <FormControl>
                             <Input placeholder='Study key'
                                 {...field}
@@ -216,7 +274,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                                 >
                                     <SelectValue placeholder="Select an action" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className='max-h-80'>
                                     {actionList.map((action) => (
                                         <SelectItem key={action} value={action}>{action}</SelectItem>
                                     ))}
@@ -230,7 +288,9 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
         )
     }
 
+
     const limiterFormField = () => {
+
         if (form.getValues('action') === "") {
             return (<div>
                 <p className='text-sm mb-1.5'>Limiter</p>
@@ -241,6 +301,11 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
         }
 
         const hint = selectedResourcePermissionInfo?.actions[form.getValues('action')].limiterHint;
+        const hideLimiter = getIfHideLimiter(form.getValues('resourceType'), form.getValues('resourceId'), form.getValues('action'));
+
+        if (hideLimiter) {
+            return null
+        }
 
         return <FormField
             control={form.control}

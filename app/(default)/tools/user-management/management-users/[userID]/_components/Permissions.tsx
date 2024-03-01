@@ -128,7 +128,7 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                             <TableCell
                                 className='text-xs font-mono'
                             >
-                                {permission.limiter}
+                                {JSON.stringify(permission.limiter, null, 1)}
                             </TableCell>
                             <TableCell>
                                 <PermissionActions

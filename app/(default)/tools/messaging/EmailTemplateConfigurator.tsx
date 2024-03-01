@@ -10,7 +10,11 @@ import { decodeTemplate, encodeTemplate } from './schedules/editor/utils';
 import { BsCheck, BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useRouter } from 'next/navigation';
-import { deleteMessageTemplate, uploadMessageTemplate } from '../../../../actions/messaging/messageTemplates';
+import {
+    deleteEmailTemplate,
+    uploadEmailTemplate,
+} from '../../../../actions/messaging/email-templates';
+import { toast } from 'sonner';
 
 interface EmailTemplateConfiguratorProps {
     emailTemplateConfig?: EmailTemplate;
@@ -94,12 +98,14 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 setSubmitSuccess(false);
                 startTransition(async () => {
                     try {
-                        await uploadMessageTemplate(emailTemplateConfig);
-                        router.refresh();
-                        setSubmitSuccess(true);
-                        if (!props.emailTemplateConfig) {
-                            router.replace('/tools/messaging/custom-messages');
+                        const resp = await uploadEmailTemplate(emailTemplateConfig);
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            setSubmitError(resp.error);
+                            return;
                         }
+                        toast.success('Message template saved');
+                        setSubmitSuccess(true);
                     } catch (error: any) {
                         console.error(error);
                         setSubmitError(error.message);
@@ -125,11 +131,17 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
                                 startTransition(async () => {
                                     try {
-                                        await deleteMessageTemplate(
+                                        const resp = await deleteEmailTemplate(
                                             emailTemplateConfig.messageType,
                                             emailTemplateConfig.studyKey ?? '');
-                                        router.refresh();
-                                        router.replace('/tools/messaging/custom-messages');
+                                        if (resp.error) {
+                                            toast.error(resp.error);
+                                            setSubmitError(resp.error);
+                                            return;
+                                        }
+                                        toast.success('Message template deleted');
+                                        router.back();
+
                                     } catch (error: any) {
                                         console.error(error);
                                         setSubmitError(`Failed to delete schedule: ${error.message}`);

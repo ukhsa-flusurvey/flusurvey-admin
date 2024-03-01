@@ -29,7 +29,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                     key={mode}
                     tooltip='File import/export'
                     isActive={currentMode === 'file'}
-                    onPress={() => {
+                    onClick={() => {
                         setMode(mode);
                     }}
                     isDisabled={isDisabled}
@@ -41,7 +41,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                     key={mode}
                     tooltip='Survey properties'
                     isActive={currentMode === 'props'}
-                    onPress={() => {
+                    onClick={() => {
                         setMode(mode);
                     }}
                     isDisabled={isDisabled}
@@ -53,7 +53,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                     key={mode}
                     tooltip='Survey items'
                     isActive={currentMode === 'items'}
-                    onPress={() => {
+                    onClick={() => {
                         setMode(mode);
                     }}
                     isDisabled={isDisabled}
@@ -65,7 +65,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                     key={mode}
                     tooltip='Preview'
                     isActive={currentMode === 'preview'}
-                    onPress={() => {
+                    onClick={() => {
                         setMode(mode);
                     }}
                     isDisabled={isDisabled}
@@ -77,7 +77,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                     key={mode}
                     tooltip='Publish'
                     isActive={currentMode === 'publish'}
-                    onPress={() => {
+                    onClick={() => {
                         setMode(mode);
                     }}
                     isDisabled={isDisabled}
@@ -99,7 +99,7 @@ const SurveyEditorSidebar: React.FC<SidebarProps> = ({
                 <Divider />
                 <SidebarItem
                     tooltip='Exit Survey Editor'
-                    onPress={() => {
+                    onClick={() => {
                         onExit();
                     }}
                 >

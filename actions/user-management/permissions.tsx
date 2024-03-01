@@ -9,7 +9,7 @@ export const createPermissionForManagementUser = async (
     resourceType: string,
     resourceKey: string,
     action: string,
-    limiter: string
+    limiter?: { [key: string]: string }[]
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
@@ -60,7 +60,7 @@ export const deletePermissionForManagementUser = async (
 export const updatePermissionLimiterForManagementUser = async (
     userID: string,
     permissionID: string,
-    limiter: string
+    limiter?: { [key: string]: string }[]
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
