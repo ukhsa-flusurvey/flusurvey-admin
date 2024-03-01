@@ -107,7 +107,11 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         }
                         toast.success('Message template saved');
                         if (!props.emailTemplateConfig) {
-                            router.push(`/tools/messaging/email-templates/global-templates/${emailTemplateConfig.messageType}`);
+                            if (props.isGlobalTemplate) {
+                                router.replace(`/tools/messaging/email-templates/global-templates/${emailTemplateConfig.messageType}`);
+                            } else if (!props.isSystemTemplate) {
+                                router.replace(`/tools/messaging/email-templates/study-templates/${emailTemplateConfig.studyKey}/${emailTemplateConfig.messageType}`);
+                            }
                         }
                         setSubmitSuccess(true);
                     } catch (error: any) {
@@ -184,9 +188,10 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
                     {(!props.isSystemTemplate && !props.isGlobalTemplate) && (
                         <Input
-                            label='Study key (Optional)'
+                            label='Study key'
                             placeholder='Enter a study key'
                             isReadOnly={props.emailTemplateConfig !== undefined}
+                            isRequired
                             value={emailTemplateConfig.studyKey ?? ''}
                             onValueChange={(value) => {
                                 setEmailTemplateConfig((s) => {
@@ -202,7 +207,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     <Divider />
                     <div className=''>
                         <Switch
-                            isSelected={emailTemplateConfig.headerOverrides !== undefined}
+                            isSelected={emailTemplateConfig.headerOverrides !== null && emailTemplateConfig.headerOverrides !== undefined}
                             onValueChange={(value) => {
                                 if (!value && emailTemplateConfig.headerOverrides !== undefined && (
                                     emailTemplateConfig.headerOverrides.from ||

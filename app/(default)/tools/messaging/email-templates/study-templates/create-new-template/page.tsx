@@ -1,11 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Suspense } from "react";
-import StudyEmailTemplates, { StudyEmailTemplatesSkeleton } from "./_components/StudyEmailTemplates";
-
-export const metadata = {
-    title: "Study Email Templates",
-    description: "Configure email templates for study messages, like invitations, reminders, etc.",
-}
+import EmailTemplateConfigurator from "../../../EmailTemplateConfigurator";
 
 export default function Page() {
 
@@ -21,6 +15,10 @@ export default function Page() {
                             },
                             {
                                 title: 'Study Email Templates',
+                                href: '/tools/messaging/email-templates/study-templates',
+                            },
+                            {
+                                title: 'Create New Template',
                             },
                         ]
                     }
@@ -28,9 +26,11 @@ export default function Page() {
             </div>
             <main className="py-6">
                 <div className="flex">
-                    <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
-                        <StudyEmailTemplates />
-                    </Suspense>
+                    <EmailTemplateConfigurator
+                        emailTemplateConfig={undefined}
+                        isSystemTemplate={false}
+                        isGlobalTemplate={false}
+                    />
                 </div>
             </main>
 

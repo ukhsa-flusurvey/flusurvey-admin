@@ -92,13 +92,11 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
     }
 
     return (
-        <div>
-            <EmailTemplateConfigurator
-                emailTemplateConfig={currentTemplate}
-                isSystemTemplate={props.isSystemTemplate}
-                isGlobalTemplate={props.isGlobalTemplate}
-            />
-        </div>
+        <EmailTemplateConfigurator
+            emailTemplateConfig={currentTemplate}
+            isSystemTemplate={props.isSystemTemplate}
+            isGlobalTemplate={props.isGlobalTemplate}
+        />
     );
 };
 
