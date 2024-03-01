@@ -1,11 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Suspense } from "react";
-import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
-
-export const metadata = {
-    title: "Global Email Templates",
-    description: "Configure email templates for global messages, like newsletters, etc.",
-}
+import ScheduleEditor from "../_components/ScheduleEditor";
 
 export default function Page() {
 
@@ -20,17 +14,19 @@ export default function Page() {
                                 href: '/tools/messaging',
                             },
                             {
-                                title: 'Global Email Templates',
+                                title: 'Scheduled Emails',
+                                href: '/tools/messaging/schedules',
+                            },
+                            {
+                                title: 'Create New Schedule',
                             },
                         ]
                     }
                 />
             </div>
             <main className="py-6">
-                <div className="flex">
-                    <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
-                        <GlobalEmailTemplates />
-                    </Suspense>
+                <div className="flex w-full">
+                    <ScheduleEditor />
                 </div>
             </main>
 

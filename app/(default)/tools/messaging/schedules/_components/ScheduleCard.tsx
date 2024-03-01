@@ -1,38 +1,40 @@
 import { MessageSchedule } from '@/utils/server/types/messaging';
 import { formatDistanceStrict } from 'date-fns';
-import { BsArrowClockwise, BsCalendarDate, BsChevronRight } from 'react-icons/bs';
-import { dateFromTimestamp, formatTimestamp } from './utils';
-import { Card } from '@nextui-org/card';
+import { dateFromTimestamp, formatTimestamp } from '../utils';
 import Link from 'next/link';
-import { Chip } from '@nextui-org/react';
+import { Badge } from '@/components/ui/badge';
+import { CalendarClock, ChevronRight, RefreshCw } from 'lucide-react';
+
 
 const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => {
     return (
-        <Card className="bg-white group  hover:bg-default-100"
-            isPressable
-            as={Link}
-            href={`/tools/messaging/schedules/editor?id=${schedule.id}`}
-        >
-            <div className='p-unit-md flex gap-unit-md items-center'>
+        <li>
+            <Link
+                href={`/tools/messaging/schedules/${schedule.id}`}
+                prefetch={false}
+                className='flex gap-4 items-center px-6 py-4 bg-white hover:bg-gray-100 transition-colors duration-200 ease-in-out cursor-pointer'
+            >
                 <div className='grow'>
-                    <div className="flex items-center gap-unit-lg">
-                        <Chip size='sm'>
+                    <div className="flex items-center gap-6">
+                        <Badge
+                            className='text-xs'
+                        >
                             {schedule.template.messageType}
-                        </Chip>
+                        </Badge>
 
-                        <div className="text-default-600 divide-x-2">
+                        <div className="text-neutral-700 divide-x-2">
                             <span className="pe-2">{schedule.type}</span>
                             {schedule.studyKey && <span className="px-2">{schedule.studyKey}</span>}
                         </div>
                     </div>
 
-                    <h3 className="font-bold group-hover:underline my-unit-1 text-large">
+                    <h3 className="font-bold group-hover:underline my-1 text-lg">
                         {schedule.label}
                     </h3>
                     <div className="flex gap-4">
                         <div className="flex items-center">
-                            <span className="text-default-400 me-1">
-                                <BsCalendarDate className="" />
+                            <span className="text-neutral-400 me-1">
+                                <CalendarClock className="size-5" />
                             </span>
                             <span className="px-1">
                                 {formatTimestamp(schedule.nextTime)}
@@ -40,8 +42,8 @@ const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => 
                         </div>
 
                         <div className="flex items-center">
-                            <span className="text-default-400">
-                                <BsArrowClockwise className="" />
+                            <span className="text-neutral-400">
+                                <RefreshCw className="size-5" />
                             </span>
                             <span className="px-1">
                                 {formatDistanceStrict(
@@ -53,10 +55,10 @@ const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => 
                     </div>
                 </div>
                 <div>
-                    <BsChevronRight className="text-default-400 text-large" />
+                    <ChevronRight className="text-neutral-600 size-6" />
                 </div>
-            </div>
-        </Card>
+            </Link>
+        </li>
     )
 }
 

@@ -6,20 +6,21 @@ import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Switch, Tab, Tabs } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
-import { decodeTemplate, encodeTemplate } from './schedules/editor/utils';
+import { decodeTemplate, encodeTemplate } from '../../schedules/_components/utils';
 import { BsCheck, BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useRouter } from 'next/navigation';
 import {
     deleteEmailTemplate,
     uploadEmailTemplate,
-} from '../../../../actions/messaging/email-templates';
+} from '../../../../../../actions/messaging/email-templates';
 import { toast } from 'sonner';
 
 interface EmailTemplateConfiguratorProps {
     emailTemplateConfig?: EmailTemplate;
     messageType?: string;
     isSystemTemplate: boolean;
+    isGlobalTemplate?: boolean;
 }
 
 const initialEmailTemplate: EmailTemplate = {
@@ -105,6 +106,13 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                             return;
                         }
                         toast.success('Message template saved');
+                        if (!props.emailTemplateConfig) {
+                            if (props.isGlobalTemplate) {
+                                router.replace(`/tools/messaging/email-templates/global-templates/${emailTemplateConfig.messageType}`);
+                            } else if (!props.isSystemTemplate) {
+                                router.replace(`/tools/messaging/email-templates/study-templates/${emailTemplateConfig.studyKey}/${emailTemplateConfig.messageType}`);
+                            }
+                        }
                         setSubmitSuccess(true);
                     } catch (error: any) {
                         console.error(error);
@@ -178,11 +186,12 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         description={!props.isSystemTemplate && 'This message type will be used to identify the message in the system, e.g. "T3_reminder". Cannot be changed later.'}
                     />
 
-                    {!props.isSystemTemplate && (
+                    {(!props.isSystemTemplate && !props.isGlobalTemplate) && (
                         <Input
-                            label='Study key (Optional)'
+                            label='Study key'
                             placeholder='Enter a study key'
                             isReadOnly={props.emailTemplateConfig !== undefined}
+                            isRequired
                             value={emailTemplateConfig.studyKey ?? ''}
                             onValueChange={(value) => {
                                 setEmailTemplateConfig((s) => {
@@ -198,7 +207,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     <Divider />
                     <div className=''>
                         <Switch
-                            isSelected={emailTemplateConfig.headerOverrides !== undefined}
+                            isSelected={emailTemplateConfig.headerOverrides !== null && emailTemplateConfig.headerOverrides !== undefined}
                             onValueChange={(value) => {
                                 if (!value && emailTemplateConfig.headerOverrides !== undefined && (
                                     emailTemplateConfig.headerOverrides.from ||

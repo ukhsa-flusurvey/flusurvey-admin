@@ -12,6 +12,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import clsx from 'clsx';
 import NotImplemented from '@/components/NotImplemented';
 import { addMonths, addWeeks, format } from 'date-fns';
+import { toast } from 'sonner';
 
 
 const dateToInputStr = (date: Date) => {
@@ -98,13 +99,19 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
     return (
         <form
+            className='w-full'
             onSubmit={(event) => {
                 event.preventDefault();
                 setSubmitError('');
                 startTransition(async () => {
                     try {
-                        await saveMessageSchedule(schedule);
-                        router.refresh();
+                        const resp = await saveMessageSchedule(schedule);
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            setSubmitError(resp.error);
+                            return;
+                        }
+                        toast.success('Schedule saved');
                         router.replace('/tools/messaging/schedules');
                     } catch (error: any) {
                         console.error(error);
@@ -268,7 +275,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     <div className='flex items-center gap-unit-md'>
                         <div className='shrink-0'>
                             <Switch
-                                isSelected={schedule.until !== undefined}
+                                isSelected={schedule.until !== null && schedule.until !== undefined && schedule.until !== 0}
                                 onValueChange={(value) => {
                                     setSchedule((s) => {
                                         const newSchedule = { ...s };
@@ -359,7 +366,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
                 <div className=''>
                     <Switch
-                        isSelected={schedule.template.headerOverrides !== undefined}
+                        isSelected={schedule.template.headerOverrides !== null && schedule.template.headerOverrides !== undefined}
                         onValueChange={(value) => {
                             if (!value && schedule.template.headerOverrides !== undefined && (
                                 schedule.template.headerOverrides.from ||

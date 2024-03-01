@@ -1,14 +1,8 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Suspense } from "react";
-import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
+import EmailTemplateConfigurator from "../../_components/EmailTemplateConfigurator";
 
-export const metadata = {
-    title: "Global Email Templates",
-    description: "Configure email templates for global messages, like newsletters, etc.",
-}
 
 export default function Page() {
-
     return (
         <div className="px-6">
             <div className="pt-3 flex gap-8">
@@ -21,6 +15,10 @@ export default function Page() {
                             },
                             {
                                 title: 'Global Email Templates',
+                                href: '/tools/messaging/email-templates/global-templates',
+                            },
+                            {
+                                title: 'Create New Template',
                             },
                         ]
                     }
@@ -28,9 +26,11 @@ export default function Page() {
             </div>
             <main className="py-6">
                 <div className="flex">
-                    <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
-                        <GlobalEmailTemplates />
-                    </Suspense>
+                    <EmailTemplateConfigurator
+                        emailTemplateConfig={undefined}
+                        isSystemTemplate={false}
+                        isGlobalTemplate={true}
+                    />
                 </div>
             </main>
 

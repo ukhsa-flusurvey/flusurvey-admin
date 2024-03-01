@@ -1,7 +1,7 @@
 'use server';
 
 import React from 'react';
-import EmailTemplateConfigurator from '../../EmailTemplateConfigurator';
+import EmailTemplateConfigurator from './EmailTemplateConfigurator';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
 import ErrorAlert from '@/components/ErrorAlert';
@@ -12,6 +12,7 @@ interface EmailTemplateConfigProps {
     messageType?: string;
     studyKey?: string;
     isSystemTemplate: boolean;
+    isGlobalTemplate?: boolean;
 }
 
 const getGlobalMessageTemplate = async (messageType: string) => {
@@ -91,12 +92,11 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
     }
 
     return (
-        <div>
-            <EmailTemplateConfigurator
-                emailTemplateConfig={currentTemplate}
-                isSystemTemplate={props.isSystemTemplate}
-            />
-        </div>
+        <EmailTemplateConfigurator
+            emailTemplateConfig={currentTemplate}
+            isSystemTemplate={props.isSystemTemplate}
+            isGlobalTemplate={props.isGlobalTemplate}
+        />
     );
 };
 
