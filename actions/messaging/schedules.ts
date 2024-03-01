@@ -34,19 +34,20 @@ export const deleteMessageSchedule = async (
     id: string
 ) => {
     const session = await auth();
-    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
-
-    const url = getCASEManagementAPIURL(`/v1/messaging/auto-message/${id}`);
-    const r = await fetch(url.toString(), {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${session?.CASEaccessToken}`,
-        },
-        next: { revalidate: 0 }
-    });
-    if (r.status !== 200) {
-        console.error(await r.json());
-        throw new Error('Failed to delete message schedule');
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, body: { error: 'Unauthorized' } };
     }
-    return r.json();
+
+    const url = `/v1/messaging/scheduled-emails/${id}`;
+    const resp = await fetchCASEManagementAPI(url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        });
+    if (resp.status !== 200) {
+        return { error: `Failed to save template: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/messaging/schedules');
+    return resp.body;
 }
