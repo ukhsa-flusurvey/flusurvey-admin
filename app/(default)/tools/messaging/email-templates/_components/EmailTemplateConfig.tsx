@@ -12,6 +12,7 @@ interface EmailTemplateConfigProps {
     messageType?: string;
     studyKey?: string;
     isSystemTemplate: boolean;
+    isGlobalTemplate?: boolean;
 }
 
 const getGlobalMessageTemplate = async (messageType: string) => {
@@ -95,6 +96,7 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
             <EmailTemplateConfigurator
                 emailTemplateConfig={currentTemplate}
                 isSystemTemplate={props.isSystemTemplate}
+                isGlobalTemplate={props.isGlobalTemplate}
             />
         </div>
     );
