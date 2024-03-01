@@ -1,14 +1,15 @@
 'use server'
+
 import ErrorAlert from '@/components/ErrorAlert';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmailTemplate } from '@/utils/server/types/messaging';
-import { Cog } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import EmailTemplateLinkItem from './EmailTemplateLinkItem';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import CogLoader from '@/components/CogLoader';
 
 
 // GlobalEmailTemplates Wrapper Card
@@ -133,14 +134,9 @@ export default GlobalEmailTemplates;
 export const GlobalEmailTemplatesSkeleton: React.FC<GlobalEmailTemplatesProps> = (props) => {
     return (
         <GlobalEmailTemplatesCard isLoading={true}>
-            <div className='animate-pulse px-6 py-3 rounded-md bg-white'>
-                <p className='text-center'>
-                    Loading global templates...
-                </p>
-                <p className='text-center flex justify-center mt-3'>
-                    <Cog className='size-8 animate-spin' />
-                </p>
-            </div>
+            <CogLoader
+                label='Loading global templates...'
+            />
         </GlobalEmailTemplatesCard>
     );
 }
