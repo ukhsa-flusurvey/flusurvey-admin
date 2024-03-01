@@ -12,6 +12,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import clsx from 'clsx';
 import NotImplemented from '@/components/NotImplemented';
 import { addMonths, addWeeks, format } from 'date-fns';
+import { toast } from 'sonner';
 
 
 const dateToInputStr = (date: Date) => {
@@ -98,13 +99,19 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
     return (
         <form
+            className='w-full'
             onSubmit={(event) => {
                 event.preventDefault();
                 setSubmitError('');
                 startTransition(async () => {
                     try {
-                        await saveMessageSchedule(schedule);
-                        router.refresh();
+                        const resp = await saveMessageSchedule(schedule);
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            setSubmitError(resp.error);
+                            return;
+                        }
+                        toast.success('Schedule saved');
                         router.replace('/tools/messaging/schedules');
                     } catch (error: any) {
                         console.error(error);

@@ -95,7 +95,7 @@ const ScheduledEmails: React.FC<ScheduleListProps> = async (props) => {
     } else {
         content = (
             <ul
-                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden'
+                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden border drop-shadow-sm'
             >
                 {schedules.map((schedule: MessageSchedule) => <ScheduleCard key={schedule.id} schedule={schedule} />)}
             </ul>

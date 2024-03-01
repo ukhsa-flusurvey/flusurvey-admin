@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import EmailTemplateConfigurator from "../../../EmailTemplateConfigurator";
+import EmailTemplateConfigurator from "../../_components/EmailTemplateConfigurator";
 
 export default function Page() {
 

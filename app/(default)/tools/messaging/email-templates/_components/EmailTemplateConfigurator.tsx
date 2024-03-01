@@ -6,14 +6,14 @@ import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Switch, Tab, Tabs } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
-import { decodeTemplate, encodeTemplate } from './schedules/editor/utils';
+import { decodeTemplate, encodeTemplate } from '../../schedules/_components/utils';
 import { BsCheck, BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useRouter } from 'next/navigation';
 import {
     deleteEmailTemplate,
     uploadEmailTemplate,
-} from '../../../../actions/messaging/email-templates';
+} from '../../../../../../actions/messaging/email-templates';
 import { toast } from 'sonner';
 
 interface EmailTemplateConfiguratorProps {

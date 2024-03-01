@@ -1,7 +1,7 @@
 'use server';
 
 import React from 'react';
-import EmailTemplateConfigurator from '../../EmailTemplateConfigurator';
+import EmailTemplateConfigurator from './EmailTemplateConfigurator';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
 import ErrorAlert from '@/components/ErrorAlert';

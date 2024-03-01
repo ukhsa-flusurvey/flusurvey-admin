@@ -12,7 +12,7 @@ const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => 
             <Link
                 href={`/tools/messaging/schedules/${schedule.id}`}
                 prefetch={false}
-                className='flex gap-4 items-center px-6 py-4 bg-slate-100 hover:bg-gray-100 transition-colors duration-200 ease-in-out cursor-pointer'
+                className='flex gap-4 items-center px-6 py-4 bg-white hover:bg-gray-100 transition-colors duration-200 ease-in-out cursor-pointer'
             >
                 <div className='grow'>
                     <div className="flex items-center gap-6">
