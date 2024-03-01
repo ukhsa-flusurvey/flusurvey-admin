@@ -65,6 +65,8 @@ const systemMessageTypes = [
     'account-id-changed',
     'account-deleted',
     'invitation',
+    'account-inactivity',
+    'account-deleted-after-inactivity'
 ]
 
 const getGlobalMessageTemplates = async () => {
@@ -105,17 +107,19 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
                 No global templates have been created yet.
             </p>
         );
-    } else (
+    } else {
+        const relevantTemplates = globalTemplates.filter((template: any) => !systemMessageTypes.includes(template.messageType));
         cardContent = (
             <ul
-                className='divide-y-1 divide-black/10'
+                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden'
             >
-                {globalTemplates.map((template: any) => (
+                {relevantTemplates.map((template: any) => (
                     <EmailTemplateLinkItem key={template.messageType} template={template} />
                 ))}
             </ul>
         )
-    )
+    }
+
 
     return (
         <GlobalEmailTemplatesCard isLoading={false}>

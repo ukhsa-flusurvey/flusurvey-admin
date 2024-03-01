@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
 

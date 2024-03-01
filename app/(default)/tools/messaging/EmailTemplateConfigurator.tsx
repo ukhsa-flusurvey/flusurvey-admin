@@ -20,6 +20,7 @@ interface EmailTemplateConfiguratorProps {
     emailTemplateConfig?: EmailTemplate;
     messageType?: string;
     isSystemTemplate: boolean;
+    isGlobalTemplate?: boolean;
 }
 
 const initialEmailTemplate: EmailTemplate = {
@@ -105,6 +106,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                             return;
                         }
                         toast.success('Message template saved');
+                        if (!props.emailTemplateConfig) {
+                            router.push(`/tools/messaging/email-templates/global-templates/${emailTemplateConfig.messageType}`);
+                        }
                         setSubmitSuccess(true);
                     } catch (error: any) {
                         console.error(error);
@@ -178,7 +182,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         description={!props.isSystemTemplate && 'This message type will be used to identify the message in the system, e.g. "T3_reminder". Cannot be changed later.'}
                     />
 
-                    {!props.isSystemTemplate && (
+                    {(!props.isSystemTemplate && !props.isGlobalTemplate) && (
                         <Input
                             label='Study key (Optional)'
                             placeholder='Enter a study key'
