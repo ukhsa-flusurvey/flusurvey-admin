@@ -4,9 +4,6 @@ import { MessageSchedule } from '@/utils/server/types/messaging';
 import React from 'react';
 
 import ScheduleCard from './ScheduleCard';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import CogLoader from '@/components/CogLoader';
 import ErrorAlert from '@/components/ErrorAlert';
 import { auth } from '@/auth';

@@ -9,12 +9,14 @@ interface ItemListCardWrapperWithAddButtonProps {
     description: string;
     addHref: string;
     addLabel: string;
+    className?: string;
 }
 
 export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithAddButtonProps> = (props) => {
     return (
         <Card
             variant={"opaque"}
+            className={props.className}
         >
             <CardHeader>
                 <CardTitle>

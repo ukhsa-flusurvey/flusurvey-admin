@@ -1,4 +1,4 @@
-import StudyConfigAppbarBase from "./StudyConfigAppbarBase";
+import StudyConfigAppbarBase from "./_components/StudyConfigAppbarBase";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
     return (
