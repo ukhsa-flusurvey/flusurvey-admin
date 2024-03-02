@@ -11,6 +11,7 @@ import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import CogLoader from '@/components/CogLoader';
 import { LinkMenu } from '@/components/LinkMenu';
+import { ItemListCardWrapperWithAddButton } from '@/components/ItemListCardWrapperWithAddButton';
 
 
 // GlobalEmailTemplates Wrapper Card
@@ -22,34 +23,15 @@ interface GlobalEmailTemplatesCardProps {
 const GlobalEmailTemplatesCard: React.FC<GlobalEmailTemplatesCardProps> = (props) => {
     return (
         <div className="flex">
-            <Card
-                variant={"opaque"}
-                className="p-1"
+            <ItemListCardWrapperWithAddButton
+                isLoading={props.isLoading}
+                title="Global Email Templates"
+                description="Configure email templates for global messages, like newsletters, etc."
+                addHref="/tools/messaging/email-templates/global-templates/create-new-template"
+                addLabel="Add New Template"
             >
-                <CardHeader>
-
-                    <CardTitle>
-                        Global Email Templates
-                    </CardTitle>
-                    <CardDescription>
-                        Configure email templates for global messages, like newsletters, etc.
-                    </CardDescription>
-                </CardHeader>
-                <div className='px-6'>
-                    {props.children}
-                </div>
-                <div className='p-6'>
-                    <Button
-                        disabled={props.isLoading}
-                        asChild={!props.isLoading}
-                    >
-                        <Link
-                            href="/tools/messaging/email-templates/global-templates/create-new-template">
-                            Add New Template
-                        </Link>
-                    </Button>
-                </div>
-            </Card>
+                {props.children}
+            </ItemListCardWrapperWithAddButton>
         </div>
     );
 }

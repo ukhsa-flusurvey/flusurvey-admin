@@ -12,6 +12,7 @@ import ErrorAlert from '@/components/ErrorAlert';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { LinkMenu } from '@/components/LinkMenu';
+import { ItemListCardWrapperWithAddButton } from '@/components/ItemListCardWrapperWithAddButton';
 
 const ScheduledEmailsCardWrapper = ({
     isLoading,
@@ -22,33 +23,15 @@ const ScheduledEmailsCardWrapper = ({
 }) => {
     return (
         <div className="flex">
-            <Card
-                variant={"opaque"}
-                className="p-1"
+            <ItemListCardWrapperWithAddButton
+                isLoading={isLoading}
+                title="Scheduled Emails"
+                description="Configure email schedules to send messages automatically on a recurring basis."
+                addHref="/tools/messaging/schedules/create-new-schedule"
+                addLabel="Add New Schedule"
             >
-                <CardHeader>
-                    <CardTitle>
-                        Scheduled Emails
-                    </CardTitle>
-                    <CardDescription>
-                        Configure email schedules to send messages automatically on a recurring basis.
-                    </CardDescription>
-                </CardHeader>
-                <div className='px-6'>
-                    {children}
-                </div>
-                <div className='p-6'>
-                    <Button
-                        disabled={isLoading}
-                        asChild={!isLoading}
-                    >
-                        <Link
-                            href="/tools/messaging/schedules/create-new-schedule">
-                            Add New Schedule
-                        </Link>
-                    </Button>
-                </div>
-            </Card>
+                {children}
+            </ItemListCardWrapperWithAddButton>
         </div>
     )
 }

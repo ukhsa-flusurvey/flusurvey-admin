@@ -1,15 +1,14 @@
 'use server'
+
 import ErrorAlert from '@/components/ErrorAlert';
-import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
-import Link from 'next/link';
 import React from 'react';
 import EmailTemplateLinkItem from './EmailTemplateLinkItem';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { LinkMenu } from '@/components/LinkMenu';
+import { ItemListCardWrapperWithAddButton } from '@/components/ItemListCardWrapperWithAddButton';
 
 
 // StudyEmailTemplates Wrapper Card
@@ -21,34 +20,15 @@ interface StudyEmailTemplatesCardProps {
 const StudyEmailTemplatesCard: React.FC<StudyEmailTemplatesCardProps> = (props) => {
     return (
         <div className="flex">
-            <Card
-                variant={"opaque"}
-                className="p-1"
+            <ItemListCardWrapperWithAddButton
+                isLoading={props.isLoading}
+                title="Study Email Templates"
+                description="Configure email templates for study-specific messages."
+                addHref="/tools/messaging/email-templates/study-templates/create-new-template"
+                addLabel="Add New Template"
             >
-                <CardHeader>
-
-                    <CardTitle>
-                        Study Email Templates
-                    </CardTitle>
-                    <CardDescription>
-                        Configure email templates for study-specific messages.
-                    </CardDescription>
-                </CardHeader>
-                <div className='px-6'>
-                    {props.children}
-                </div>
-                <div className='p-6'>
-                    <Button
-                        disabled={props.isLoading}
-                        asChild={!props.isLoading}
-                    >
-                        <Link
-                            href="/tools/messaging/email-templates/study-templates/create-new-template">
-                            Add New Template
-                        </Link>
-                    </Button>
-                </div>
-            </Card>
+                {props.children}
+            </ItemListCardWrapperWithAddButton>
         </div>
     );
 }
