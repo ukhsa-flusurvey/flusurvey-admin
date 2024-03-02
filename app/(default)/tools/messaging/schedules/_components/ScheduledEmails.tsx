@@ -11,6 +11,7 @@ import CogLoader from '@/components/CogLoader';
 import ErrorAlert from '@/components/ErrorAlert';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import { LinkMenu } from '@/components/LinkMenu';
 
 const ScheduledEmailsCardWrapper = ({
     isLoading,
@@ -92,11 +93,9 @@ const ScheduledEmails: React.FC<ScheduleListProps> = async (props) => {
         content = <p className='py-6 text-center text-neutral-600'>No schedules found.</p>
     } else {
         content = (
-            <ul
-                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden border drop-shadow-sm'
-            >
+            <LinkMenu>
                 {schedules.map((schedule: MessageSchedule) => <ScheduleCard key={schedule.id} schedule={schedule} />)}
-            </ul>
+            </LinkMenu>
         )
     }
 

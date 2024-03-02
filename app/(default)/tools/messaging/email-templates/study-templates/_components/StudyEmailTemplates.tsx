@@ -9,6 +9,7 @@ import React from 'react';
 import EmailTemplateLinkItem from './EmailTemplateLinkItem';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import { LinkMenu } from '@/components/LinkMenu';
 
 
 // StudyEmailTemplates Wrapper Card
@@ -96,13 +97,11 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
         );
     } else {
         cardContent = (
-            <ul
-                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden'
-            >
+            <LinkMenu>
                 {studyTemplates.map((template: any) => (
                     <EmailTemplateLinkItem key={template.messageType} template={template} />
                 ))}
-            </ul>
+            </LinkMenu>
         )
     }
 

@@ -10,6 +10,7 @@ import EmailTemplateLinkItem from './EmailTemplateLinkItem';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import CogLoader from '@/components/CogLoader';
+import { LinkMenu } from '@/components/LinkMenu';
 
 
 // GlobalEmailTemplates Wrapper Card
@@ -111,13 +112,11 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
     } else {
         const relevantTemplates = globalTemplates.filter((template: any) => !systemMessageTypes.includes(template.messageType));
         cardContent = (
-            <ul
-                className='divide-y-1 divide-black/10 rounded-lg overflow-hidden'
-            >
+            <LinkMenu>
                 {relevantTemplates.map((template: any) => (
                     <EmailTemplateLinkItem key={template.messageType} template={template} />
                 ))}
-            </ul>
+            </LinkMenu>
         )
     }
 
