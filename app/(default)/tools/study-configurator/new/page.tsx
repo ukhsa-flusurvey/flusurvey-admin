@@ -1,7 +1,8 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
-import NewStudyForm from "./NewStudyForm";
 import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
+import CreateStudyForm from "./CreateStudyForm";
 
+
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
     return (
@@ -18,8 +19,8 @@ export default async function Page() {
                 ]
             }
         >
-            <div className="">
-                <NewStudyForm />
+            <div className="flex">
+                <CreateStudyForm />
             </div>
         </SimpleBreadcrumbsPageLayout>
     )

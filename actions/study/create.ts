@@ -1,26 +1,30 @@
 'use server'
 
+import { newStudySchema } from "@/app/(default)/tools/study-configurator/new/CreateStudyForm";
 import { auth } from "@/auth";
-import { getCASEManagementAPIURL } from "@/utils/server/api";
-import { Study } from "@/utils/server/types/studyInfos";
+import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
+import { revalidatePath } from "next/cache";
+import { z } from "zod"
 
 
-export const createStudy = async (study: Study): Promise<Study> => {
+export const createStudy = async (newStudy: z.infer<typeof newStudySchema>) => {
     const session = await auth();
-    if (!session || !session.CASEaccessToken) throw new Error('unauthenticated');
-    const url = getCASEManagementAPIURL('/v1/studies');
-    const r = await fetch(url.toString(), {
-        method: 'POST',
-        body: JSON.stringify({ study }),
-        headers: {
-            'Authorization': `Bearer ${session?.CASEaccessToken}`,
-            'Content-Type': 'application/json'
-        },
-        next: { revalidate: 0 }
-    });
-    if (r.status !== 200) {
-        console.log(await r.json());
-        throw new Error('Failed to create study');
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, body: { error: 'Unauthorized' } };
     }
-    return r.json();
+
+    let url = `/v1/studies`;
+
+    const resp = await fetchCASEManagementAPI(url,
+        session.CASEaccessToken,
+        {
+            method: 'POST',
+            body: JSON.stringify(newStudy),
+            revalidate: 0,
+        });
+    if (resp.status > 201) {
+        return { error: `Failed to create study: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/study-configurator');
+    return resp.body;
 }
