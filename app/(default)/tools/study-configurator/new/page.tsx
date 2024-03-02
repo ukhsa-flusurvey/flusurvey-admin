@@ -1,25 +1,26 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NewStudyForm from "./NewStudyForm";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
 
 
 export default async function Page() {
     return (
-        <div className="px-unit-lg bg-white/60 h-full">
-            <div className="py-unit-sm">
-                <Breadcrumbs
-                    homeLink="/tools/study-configurator"
-                    links={
-                        [
-                            {
-                                title: 'Create a new study'
-                            }
-                        ]
-                    }
-                />
-                <main className="py-unit-lg">
-                    <NewStudyForm />
-                </main>
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Studies',
+                        href: '/tools/study-configurator',
+                    },
+                    {
+                        title: 'Create a new study',
+                    },
+                ]
+            }
+        >
+            <div className="">
+                <NewStudyForm />
             </div>
-        </div>
+        </SimpleBreadcrumbsPageLayout>
     )
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
 interface ItemListCardWrapperWithAddButtonProps {
     isLoading: boolean;
@@ -26,10 +26,12 @@ export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithA
                     {props.description}
                 </CardDescription>
             </CardHeader>
-            <div className='px-6'>
+
+            <CardContent>
                 {props.children}
-            </div>
-            <div className='p-6'>
+            </CardContent>
+
+            <CardFooter>
                 <Button
                     disabled={props.isLoading}
                     asChild={!props.isLoading}
@@ -39,7 +41,7 @@ export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithA
                         {props.addLabel}
                     </Link>
                 </Button>
-            </div>
+            </CardFooter>
         </Card>
     );
 }

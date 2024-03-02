@@ -1,39 +1,34 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
 import EmailTemplateConfigurator from "../../_components/EmailTemplateConfigurator";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
 
+export const dynamic = 'force-dynamic';
 
 export default function Page() {
     return (
-        <div className="px-6">
-            <div className="pt-3 flex gap-8">
-                <Breadcrumbs
-                    links={
-                        [
-                            {
-                                title: 'Messaging Tools',
-                                href: '/tools/messaging',
-                            },
-                            {
-                                title: 'Global Email Templates',
-                                href: '/tools/messaging/email-templates/global-templates',
-                            },
-                            {
-                                title: 'Create New Template',
-                            },
-                        ]
-                    }
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Messaging Tools',
+                        href: '/tools/messaging',
+                    },
+                    {
+                        title: 'Global Email Templates',
+                        href: '/tools/messaging/email-templates/global-templates',
+                    },
+                    {
+                        title: 'Create New Template',
+                    },
+                ]
+            }
+        >
+            <div className="flex">
+                <EmailTemplateConfigurator
+                    emailTemplateConfig={undefined}
+                    isSystemTemplate={false}
+                    isGlobalTemplate={true}
                 />
             </div>
-            <main className="py-6">
-                <div className="flex">
-                    <EmailTemplateConfigurator
-                        emailTemplateConfig={undefined}
-                        isSystemTemplate={false}
-                        isGlobalTemplate={true}
-                    />
-                </div>
-            </main>
-
-        </div>
+        </SimpleBreadcrumbsPageLayout>
     );
 }

@@ -1,6 +1,8 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
 import { Suspense } from "react";
 import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: "Global Email Templates",
@@ -10,30 +12,24 @@ export const metadata = {
 export default function Page() {
 
     return (
-        <div className="px-6">
-            <div className="pt-3 flex gap-8">
-                <Breadcrumbs
-                    links={
-                        [
-                            {
-                                title: 'Messaging Tools',
-                                href: '/tools/messaging',
-                            },
-                            {
-                                title: 'Global Email Templates',
-                            },
-                        ]
-                    }
-                />
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Messaging Tools',
+                        href: '/tools/messaging',
+                    },
+                    {
+                        title: 'Global Email Templates',
+                    },
+                ]
+            }
+        >
+            <div className="flex">
+                <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
+                    <GlobalEmailTemplates />
+                </Suspense>
             </div>
-            <main className="py-6">
-                <div className="flex">
-                    <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
-                        <GlobalEmailTemplates />
-                    </Suspense>
-                </div>
-            </main>
-
-        </div>
+        </SimpleBreadcrumbsPageLayout>
     );
 }
