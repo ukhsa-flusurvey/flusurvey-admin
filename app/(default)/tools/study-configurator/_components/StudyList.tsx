@@ -1,8 +1,12 @@
 'use server';
 
+import { auth } from "@/auth";
 import CogLoader from "@/components/CogLoader";
 import ErrorAlert from "@/components/ErrorAlert";
 import { ItemListCardWrapperWithAddButton } from "@/components/ItemListCardWrapperWithAddButton";
+import { LinkMenu } from "@/components/LinkMenu";
+import StudyCard from "@/components/StudyCard";
+import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { Study } from "@/utils/server/types/studyInfos";
 import { BsJournalMedical } from "react-icons/bs";
 
@@ -28,22 +32,34 @@ const StudyListCardWrapper: React.FC<{
 }
 
 const getStudies = async () => {
-    // todo
-
-    return { studies: [], error: 'unimplemented' };
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/studies';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch studies: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }
 
 const StudyList: React.FC<StudyListProps> = async (props) => {
     const resp = await getStudies();
 
-    let studies: Array<Study> = resp.studies;
+    const studies: Array<Study> = resp.studies;
     const error = resp.error;
-
 
     let content = null;
     if (error) {
         content = <ErrorAlert
-            title="Error loading schedules"
+            title="Error loading studies"
             error={error}
         />
     } else if (!studies || studies.length === 0) {
@@ -54,28 +70,13 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
         </div>
     } else {
         content = (
-            <p>todo</p>
-
+            <LinkMenu>
+                {studies.map((study: Study) => <StudyCard key={study.key}
+                    baseURL='/tools/study-configurator'
+                    study={study}
+                />)}
+            </LinkMenu>
         )
-        {/*
-        import StudyCard from '@/components/StudyCard';
-        const studies = data.studies.map((study: Study) => {
-            return {
-                ...study,
-                stats: {
-                    participantCount: typeof (study.stats.participantCount) === 'string' ? parseInt(study.stats.participantCount) : study.stats.participantCount,
-                    tempParticipantCount: typeof (study.stats.tempParticipantCount) === 'string' ? parseInt(study.stats.tempParticipantCount) : study.stats.tempParticipantCount,
-                    responseCount: typeof (study.stats.responseCount) === 'string' ? parseInt(study.stats.responseCount) : study.stats.responseCount,
-                }
-            }
-        })
-              {studies.map((study: Study) => <StudyCard key={study.key}
-                baseURL='/tools/study-configurator'
-                study={study}
-            />)}
-        <LinkMenu>
-                {schedules.map((schedule: MessageSchedule) => <ScheduleCard key={schedule.id} schedule={schedule} />)}
-            </LinkMenu> */}
     }
 
     return (
