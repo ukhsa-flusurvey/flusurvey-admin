@@ -30,8 +30,6 @@ const isFileUploadAllowedSimplified = (study?: Study) => {
         return false;
     }
 
-    console.log('study.configs.participantFileUploadRule', study.configs.participantFileUploadRule);
-
     const rule = study.configs.participantFileUploadRule;
     if (rule.name !== 'gt' || rule.data === undefined || rule.data.length < 2) {
         return false;

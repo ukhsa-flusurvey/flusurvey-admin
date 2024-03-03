@@ -9,10 +9,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { BsCheck, BsPencil, BsPlus, BsX, BsXLg } from "react-icons/bs";
 import { ExpressionArg, LocalizedString } from "survey-engine/data_types";
-import { updateStudyProps } from "../../../../../actions/study/updateStudyProps";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { updateStudyDisplayProps } from "@/actions/study/updateStudyProps";
+import { toast } from "sonner";
 
 const StudyCardWithTags = ({
     name, description, tags
@@ -65,8 +66,16 @@ const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ 
     const onChange = (studyProps: StudyProps) => {
         startTransition(async () => {
             try {
-                await updateStudyProps(studyKey, studyProps);
-                router.refresh();
+                const resp = await updateStudyDisplayProps(studyKey,
+                    studyProps.name,
+                    studyProps.description,
+                    studyProps.tags
+                );
+                if (resp.error) {
+                    toast.error(resp.error);
+                    return;
+                }
+                toast.success('Display texts updated');
             } catch (error) {
                 console.error(error);
                 return;

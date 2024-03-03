@@ -1,8 +1,8 @@
 'use client'
 
+import { updateStudyFileUploadConfig } from '@/actions/study/updateStudyProps';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { updateStudyFileUploadConfig } from '@/lib/data/studyAPI';
 import React from 'react';
 import { toast } from 'sonner';
 

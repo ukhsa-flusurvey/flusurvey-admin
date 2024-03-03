@@ -1,9 +1,9 @@
 'use client'
 
+import { updateStudyStatus } from '@/actions/study/updateStudyProps';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { updateStudyStatus } from '@/lib/data/studyAPI';
 import { ChevronDownIcon } from 'lucide-react';
 import React from 'react';
 import { BeatLoader } from 'react-spinners';
