@@ -1,11 +1,8 @@
-import React from 'react';
-import SurveyOverview from '../SurveyOverview';
-import { Study } from '@/utils/server/types/studyInfos';
-import StudyOverview from '../StudyOverview';
-import StudyRuleOverview from '../StudyRuleOverview';
-import StudyMembersCard from '../StudyMembersCard';
-import StudyNotificationSubsCard from '../StudyNotificationSubsCard';
-import { Divider } from '@nextui-org/divider';
+import React, { Suspense } from 'react';
+import StatusCard, { StatusCardSkeleton } from './StatusCard';
+import Stats, { StatsSkeleton } from './Stats';
+import StudyCard, { StudyCardSkeleton } from './StudyCard';
+import SurveysPreview, { SurveysPreviewSkeleton } from './SurveysPreview';
 
 
 interface StudyDashboardProps {
@@ -14,29 +11,32 @@ interface StudyDashboardProps {
 
 const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
     return (
-        <>
-            <div className=''>
-                {/*<StudyOverview
-                    study={props.study}
-    />
-                <Divider />
-                <SurveyOverview
-                    studyKey={props.studyKey}
-                />
-                <Divider />
-                <StudyRuleOverview
-                    studyKey={props.studyKey}
-                />
-                <Divider />
-                <StudyNotificationSubsCard
-                    studyKey={props.studyKey}
-                />
-                <Divider />
-    */}
-
-                todo: show stats and study card with links to other pages
+        <div className='space-y-4'>
+            <div className='flex'>
+                <Suspense fallback={<StatusCardSkeleton />}>
+                    <StatusCard
+                        studyKey={props.studyKey}
+                    />
+                </Suspense>
             </div>
-        </>
+            <div className='flex'>
+                <Suspense fallback={<StatsSkeleton />}>
+                    <Stats
+                        studyKey={props.studyKey}
+                    />
+                </Suspense>
+            </div>
+            <div>
+                <Suspense fallback={<StudyCardSkeleton />}>
+                    <StudyCard studyKey={props.studyKey} />
+                </Suspense>
+            </div>
+            <div className=''>
+                <Suspense fallback={<SurveysPreviewSkeleton />}>
+                    <SurveysPreview />
+                </Suspense>
+            </div>
+        </div>
     );
 };
 
