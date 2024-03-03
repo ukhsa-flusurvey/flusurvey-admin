@@ -1,7 +1,6 @@
 import StudyDashboard from "./_components/StudyDashboard";
-import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
 
-interface PageProps {
+export interface StudyKeyPageParams {
     params: {
         studyKey: string
     }
@@ -10,24 +9,10 @@ interface PageProps {
 export const dynamic = 'force-dynamic';
 
 
-export default async function Page(props: PageProps) {
+export default async function Page(props: StudyKeyPageParams) {
     return (
-        <SimpleBreadcrumbsPageLayout
-            links={
-                [
-                    {
-                        title: 'Studies',
-                        href: '/tools/study-configurator',
-                    },
-                    {
-                        title: props.params.studyKey,
-                    },
-                ]
-            }
-        >
-            <StudyDashboard
-                studyKey={props.params.studyKey}
-            />
-        </SimpleBreadcrumbsPageLayout>
+        <StudyDashboard
+            studyKey={props.params.studyKey}
+        />
     )
 }

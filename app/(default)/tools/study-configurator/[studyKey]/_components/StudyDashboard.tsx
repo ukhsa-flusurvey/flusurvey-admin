@@ -2,7 +2,6 @@ import React from 'react';
 import SurveyOverview from '../SurveyOverview';
 import { Study } from '@/utils/server/types/studyInfos';
 import StudyOverview from '../StudyOverview';
-import DangerZone from './DangerZone';
 import StudyRuleOverview from '../StudyRuleOverview';
 import StudyMembersCard from '../StudyMembersCard';
 import StudyNotificationSubsCard from '../StudyNotificationSubsCard';
@@ -35,9 +34,7 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                 <Divider />
     */}
 
-                <DangerZone
-                    studyKey={props.studyKey}
-                />
+                todo: show stats and study card with links to other pages
             </div>
         </>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useTransition } from 'react';
-import { deleteStudyAction } from '../../../../../../actions/study/delete';
+import { deleteStudyAction } from '../../../../../../../../actions/study/delete';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
