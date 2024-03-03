@@ -21,7 +21,7 @@ const StatCard = (props: {
         <Card variant={'opaque'}
             className='p-6'
         >
-            <h3 className='text- font-semibold mb-2'>{props.title}</h3>
+            <h3 className='font-semibold mb-2'>{props.title}</h3>
             {props.value === undefined && <Skeleton className='h-8 w-20' />}
             <p className='text-2xl font-semibold'>
                 {props.value}
