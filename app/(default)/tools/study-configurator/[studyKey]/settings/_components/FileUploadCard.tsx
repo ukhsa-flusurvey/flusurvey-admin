@@ -4,6 +4,7 @@ import { getStudy } from '@/lib/data/studyAPI';
 import ErrorAlert from '@/components/ErrorAlert';
 import { Study } from '@/utils/server/types/studyInfos';
 import FileUploadToggle from './FileUploadToggle';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface FileUploadCardProps {
     studyKey: string;
@@ -74,7 +75,7 @@ export default FileUploadCard;
 export const FileUploadCardSkeleton: React.FC = () => {
     return (
         <Wrapper>
-            <p>FileUploadCardSkeleton</p>
+            <Skeleton className='h-8 w-20' />
         </Wrapper >
     );
 }
