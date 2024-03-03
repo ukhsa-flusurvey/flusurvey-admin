@@ -2,34 +2,34 @@
 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { updateStudyIsDefault } from '@/lib/data/studyAPI';
+import { updateStudyFileUploadConfig } from '@/lib/data/studyAPI';
 import React from 'react';
 import { toast } from 'sonner';
 
-interface IsDefaultStudyToggleProps {
+interface FileUploadToggleProps {
     studyKey: string;
-    isDefaultStudy: boolean;
+    simplifiedFileUploadConfigValue: boolean;
 }
 
-const IsDefaultStudyToggle: React.FC<IsDefaultStudyToggleProps> = (props) => {
+const FileUploadToggle: React.FC<FileUploadToggleProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
 
     return (
         <div className='flex items-center'>
             <Switch
-                id='isDefaultStudy'
-                name='isDefaultStudy'
-                checked={props.isDefaultStudy}
+                id='fileUploadToggle'
+                name='fileUploadToggle'
+                checked={props.simplifiedFileUploadConfigValue}
 
                 onCheckedChange={(checked) => {
                     startTransition(async () => {
                         try {
-                            const resp = await updateStudyIsDefault(props.studyKey, checked);
+                            const resp = await updateStudyFileUploadConfig(props.studyKey, checked);
                             if (resp.error) {
                                 toast.error(resp.error);
                                 return;
                             }
-                            toast.success('Study updated');
+                            toast.success('File upload updated');
                         } catch (error) {
                             toast.error('An error occurred');
                         }
@@ -38,13 +38,13 @@ const IsDefaultStudyToggle: React.FC<IsDefaultStudyToggleProps> = (props) => {
                 disabled={isPending}
             />
             <Label
-                htmlFor='isDefaultStudy'
+                htmlFor='fileUploadToggle'
                 className='ml-2'
             >
-                Default Study ({props.isDefaultStudy ? 'Yes' : 'No'})
+                Participant can upload files ({props.simplifiedFileUploadConfigValue ? 'Yes' : 'No'})
             </Label>
         </div>
     );
 };
 
-export default IsDefaultStudyToggle;
+export default FileUploadToggle;
