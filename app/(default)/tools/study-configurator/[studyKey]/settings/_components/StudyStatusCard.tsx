@@ -4,6 +4,7 @@ import StatusToggle from '../../_components/StatusToggle';
 import { getStudy } from '@/lib/data/studyAPI';
 import ErrorAlert from '@/components/ErrorAlert';
 import { Skeleton } from '@/components/ui/skeleton';
+import WrapperCard from './WrapperCard';
 
 interface StudyStatusCardProps {
     studyKey: string;
@@ -11,21 +12,12 @@ interface StudyStatusCardProps {
 
 const Wrapper = (props: { children: React.ReactNode }) => {
     return (
-        <Card
-            variant={'opaque'}
+        <WrapperCard
+            title={'Study Status'}
+            description={'Study status defines whether the study is visible to participants and whether data collection is active.'}
         >
-            <CardHeader>
-                <CardTitle>
-                    Study Status
-                </CardTitle>
-                <CardDescription>
-                    Study status defines whether the study is visible to participants and whether data collection is active.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                {props.children}
-            </CardContent>
-        </Card>
+            {props.children}
+        </WrapperCard>
     )
 }
 

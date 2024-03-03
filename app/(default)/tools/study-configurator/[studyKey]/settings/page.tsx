@@ -2,6 +2,9 @@ import { Suspense } from "react";
 import StudyStatusCard, { StudyStatusCardSkeleton } from "./_components/StudyStatusCard";
 import { StudyKeyPageParams } from "../page";
 import IsDefaultStudyCard, { IsDefaultStudyCardSkeleton } from "./_components/IsDefaultStudyCard";
+import FileUploadCard, { FileUploadCardSkeleton } from "./_components/FileUploadCard";
+import DisplayTextsCard, { DisplayTextsCardSkeleton } from "./_components/DisplayTextsCard";
+
 
 export const dynamic = 'force-dynamic';
 
@@ -17,18 +20,17 @@ export default function Page(props: StudyKeyPageParams) {
                 />
             </Suspense>
 
-
-            <p>
-                display texts
-            </p>
+            <Suspense fallback={<DisplayTextsCardSkeleton />}>
+                <DisplayTextsCard studyKey={studyKey} />
+            </Suspense>
 
             <Suspense fallback={<IsDefaultStudyCardSkeleton />}>
                 <IsDefaultStudyCard studyKey={studyKey} />
             </Suspense>
 
-            <p>
-                file upload allowed, not allowed
-            </p>
+            <Suspense fallback={<FileUploadCardSkeleton />}>
+                <FileUploadCard studyKey={studyKey} />
+            </Suspense>
         </div>
     );
 }

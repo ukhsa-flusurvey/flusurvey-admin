@@ -4,6 +4,7 @@ import IsDefaultStudyToggle from './IsDefaultStudyToggle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getStudy } from '@/lib/data/studyAPI';
 import ErrorAlert from '@/components/ErrorAlert';
+import WrapperCard from './WrapperCard';
 
 interface IsDefaultStudyCardProps {
     studyKey: string;
@@ -11,21 +12,12 @@ interface IsDefaultStudyCardProps {
 
 const Wrapper = (props: { children: React.ReactNode }) => {
     return (
-        <Card
-            variant={'opaque'}
+        <WrapperCard
+            title={'Default Study'}
+            description={'If the study is the default study, all participants will be assigned to this study by default once they log in. If the study is not the default study, participants need to join the study manually.'}
         >
-            <CardHeader>
-                <CardTitle>
-                    Default Study
-                </CardTitle>
-                <CardDescription>
-                    If the study is the default study, all participants will be assigned to this study by default once they log in. If the study is not the default study, participants need to join the study manually.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                {props.children}
-            </CardContent>
-        </Card>
+            {props.children}
+        </WrapperCard>
     )
 }
 
