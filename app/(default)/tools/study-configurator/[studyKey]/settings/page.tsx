@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import StudyStatusCard, { StudyStatusCardSkeleton } from "./_components/StudyStatusCard";
 import { StudyKeyPageParams } from "../page";
+import IsDefaultStudyCard, { IsDefaultStudyCardSkeleton } from "./_components/IsDefaultStudyCard";
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +22,9 @@ export default function Page(props: StudyKeyPageParams) {
                 display texts
             </p>
 
-            <p>
-                is system default study
-            </p>
+            <Suspense fallback={<IsDefaultStudyCardSkeleton />}>
+                <IsDefaultStudyCard studyKey={studyKey} />
+            </Suspense>
 
             <p>
                 file upload allowed, not allowed
