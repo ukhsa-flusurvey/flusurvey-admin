@@ -39,7 +39,7 @@ export const getStudy = async (studyKey: string): Promise<{
         url,
         session.CASEaccessToken,
         {
-            revalidate: 0,
+            revalidate: 1,
         }
     );
     if (resp.status !== 200) {
@@ -94,33 +94,24 @@ export const getSurveyVersions = async (studyKey: string, surveyKey: string): Pr
     return resp.body;
 }
 
-export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<Survey> => {
-    throw new Error('Not implemented');
-
-    /*
+export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<{
+    error?: string,
+    survey?: Survey
+}> => {
     const session = await auth();
-        if (!session || session.CASEaccessToken === undefined) {
-            throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions/${versionID}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
         }
-
-        const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/survey/${surveyKey}/${versionID}`);
-        const response = await fetch(url,
-            {
-                headers: {
-                    ...getTokenHeader(session.CASEaccessToken)
-                },
-                next: {
-                    revalidate: 10
-                }
-            });
-        if (response.status !== 200) {
-            try {
-                const err = await response.json();
-                throw new Error(err.error);
-            } catch (error) {
-                throw new Error(`Error ${response.status} when fetching survey version`);
-            }
-        }
-        const data = await response.json();
-        return data;*/
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch survey version: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }
