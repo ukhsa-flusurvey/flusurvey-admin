@@ -20,12 +20,12 @@ export default function Page(props: StudyKeyPageParams) {
                 />
             </Suspense>
 
-            <Suspense fallback={<DisplayTextsCardSkeleton />}>
-                <DisplayTextsCard studyKey={studyKey} />
-            </Suspense>
-
             <Suspense fallback={<IsDefaultStudyCardSkeleton />}>
                 <IsDefaultStudyCard studyKey={studyKey} />
+            </Suspense>
+
+            <Suspense fallback={<DisplayTextsCardSkeleton />}>
+                <DisplayTextsCard studyKey={studyKey} />
             </Suspense>
 
             <Suspense fallback={<FileUploadCardSkeleton />}>

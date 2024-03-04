@@ -1,11 +1,9 @@
 import ErrorAlert from '@/components/ErrorAlert';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getStudy } from '@/lib/data/studyAPI';
-import { ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
 import React from 'react';
+import LinkButton from './LinkButton';
 
 interface StatsProps {
     studyKey: string;
@@ -26,20 +24,7 @@ const StatCard = (props: {
             <p className='text-2xl font-semibold'>
                 {props.value}
             </p>
-            {props.link && <Button
-                variant={'link'}
-                size={'sm'}
-                className='px-0 h-auto text-xs text-neutral-600'
-                asChild
-            >
-                <Link
-                    href={props.link.href}
-                    prefetch={false}
-                >
-                    {props.link.text}
-                    <ArrowUpRight className='size-4 ml-1' />
-                </Link>
-            </Button>}
+            {props.link && <LinkButton href={props.link.href} text={props.link.text} />}
         </Card>
     );
 }

@@ -19,6 +19,7 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                     />
                 </Suspense>
             </div>
+
             <div className='flex'>
                 <Suspense fallback={<StatsSkeleton />}>
                     <Stats
@@ -26,16 +27,21 @@ const StudyDashboard: React.FC<StudyDashboardProps> = async (props) => {
                     />
                 </Suspense>
             </div>
+
+            <div className=''>
+                <Suspense fallback={<SurveysPreviewSkeleton />}>
+                    <SurveysPreview
+                        studyKey={props.studyKey}
+                    />
+                </Suspense>
+            </div>
+
             <div>
                 <Suspense fallback={<StudyCardSkeleton />}>
                     <StudyCard studyKey={props.studyKey} />
                 </Suspense>
             </div>
-            <div className=''>
-                <Suspense fallback={<SurveysPreviewSkeleton />}>
-                    <SurveysPreview />
-                </Suspense>
-            </div>
+
         </div>
     );
 };

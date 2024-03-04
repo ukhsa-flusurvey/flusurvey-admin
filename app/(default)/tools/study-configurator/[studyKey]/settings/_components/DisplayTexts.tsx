@@ -5,7 +5,6 @@ import { getLocalizedString } from "@/utils/getLocalisedString";
 import { StudyProps } from "@/utils/server/types/studyInfos";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { BsCheck, BsPencil, BsPlus, BsX, BsXLg } from "react-icons/bs";
 import { ExpressionArg, LocalizedString } from "survey-engine/data_types";
@@ -15,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { updateStudyDisplayProps } from "@/actions/study/updateStudyProps";
 import { toast } from "sonner";
 
-const StudyCardWithTags = ({
+export const StudyCardWithTags = ({
     name, description, tags
 }: {
     name?: string,
@@ -23,7 +22,7 @@ const StudyCardWithTags = ({
     tags: Array<string | undefined>,
 }) => {
     return (
-        <div className='bg-slate-200 px-6 py-4 rounded-lg'>
+        <div className='bg-slate-200 px-6 py-4 rounded-lg drop-shadow-sm'>
             <p className='font-bold'>
                 <span className="text-xl">
                     {name || '<study name>'}
@@ -51,7 +50,6 @@ const DisplayTexts: React.FC<{ studyKey: string, studyProps: StudyProps }> = ({ 
     const [currentStudyProps, setCurrentStudyProps] = React.useState<StudyProps>(studyProps);
     const [selectedLanguage, setSelectedLanguage] = React.useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
     const [editMode, setEditMode] = React.useState(false);
-    const router = useRouter();
     const [isPending, startTransition] = React.useTransition();
 
     useEffect(() => {
