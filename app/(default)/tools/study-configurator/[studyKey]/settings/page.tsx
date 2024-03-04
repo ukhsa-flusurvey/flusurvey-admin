@@ -13,7 +13,6 @@ export default function Page(props: StudyKeyPageParams) {
 
     return (
         <div className="space-y-4">
-
             <Suspense fallback={<StudyStatusCardSkeleton />}>
                 <StudyStatusCard
                     studyKey={studyKey}

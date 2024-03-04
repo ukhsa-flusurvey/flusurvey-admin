@@ -1,7 +1,6 @@
 'use server';
 
 import { auth } from "@/auth";
-import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { revalidatePath } from "next/cache";
 
@@ -13,7 +12,7 @@ export const saveStudyNotifications = async (studyKey: string, subscriptions: { 
         return { status: 401, error: 'Unauthorized' };
     }
 
-    const url = `/v1/study/${studyKey}/notification-subscriptions`;
+    const url = `/v1/studies/${studyKey}/notification-subscriptions`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
