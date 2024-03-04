@@ -22,7 +22,11 @@ export default async function Page(props: PageProps) {
     }
 
     // download survey
-    const surveyDef = await getSurveyVersion(props.params.studyKey, props.params.surveyKey, props.searchParams.version);
+    const resp = await getSurveyVersion(props.params.studyKey, props.params.surveyKey, props.searchParams.version);
+    if (resp.error) {
+        return <div>{resp.error}</div>
+    }
+    const surveyDef = resp.survey;
 
     return <>
         <div className="absolute top-0 z-50 w-full">

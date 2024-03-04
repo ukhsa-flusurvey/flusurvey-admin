@@ -10,7 +10,7 @@ import { z } from "zod"
 export const createStudy = async (newStudy: z.infer<typeof newStudySchema>) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     let url = `/v1/studies`;

@@ -12,7 +12,7 @@ export const saveMessageSchedule = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const url = `/v1/messaging/scheduled-emails`;
@@ -35,7 +35,7 @@ export const deleteMessageSchedule = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const url = `/v1/messaging/scheduled-emails/${id}`;

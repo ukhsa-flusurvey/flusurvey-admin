@@ -115,3 +115,28 @@ export const getSurveyVersion = async (studyKey: string, surveyKey: string, vers
     }
     return resp.body;
 }
+
+export const getStudyNotificationSubscriptions = async (studyKey: string): Promise<{
+    error?: string,
+    subscriptions?: Array<{
+        messageType: string,
+        email: string,
+    }>
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/notification-subscriptions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study notification subscriptions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}

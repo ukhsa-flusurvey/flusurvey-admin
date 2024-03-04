@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 export const deleteStudyAction = async (studyKey: string) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     let url = `/v1/studies/${studyKey}`;

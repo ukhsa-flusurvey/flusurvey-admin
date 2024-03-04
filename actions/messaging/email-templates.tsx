@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 export const uploadEmailTemplate = async (template: EmailTemplate) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     let url = `/v1/messaging/email-templates/global-templates`;
@@ -37,7 +37,7 @@ export const deleteEmailTemplate = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     let url = `/v1/messaging/email-templates/global-templates/${messageType}`;

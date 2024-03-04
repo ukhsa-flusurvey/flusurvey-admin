@@ -1,6 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import CreateSurveyActionsCard from "./CreateSurveyActionsCard";
-import { getSurveyKeys } from "@/lib/data/studyAPI";
+import { getSurveyInfos } from "@/lib/data/studyAPI";
 import { Suspense } from "react";
 import { Spinner } from "@nextui-org/spinner";
 
@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const surveyKeys = await getSurveyKeys(props.params.studyKey);
+    const surveyKeys = (await getSurveyInfos(props.params.studyKey)).surveys?.map(s => s.key) || [];
 
     return (
         <div className="px-unit-lg bg-white/60 h-full">
@@ -42,7 +42,7 @@ export default async function Page(props: PageProps) {
                     }>
                         <CreateSurveyActionsCard
                             studyKey={props.params.studyKey}
-                            existingSurveyKeys={surveyKeys.keys || []}
+                            existingSurveyKeys={surveyKeys || []}
                         />
                     </Suspense>
                 </main>
