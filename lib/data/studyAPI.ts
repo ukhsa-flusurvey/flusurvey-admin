@@ -140,3 +140,25 @@ export const getStudyNotificationSubscriptions = async (studyKey: string): Promi
     }
     return resp.body;
 }
+
+export const getStudyPermissions = async (studyKey: string): Promise<{
+    error?: string,
+    permissions?: any,
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/permissions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study permissions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
