@@ -103,10 +103,18 @@ export const permissionInfos: PermissionInfos = {
 }
 
 export const getIfHideLimiter = (resourceType: string, resourceId: string, action: string) => {
+    if (resourceType === "study") {
+        return permissionInfos[resourceType].resources["*"].actions[action].hideLimiter;
+    }
     return permissionInfos[resourceType].resources[resourceId].actions[action].hideLimiter;
 }
 
-
+export const getHint = (resourceType: string, resourceId: string, action: string) => {
+    if (resourceType === "study") {
+        return permissionInfos[resourceType].resources["*"].actions[action].limiterHint;
+    }
+    return permissionInfos[resourceType].resources[resourceId].actions[action].limiterHint;
+}
 
 
 const formSchema = z.object({
@@ -300,7 +308,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
             </div>)
         }
 
-        const hint = selectedResourcePermissionInfo?.actions[form.getValues('action')].limiterHint;
+        const hint = getHint(form.getValues('resourceType'), form.getValues('resourceId'), form.getValues('action'));
         const hideLimiter = getIfHideLimiter(form.getValues('resourceType'), form.getValues('resourceId'), form.getValues('action'));
 
         if (hideLimiter) {
@@ -314,8 +322,8 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                 return <FormItem>
                     <FormLabel>Limiter</FormLabel>
                     <FormControl>
-                        <Textarea placeholder='Resource and action specific limiter'
-
+                        <Textarea
+                            placeholder='Resource and action specific limiter'
                             {...field}
                         />
                     </FormControl>
@@ -323,7 +331,6 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                         {hint}
                     </FormDescription>
                     <FormMessage />
-
                 </FormItem>
             }}
         />
