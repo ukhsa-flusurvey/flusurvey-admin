@@ -16,16 +16,6 @@ interface SurveyOverviewProps {
 }
 
 
-const NoSurveys: React.FC = () => {
-    return (
-        <div className='flex py-unit-md flex-col justify-center items-center text-center'>
-            <BsCardChecklist className="text-3xl text-default-300 mb-unit-sm" />
-            <h3 className='font-bold'>No surveys yet</h3>
-            <p className='text-default-500  text-small'>Create a new survey to start collecting data.</p>
-        </div>
-    );
-}
-
 const SurveyCard: React.FC<{ surveyKey: string; studyKey: string }> = ({ surveyKey, studyKey }) => {
     const { data: surveyVersions, error, isLoading } = useSWR<{ surveyVersions?: Survey[] }>(`/api/case-management-api/v1/study/${studyKey}/survey/${surveyKey}/versions`, AuthAPIFetcher)
 
@@ -95,25 +85,8 @@ const SurveyList: React.FC<{ studyKey: string }> = ({ studyKey }) => {
         </div>
     }
 
-    let errorComp: React.ReactNode = null;
-    if (error) {
-        if (error.message === 'Unauthorized') {
-            signOut({ callbackUrl: '/auth/login?callbackUrl=/tools/study-configurator/' });
-            return null;
-        }
 
-        errorComp = <div className='bg-danger-50 gap-unit-md rounded-medium p-unit-md flex items-center mb-unit-md'>
-            <div className='text-danger text-2xl'>
-                <BsExclamationTriangle />
-            </div>
-            <div>
-                <p className='text-danger font-bold'>Something went wrong</p>
-                <p className='text-danger text-small'>{error.message}</p>
-            </div>
-        </div>
-    }
-
-    let list = <NoSurveys />;
+    let list = null;
 
     if (surveyKeys && surveyKeys.keys && surveyKeys.keys.length > 0) {
         list = <div className="grid grid-cols-1 lg:grid-cols-2 gap-unit-md">
@@ -123,7 +96,6 @@ const SurveyList: React.FC<{ studyKey: string }> = ({ studyKey }) => {
 
     return (
         <>
-            {errorComp}
             {list}
             <div className='mt-unit-md'>
                 <Button
