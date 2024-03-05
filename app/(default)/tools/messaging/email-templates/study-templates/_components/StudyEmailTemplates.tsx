@@ -5,10 +5,9 @@ import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
 import React from 'react';
 import EmailTemplateLinkItem from './EmailTemplateLinkItem';
-import { auth } from '@/auth';
-import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { LinkMenu } from '@/components/LinkMenu';
 import { ItemListCardWrapperWithAddButton } from '@/components/ItemListCardWrapperWithAddButton';
+import { getStudyMessageTemplates } from '@/lib/data/messagingAPI';
 
 
 // StudyEmailTemplates Wrapper Card
@@ -38,24 +37,7 @@ interface StudyEmailTemplatesProps {
 
 }
 
-const getStudyMessageTemplates = async () => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/messaging/email-templates/study-templates';
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch message templates: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
+
 
 const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) => {
 
