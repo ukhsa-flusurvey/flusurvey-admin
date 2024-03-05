@@ -15,7 +15,7 @@ interface SurveysPreviewProps {
     studyKey: string;
 }
 
-const NoSurveys: React.FC = () => {
+export const NoSurveys: React.FC = () => {
     return (
         <div className='mx-auto text-center'>
             <BsCardChecklist className="text-3xl mx-auto text-neutral-300 mb-1" />

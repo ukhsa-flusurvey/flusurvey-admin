@@ -1,8 +1,12 @@
-export default function Page() {
+import { Suspense } from "react";
+import SurveyList, { SurveyListSkeleton } from "./_components/SurveyList";
+import { StudyKeyPageParams } from "../page";
+
+export default function Page(props: StudyKeyPageParams) {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/study-configurator/[studyKey]/surveys/page.tsx</h1>
-        </div>
+        <Suspense fallback={<SurveyListSkeleton studyKey={props.params.studyKey} />}>
+            <SurveyList studyKey={props.params.studyKey} />
+        </Suspense>
     );
 }
