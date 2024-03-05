@@ -24,6 +24,7 @@ const GlobalEmailTemplatesCard: React.FC<GlobalEmailTemplatesCardProps> = (props
     return (
         <div className="flex">
             <ItemListCardWrapperWithAddButton
+                className='w-full'
                 isLoading={props.isLoading}
                 title="Global Email Templates"
                 description="Configure email templates for global messages, like newsletters, etc."
@@ -77,6 +78,7 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
     const resp = await getGlobalMessageTemplates();
 
     const globalTemplates: EmailTemplate[] | undefined = resp.templates;
+    const relevantTemplates = globalTemplates?.filter((template: any) => !systemMessageTypes.includes(template.messageType));
 
     let cardContent = null;
     const error = null;
@@ -85,14 +87,13 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
             title="Error loading global templates"
             error={error}
         />
-    } else if (!globalTemplates || globalTemplates.length === 0) {
+    } else if (!relevantTemplates || relevantTemplates.length === 0) {
         cardContent = (
             <p className='py-6 text-center text-neutral-600'>
                 No global templates have been created yet.
             </p>
         );
     } else {
-        const relevantTemplates = globalTemplates.filter((template: any) => !systemMessageTypes.includes(template.messageType));
         cardContent = (
             <LinkMenu>
                 {relevantTemplates.map((template: any) => (
