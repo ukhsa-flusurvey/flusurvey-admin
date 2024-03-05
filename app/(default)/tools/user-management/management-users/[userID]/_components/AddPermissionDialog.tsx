@@ -117,7 +117,8 @@ export const getHint = (resourceType: string, resourceId: string, action: string
 }
 
 
-const formSchema = z.object({
+export const permissionSchema = z.object({
+    subjectId: z.string().min(1),
     resourceType: z.enum(["study", "messaging"]),
     resourceId: z.string().min(1).trim(),
     action: z.string().min(1),
@@ -147,9 +148,10 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     const [selectedResourcePermissionInfo, setSelectedResourcePermissionInfo] = React.useState<ResourcePermission | undefined>(undefined)
     const [error, setError] = React.useState<string | undefined>(undefined)
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof permissionSchema>>({
+        resolver: zodResolver(permissionSchema),
         defaultValues: {
+            subjectId: props.userId,
             resourceType: undefined,
             resourceId: "",
             action: "",
@@ -157,7 +159,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof permissionSchema>) {
         setError(undefined)
         startTransition(async () => {
             const resp = await createPermissionForManagementUser(

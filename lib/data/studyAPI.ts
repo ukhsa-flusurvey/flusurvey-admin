@@ -141,9 +141,25 @@ export const getStudyNotificationSubscriptions = async (studyKey: string): Promi
     return resp.body;
 }
 
+export interface PermissionsInfo {
+    user: {
+        id: string;
+        username?: string;
+        email?: string;
+        imageUrl?: string;
+    }
+    permissions: Array<{
+        id: string;
+        action: string;
+        limiter?: { [key: string]: string };
+    }>;
+}
+
 export const getStudyPermissions = async (studyKey: string): Promise<{
     error?: string,
-    permissions?: any,
+    permissions?: {
+        [key: string]: PermissionsInfo
+    },
 }> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {

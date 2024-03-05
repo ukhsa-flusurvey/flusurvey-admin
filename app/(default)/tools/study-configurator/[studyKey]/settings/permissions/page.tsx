@@ -1,10 +1,18 @@
+import { Suspense } from "react";
+import PermissionsCard, { PermissionsCardSkeleton } from "./_components/PermissionsCard";
+import { StudyKeyPageParams } from "../../page";
+
 export const dynamic = 'force-dynamic';
 
-export default function Page() {
+export default function Page(
+    props: StudyKeyPageParams
+) {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/study-configurator/[studyKey]/settings/permissions/page.tsx</h1>
-        </div>
+        <Suspense fallback={<PermissionsCardSkeleton />}>
+            <PermissionsCard
+                studyKey={props.params.studyKey}
+            />
+        </Suspense>
     );
 }
