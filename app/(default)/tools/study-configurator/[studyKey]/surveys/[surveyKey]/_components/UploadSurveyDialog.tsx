@@ -1,23 +1,21 @@
 'use client';
 
-import { Button, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useTransition } from 'react';
 import { BsCloudArrowUp } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
-import { createNewSurvey } from '../../../../../../../actions/study/uploadSurvey';
+import { createNewSurvey } from '../../../../../../../../actions/study/surveys';
 import Filepicker from '@/components/inputs/Filepicker';
+import { Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface UploadSurveyDialogProps {
     surveyKey: string;
     studyKey: string;
-    isOpen: boolean;
-    onOpenChange: (isOpen: boolean) => void;
 }
 
 const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
-    isOpen,
-    onOpenChange,
     surveyKey,
     studyKey,
 }) => {
@@ -26,6 +24,13 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
     const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = useState<string | undefined>(undefined);
     const router = useRouter();
+
+    return (
+        <Button>
+            <Upload className='size-4 me-2' />
+            Upload a new version
+        </Button>
+    )
 
     const submit = async () => {
         setErrorMsg(undefined);
@@ -46,7 +51,7 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}
+        <Modal isOpen={false}
             backdrop='blur'
         >
             <ModalContent>
@@ -104,7 +109,7 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
 
                                 <span className='text-default-600 text-small'>Use a JSON file from your computer to publish a new survey version</span>
 
-                                <Button
+                                {/* <Button
                                     variant="flat"
                                     className='mt-unit-sm'
                                     color='secondary'
@@ -117,7 +122,7 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
                                     }}
                                 >
                                     Upload
-                                </Button>
+                                </Button> */}
                                 {errorMsg && <p className='text-danger mt-unit-sm'>{errorMsg}</p>}
                                 {successMsg && <p className='text-success mt-unit-sm'>{successMsg}</p>}
                             </div>

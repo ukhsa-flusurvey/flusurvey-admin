@@ -27,3 +27,24 @@ export const createNewSurvey = async (studyKey: string, survey: Survey) => {
     revalidatePath('/tools/study-configurator');
     return resp.body;
 }
+
+export const deleteSurveyVersion = async (studyKey: string, surveyKey: string, versionId: string) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, error: 'Unauthorized' };
+    }
+
+    let url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions/${versionId}`;
+
+    const resp = await fetchCASEManagementAPI(url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        });
+    if (resp.status > 201) {
+        return { error: `Failed to delete survey version: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/study-configurator');
+    return resp.body;
+}

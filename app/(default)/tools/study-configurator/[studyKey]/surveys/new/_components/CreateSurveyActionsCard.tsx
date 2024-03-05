@@ -3,9 +3,8 @@
 import React, { useState, useTransition } from 'react';
 import Filepicker from '@/components/inputs/Filepicker';
 import { Survey } from 'survey-engine/data_types';
-import { BsCloudArrowUp, BsPencilSquare } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
-import { createNewSurvey } from '../../../../../../../../actions/study/uploadSurvey';
+import { createNewSurvey } from '../../../../../../../../actions/study/surveys';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import LoadingButton from '@/components/LoadingButton';
@@ -23,12 +22,10 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
     const [isPending, startTransition] = useTransition();
     const [newSurvey, setNewSurvey] = useState<Survey | undefined>(undefined);
     const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
-    const [successMsg, setSuccessMsg] = useState<string | undefined>(undefined);
     const router = useRouter();
 
     const submit = async () => {
         setErrorMsg(undefined);
-        setSuccessMsg(undefined);
         if (newSurvey) {
             startTransition(async () => {
                 try {
@@ -69,7 +66,6 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
                         }}
                         onChange={(files) => {
                             setErrorMsg(undefined);
-                            setSuccessMsg(undefined);
                             if (files.length > 0) {
                                 // read file as a json
                                 const reader = new FileReader();

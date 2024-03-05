@@ -1,5 +1,6 @@
-import SurveyHistoryView from "./SurveyHistoryView";
 import BackButton from "../_components/BackButton";
+import SurveyOverview, { SurveyOverviewSkeleton } from "./_components/SurveyOverview";
+import { Suspense } from "react";
 
 
 interface PageProps {
@@ -23,11 +24,14 @@ export default async function Page(props: PageProps) {
                 />
             </div>
 
-
-            <SurveyHistoryView
-                studyKey={props.params.studyKey}
-                surveyKey={props.params.surveyKey}
-            />
+            <div className="flex">
+                <Suspense fallback={<SurveyOverviewSkeleton studyKey={props.params.studyKey} surveyKey={props.params.surveyKey} />}>
+                    <SurveyOverview
+                        studyKey={props.params.studyKey}
+                        surveyKey={props.params.surveyKey}
+                    />
+                </Suspense>
+            </div>
         </div>
     )
 }
