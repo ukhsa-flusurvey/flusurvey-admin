@@ -21,6 +21,7 @@ const StudyEmailTemplatesCard: React.FC<StudyEmailTemplatesCardProps> = (props) 
     return (
         <div className="flex">
             <ItemListCardWrapperWithAddButton
+                className='w-full sm:w-auto'
                 isLoading={props.isLoading}
                 title="Study Email Templates"
                 description="Configure email templates for study-specific messages."
@@ -77,7 +78,9 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
         );
     } else {
         cardContent = (
-            <LinkMenu>
+            <LinkMenu
+                className='max-h-[520px] overflow-y-auto'
+            >
                 {studyTemplates.map((template: any) => (
                     <EmailTemplateLinkItem key={template.messageType} template={template} />
                 ))}

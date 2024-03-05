@@ -25,11 +25,9 @@ export default function Page() {
                 ]
             }
         >
-            <div className="flex">
-                <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
-                    <StudyEmailTemplates />
-                </Suspense>
-            </div>
+            <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
+                <StudyEmailTemplates />
+            </Suspense>
         </SimpleBreadcrumbsPageLayout>
     );
 }
