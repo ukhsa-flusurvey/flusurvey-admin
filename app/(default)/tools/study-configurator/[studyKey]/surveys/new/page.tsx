@@ -1,8 +1,6 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
-import CreateSurveyActionsCard from "./CreateSurveyActionsCard";
+import CreateSurveyActionsCard from "./_components/CreateSurveyActionsCard";
 import { getSurveyInfos } from "@/lib/data/studyAPI";
-import { Suspense } from "react";
-import { Spinner } from "@nextui-org/spinner";
+import BackButton from "../_components/BackButton";
 
 
 interface PageProps {
@@ -18,35 +16,20 @@ export default async function Page(props: PageProps) {
     const surveyKeys = (await getSurveyInfos(props.params.studyKey)).surveys?.map(s => s.key) || [];
 
     return (
-        <div className="px-unit-lg bg-white/60 h-full">
-            <div className="py-unit-sm">
-                <Breadcrumbs
-                    homeLink="/tools/study-configurator"
-                    links={
-                        [
-                            {
-                                title: props.params.studyKey,
-                                href: `/tools/study-configurator/${props.params.studyKey}`,
-                            },
-                            {
-                                title: 'Create a new survey'
-                            }
-                        ]
-                    }
+        <div className="space-y-4">
+            <div>
+                <BackButton
+                    label="Back to surveys"
+                    href={`/tools/study-configurator/${props.params.studyKey}/surveys`}
                 />
-                <main className="py-unit-lg">
-                    <Suspense fallback={
-                        <div className="flex justify-center">
-                            <Spinner />
-                        </div>
-                    }>
-                        <CreateSurveyActionsCard
-                            studyKey={props.params.studyKey}
-                            existingSurveyKeys={surveyKeys || []}
-                        />
-                    </Suspense>
-                </main>
+            </div>
+            <div className="w-full sm:w-2/3 md:1/2">
+                <CreateSurveyActionsCard
+                    studyKey={props.params.studyKey}
+                    existingSurveyKeys={surveyKeys || []}
+                />
             </div>
         </div>
+
     )
 }

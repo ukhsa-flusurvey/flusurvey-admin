@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useTransition } from 'react';
 import { BsCloudArrowUp } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
-import { uploadSurvey } from '../../../../../../../actions/study/uploadSurvey';
+import { createNewSurvey } from '../../../../../../../actions/study/uploadSurvey';
 import Filepicker from '@/components/inputs/Filepicker';
 
 interface UploadSurveyDialogProps {
@@ -33,7 +33,7 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
         if (newSurvey) {
             startTransition(async () => {
                 try {
-                    const response = await uploadSurvey(studyKey, newSurvey)
+                    const response = await createNewSurvey(studyKey, newSurvey)
                     router.refresh();
                     setSuccessMsg('Survey uploaded successfully.');
                 }

@@ -1,13 +1,17 @@
 'use client';
-import { Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
+
 import React, { useState, useTransition } from 'react';
-import { Link as NextUILink } from '@nextui-org/link'
-import { Button } from '@nextui-org/button';
 import Filepicker from '@/components/inputs/Filepicker';
 import { Survey } from 'survey-engine/data_types';
 import { BsCloudArrowUp, BsPencilSquare } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
-import { uploadSurvey } from '../../../../../../../actions/study/uploadSurvey';
+import { createNewSurvey } from '../../../../../../../../actions/study/uploadSurvey';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import LoadingButton from '@/components/LoadingButton';
+import { PenSquare, Upload } from 'lucide-react';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 
 interface CreateSurveyActionsCardProps {
@@ -28,13 +32,20 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
         if (newSurvey) {
             startTransition(async () => {
                 try {
-                    const response = await uploadSurvey(props.studyKey, newSurvey)
-                    router.refresh();
-                    setSuccessMsg('Survey uploaded successfully.');
+                    const resp = await createNewSurvey(props.studyKey, newSurvey)
+                    if (resp.error) {
+                        toast.error('Error uploading survey', {
+                            description: resp.error
+                        });
+                        return;
+                    }
+
+                    toast.success('Survey uploaded successfully');
+                    router.push(`/tools/study-configurator/${props.studyKey}/surveys/${newSurvey.surveyDefinition.key}`);
                 }
                 catch (e: any) {
+                    toast.error('Error uploading survey');
                     setErrorMsg(e.message);
-                    console.error(e);
                 }
             })
         };
@@ -42,14 +53,13 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
 
     return (
         <Card
-            className='bg-white/50'
-            isBlurred
+            variant={'opaque'}
         >
-            <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold'>Upload new survey</h3>
+            <CardHeader>
+                <CardTitle className='text-xl font-bold'>Upload new survey</CardTitle>
             </CardHeader>
-            <Divider />
-            <CardBody className='max-h-[400px] overflow-y-scroll'>
+
+            <CardContent className='max-h-[400px] overflow-y-scroll'>
                 <div className='flex flex-col gap-1'>
                     <Filepicker
                         id='upload-survey-filepicker'
@@ -96,49 +106,43 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
                             }
                         }}
                     />
-                    {errorMsg && <p className='text-danger'>{errorMsg}</p>}
-                    {successMsg && <p className='text-success'>{successMsg}</p>}
-                    <Button
-                        variant="flat"
-                        className='mt-unit-sm'
-                        color='secondary'
-                        size='lg'
+                    {errorMsg && <p className='text-red-600'>{errorMsg}</p>}
+                    <LoadingButton
+                        className='mt-3'
                         isLoading={isPending}
-                        isDisabled={newSurvey === undefined}
-                        startContent={<BsCloudArrowUp className='text-large' />}
+                        disabled={newSurvey === undefined}
                         onClick={() => {
                             submit();
                         }}
                     >
+                        <Upload className='size-4 me-2' />
                         Upload
-                    </Button>
-                    <span className='text-default-400 text-small'>Use a JSON file from your computer to create a new survey</span>
+                    </LoadingButton>
+                    <span className='text-neutral-600 text-xs'>Use a JSON file from your computer to create a new survey</span>
                 </div>
 
                 <div className='flex row items-center my-4'>
-                    <div className='border-t border-t-default-400 grow h-[1px]'></div>
-                    <span className='px-2 text-default-400'>OR</span>
-                    <div className='border-t border-t-default-400 grow h-[1px]'></div>
+                    <div className='border-t border-t-neutral-400 grow h-[1px]'></div>
+                    <span className='px-2 text-neutral-400'>OR</span>
+                    <div className='border-t border-t-neutral-400 grow h-[1px]'></div>
                 </div>
 
                 <div className='flex flex-col gap-1'>
                     <Button
-                        variant="flat"
-                        color="primary"
-                        as={NextUILink}
-                        size='lg'
-                        isDisabled={true || isPending}
-                        href={`/tools/study-configurator/${props.studyKey}/survey/new`}
-                        startContent={<BsPencilSquare className='text-large' />}
+                        variant="outline"
+                        disabled={true || isPending}
+                        asChild
                     >
-
-                        Open Editor
+                        <Link
+                            href={`/tools/study-configurator/${props.studyKey}/survey/new`}
+                        >
+                            <PenSquare className='size-4 me-2' />
+                            Open Editor
+                        </Link>
                     </Button>
-                    <span className='text-default-400 text-small'>Start creating the survey in the interactive editor</span>
+                    <span className='text-neutral-600 text-xs'>Start creating the survey in the interactive editor</span>
                 </div>
-            </CardBody>
-            <Divider />
-
+            </CardContent>
         </Card>
     );
 };
