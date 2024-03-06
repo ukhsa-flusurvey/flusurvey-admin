@@ -1,14 +1,14 @@
 import SurveyEditor from "@/components/survey-editor/SurveyEditor";
 import { getSurveyVersion } from "@/lib/data/studyAPI";
-import { redirect } from "next/navigation";
+import BackButton from "../../_components/BackButton";
+import ErrorAlert from "@/components/ErrorAlert";
+
 
 interface PageProps {
     params: {
         studyKey: string;
         surveyKey: string;
-    }
-    searchParams: {
-        version: string;
+        versionId: string;
     }
 }
 
@@ -17,19 +17,28 @@ export const dynamic = 'force-dynamic';
 
 export default async function Page(props: PageProps) {
 
-    if (!props.searchParams.version) {
-        redirect(`/tools/study-configurator/${props.params.studyKey}/survey/${props.params.surveyKey}`);
-    }
-
     // download survey
-    const resp = await getSurveyVersion(props.params.studyKey, props.params.surveyKey, props.searchParams.version);
+    const resp = await getSurveyVersion(props.params.studyKey, props.params.surveyKey, props.params.versionId);
     if (resp.error) {
-        return <div>{resp.error}</div>
+        return <div>
+            <BackButton
+                label="Back to version overview"
+                href={`/tools/study-configurator/${props.params.studyKey}/surveys/${props.params.surveyKey}`}
+            />
+            <ErrorAlert
+                title='Could not load survey information'
+                error={resp.error}
+            />
+        </div>
     }
     const surveyDef = resp.survey;
 
     return <>
         <div className="absolute top-0 z-50 w-full">
+            <BackButton
+                label="Back to version overview"
+                href={`/tools/study-configurator/${props.params.studyKey}/surveys/${props.params.surveyKey}`}
+            />
             <SurveyEditor
                 initialSurvey={surveyDef}
 

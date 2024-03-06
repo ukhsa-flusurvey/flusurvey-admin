@@ -8,7 +8,7 @@ import { Download, MoreVertical, PenSquare, Trash2 } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { BarLoader } from 'react-spinners';
 import { toast } from 'sonner';
-
+import { useRouter } from 'next/navigation';
 
 interface SurveyVersionMenuProps {
     studyKey: string;
@@ -18,6 +18,12 @@ interface SurveyVersionMenuProps {
 
 const SurveyVersionMenu: React.FC<SurveyVersionMenuProps> = (props) => {
     const [isPending, startTransition] = useTransition();
+
+    const router = useRouter();
+
+    const onOpenInEditor = () => {
+        router.push(`/tools/study-configurator/${props.studyKey}/surveys/${props.surveyKey}/${props.versionId}`);
+    }
 
     const onDownload = () => {
         startTransition(async () => {
@@ -90,7 +96,8 @@ const SurveyVersionMenu: React.FC<SurveyVersionMenuProps> = (props) => {
                     Download JSON
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    disabled={isPending || true}
+                    disabled={isPending}
+                    onClick={onOpenInEditor}
                 >
                     <PenSquare className='me-2 size-4 text-neutral-500' />
                     Open in editor

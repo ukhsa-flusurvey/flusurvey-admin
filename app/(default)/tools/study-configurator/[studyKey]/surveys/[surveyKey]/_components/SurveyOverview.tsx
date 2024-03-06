@@ -64,6 +64,8 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = async (props) => {
         );
     }
 
+    const latestVersionId = versions[0].versionId;
+
 
     return (
         <Wrapper {...props}
@@ -76,11 +78,10 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = async (props) => {
                 />
                 <Button
                     variant={'outline'}
-                    disabled
                     asChild
                 >
                     <Link
-                        href={`/tools/study-configurator/${props.studyKey}/surveys/${props.surveyKey}/edit`}
+                        href={`/tools/study-configurator/${props.studyKey}/surveys/${props.surveyKey}/${latestVersionId}`}
                     >
                         Open Current Version in Editor
                     </Link>
