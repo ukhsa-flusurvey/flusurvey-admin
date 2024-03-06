@@ -11,6 +11,7 @@ import Timeline from './Timeline';
 import { Calendar, MoreVertical } from 'lucide-react';
 import SurveyVersionMenu from './SurveyVersionMenu';
 import SurveyMenu from './SurveyMenu';
+import { Badge } from '@/components/ui/badge';
 
 interface SurveyOverviewProps {
     studyKey: string;
@@ -96,11 +97,16 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = async (props) => {
                             key={version.versionId}
                         >
                             <div className='grow'>
-                                <p className="flex items-center mb-1 border-b group-hover:border-neutral-300 border-transparent">
+                                <div className="flex items-center mb-1 border-b group-hover:border-neutral-300 border-transparent">
                                     Version: <span className="ml-2 font-bold">
                                         {version.versionId}
                                     </span>
-                                </p>
+                                    {version.unpublished && <Badge
+                                        className='ml-2'
+                                    >
+                                        Unpublished
+                                    </Badge>}
+                                </div>
                                 <time className="text-xs font-normal leading-none text-neutral-500 flex items-center gap-2">
                                     <span><Calendar className='size-4' /></span>
                                     <span>{publishedTime}</span>
