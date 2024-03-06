@@ -1,7 +1,8 @@
 import SurveyEditor from "@/components/survey-editor/SurveyEditor";
-import { getSurveyVersion } from "@/lib/data/studyAPI";
+import { getSurveyVersion, getSurveyVersions } from "@/lib/data/studyAPI";
 import BackButton from "../../../../../../../../components/BackButton";
 import ErrorAlert from "@/components/ErrorAlert";
+import { AlertTriangle } from "lucide-react";
 
 
 interface PageProps {
@@ -33,16 +34,32 @@ export default async function Page(props: PageProps) {
     }
     const surveyDef = resp.survey;
 
-    return <>
-        <div className="absolute top-0 z-50 w-full">
-            <BackButton
-                label="Back to version overview"
-                href={`/tools/study-configurator/${props.params.studyKey}/surveys/${props.params.surveyKey}`}
-            />
-            <SurveyEditor
-                initialSurvey={surveyDef}
+    const versionsResp = await getSurveyVersions(props.params.studyKey, props.params.surveyKey);
+    const versions = versionsResp.versions;
 
-            />
+    const warnIfNotLatest = versions && versions.length > 0 && versions[0].versionId !== props.params.versionId;
+
+    return <>
+        <div className="space-y-4">
+            <div className="flex gap-4 justify-between">
+                <BackButton
+                    label="Back to version overview"
+                    href={`/tools/study-configurator/${props.params.studyKey}/surveys/${props.params.surveyKey}`}
+                />
+                {warnIfNotLatest && <div className="flex items-center bg-yellow-100 border text-sm px-2 py-1 rounded-md">
+                    <span>
+                        <AlertTriangle className="size-6 me-2 text-yellow-600" />
+                    </span>
+                    <p>
+                        You are currently editing an older version of the survey. This might override changes made in the latest version.
+                    </p>
+                </div>}
+
+
+            </div>
+            <div>
+                Survey editor would open here for {surveyDef?.surveyDefinition.key}
+            </div>
         </div>
     </>
 }
