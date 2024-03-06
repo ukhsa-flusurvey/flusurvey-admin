@@ -1,10 +1,8 @@
 'use client';
 
-import { Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import React, { useState, useTransition } from 'react';
 import { Survey } from 'survey-engine/data_types';
-import { createNewSurvey, uploadSurvey } from '../../../../../../../../actions/study/surveys';
+import { uploadSurvey } from '../../../../../../../../actions/study/surveys';
 import Filepicker from '@/components/inputs/Filepicker';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
