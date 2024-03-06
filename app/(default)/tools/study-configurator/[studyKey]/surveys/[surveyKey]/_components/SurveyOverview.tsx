@@ -8,7 +8,7 @@ import UploadSurveyDialog from './UploadSurveyDialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Timeline from './Timeline';
-import { Calendar, MoreVertical } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import SurveyVersionMenu from './SurveyVersionMenu';
 import SurveyMenu from './SurveyMenu';
 import { Badge } from '@/components/ui/badge';

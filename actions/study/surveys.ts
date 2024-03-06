@@ -28,6 +28,28 @@ export const createNewSurvey = async (studyKey: string, survey: Survey) => {
     return resp.body;
 }
 
+export const uploadSurvey = async (studyKey: string, surveyKey: string, survey: Survey) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { status: 401, error: 'Unauthorized' };
+    }
+
+    let url = `/v1/studies/${studyKey}/surveys/${surveyKey}`;
+
+    const resp = await fetchCASEManagementAPI(url,
+        session.CASEaccessToken,
+        {
+            method: 'POST',
+            body: JSON.stringify(survey),
+            revalidate: 0,
+        });
+    if (resp.status !== 200) {
+        return { error: `Failed to upload survey: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/study-configurator');
+    return resp.body;
+}
+
 export const deleteSurveyVersion = async (studyKey: string, surveyKey: string, versionId: string) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
