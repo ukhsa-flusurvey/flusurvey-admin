@@ -14,11 +14,11 @@ const StudyCard = (props: { study: Study, baseURL: string }) => {
     >
         <div className=' flex'>
             <div className='grow'>
-                <div className='text-lg font-bold'>
+                <div className='text-xl flex items-center font-bold'>
                     {props.study.key}
                     {props.study.props.systemDefaultStudy && <Badge variant='default' className='ml-2'>Default</Badge>}
                 </div>
-                <div className='text-xs flex items-center mt-2'>
+                <div className='text-sm flex items-center mt-1'>
                     <span className='me-1 text-neutral-500'>Participants: </span>
                     <span>{(props.study.stats.participantCount || 0) + (props.study.stats.tempParticipantCount || 0)}</span>
                     <span><Dot /> </span>

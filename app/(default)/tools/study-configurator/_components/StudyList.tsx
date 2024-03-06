@@ -1,12 +1,9 @@
-'use server';
-
-import { auth } from "@/auth";
 import CogLoader from "@/components/CogLoader";
 import ErrorAlert from "@/components/ErrorAlert";
 import { ItemListCardWrapperWithAddButton } from "@/components/ItemListCardWrapperWithAddButton";
 import { LinkMenu } from "@/components/LinkMenu";
 import StudyCard from "@/components/StudyCard";
-import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
+import { getStudies } from "@/lib/data/studyAPI";
 import { Study } from "@/utils/server/types/studyInfos";
 import { BsJournalMedical } from "react-icons/bs";
 
@@ -31,29 +28,11 @@ const StudyListCardWrapper: React.FC<{
     );
 }
 
-const getStudies = async () => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/studies';
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch studies: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
 
 const StudyList: React.FC<StudyListProps> = async (props) => {
     const resp = await getStudies();
 
-    const studies: Array<Study> = resp.studies;
+    const studies: Array<Study> | undefined = resp.studies;
     const error = resp.error;
 
     let content = null;

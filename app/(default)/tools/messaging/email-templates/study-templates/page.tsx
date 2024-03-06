@@ -1,6 +1,8 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
 import { Suspense } from "react";
 import StudyEmailTemplates, { StudyEmailTemplatesSkeleton } from "./_components/StudyEmailTemplates";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: "Study Email Templates",
@@ -10,30 +12,22 @@ export const metadata = {
 export default function Page() {
 
     return (
-        <div className="px-6">
-            <div className="pt-3 flex gap-8">
-                <Breadcrumbs
-                    links={
-                        [
-                            {
-                                title: 'Messaging Tools',
-                                href: '/tools/messaging',
-                            },
-                            {
-                                title: 'Study Email Templates',
-                            },
-                        ]
-                    }
-                />
-            </div>
-            <main className="py-6">
-                <div className="flex">
-                    <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
-                        <StudyEmailTemplates />
-                    </Suspense>
-                </div>
-            </main>
-
-        </div>
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Messaging Tools',
+                        href: '/tools/messaging',
+                    },
+                    {
+                        title: 'Study Email Templates',
+                    },
+                ]
+            }
+        >
+            <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
+                <StudyEmailTemplates />
+            </Suspense>
+        </SimpleBreadcrumbsPageLayout>
     );
 }

@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { getSurveyKeys } from "@/lib/data/studyAPI";
+import { getSurveyInfos } from "@/lib/data/studyAPI";
 import SurveyInfoDownloaderForm from "./SurveyInfoDownloader";
 import ResponseDownloaderForm from "./ResponseDownloader";
 
@@ -21,9 +21,10 @@ interface PageProps {
 export default async function Page(props: PageProps) {
     let surveyKeys: string[] = [];
     try {
-        const resp = await getSurveyKeys(props.params.studyKey)
-        if (resp.keys) {
-            surveyKeys = resp.keys;
+        const resp = await getSurveyInfos(props.params.studyKey)
+
+        if (resp.surveys) {
+            surveyKeys = resp.surveys.map(s => s.key);
         }
     } catch (e) {
         console.error(e);

@@ -1,12 +1,9 @@
-'use server';
-
 import React from 'react';
 import EmailTemplateConfigurator from './EmailTemplateConfigurator';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
 import ErrorAlert from '@/components/ErrorAlert';
-import { auth } from '@/auth';
-import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import { getGlobalMessageTemplate, getStudyMessageTemplate } from '@/lib/data/messagingAPI';
 
 interface EmailTemplateConfigProps {
     messageType?: string;
@@ -15,43 +12,6 @@ interface EmailTemplateConfigProps {
     isGlobalTemplate?: boolean;
 }
 
-const getGlobalMessageTemplate = async (messageType: string) => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/messaging/email-templates/global-templates/' + messageType;
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch message template: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
-
-const getStudyMessageTemplate = async (messageType: string, studyKey: string) => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = `/v1/messaging/email-templates/study-templates/${studyKey}/${messageType}`;
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch message template: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
 
 const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) => {
     if (!props.messageType) {

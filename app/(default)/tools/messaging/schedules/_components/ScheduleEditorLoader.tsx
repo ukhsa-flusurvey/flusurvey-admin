@@ -1,38 +1,19 @@
 'use server'
 
-import { auth } from '@/auth';
 import CogLoader from '@/components/CogLoader';
 import ErrorAlert from '@/components/ErrorAlert';
-import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { MessageSchedule } from '@/utils/server/types/messaging';
 import React from 'react';
 import ScheduleEditor from './ScheduleEditor';
+import { getEmailScheduleById } from '@/lib/data/messagingAPI';
 
 interface ScheduleEditorLoaderProps {
     id: string;
 }
 
-const getScheduleById = async (id: string) => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/messaging/scheduled-emails/' + id;
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch scheduled email: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
 
 const ScheduleEditorLoader: React.FC<ScheduleEditorLoaderProps> = async (props) => {
-    const resp = await getScheduleById(props.id);
+    const resp = await getEmailScheduleById(props.id);
 
     const schedule: MessageSchedule = resp.schedule;
 

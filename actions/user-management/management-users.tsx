@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 export const deleteManagementUser = async (userID: string) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}`,

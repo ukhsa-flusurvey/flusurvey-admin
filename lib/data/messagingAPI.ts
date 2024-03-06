@@ -1,72 +1,119 @@
 'use server'
 
-import { EmailTemplate, MessageSchedule } from '../../utils/server/types/messaging';
-import { getCASEManagementAPIURL, getTokenHeader } from '../../utils/server/api';
 import { auth } from '@/auth';
+import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 
-export const getMessageSchedules = async (): Promise<MessageSchedule[]> => {
+
+export const getEmailSchedules = async () => {
     const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
     }
-
-    const url = getCASEManagementAPIURL('/v1/messaging/auto-messages');
-    const response = await fetch(url,
+    const url = '/v1/messaging/scheduled-emails';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
         {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 0
-            }
-        });
-
-    const data = await response.json();
-    if (data.error) {
-        throw new Error(data.error);
-    }
-    let schedules: Array<MessageSchedule> = data.autoMessages || [];
-    schedules = schedules.map((schedule) => {
-        let nt = schedule.nextTime;
-        if (typeof nt === 'string') nt = parseInt(nt);
-
-        let until = schedule.until;
-        if (typeof until === 'string') until = parseInt(until);
-
-        let period = schedule.period;
-        if (typeof period === 'string') period = parseInt(period);
-
-        return {
-            ...schedule,
-            nextTime: nt,
-            until,
-            period,
+            revalidate: 0,
         }
-    })
-    return schedules;
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message templates: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }
 
-export const getMessageTemplates = async (): Promise<EmailTemplate[]> => {
+export const getEmailScheduleById = async (id: string) => {
     const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
     }
-
-    const url = getCASEManagementAPIURL('/v1/messaging/email-templates');
-    const response = await fetch(url,
+    const url = '/v1/messaging/scheduled-emails/' + id;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
         {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 10
-            }
-        });
-
-    const data = await response.json();
-    if (data.error) {
-        throw new Error(data.error);
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch scheduled email: ${resp.status} - ${resp.body.error}` };
     }
-    let templates: Array<EmailTemplate> = data.templates || [];
-    return templates;
+    return resp.body;
+}
+
+export const getStudyMessageTemplates = async () => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/messaging/email-templates/study-templates';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message templates: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getGlobalMessageTemplates = async () => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/messaging/email-templates/global-templates';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message templates: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getGlobalMessageTemplate = async (messageType: string) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/messaging/email-templates/global-templates/' + messageType;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getStudyMessageTemplate = async (messageType: string, studyKey: string) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/messaging/email-templates/study-templates/${studyKey}/${messageType}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }
