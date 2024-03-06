@@ -1,7 +1,5 @@
-import Breadcrumbs from '@/components/Breadcrumbs';
-import NotImplemented from '@/components/NotImplemented';
-import React from 'react';
-import StudyRuleEditActions from './StudyRuleEditActions';
+import React, { Suspense } from 'react';
+import StudyRulesOverview, { StudyRulesOverviewSkeleton } from './_components/StudyRulesOverview';
 
 
 interface PageProps {
@@ -13,36 +11,15 @@ interface PageProps {
 export const dynamic = 'force-dynamic';
 
 const Page: React.FC<PageProps> = async (props) => {
-
     return (
-        <div className="px-unit-lg bg-white/60 h-full">
-            <div className="py-unit-sm">
-                <Breadcrumbs
-                    homeLink="/tools/study-configurator"
-                    links={
-                        [
-                            {
-                                title: props.params.studyKey,
-                                href: `/tools/study-configurator/${props.params.studyKey}`,
-                            },
-                            {
-                                title: `Study Rules`,
-                            }
-                        ]
-                    }
+        <div className='flex'>
+            <Suspense fallback={<StudyRulesOverviewSkeleton
+                studyKey={props.params.studyKey}
+            />}>
+                <StudyRulesOverview
+                    studyKey={props.params.studyKey}
                 />
-                <main className="py-unit-lg">
-                    <div className="grid grid-cols-2 gap-unit-md">
-                        <NotImplemented >
-                            show rule history (list of rules published)
-                        </NotImplemented>
-
-                        <StudyRuleEditActions
-                            studyKey={props.params.studyKey}
-                        />
-                    </div>
-                </main>
-            </div>
+            </Suspense>
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import BackButton from "../_components/BackButton";
+import BackButton from "../../../../../../../components/BackButton";
 import SurveyOverview, { SurveyOverviewSkeleton } from "./_components/SurveyOverview";
 import { Suspense } from "react";
 

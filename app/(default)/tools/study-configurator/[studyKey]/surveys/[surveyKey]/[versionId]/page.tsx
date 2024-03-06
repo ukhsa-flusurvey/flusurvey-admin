@@ -1,6 +1,6 @@
 import SurveyEditor from "@/components/survey-editor/SurveyEditor";
 import { getSurveyVersion } from "@/lib/data/studyAPI";
-import BackButton from "../../_components/BackButton";
+import BackButton from "../../../../../../../../components/BackButton";
 import ErrorAlert from "@/components/ErrorAlert";
 
 

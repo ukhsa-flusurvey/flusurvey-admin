@@ -1,6 +1,6 @@
 import CreateSurveyActionsCard from "./_components/CreateSurveyActionsCard";
 import { getSurveyInfos } from "@/lib/data/studyAPI";
-import BackButton from "../_components/BackButton";
+import BackButton from "../../../../../../../components/BackButton";
 
 
 interface PageProps {

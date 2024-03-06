@@ -1,16 +1,16 @@
 'use client';
-import { Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
+
 import React, { useState, useTransition } from 'react';
-import { Link as NextUILink } from '@nextui-org/link'
-import { Button } from '@nextui-org/button';
 import Filepicker from '@/components/inputs/Filepicker';
-import { BsCloudArrowUp, BsPencilSquare, BsShuffle } from 'react-icons/bs';
-import { useRouter } from 'next/navigation';
+import { Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import LoadingButton from '@/components/LoadingButton';
+import { toast } from 'sonner';
 import { Expression, isExpression } from 'survey-engine/data_types';
-import { uploadStudyRules } from '../../../../../../actions/study/uploadStudyRules';
+import { saveStudyRules } from '@/actions/study/studyRules';
 
-
-interface StudyRuleEditActionsProps {
+interface UploadStudyRulesDialogProps {
     studyKey: string;
 }
 
@@ -36,12 +36,12 @@ const checkIfValidStudyRule = (rules: any): boolean => {
     return true;
 }
 
-const StudyRuleEditActions: React.FC<StudyRuleEditActionsProps> = (props) => {
+const UploadStudyRulesDialog: React.FC<UploadStudyRulesDialogProps> = (props) => {
     const [isPending, startTransition] = useTransition();
     const [newStudyRules, setNewStudyRules] = useState<Expression[] | undefined>(undefined);
     const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = useState<string | undefined>(undefined);
-    const router = useRouter();
+    const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
 
     const submit = async () => {
         setErrorMsg(undefined);
@@ -49,9 +49,21 @@ const StudyRuleEditActions: React.FC<StudyRuleEditActionsProps> = (props) => {
         if (newStudyRules) {
             startTransition(async () => {
                 try {
-                    const response = await uploadStudyRules(props.studyKey, { rules: newStudyRules })
-                    setSuccessMsg('Study rules uploaded successfully');
-                    router.refresh();
+                    const response = await saveStudyRules(props.studyKey, newStudyRules)
+                    if (response.error) {
+                        setErrorMsg('Failed to upload study rules.');
+                        toast.error('Failed to upload study rules.', {
+                            description: response.error
+                        });
+                        return;
+                    }
+                    setSuccessMsg('Study rules uploaded successfully.');
+                    toast.success('Study rules uploaded successfully.');
+
+                    // close dialog
+                    if (dialogCloseRef.current) {
+                        dialogCloseRef.current.click();
+                    }
                 }
                 catch (e: any) {
                     setErrorMsg(e.message);
@@ -62,22 +74,28 @@ const StudyRuleEditActions: React.FC<StudyRuleEditActionsProps> = (props) => {
     };
 
     return (
-        <Card
-            className='bg-white/50'
-            isBlurred
-        >
-            <CardHeader className="bg-content2">
-                <h3 className='text-xl font-bold flex items-center'>
-                    <BsShuffle className='mr-unit-sm text-default-400' />
-                    General study rules
-                </h3>
-            </CardHeader>
-            <Divider />
-            <CardBody className='max-h-[400px] overflow-y-scroll'>
-                <div className='flex flex-col gap-1'>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>
+                    <Upload className='size-4 me-2' />
+                    Upload a new version
+                </Button>
+            </DialogTrigger>
+
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle className='flex items-center gap-1.5'>
+                        Upload new version of the study rules
+                    </DialogTitle>
+                    <DialogDescription>
+                        Use a JSON file from your computer to publish a new study rules
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className='py-unit-md flex flex-col'>
                     <Filepicker
-                        id='upload-survey-filepicker'
-                        label='Upload new study rules'
+                        id='upload-study-rules-filepicker'
+                        label='Select a file'
                         accept={{
                             'application/json': ['.json'],
                         }}
@@ -108,50 +126,34 @@ const StudyRuleEditActions: React.FC<StudyRuleEditActionsProps> = (props) => {
                             }
                         }}
                     />
-                    {errorMsg && <p className='text-danger'>{errorMsg}</p>}
-                    {successMsg && <p className='text-success'>{successMsg}</p>}
-                    <Button
-                        variant="flat"
-                        className='mt-unit-sm'
-                        color='secondary'
-                        size='lg'
+                    {errorMsg && <p className='text-red-600 mt-2'>{errorMsg}</p>}
+                    {successMsg && <p className='text-green-600 mt-2'>{successMsg}</p>}
+                </div>
+                <DialogFooter>
+                    <DialogClose
+                        ref={dialogCloseRef}
+                        asChild
+                    >
+                        <Button
+                            variant={'outline'}
+                        >
+                            Cancel
+                        </Button>
+                    </DialogClose>
+
+                    <LoadingButton
                         isLoading={isPending}
-                        isDisabled={newStudyRules === undefined}
-                        startContent={<BsCloudArrowUp className='text-large' />}
                         onClick={() => {
                             submit();
                         }}
+                        disabled={newStudyRules === undefined}
                     >
                         Upload
-                    </Button>
-                    <span className='text-default-400 text-small'>Use a JSON file from your computer to publish a new set of study rules</span>
-                </div>
-
-                <div className='flex row items-center my-4'>
-                    <div className='border-t border-t-default-400 grow h-[1px]'></div>
-                    <span className='px-2 text-default-400'>OR</span>
-                    <div className='border-t border-t-default-400 grow h-[1px]'></div>
-                </div>
-
-                <div className='flex flex-col gap-1'>
-                    <Button
-                        variant="flat"
-                        color="primary"
-                        as={NextUILink}
-                        size='lg'
-                        isDisabled={true || isPending}
-                        href={`/tools/study-configurator/${props.studyKey}/rules`}
-                        startContent={<BsPencilSquare className='text-large' />}
-                    >
-                        Open in Editor
-                    </Button>
-                    <span className='text-default-400 text-small'>Open the current version of the study rules in the interactive editor</span>
-                </div>
-            </CardBody>
-            <Divider />
-
-        </Card>
+                    </LoadingButton>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 };
 
-export default StudyRuleEditActions;
+export default UploadStudyRulesDialog;
