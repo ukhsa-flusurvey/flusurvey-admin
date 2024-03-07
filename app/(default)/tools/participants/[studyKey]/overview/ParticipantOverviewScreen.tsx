@@ -5,7 +5,7 @@ import { Divider } from "@nextui-org/divider";
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import ParticipantDetails from './ParticipantDetails';
-import ParticipantList from './ParticipantList';
+
 import { ParticipantState } from '@/utils/server/types/participantState';
 
 interface ParticipantOverviewScreenProps {
@@ -22,11 +22,6 @@ const ParticipantOverviewScreen: React.FC<ParticipantOverviewScreenProps> = (pro
         <div className="flex gap-1 h-full">
             <div className='w-80 h-full overflow-y-scroll pt-unit-md'>
                 <h2 className='text-2xl font-bold mb-unit-md'>Participants</h2>
-
-                <ParticipantList
-                    studyKey={props.studyKey}
-                    onParticipantSelected={(participant) => setSelectedParticipant(participant)}
-                />
             </div>
             <Divider orientation="vertical" />
             <div className='grow h-full overflow-y-scroll pt-unit-md'>
