@@ -3,9 +3,7 @@
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import React, { useEffect } from 'react';
 import ParticipantListItem from './ParticipantListItem';
-import { Button } from '@/components/ui/button';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { GripHorizontal } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import LoadingButton from '@/components/LoadingButton';
 import { getParticipants } from '@/lib/data/participants';

@@ -1,13 +1,8 @@
 import CogLoader from '@/components/CogLoader';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import React from 'react';
-import Pagination from './Pagination';
 import { getParticipants } from '@/lib/data/participants';
 import ErrorAlert from '@/components/ErrorAlert';
 import { Skeleton } from '@/components/ui/skeleton';
-import ParticipantListItem from './ParticipantListItem';
-import { GripHorizontal, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import ParticipantClientList from './ParticipantClientList';
 
 interface ParticipantsListProps {
