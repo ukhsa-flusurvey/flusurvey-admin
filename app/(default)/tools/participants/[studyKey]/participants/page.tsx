@@ -87,7 +87,7 @@ export default async function Page(props: PageProps) {
                             >
                                 <ParticipantDetails
                                     studyKey={props.params.studyKey}
-                                    participantKey={props.searchParams?.selectedParticipant}
+                                    participantID={props.searchParams?.selectedParticipant}
                                 />
 
                             </Suspense>

@@ -48,3 +48,30 @@ export const getParticipants = async (
     }
     return resp.body;
 }
+
+export const getParticipantById = async (
+    studyKey: string,
+    participantId: string,
+): Promise<{
+    error?: string,
+    participant?: ParticipantState
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+
+    const url = `/v1/studies/${studyKey}/data-explorer/participants/${participantId}`;
+
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch participant: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
