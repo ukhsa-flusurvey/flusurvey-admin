@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import Search from "./_components/Search";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, HardDriveDownload } from "lucide-react";
 import { Suspense } from "react";
 import ParticipantList, { ParticipantListSkeleton } from "./_components/ParticipantsList";
 import ParticipantDetails, { ParticipantDetailsSkeleton } from "./_components/ParticipantDetails";
@@ -42,25 +42,30 @@ export default async function Page(props: PageProps) {
                     <CardHeader
                         className="p-4 gap-1"
                     >
-                        <CardTitle>
-                            Participants
+                        <CardTitle className="flex items-center">
+                            <div className="grow">
+                                Participants
+                            </div>
+                            <Button
+                                variant='link'
+                                asChild
+                                className="font-bold"
+                            >
+                                <Link
+                                    href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
+                                >
+                                    <HardDriveDownload className="size-4 me-2" />
+                                    Open Exporter
+                                    <ArrowRight className="ml-2 size-4" />
+                                </Link>
+                            </Button>
                         </CardTitle>
                         <div className="flex gap-12">
                             <div className="grow">
                                 <Search />
                             </div>
 
-                            <Button
-                                variant='link'
-                                asChild
-                            >
-                                <Link
-                                    href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
-                                >
-                                    Open Exporter
-                                    <ArrowRight className="ml-2 size-4" />
-                                </Link>
-                            </Button>
+
                         </div>
                     </CardHeader>
                     <Separator
