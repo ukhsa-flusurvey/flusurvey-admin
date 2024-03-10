@@ -1,13 +1,10 @@
-'use server'
-
-import { auth } from '@/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
+import { getManagementUser } from '@/lib/data/userManagementAPI';
 import { HelpCircle, UserRound } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -16,24 +13,6 @@ interface UserDetailsProps {
     userId: string;
 }
 
-const getManagementUser = async (userId: string) => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/user-management/management-users/' + userId;
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch management user: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
 
 
 const UserDetails: React.FC<UserDetailsProps> = async (props) => {

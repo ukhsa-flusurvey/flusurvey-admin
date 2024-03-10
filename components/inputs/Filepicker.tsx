@@ -48,9 +48,9 @@ const Filepicker: React.FC<FilepickerProps> = (props) => {
             )}
 
             <div
-                className={clsx("border-medium border-dashed border-default-200  rounded-medium p-4 hover:border-default-400 cursor-pointer outline-primary",
+                className={clsx("border-2 border-dashed border-neutral-200  rounded-md p-4 hover:border-neutral-400 cursor-pointer outline-black",
                     {
-                        "border-default-400 bg-default-100": isDragActive,
+                        "border-neutral-400 bg-neutral-100": isDragActive,
                     }
                 )}
                 {...getRootProps()}>
@@ -62,9 +62,9 @@ const Filepicker: React.FC<FilepickerProps> = (props) => {
                     {acceptedFiles.length > 0 ? <p>{
                         acceptedFiles[0].name
                     }</p> : <>
-                        <BsFileEarmarkArrowUp className='text-2xl text-default-400' />
+                        <BsFileEarmarkArrowUp className='text-2xl text-neutral-400' />
                         <p>
-                            <span className='text-secondary me-1'>
+                            <span className='text-cyan-800 me-1'>
                                 {placeholders.upload}
                             </span>
                             <span>

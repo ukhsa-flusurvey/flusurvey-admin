@@ -6,9 +6,8 @@ import React from 'react';
 import AddPermissionDialog from './AddPermissionDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import PermissionActions from './PermissionActions';
-import { auth } from '@/auth';
-import { fetchCASEManagementAPI } from '@/utils/server/fetch-case-management-api';
 import { Badge } from '@/components/ui/badge';
+import { getPermissions } from '@/lib/data/userManagementAPI';
 
 
 interface PermissionsProps {
@@ -48,24 +47,7 @@ const CardWrapper: React.FC<{
     );
 }
 
-const getPermissions = async (userId: string) => {
-    const session = await auth();
-    if (!session || !session.CASEaccessToken) {
-        return { error: 'Unauthorized' };
-    }
-    const url = '/v1/user-management/management-users/' + userId + '/permissions';
-    const resp = await fetchCASEManagementAPI(
-        url,
-        session.CASEaccessToken,
-        {
-            revalidate: 0,
-        }
-    );
-    if (resp.status !== 200) {
-        return { error: `Failed to fetch management user's permissions: ${resp.status} - ${resp.body.error}` };
-    }
-    return resp.body;
-}
+
 
 const Permissions: React.FC<PermissionsProps> = async (props) => {
     const resp = await getPermissions(props.userId);

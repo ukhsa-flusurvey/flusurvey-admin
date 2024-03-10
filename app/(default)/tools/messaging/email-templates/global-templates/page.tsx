@@ -1,3 +1,9 @@
+import { Suspense } from "react";
+import GlobalEmailTemplates, { GlobalEmailTemplatesSkeleton } from "./_components/GlobalEmailTemplates";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
+
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: "Global Email Templates",
     description: "Configure email templates for global messages, like newsletters, etc.",
@@ -6,8 +12,24 @@ export const metadata = {
 export default function Page() {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/messaging/email-templates/global-templates/page.tsx</h1>
-        </div>
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Messaging Tools',
+                        href: '/tools/messaging',
+                    },
+                    {
+                        title: 'Global Email Templates',
+                    },
+                ]
+            }
+        >
+            <div className="flex">
+                <Suspense fallback={<GlobalEmailTemplatesSkeleton />}>
+                    <GlobalEmailTemplates />
+                </Suspense>
+            </div>
+        </SimpleBreadcrumbsPageLayout>
     );
 }

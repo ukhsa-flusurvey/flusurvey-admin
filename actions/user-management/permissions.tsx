@@ -13,7 +13,7 @@ export const createPermissionForManagementUser = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}/permissions`,
@@ -41,7 +41,7 @@ export const deletePermissionForManagementUser = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}/permissions/${permissionID}`,
@@ -64,7 +64,7 @@ export const updatePermissionLimiterForManagementUser = async (
 ) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
-        return { status: 401, body: { error: 'Unauthorized' } };
+        return { status: 401, error: 'Unauthorized' };
     }
 
     const resp = await fetchCASEManagementAPI(`/v1/user-management/management-users/${userID}/permissions/${permissionID}/limiter`,

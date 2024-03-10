@@ -1,154 +1,233 @@
 'use server'
 
-import { getCASEManagementAPIURL, getTokenHeader } from "../../utils/server/api";
 import { Study } from '../../utils/server/types/studyInfos';
-import { Survey } from 'survey-engine/data_types';
+import { Expression, Survey } from 'survey-engine/data_types';
 import { auth } from '@/auth';
+import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 
 
-export const getSurveysForStudy = async (studyKey: string) => {
+export const getStudies = async (): Promise<{ error?: string, studies?: Study[] }> => {
     const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
     }
-
-    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/surveys`);
-
-    const response = await fetch(url,
+    const url = '/v1/studies';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
         {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 10
-            }
-        });
-    if (response.status !== 200) {
-        try {
-            const err = await response.json();
-            throw new Error(err.error);
-        } catch (error) {
-            throw new Error(`Error ${response.status} when fetching surveys`);
+            revalidate: 0,
         }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch studies: ${resp.status} - ${resp.body.error}` };
     }
-    const data = await response.json();
-    return data;
-}
-
-export const getStudies = async (): Promise<{ studies?: Study[] }> => {
-    const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
-    }
-
-    const url = getCASEManagementAPIURL(`/v1/studies`);
-
-    const response = await fetch(url,
-        {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 10
-            }
-        });
-    if (response.status !== 200) {
-        try {
-            const err = await response.json();
-            throw new Error(err.error);
-        } catch (error) {
-            throw new Error(`Error ${response.status} when fetching studies`);
-        }
-    }
-    const data = await response.json();
-    return data;
+    return resp.body;
 }
 
 
-export const getStudy = async (studyKey: string): Promise<Study> => {
-    const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
-    }
-
-    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}`);
-
-    const response = await fetch(url,
-        {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 0
-            }
-        });
-    if (response.status !== 200) {
-        try {
-            const err = await response.json();
-            throw new Error(err.error);
-        } catch (error) {
-            throw new Error(`Error ${response.status} when fetching study`);
-        }
-    }
-    const data = await response.json();
-    return data;
-}
-
-export const getSurveyKeys = async (studyKey: string): Promise<{
-    keys: string[]
+export const getStudy = async (studyKey: string): Promise<{
+    error?: string,
+    study?: Study
 }> => {
     const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
     }
-
-    const url = getCASEManagementAPIURL(`v1/study/${studyKey}/survey-keys`);
-
-    const response = await fetch(url,
+    const url = `/v1/studies/${studyKey}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
         {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 10
-            }
-        });
-    if (response.status !== 200) {
-        try {
-            const err = await response.json();
-            throw new Error(err.error);
-        } catch (error) {
-            throw new Error(`Error ${response.status} when fetching survey keys`);
+            revalidate: 1,
         }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study: ${resp.status} - ${resp.body.error}` };
     }
-    const data = await response.json();
-    return data;
+    return resp.body;
 }
 
-export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<Survey> => {
+export const getSurveyInfos = async (studyKey: string): Promise<{
+    error?: string,
+    surveys?: Array<{
+        key: string,
+    }>
+}> => {
     const session = await auth();
-    if (!session || session.CASEaccessToken === undefined) {
-        throw new Error('Unauthorized');
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
     }
-
-    const url = getCASEManagementAPIURL(`/v1/study/${studyKey}/survey/${surveyKey}/${versionID}`);
-    const response = await fetch(url,
+    const url = `/v1/studies/${studyKey}/surveys`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
         {
-            headers: {
-                ...getTokenHeader(session.CASEaccessToken)
-            },
-            next: {
-                revalidate: 10
-            }
-        });
-    if (response.status !== 200) {
-        try {
-            const err = await response.json();
-            throw new Error(err.error);
-        } catch (error) {
-            throw new Error(`Error ${response.status} when fetching survey version`);
+            revalidate: 0,
         }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch survey keys: ${resp.status} - ${resp.body.error}` };
     }
-    const data = await response.json();
-    return data;
+    return resp.body;
+}
+
+export const getSurveyVersions = async (studyKey: string, surveyKey: string): Promise<{
+    error?: string,
+    versions?: Array<Survey>
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch survey versions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getSurveyVersion = async (studyKey: string, surveyKey: string, versionID: string): Promise<{
+    error?: string,
+    survey?: Survey
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions/${versionID}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch survey version: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getStudyNotificationSubscriptions = async (studyKey: string): Promise<{
+    error?: string,
+    subscriptions?: Array<{
+        messageType: string,
+        email: string,
+    }>
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/notification-subscriptions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study notification subscriptions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export interface PermissionsInfo {
+    user: {
+        id: string;
+        username?: string;
+        email?: string;
+        imageUrl?: string;
+    }
+    permissions: Array<{
+        id: string;
+        action: string;
+        limiter?: { [key: string]: string };
+    }>;
+}
+
+export const getStudyPermissions = async (studyKey: string): Promise<{
+    error?: string,
+    permissions?: {
+        [key: string]: PermissionsInfo
+    },
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/permissions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study permissions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getStudyRulesVersions = async (studyKey: string): Promise<{
+    error?: string,
+    versions?: Array<{
+        id: string,
+        uploadedAt: number,
+    }>
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/rules/versions`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study rules versions: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getStudyRulesVersion = async (studyKey: string, versionID: string): Promise<{
+    error?: string,
+    studyRules?: {
+        id: string,
+        uploadedAt: number,
+        uploadedBy: string,
+        studyKey: string,
+        rules: Array<Expression>
+    };
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/rules/versions/${versionID}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study rules version: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
 }

@@ -1,3 +1,9 @@
+import { Suspense } from "react";
+import StudyEmailTemplates, { StudyEmailTemplatesSkeleton } from "./_components/StudyEmailTemplates";
+import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
+
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: "Study Email Templates",
     description: "Configure email templates for study messages, like invitations, reminders, etc.",
@@ -6,8 +12,22 @@ export const metadata = {
 export default function Page() {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/messaging/email-templates/study-templates/page.tsx</h1>
-        </div>
+        <SimpleBreadcrumbsPageLayout
+            links={
+                [
+                    {
+                        title: 'Messaging Tools',
+                        href: '/tools/messaging',
+                    },
+                    {
+                        title: 'Study Email Templates',
+                    },
+                ]
+            }
+        >
+            <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
+                <StudyEmailTemplates />
+            </Suspense>
+        </SimpleBreadcrumbsPageLayout>
     );
 }
