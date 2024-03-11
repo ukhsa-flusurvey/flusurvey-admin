@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, ArrowUpSquare, MoreVertical, Save, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Copy, MoreVertical, Save, Trash2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import DeleteResponsesDialog from './DeleteResponsesDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -10,6 +10,9 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import LoadingButton from '@/components/LoadingButton';
 import { getResponses } from '@/lib/data/responses';
 import { toast } from 'sonner';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
+import { useCopyToClipboard } from 'usehooks-ts';
 
 interface ResponseTableClientProps {
     studyKey: string;
@@ -23,7 +26,52 @@ interface ResponseTableClientProps {
     pagination?: Pagination;
 }
 
+const fixedCols = [
+    'ID',
+    "participantID",
+    "version",
+    "opened",
+    "submitted",
+    "language",
+    "engineVersion",
+    "session",
+]
+
+
+const ObjectValue = (props: { value: Object }) => {
+    const [copiedText, copyToClipboard] = useCopyToClipboard();
+    return (
+        <div className='flex items-center'>
+            {'<Object>'}
+            <Button
+                variant='link'
+                size='icon'
+                className='size-4 ms-2'
+                onClick={() => {
+                    copyToClipboard(JSON.stringify(props.value, null, 2));
+                    toast.success('Copied to clipboard');
+                }}
+            >
+                <Copy />
+            </Button>
+        </div>
+    )
+}
+
+const printValue = (value: number | string | boolean | Object): string | React.ReactNode => {
+    if (typeof value === 'object') {
+        return <ObjectValue value={value} />
+    }
+    return value;
+}
+
+const printAsDate = (value: number) => {
+    const date = new Date(value * 1000);
+    return date.toLocaleString();
+}
+
 const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
+    const [isMounted, setIsMounted] = React.useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
     const [responses, setResponses] = React.useState(props.responses || []);
@@ -33,8 +81,19 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     const pageSize = props.pageSize || 20;
 
     useEffect(() => {
+        setIsMounted(true);
+        return () => {
+            setIsMounted(false);
+        }
+    }, []);
+
+    useEffect(() => {
         setTotalResponses(props.pagination?.totalCount || 0);
     }, [props.pageSize, props.pagination?.totalCount]);
+
+    if (!isMounted) {
+        return null;
+    }
 
     const onDownloadCurrentView = () => {
         console.log('Download current view');
@@ -74,15 +133,69 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
 
     const hasMore = totalResponses > responses.length;
 
+    if (responses.length === 0) {
+        return (
+            <div>no responses</div>
+        )
+    }
+
+    const allColumns = Object.keys(responses[0]);
+    const columns = [...fixedCols, ...allColumns.filter(col => !fixedCols.includes(col))];
+
     return (
-        <div className='h-full w-full relative'>
-            <ScrollArea
-                className="h-full w-full overflow-y-auto pb-6 "
-            >
+        <div className='h-full w-full'>
+            <div className='overflow-y-scroll h-full pb-6'>
+                <ScrollArea className='block pb-3'>
+                    <Table className='text-xs border-2 border-neutral-300'>
+                        <TableHeader>
+                            <TableRow
+                                className='bg-slate-100'
+                            >
+                                {columns.map((column, index) => {
+                                    return (
+                                        <TableHead key={index}
+                                            className={cn('h-auto py-1 font-bold')}
+                                        >
+                                            {column}
+                                        </TableHead>
+                                    )
+                                })}
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {responses.map((resp, index) => {
+                                return (
+                                    <TableRow key={index}
+                                        className='group'
+                                    >
+                                        {columns.map((column, index) => (
+                                            <TableCell key={index}
+                                                className={cn('h-auto py-1 bg-white',
+                                                    'group-hover:bg-slate-50',
+                                                    {
+                                                        'bg-slate-50 group-hover:bg-slate-100': index % 2 === 0
+                                                    },
+
+                                                )}
+                                            >
+                                                {column === 'opened' || column === 'submitted' ? printAsDate(resp[column] as number) : printValue(resp[column])}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                )
+
+                            })}
+                        </TableBody>
+
+                    </Table>
+
+                    <ScrollBar
+                        orientation='horizontal'
+                    />
+                </ScrollArea>
 
 
-
-                <div className='flex justify-center py-4 pb-8'>
+                <div className='flex justify-center py-4 pb-8 w-full'>
                     {
                         hasMore ? <LoadingButton
                             isLoading={isPending}
@@ -96,9 +209,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                     }
                 </div>
 
-                <ScrollBar />
-            </ScrollArea>
-
+            </div>
 
             <div className='h-6 w-full bg-slate-50 absolute bottom-0 left-0 border-t border-neutral-300'>
                 <div className='flex items-center justify-between px-4 h-full'>
