@@ -20,6 +20,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 
 const responseFilterSchema = z.object({
@@ -105,11 +106,14 @@ const ResponseFilterForm: React.FC<ResponseFilterFormProps> = (props) => {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent
-                                        className="h-40 overflow-y-auto"
+
                                     >
-                                        {props.surveyKeys.map((surveyKey) => (
-                                            <SelectItem key={surveyKey} value={surveyKey}>{surveyKey}</SelectItem>
-                                        ))}
+                                        <ScrollArea className="h-40 overflow-y-auto">
+                                            {props.surveyKeys.map((surveyKey) => (
+                                                <SelectItem key={surveyKey} value={surveyKey}>{surveyKey}</SelectItem>
+                                            ))}
+                                            <ScrollBar />
+                                        </ScrollArea>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
