@@ -2,25 +2,102 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight, ArrowUpSquare, MoreVertical, Save, Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import DeleteResponsesDialog from './DeleteResponsesDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Pagination } from '@/utils/server/types/paginationInfo';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import LoadingButton from '@/components/LoadingButton';
+import { getResponses } from '@/lib/data/responses';
+import { toast } from 'sonner';
 
 interface ResponseTableClientProps {
     studyKey: string;
+    surveyKey: string;
+    filter?: string;
+    sort?: string;
+    pageSize?: number;
+    responses?: Array<{
+        [key: string]: number | string | boolean | Object
+    }>;
+    pagination?: Pagination;
 }
 
 const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
+    const [responses, setResponses] = React.useState(props.responses || []);
+    const [totalResponses, setTotalResponses] = React.useState(props.pagination?.totalCount || 0);
+    const [isPending, startTransition] = React.useTransition();
+
+    const pageSize = props.pageSize || 20;
+
+    useEffect(() => {
+        setTotalResponses(props.pagination?.totalCount || 0);
+    }, [props.pageSize, props.pagination?.totalCount]);
+
     const onDownloadCurrentView = () => {
         console.log('Download current view');
     }
 
+    const onLoadMore = () => {
+        const page = Math.floor(responses.length / pageSize) + 1;
+        startTransition(async () => {
+            try {
+                const resp = await getResponses(
+                    props.studyKey,
+                    props.surveyKey,
+                    page,
+                    props.filter,
+                    props.sort,
+                    pageSize,
+                    true
+                );
+                if (resp.error) {
+                    toast.error('Failed to load more responses', {
+                        description: resp.error
+                    });
+                    return;
+                }
+                if (resp.responses) {
+                    setResponses([...responses, ...resp.responses]);
+                }
+                if (resp.pagination) {
+                    setTotalResponses(resp.pagination.totalCount);
+                }
+            } catch (e) {
+                console.error(e);
+                toast.error('Failed to load more responses');
+            }
+        });
+    }
+
+    const hasMore = totalResponses > responses.length;
+
     return (
         <div className='h-full w-full relative'>
+            <ScrollArea
+                className="h-full w-full overflow-y-auto pb-6 "
+            >
 
 
+
+                <div className='flex justify-center py-4 pb-8'>
+                    {
+                        hasMore ? <LoadingButton
+                            isLoading={isPending}
+                            variant={'default'}
+                            onClick={onLoadMore}
+                        >
+                            Load more
+                        </LoadingButton> : <p className='text-xs text-neutral-500'>
+                            End of list
+                        </p>
+                    }
+                </div>
+
+                <ScrollBar />
+            </ScrollArea>
 
 
             <div className='h-6 w-full bg-slate-50 absolute bottom-0 left-0 border-t border-neutral-300'>
@@ -28,7 +105,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                     <p className='text-neutral-500 text-xs '>
                         Showing responses:
                         <span className='ms-2'>
-                            0 of 0
+                            {responses.length} of {totalResponses}
                         </span>
                     </p>
 

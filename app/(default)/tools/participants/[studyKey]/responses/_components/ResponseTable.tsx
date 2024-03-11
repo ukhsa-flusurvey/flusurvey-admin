@@ -3,6 +3,7 @@ import React from 'react';
 import ResponseTableClient from './ResponseTableClient';
 import { ArrowUp, List } from 'lucide-react';
 import { getResponses } from '@/lib/data/responses';
+import ErrorAlert from '@/components/ErrorAlert';
 
 interface ResponseTableProps {
     studyKey: string;
@@ -54,8 +55,20 @@ const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
         pageSize,
         true
     );
-    console.log(resp.pagination);
-    const responses = [];
+
+    const error = resp.error;
+    if (error) {
+        return (
+            <div className='flex p-4 justify-center w-full'>
+                <div className='block w-full'>
+                    <ErrorAlert
+                        title='Failed to load responses'
+                        error={error} />
+                </div>
+            </div>
+        )
+    }
+    const responses = resp.responses || [];
 
     if (responses.length === 0) {
         return (
@@ -75,11 +88,15 @@ const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
         );
     }
 
-    // TODO: error
-    // TODO: no responses
     return (
         <ResponseTableClient
             studyKey={props.studyKey}
+            surveyKey={props.searchParams.surveyKey}
+            filter={filter}
+            sort={sort}
+            pageSize={pageSize}
+            responses={responses}
+            pagination={resp.pagination}
         />
     );
 };
