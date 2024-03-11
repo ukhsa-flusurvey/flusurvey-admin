@@ -78,6 +78,7 @@ export default async function Page(props: PageProps) {
                             fallback={<ResponseTableSkeleton />}>
                             <ResponseTable
                                 studyKey={props.params.studyKey}
+                                searchParams={props.searchParams}
                             />
                         </Suspense>
                     </div>
