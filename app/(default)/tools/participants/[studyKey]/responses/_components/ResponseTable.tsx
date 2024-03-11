@@ -2,6 +2,7 @@ import CogLoader from '@/components/CogLoader';
 import React from 'react';
 import ResponseTableClient from './ResponseTableClient';
 import { ArrowUp, List } from 'lucide-react';
+import { getResponses } from '@/lib/data/responses';
 
 interface ResponseTableProps {
     studyKey: string;
@@ -13,18 +14,20 @@ interface ResponseTableProps {
     }
 }
 
+const constructFilter = (laterThan?: number, earlierThan?: number) => {
+    if (laterThan && earlierThan) {
+        return `{"$and":[{"arrivedAt":{"$gt":${laterThan}}},{"arrivedAt":{"$lt":${earlierThan}}}]}`;
+    }
+    if (laterThan) {
+        return `{"arrivedAt":{"$gt":${laterThan}}}`;
+    }
+    if (earlierThan) {
+        return `{"arrivedAt":{"$lt":${earlierThan}}}`;
+    }
+    return undefined;
+}
+
 const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
-
-
-    // TODO construct filter and sort for later than and older than
-
-    /*searchParams ?: {
-        surveyKey?: string;
-        laterThan?: number;
-        earlierThan?: number;
-        page?: string;
-    }*/
-
     if (!props.searchParams || !props.searchParams.surveyKey) {
         return (
             <div className='w-flex p-4'>
@@ -39,6 +42,19 @@ const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
         );
     }
 
+    const filter = constructFilter(props.searchParams.laterThan, props.searchParams.earlierThan);
+    const sort = encodeURIComponent('{ "arrivedAt": 1 }');
+    const pageSize = 20;
+    const resp = await getResponses(
+        props.studyKey,
+        props.searchParams.surveyKey,
+        1,
+        filter,
+        sort,
+        pageSize,
+        true
+    );
+    console.log(resp.pagination);
     const responses = [];
 
     if (responses.length === 0) {
