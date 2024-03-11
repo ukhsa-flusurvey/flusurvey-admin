@@ -40,7 +40,7 @@ export default async function Page(props: PageProps) {
                     className="w-full h-full flex flex-col overflow-hidden"
                 >
                     <CardHeader
-                        className="p-4 gap-1"
+                        className="p-4 gap-1 bg-neutral-50"
                     >
                         <CardTitle className="flex items-center">
                             <div className="grow">
@@ -64,8 +64,6 @@ export default async function Page(props: PageProps) {
                             <div className="grow">
                                 <Search />
                             </div>
-
-
                         </div>
                     </CardHeader>
                     <Separator

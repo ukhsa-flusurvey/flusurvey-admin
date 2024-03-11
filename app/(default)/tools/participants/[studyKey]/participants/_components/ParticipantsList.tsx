@@ -45,7 +45,7 @@ const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
 
     return (
         <div className="h-full w-[330px] relative border-r border-neutral-300 ">
-            <div className='px-4 absolute top-0 w-full text-sm font-semibold h-8 flex items-center justify-between border-b border-neutral-300 bg-slate-50'>
+            <div className='px-4 absolute top-0 w-full text-sm font-semibold h-8 flex items-center justify-between border-b border-neutral-300 bg-slate-100'>
                 Found {pagination.totalCount} participants
             </div>
             <ParticipantClientList

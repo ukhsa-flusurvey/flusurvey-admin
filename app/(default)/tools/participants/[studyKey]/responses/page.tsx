@@ -1,7 +1,12 @@
-import Breadcrumbs from "@/components/Breadcrumbs";
-import { getSurveyInfos } from "@/lib/data/studyAPI";
-import SurveyInfoDownloaderForm from "./SurveyInfoDownloader";
-import ResponseDownloaderForm from "./ResponseDownloader";
+
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight, HardDriveDownload } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
+import ResponseFilter, { ResponseFilterSkeleton } from "./_components/ResponseFilter";
+import ResponseTable, { ResponseTableSkeleton } from "./_components/ResponseTable";
 
 
 export const dynamic = 'force-dynamic';
@@ -16,50 +21,70 @@ interface PageProps {
     params: {
         studyKey: string;
     }
+    searchParams?: {
+        surveyKey?: string;
+        laterThan?: number;
+        earlierThan?: number;
+        page?: string;
+    }
 }
 
 export default async function Page(props: PageProps) {
-    let surveyKeys: string[] = [];
-    try {
-        const resp = await getSurveyInfos(props.params.studyKey)
 
-        if (resp.surveys) {
-            surveyKeys = resp.surveys.map(s => s.key);
-        }
-    } catch (e) {
-        console.error(e);
-    }
+    const responseTableKey = props.params.studyKey + JSON.stringify(props.searchParams);
 
     return (
-        <div className="py-unit-sm px-unit-lg">
-            <Breadcrumbs
-                homeLink={`/tools/participants`}
-                links={
-                    [
-                        {
-                            title: `${props.params.studyKey}`,
-                            href: `/tools/participants/${props.params.studyKey}`
-                        },
-                        {
-                            title: `Response downloader`
-                        }
-                    ]
-                }
-            />
-            <main className="py-unit-lg">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-unit-lg">
-                    <ResponseDownloaderForm
-                        studyKey={props.params.studyKey}
-                        availableSurveys={surveyKeys}
+        <div
+            className="h-full w-full py-6 flex flex-col gap-4" >
+            <div className="grow flex overflow-hidden">
+                <Card
+                    variant={'opaque'}
+                    className="w-full h-full flex flex-col overflow-hidden"
+                >
+                    <CardHeader
+                        className="p-4 gap-1 bg-neutral-50"
+                    >
+                        <CardTitle className="flex items-center">
+                            <div className="grow">
+                                Responses
+                            </div>
+                            <Button
+                                variant='link'
+                                asChild
+                                className="font-bold"
+                            >
+                                <Link
+                                    href={`/tools/participants/${props.params.studyKey}/responses/exporter`}
+                                >
+                                    <HardDriveDownload className="size-4 me-2" />
+                                    Open Exporter
+                                    <ArrowRight className="ml-2 size-4" />
+                                </Link>
+                            </Button>
+                        </CardTitle>
+
+                        <Suspense fallback={<ResponseFilterSkeleton />}>
+                            <ResponseFilter
+                                studyKey={props.params.studyKey}
+                            />
+                        </Suspense>
+                    </CardHeader>
+                    <Separator
+                        className="bg-neutral-300"
                     />
-                    <div>
-                        <SurveyInfoDownloaderForm
-                            studyKey={props.params.studyKey}
-                            availableSurveys={surveyKeys}
-                        />
+                    <div className="grow flex overflow-hidden">
+                        <Suspense
+                            key={responseTableKey}
+                            fallback={<ResponseTableSkeleton />}>
+                            <ResponseTable
+                                studyKey={props.params.studyKey}
+                            />
+                        </Suspense>
                     </div>
-                </div>
-            </main>
+                </Card>
+
+            </div>
         </div>
-    );
+
+    )
 }
