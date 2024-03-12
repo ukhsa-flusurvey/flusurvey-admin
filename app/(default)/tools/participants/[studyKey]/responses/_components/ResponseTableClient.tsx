@@ -168,6 +168,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                                                     'group-hover:bg-slate-50',
                                                     {
                                                         'bg-slate-50 group-hover:bg-slate-100': index % 2 === 0,
+                                                        'text-start font-mono': column === 'ID' || column === 'participantID',
                                                     }
                                                 )}
                                             >
