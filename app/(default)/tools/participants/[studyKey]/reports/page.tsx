@@ -50,7 +50,7 @@ export default async function Page(props: PageProps) {
                                 className="font-bold"
                             >
                                 <Link
-                                    href={`/tools/participants/${props.params.studyKey}/responses/exporter`}
+                                    href={`/tools/participants/${props.params.studyKey}/reports/exporter`}
                                 >
                                     <HardDriveDownload className="size-4 me-2" />
                                     Open Exporter
@@ -75,6 +75,7 @@ export default async function Page(props: PageProps) {
                             fallback={<ReportViewerSkeleton />}>
                             <ReportViewer
                                 studyKey={props.params.studyKey}
+                                filter={props.searchParams?.filter}
                             />
                         </Suspense>
                     </div>
