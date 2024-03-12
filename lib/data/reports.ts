@@ -4,6 +4,19 @@ import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { Pagination } from "@/utils/server/types/paginationInfo";
 
+export interface Report {
+    id: string;
+    key: string;
+    participantID: string;
+    responseID: string;
+    timestamp: number;
+    data?: Array<{
+        key: string;
+        value: string;
+        dtype?: string;
+    }>
+}
+
 export const getReports = async (
     studyKey: string,
     page: number,
@@ -12,9 +25,7 @@ export const getReports = async (
     pageSize?: number,
 ): Promise<{
     error?: string,
-    reports?: Array<{
-
-    }>
+    reports?: Array<Report>
     pagination?: Pagination
 }> => {
     const session = await auth();

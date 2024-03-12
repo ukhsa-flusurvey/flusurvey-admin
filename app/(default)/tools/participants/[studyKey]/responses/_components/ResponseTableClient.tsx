@@ -109,8 +109,6 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     }
 
     const onDownloadCurrentView = () => {
-        console.log('Download current view');
-
         startTransition(() => {
             // convert responses to csv
             const convertResponsesToCSV = () => {
