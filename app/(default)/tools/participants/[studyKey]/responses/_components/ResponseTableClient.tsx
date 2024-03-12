@@ -11,6 +11,7 @@ import { getResponses } from '@/lib/data/responses';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useCopyToClipboard } from 'usehooks-ts';
+import { deleteResponses } from '@/actions/study/responses';
 
 interface ResponseTableClientProps {
     studyKey: string;
@@ -311,10 +312,30 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
 
+                isLoading={isPending}
                 studyKey={props.studyKey}
+                totalResponses={totalResponses}
 
                 onPerformDelete={() => {
-                    console.log('Perform delete');
+                    startTransition(async () => {
+                        console.log('Perform delete');
+                        try {
+                            const resp = await deleteResponses(props.studyKey, props.surveyKey, props.filter, props.studyKey);
+                            if (resp.error) {
+                                toast.error('Failed to delete responses', {
+                                    description: resp.error
+                                });
+                                setIsDeleteDialogOpen(false);
+                                return;
+                            }
+                            toast.success('Responses deleted');
+                        } catch (e) {
+                            console.error(e);
+                            toast.error('Failed to delete responses');
+                        }
+
+                        setIsDeleteDialogOpen(false);
+                    })
                 }}
             />
 
