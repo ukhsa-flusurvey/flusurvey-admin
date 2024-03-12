@@ -45,7 +45,7 @@ const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
 
     const filter = constructFilter(props.searchParams.laterThan, props.searchParams.earlierThan);
     const sort = encodeURIComponent('{ "arrivedAt": -1 }');
-    const pageSize = 20;
+    const pageSize = 50;
     const resp = await getResponses(
         props.studyKey,
         props.searchParams.surveyKey,

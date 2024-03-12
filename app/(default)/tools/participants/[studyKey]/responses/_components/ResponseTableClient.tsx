@@ -1,16 +1,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, Copy, MoreVertical, Save, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Copy, Download, MoreVertical, Save, Trash2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import DeleteResponsesDialog from './DeleteResponsesDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination } from '@/utils/server/types/paginationInfo';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import LoadingButton from '@/components/LoadingButton';
 import { getResponses } from '@/lib/data/responses';
 import { toast } from 'sonner';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { useCopyToClipboard } from 'usehooks-ts';
 
@@ -145,69 +143,53 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     return (
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
-                <ScrollArea className='block pb-3'>
-                    <Table className='text-xs border-2 border-neutral-300'>
-                        <TableHeader>
-                            <TableRow
-                                className='bg-slate-100'
-                            >
+                <ScrollArea className='block pb-3 pe-3 h-full'>
+                    <table className='text-xs border border-neutral-300 mx-1 shadow-md drop-shadow-md mb-2'>
+                        <thead className='sticky top-0 z-10 shadow-sm border-b-4'>
+                            <tr className='bg-slate-200/70 backdrop-blur-md '>
                                 {columns.map((column, index) => {
                                     return (
-                                        <TableHead key={index}
-                                            className={cn('h-auto py-1 font-bold')}
-                                        >
+                                        <th key={index} className={cn('h-auto px-2 w-auto whitespace-nowrap py-1 font-bold')}>
                                             {column}
-                                        </TableHead>
-                                    )
+                                        </th>
+                                    );
                                 })}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {responses.map((resp, index) => {
                                 return (
-                                    <TableRow key={index}
-                                        className='group'
-                                    >
+                                    <tr key={index} className='group'>
                                         {columns.map((column, index) => (
-                                            <TableCell key={index}
-                                                className={cn('h-auto py-1 bg-white',
+                                            <td
+                                                key={index}
+                                                className={cn(
+                                                    'h-auto px-2 text-center py-1.5 bg-white border-b border-neutral-200 whitespace-nowrap',
                                                     'group-hover:bg-slate-50',
                                                     {
-                                                        'bg-slate-50 group-hover:bg-slate-100': index % 2 === 0
-                                                    },
-
+                                                        'bg-slate-50 group-hover:bg-slate-100': index % 2 === 0,
+                                                    }
                                                 )}
                                             >
-                                                {column === 'opened' || column === 'submitted' ? printAsDate(resp[column] as number) : printValue(resp[column])}
-                                            </TableCell>
+                                                {column === 'opened' || column === 'submitted'
+                                                    ? printAsDate(resp[column] as number)
+                                                    : printValue(resp[column])}
+                                            </td>
                                         ))}
-                                    </TableRow>
-                                )
-
+                                    </tr>
+                                );
                             })}
-                        </TableBody>
-
-                    </Table>
+                        </tbody>
+                    </table>
+                    <ScrollBar
+                        className='w-3'
+                    />
 
                     <ScrollBar
+                        className='h-3'
                         orientation='horizontal'
                     />
                 </ScrollArea>
-
-
-                <div className='flex justify-center py-4 pb-8 w-full'>
-                    {
-                        hasMore ? <LoadingButton
-                            isLoading={isPending}
-                            variant={'default'}
-                            onClick={onLoadMore}
-                        >
-                            Load more
-                        </LoadingButton> : <p className='text-xs text-neutral-500'>
-                            End of list
-                        </p>
-                    }
-                </div>
 
             </div>
 
@@ -220,6 +202,16 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                         </span>
                     </p>
 
+                    {hasMore && <Button
+                        variant={'link'}
+                        className='text-xs px-0 h-4'
+                        onClick={onLoadMore}
+                        disabled={isPending}
+                    >
+                        <Download className='size-3 me-2' />
+                        {isPending ? 'Loading...' : 'Load more'}
+                    </Button>}
+
                     <div className='flex gap-2 items-center max-h-6'>
                         <Button
                             variant={'link'}
@@ -229,6 +221,8 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                             <Save className='size-3 me-2' />
                             Download current view
                         </Button>
+
+
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -273,7 +267,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                 }}
             />
 
-        </div>
+        </div >
     );
 };
 
