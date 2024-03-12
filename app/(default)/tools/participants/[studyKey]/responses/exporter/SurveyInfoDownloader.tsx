@@ -21,7 +21,9 @@ const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_P
 
 const formSchema = z.object({
     surveyKey: z.string().min(1, { message: 'Please select a survey' }),
-    exportFormat: z.string(),
+    exportFormat: z.enum(
+        ['json', 'csv'],
+    ),
     language: z.string().min(2),
     shortKeys: z.boolean(),
 })
@@ -50,7 +52,14 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
             const language = values.language;
             const useShortKeys = values.shortKeys;
 
-            const resp = await fetch(`/api/case-management-api/v1/data/${props.studyKey}/survey/${selectedSurveyKey}/survey-info${exportFormat === 'csv' ? '/csv' : ''}?lang=${language}&shortKeys=${useShortKeys}`)
+            const queryParams = new URLSearchParams();
+            queryParams.append('surveyKey', selectedSurveyKey);
+            queryParams.append('format', exportFormat);
+            queryParams.append('language', language);
+            queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
+
+            const url = `/api/case-management-api/v1/studies/${props.studyKey}/data-exporter/survey-info?${queryParams.toString()}`;
+            const resp = await fetch(url)
             if (resp.status !== 200) {
                 if (resp.status === 401) {
                     await logout()
@@ -103,7 +112,7 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                                             <SelectContent>
                                                 {
                                                     props.availableSurveys.length === 0 &&
-                                                    <SelectItem value="">No surveys available in this study</SelectItem>
+                                                    <SelectItem value="_">No surveys available in this study</SelectItem>
                                                 }
                                                 {
                                                     props.availableSurveys.map((surveyKey) => {
@@ -187,6 +196,7 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                                                         );
                                                     })
                                                 }
+                                                <SelectItem value="ignored">Without labels</SelectItem>
                                             </SelectContent>
                                         </Select>
 

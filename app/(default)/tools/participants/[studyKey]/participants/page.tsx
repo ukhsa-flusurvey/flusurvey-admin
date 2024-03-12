@@ -1,19 +1,20 @@
-
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import Search from "./_components/Search";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, HardDriveDownload } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
-import ResponseFilter, { ResponseFilterSkeleton } from "./_components/ResponseFilter";
-import ResponseTable, { ResponseTableSkeleton } from "./_components/ResponseTable";
+import ParticipantList, { ParticipantListSkeleton } from "./_components/ParticipantsList";
+import ParticipantDetails, { ParticipantDetailsSkeleton } from "./_components/ParticipantDetails";
+
+
 
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: 'Responses',
-    description: 'Download responses from the study.',
+    title: 'Participants',
 }
 
 
@@ -22,16 +23,13 @@ interface PageProps {
         studyKey: string;
     }
     searchParams?: {
-        surveyKey?: string;
-        laterThan?: number;
-        earlierThan?: number;
+        filter?: string;
         page?: string;
-    }
+        selectedParticipant?: string;
+    };
 }
 
 export default async function Page(props: PageProps) {
-
-    const responseTableKey = props.params.studyKey + JSON.stringify(props.searchParams);
 
     return (
         <div
@@ -46,7 +44,7 @@ export default async function Page(props: PageProps) {
                     >
                         <CardTitle className="flex items-center">
                             <div className="grow">
-                                Responses
+                                Participants
                             </div>
                             <Button
                                 variant='link'
@@ -54,7 +52,7 @@ export default async function Page(props: PageProps) {
                                 className="font-bold"
                             >
                                 <Link
-                                    href={`/tools/participants/${props.params.studyKey}/responses/exporter`}
+                                    href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
                                 >
                                     <HardDriveDownload className="size-4 me-2" />
                                     Open Exporter
@@ -62,30 +60,45 @@ export default async function Page(props: PageProps) {
                                 </Link>
                             </Button>
                         </CardTitle>
-
-                        <Suspense fallback={<ResponseFilterSkeleton />}>
-                            <ResponseFilter
-                                studyKey={props.params.studyKey}
-                            />
-                        </Suspense>
+                        <div className="flex gap-12">
+                            <div className="grow">
+                                <Search />
+                            </div>
+                        </div>
                     </CardHeader>
                     <Separator
                         className="bg-neutral-300"
                     />
+
                     <div className="grow flex overflow-hidden">
                         <Suspense
-                            key={responseTableKey}
-                            fallback={<ResponseTableSkeleton />}>
-                            <ResponseTable
+                            key={props.params.studyKey + props.searchParams?.filter + props.searchParams?.page}
+                            fallback={<ParticipantListSkeleton />}
+                        >
+                            <ParticipantList
                                 studyKey={props.params.studyKey}
-                                searchParams={props.searchParams}
+                                filter={props.searchParams?.filter}
+                                page={props.searchParams?.page}
+                                selectedParticipant={props.searchParams?.selectedParticipant}
                             />
                         </Suspense>
+
+                        <div className="grow h-full overflow-auto">
+                            <Suspense
+                                key={props.params.studyKey + props.searchParams?.selectedParticipant}
+                                fallback={<ParticipantDetailsSkeleton />}
+                            >
+                                <ParticipantDetails
+                                    studyKey={props.params.studyKey}
+                                    participantID={props.searchParams?.selectedParticipant}
+                                />
+
+                            </Suspense>
+                        </div>
                     </div>
-                </Card>
-
+                </Card >
             </div>
-        </div>
 
+        </div >
     )
 }
