@@ -1,14 +1,12 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Search from "./_components/Search";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, HardDriveDownload } from "lucide-react";
 import { Suspense } from "react";
 import ParticipantList, { ParticipantListSkeleton } from "./_components/ParticipantsList";
 import ParticipantDetails, { ParticipantDetailsSkeleton } from "./_components/ParticipantDetails";
-
-
+import QueryFilterInput from "@/components/QueryFilterInput";
 
 
 export const dynamic = 'force-dynamic';
@@ -62,7 +60,9 @@ export default async function Page(props: PageProps) {
                         </CardTitle>
                         <div className="flex gap-12">
                             <div className="grow">
-                                <Search />
+                                <QueryFilterInput
+                                    id='participant-filter'
+                                />
                             </div>
                         </div>
                     </CardHeader>

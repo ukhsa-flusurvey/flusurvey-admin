@@ -6,10 +6,11 @@ import { SearchIcon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
-interface SearchProps {
+interface QueryFilterInputProps {
+    id: string;
 }
 
-const Search: React.FC<SearchProps> = (props) => {
+const QueryFilterInput: React.FC<QueryFilterInputProps> = (props) => {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -35,8 +36,8 @@ const Search: React.FC<SearchProps> = (props) => {
     return (
         <div className='flex gap-2'>
             <Input
-                id='participant-filter'
-                name='participant-filter'
+                id={props.id}
+                name={props.id}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
@@ -57,4 +58,4 @@ const Search: React.FC<SearchProps> = (props) => {
     );
 };
 
-export default Search;
+export default QueryFilterInput;
