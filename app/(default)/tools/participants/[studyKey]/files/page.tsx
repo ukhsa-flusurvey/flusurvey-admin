@@ -20,20 +20,6 @@ export default async function Page(props: PageProps) {
 
     return (
         <div className="py-unit-sm px-unit-lg">
-            <Breadcrumbs
-                homeLink={`/tools/participants/${props.params.studyKey}`}
-                links={
-                    [
-                        {
-                            title: `${props.params.studyKey}`,
-                            href: `/tools/participants/${props.params.studyKey}`
-                        },
-                        {
-                            title: `Participant files`
-                        }
-                    ]
-                }
-            />
             <main className="py-unit-lg">
                 <ParticipantFileDownloader
                     studyKey={props.params.studyKey}
