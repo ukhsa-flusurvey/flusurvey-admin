@@ -68,6 +68,20 @@ const printAsDate = (value: number) => {
     return date.toLocaleString();
 }
 
+const escapeCsvValue = (val: string | undefined) => {
+    if (val === null || val === undefined) {
+        return '';
+    }
+    let str = String(val);
+    // Escape double quotes
+    str = str.replace(/"/g, '""');
+    // Enclose in double quotes if the value contains a comma, newline, or double quote
+    if (str.search(/("|,|\n)/g) >= 0) {
+        str = `"${str}"`;
+    }
+    return str;
+};
+
 const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     const [isMounted, setIsMounted] = React.useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
@@ -95,6 +109,42 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
 
     const onDownloadCurrentView = () => {
         console.log('Download current view');
+
+        startTransition(() => {
+            // convert responses to csv
+            const convertResponsesToCSV = () => {
+                let csvContent = '';
+                csvContent += columns.join(',') + '\n';
+                csvContent += responses.map((response) => {
+                    const values = columns.map((colName) => {
+                        const value = response[colName];
+                        if (typeof value === 'object') {
+                            return JSON.stringify(value);
+                        }
+                        if (typeof value !== 'string') {
+                            return value.toString();
+                        }
+                        return value;
+                    }).map((value) => escapeCsvValue(value));
+                    return values.join(',');
+                }).join('\n');
+
+                return csvContent;
+            };
+
+            const csvContent = convertResponsesToCSV();
+
+            // download csv
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${props.studyKey}_${props.surveyKey}_responses.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
     }
 
     const onLoadMore = () => {
