@@ -109,8 +109,6 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     }
 
     const onDownloadCurrentView = () => {
-        console.log('Download current view');
-
         startTransition(() => {
             // convert responses to csv
             const convertResponsesToCSV = () => {
@@ -194,7 +192,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     return (
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
-                <ScrollArea className='block pb-3 pe-3 h-full'>
+                <ScrollArea className='block pb-3 pe-3 h-full overscroll-x-contain'>
                     <table className='text-xs border border-neutral-300 mx-1 shadow-md drop-shadow-md mb-2'>
                         <thead className='sticky top-0 z-10 shadow-sm border-b-4'>
                             <tr className='bg-slate-200/70 backdrop-blur-md '>
