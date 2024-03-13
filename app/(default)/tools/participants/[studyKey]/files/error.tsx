@@ -9,7 +9,7 @@ const error: React.FC<ErrorProps> = (props) => {
     return (
         <div className='py-4'>
             <ErrorAlert
-                title="Error loading reports"
+                title="Error loading files"
                 error="Try again later. If the problem persists, contact your admin."
             />
         </div>
