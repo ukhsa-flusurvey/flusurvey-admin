@@ -19,7 +19,7 @@ export default function Page(
             <div className="">
                 <BackButton
                     label="Back to exporter"
-                    href={`/tools/participants/${studyKey}/participants/exporter`}
+                    href={`/tools/participants/${studyKey}/reports/exporter`}
                 />
             </div>
 
@@ -30,16 +30,16 @@ export default function Page(
                     >
                         <CardHeader>
                             <CardTitle>
-                                Export Participants
+                                Export Reports
                             </CardTitle>
                             <CardDescription>
-                                Prepare a JSON file with all the participants for the given query and when ready download the file.
+                                Prepare a JSON file with all the reports for the given query and when ready download the file.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <TaskTracker
                                 taskID={taskID}
-                                taskURLPrefix={`/v1/studies/${studyKey}/data-exporter/participants`}
+                                taskURLPrefix={`/v1/studies/${studyKey}/data-exporter/reports`}
                             />
                         </CardContent>
                     </Card >
