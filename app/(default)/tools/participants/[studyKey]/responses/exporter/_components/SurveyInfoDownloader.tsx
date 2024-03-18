@@ -14,7 +14,7 @@ import { logout } from "@/actions/auth/logout";
 
 interface SurveyInfoDownloaderProps {
     studyKey: string;
-    availableSurveys: string[];
+    availableSurveyKeys: string[];
 }
 
 const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
@@ -81,10 +81,10 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
     return (
         <Card>
             <CardHeader >
-                <CardTitle >
+                <CardTitle className="text-lg" >
                     Survey Info Downloader
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs">
                     Download the history of the survey structure in a CSV or JSON format. This can be helpful when interpreting the response data.
                 </CardDescription>
             </CardHeader>
@@ -109,13 +109,13 @@ const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
                                                     <SelectValue placeholder="Select a survey" />
                                                 </SelectTrigger>
                                             </FormControl>
-                                            <SelectContent>
+                                            <SelectContent className='max-h-80'>
                                                 {
-                                                    props.availableSurveys.length === 0 &&
+                                                    props.availableSurveyKeys.length === 0 &&
                                                     <SelectItem value="_">No surveys available in this study</SelectItem>
                                                 }
                                                 {
-                                                    props.availableSurveys.map((surveyKey) => {
+                                                    props.availableSurveyKeys.map((surveyKey) => {
                                                         return (
                                                             <SelectItem
                                                                 key={surveyKey}

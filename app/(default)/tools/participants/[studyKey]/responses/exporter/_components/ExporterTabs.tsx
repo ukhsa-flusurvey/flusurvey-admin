@@ -3,16 +3,16 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SurveyInfoDownloader from './SurveyInfoDownloader';
 
 interface ExporterTabsProps {
     studyKey: string;
+    availableSurveyKeys: string[];
 }
 
 const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
     return (
         <div>
-
-
             <Card
                 variant={'opaque'}
             >
@@ -37,7 +37,12 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="responses">Make changes to your account here.</TabsContent>
-                        <TabsContent value="surveyInfo">Change your password here.</TabsContent>
+                        <TabsContent value="surveyInfo">
+                            <SurveyInfoDownloader
+                                studyKey={props.studyKey}
+                                availableSurveyKeys={props.availableSurveyKeys}
+                            />
+                        </TabsContent>
                         <TabsContent value="confidentialResponses">Change your password here.</TabsContent>
                     </Tabs>
                 </CardContent>

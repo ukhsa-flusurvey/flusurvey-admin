@@ -1,8 +1,10 @@
 import BackButton from "@/components/BackButton";
 
 import ExporterTabs from "./_components/ExporterTabs";
+import { getSurveyInfos } from "@/lib/data/studyAPI";
+import { toast } from "sonner";
 
-export default function Page(
+export default async function Page(
     {
         params: { studyKey }
     }: {
@@ -11,6 +13,18 @@ export default function Page(
         };
     }
 ) {
+    let surveyKeys: string[] = [];
+    try {
+        const resp = await getSurveyInfos(studyKey)
+
+        if (resp.surveys) {
+            surveyKeys = resp.surveys.map(s => s.key);
+        }
+    } catch (e) {
+        toast.error('Failed to fetch survey keys');
+        console.error(e);
+    }
+
 
     return (
         <div
@@ -26,6 +40,7 @@ export default function Page(
                 <div className="w-full h-full flex flex-col">
                     <ExporterTabs
                         studyKey={studyKey}
+                        availableSurveyKeys={surveyKeys}
                     />
                 </div>
             </div>
