@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyInfoDownloader from './SurveyInfoDownloader';
 import ResponseDownloader from './ResponseDownloader';
+import ConfidentialResponseDownloader from './ConfidentialResponseDownloader';
 
 interface ExporterTabsProps {
     studyKey: string;
@@ -49,7 +50,11 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                                 availableSurveyKeys={props.availableSurveyKeys}
                             />
                         </TabsContent>
-                        <TabsContent value="confidentialResponses">Change your password here.</TabsContent>
+                        <TabsContent value="confidentialResponses">
+                            <ConfidentialResponseDownloader
+                                studyKey={props.studyKey}
+                            />
+                        </TabsContent>
                     </Tabs>
                 </CardContent>
             </Card >
