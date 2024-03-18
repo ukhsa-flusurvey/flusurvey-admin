@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { Pagination } from "@/utils/server/types/paginationInfo";
-import { Task, startFileExportExport } from "./tasks";
+import { Task, startFileExportTask } from "./tasks";
 
 export interface Report {
     id: string;
@@ -106,5 +106,5 @@ export const startReportExport = async (
     error?: string,
     task?: Task
 }> => {
-    return startFileExportExport(`/v1/studies/${studyKey}/data-exporter/reports`, filter, sort);
+    return startFileExportTask(`/v1/studies/${studyKey}/data-exporter/reports`, filter, sort);
 }

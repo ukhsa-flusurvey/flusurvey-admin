@@ -15,7 +15,7 @@ export interface Task {
 }
 
 
-export const startFileExportExport = async (
+export const startFileExportTask = async (
     url: string,
     filter?: string,
     sort?: string,
