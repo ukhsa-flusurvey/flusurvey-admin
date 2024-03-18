@@ -37,7 +37,7 @@ export default async function Page(
             </div>
 
             <div className="grow flex overflow-hidden">
-                <div className="w-full h-full flex flex-col">
+                <div className="w-full h-full flex flex-col overflow-y-scroll">
                     <ExporterTabs
                         studyKey={studyKey}
                         availableSurveyKeys={surveyKeys}

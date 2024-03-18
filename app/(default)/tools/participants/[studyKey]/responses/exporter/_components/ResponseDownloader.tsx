@@ -13,8 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import LoadingButton from '@/components/LoadingButton';
 import FormDatepicker from '@/components/FormDatepicker';
-import { redirect } from 'next/navigation';
-import { logout } from '@/actions/auth/logout';
+
+import { Separator } from '@/components/ui/separator';
+import { startResponseExport } from '@/lib/data/responses';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface ResponseDownloaderProps {
     studyKey: string;
@@ -34,6 +37,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = React.useState<string | undefined>(undefined);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -60,34 +64,46 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
             const queryEndDate = Math.round(values.until.getTime() / 1000);
             const useShortKeys = values.shortKeys;
 
-            const resp = await fetch(`/api/data/responses?studyKey=${props.studyKey}&surveyKey=${selectedSurveyKey}&from=${queryStartDate}&until=${queryEndDate}&format=${exportFormat}&keySeparator=${keySeparator}&useShortKeys=${useShortKeys}`)
-            if (resp.status !== 200) {
-                if (resp.status === 401) {
-                    await logout()
+            const sort = encodeURIComponent('{ "arrivedAt": -1 }');
+
+            try {
+                const resp = await startResponseExport(
+                    props.studyKey,
+                    selectedSurveyKey,
+                    exportFormat,
+                    keySeparator,
+                    queryStartDate,
+                    queryEndDate,
+                    useShortKeys,
+                    sort
+                );
+
+                if (resp.error || !resp.task) {
+                    setErrorMsg(resp.error);
+                    toast.error('Failed to start export task', {
+                        description: resp.error,
+                    });
+                    return;
                 }
-                const err = await resp.json();
-                setErrorMsg(err.error);
-                return;
+
+                setSuccessMsg('Export task started successfully');
+                router.push(`/tools/participants/${props.studyKey}/responses/exporter/${resp.task.id}`);
+
+
+            } catch (e) {
+                console.error(e);
+                toast.error('Failed to start export task');
             }
-            const blob = await resp.blob();
-            const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = (fileName || 'responses.csv').replaceAll('"', '');
-            link.click();
-            setSuccessMsg('Downloaded successfully.');
         })
-
-
     }
 
     return (
         <Card>
             <CardHeader >
-                <CardTitle >
+                <CardTitle className="text-lg" >
                     Response Downloader
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className='text-xs'>
                     Query and download responses to your device.
                 </CardDescription>
 
@@ -97,97 +113,51 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                     <CardContent>
                         <div className='space-y-6'>
 
-                            <FormField
-                                control={form.control}
-                                name="surveyKey"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Survey key</FormLabel>
 
-                                        <Select
-                                            name={field.name}
-                                            onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a survey" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {
-                                                    props.availableSurveys.length === 0 &&
-                                                    <SelectItem value="">No surveys available in this study</SelectItem>
-                                                }
-                                                {
-                                                    props.availableSurveys.map((surveyKey) => {
-                                                        return (
-                                                            <SelectItem
-                                                                key={surveyKey}
-                                                                value={surveyKey}
-                                                            >
-                                                                {surveyKey}
-                                                            </SelectItem>
-                                                        );
-                                                    })
-                                                }
-                                            </SelectContent>
-                                        </Select>
+                            <div className='flex flex-wrap justify-between gap-6'>
+                                <FormField
+                                    control={form.control}
+                                    name="surveyKey"
+                                    render={({ field }) => (
+                                        <FormItem className='grow'>
+                                            <FormLabel>Survey key</FormLabel>
 
-                                        <FormDescription className='text-xs'>
-                                            Download responses for this survey.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <Select
+                                                name={field.name}
+                                                onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a survey" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent className='max-h-80 overflow-y-auto'>
+                                                    {
+                                                        props.availableSurveys.length === 0 &&
+                                                        <SelectItem value="">No surveys available in this study</SelectItem>
+                                                    }
+                                                    {
+                                                        props.availableSurveys.map((surveyKey) => {
+                                                            return (
+                                                                <SelectItem
+                                                                    key={surveyKey}
+                                                                    value={surveyKey}
+                                                                >
+                                                                    {surveyKey}
+                                                                </SelectItem>
+                                                            );
+                                                        })
+                                                    }
+                                                </SelectContent>
+                                            </Select>
 
-                            <FormField
-                                control={form.control}
-                                name="exportFormat"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Export format</FormLabel>
+                                            <FormDescription className='text-xs'>
+                                                Download responses for this survey.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                                        <Select
-                                            name={field.name}
-                                            onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a format" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="wide">CSV (wide)</SelectItem>
-                                                <SelectItem value="long">CSV (long)</SelectItem>
-                                                <SelectItem value="json">JSON</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-
-                                        <FormDescription className='text-xs'>
-                                            Select the format for the downloaded file.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="keySeparator"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Key separator</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter key separator" {...field} />
-                                        </FormControl>
-                                        <FormDescription className='text-xs'>
-                                            This character will be used to separate parts the slot keys in the output.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className='flex flex-col sm:flex-row gap-3'>
                                 <FormField
                                     control={form.control}
                                     name="from"
@@ -212,7 +182,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                     render={({ field }) => (
                                         <FormItem className='grow'>
                                             <FormLabel>Until</FormLabel>
-                                            <div>
+                                            <div className='w-full'>
                                                 <FormDatepicker field={field} />
                                             </div>
                                             <FormDescription className='text-xs'>
@@ -224,25 +194,80 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                 />
                             </div>
 
-                            <FormField
-                                control={form.control}
-                                name="shortKeys"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <div className='flex space-x-3 items-center'>
+                            <Separator />
+
+                            <div className='flex flex-wrap justify-between gap-6 items-end'>
+
+                                <FormField
+                                    control={form.control}
+                                    name="exportFormat"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Export format</FormLabel>
+
+                                            <Select
+                                                name={field.name}
+                                                onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a format" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="wide">CSV (wide)</SelectItem>
+                                                    <SelectItem value="long">CSV (long)</SelectItem>
+                                                    <SelectItem value="json">JSON</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+
+                                            <FormDescription className='text-xs'>
+                                                Select the format for the downloaded file.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="keySeparator"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Key separator</FormLabel>
                                             <FormControl>
-                                                <Switch
-                                                    name={field.name}
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
+                                                <Input placeholder="Enter key separator" {...field} />
                                             </FormControl>
-                                            <FormLabel>Use short keys</FormLabel>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <FormDescription className='text-xs'>
+                                                This character will be used to separate parts the slot keys in the output.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="shortKeys"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <div className='flex space-x-3 items-center'>
+                                                <FormControl>
+                                                    <Switch
+                                                        name={field.name}
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                    />
+                                                </FormControl>
+                                                <FormLabel>Use short keys</FormLabel>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+
+                            </div>
+
 
                         </div>
 
@@ -261,13 +286,13 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                         </p>}
                     </CardContent>
 
-                    <CardFooter className='flex justify-end'>
+                    <CardFooter className='flex justify-start'>
                         <LoadingButton
                             type='submit'
                             isLoading={isPending}
                         >
                             <Download className='size-4 me-2' />
-                            Download
+                            Start export task
                         </LoadingButton>
                     </CardFooter>
                 </form>

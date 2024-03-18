@@ -4,6 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyInfoDownloader from './SurveyInfoDownloader';
+import ResponseDownloader from './ResponseDownloader';
 
 interface ExporterTabsProps {
     studyKey: string;
@@ -36,7 +37,12 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                                 Confidential Responses
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="responses">Make changes to your account here.</TabsContent>
+                        <TabsContent value="responses">
+                            <ResponseDownloader
+                                studyKey={props.studyKey}
+                                availableSurveys={props.availableSurveyKeys}
+                            />
+                        </TabsContent>
                         <TabsContent value="surveyInfo">
                             <SurveyInfoDownloader
                                 studyKey={props.studyKey}
