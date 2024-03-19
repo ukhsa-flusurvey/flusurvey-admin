@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { Pagination } from "@/utils/server/types/paginationInfo";
 import { ParticipantState } from "@/utils/server/types/participantState";
+import { Task, startFileExportTask, getTaskProgress } from "./tasks";
 
 
 export const getParticipants = async (
@@ -74,4 +75,48 @@ export const getParticipantById = async (
         return { error: `Failed to fetch participant: ${resp.status} - ${resp.body.error}` };
     }
     return resp.body;
+}
+
+export const getParticipantCount = async (
+    studyKey: string,
+    filter?: string
+): Promise<{
+    error?: string,
+    count?: number
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+
+    const queryParams = new URLSearchParams();
+    if (filter) {
+        queryParams.append('filter', filter);
+    }
+    const queryString = queryParams.toString();
+    const url = `/v1/studies/${studyKey}/data-exporter/participants/count?${queryString}`;
+
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch participant count: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+
+export const startParticipantExport = async (
+    studyKey: string,
+    filter?: string,
+    sort?: string,
+): Promise<{
+    error?: string,
+    task?: Task
+}> => {
+    return startFileExportTask(`/v1/studies/${studyKey}/data-exporter/participants`, filter, sort);
 }

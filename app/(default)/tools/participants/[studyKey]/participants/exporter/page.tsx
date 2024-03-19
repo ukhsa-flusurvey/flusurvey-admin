@@ -1,50 +1,47 @@
-import { Card } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import BackButton from "@/components/BackButton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ParticipantDownloader from "./_components/ParticipantDownloader";
 
-export default function Page() {
+
+
+export default function Page({
+    params: { studyKey }
+}: {
+    params: {
+        studyKey: string;
+    };
+}) {
 
     return (
         <div
-            className="h-full w-full py-6 flex flex-col gap-4" >
-            <div className="h-12 bg-slate-100">
-                {'<- back button'}
+            className="h-full w-full py-6 flex flex-col" >
+            <div className="">
+                <BackButton
+                    label="Back to participant explorer"
+                    href={`/tools/participants/${studyKey}/participants`}
+                />
             </div>
 
             <div className="grow flex overflow-hidden">
-                <Card
-                    variant={'opaque'}
-                    className="w-full h-full flex flex-col overflow-hidden"
-                >
-                    <div className="shrink-0 bg-green-300 py-3 ">
-                        Header and search
-                    </div>
-                    <div className="grow flex overflow-hidden">
-                        <div className="bg-red-50 h-full w-64 rounded-lg relative ">
-                            <ScrollArea
-                                className="h-full overflow-y-auto pb-12 "
-                            >
-                                <div className="space-y-1">
-
-
-                                    {Array.from({ length: 20 }, (_, index) => (
-                                        <div key={index}
-                                            className="bg-red-500 h-20 w-full rounded-lg"
-                                        >Item {index + 1}</div>
-                                    ))}
-                                </div>
-
-                                <ScrollBar />
-                            </ScrollArea>
-                            <div className="bg-purple-100 w-full h-12 absolute bottom-0 flex items-center justify-center">
-                                Pagination
-                            </div>
-
-                        </div>
-                        <div className="grow h-full overflow-auto">
-
-                        </div>
-                    </div>
-                </Card >
+                <div className="w-full h-full flex flex-col">
+                    <Card
+                        variant={'opaque'}
+                    >
+                        <CardHeader>
+                            <CardTitle>
+                                Export Participants
+                            </CardTitle>
+                            <CardDescription>
+                                Prepare a JSON file with all the participants for the given query and when ready download the file.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ParticipantDownloader
+                                studyKey={studyKey}
+                            />
+                        </CardContent>
+                    </Card >
+                </div>
             </div>
 
         </div >

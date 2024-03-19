@@ -29,7 +29,10 @@ export async function GET(request: NextRequest, { params: { segments } }: { para
 
     const resp = new NextResponse(apiResponse.body, {
         status: apiResponse.status,
-        headers: { 'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json' }
+        headers: {
+            'Content-Type': apiResponse.headers.get('Content-Type') || 'application/json',
+            'Content-Disposition': apiResponse.headers.get('Content-Disposition') || '',
+        }
     });
     return resp;
 

@@ -1,22 +1,25 @@
 import BackButton from "@/components/BackButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ReportsDownloader from "./_components/ReportsDownloader";
+import TaskTracker from "../../../../../../../../components/ExportTaskTracker";
 
-export default function Page({
-    params: { studyKey }
-}: {
-    params: {
-        studyKey: string;
-    };
-}) {
+export default function Page(
+    {
+        params: { studyKey, taskID }
+    }: {
+        params: {
+            studyKey: string;
+            taskID: string;
+        };
+    }
+) {
 
     return (
         <div
             className="h-full w-full py-6 flex flex-col" >
             <div className="">
                 <BackButton
-                    label="Back to participant explorer"
-                    href={`/tools/participants/${studyKey}/participants`}
+                    label="Back to exporter"
+                    href={`/tools/participants/${studyKey}/responses/exporter`}
                 />
             </div>
 
@@ -27,15 +30,16 @@ export default function Page({
                     >
                         <CardHeader>
                             <CardTitle>
-                                Export Reports
+                                Export Responses
                             </CardTitle>
                             <CardDescription>
-                                Prepare a JSON file with all the reports for the given query and when ready download the file.
+                                {"Your file is being prepared. You can download it once it's ready."}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ReportsDownloader
-                                studyKey={studyKey}
+                            <TaskTracker
+                                taskID={taskID}
+                                taskURLPrefix={`/v1/studies/${studyKey}/data-exporter/responses`}
                             />
                         </CardContent>
                     </Card >

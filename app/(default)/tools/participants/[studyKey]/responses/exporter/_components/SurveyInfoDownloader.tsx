@@ -1,36 +1,34 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import LoadingButton from "@/components/LoadingButton";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { AlertTriangle, CheckCircle, Download } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle, CheckCircle, Download } from 'lucide-react';
-import { addDays } from 'date-fns';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import LoadingButton from '@/components/LoadingButton';
-import FormDatepicker from '@/components/FormDatepicker';
-import { redirect } from 'next/navigation';
-import { logout } from '@/actions/auth/logout';
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { logout } from "@/actions/auth/logout";
 
-interface ResponseDownloaderProps {
+interface SurveyInfoDownloaderProps {
     studyKey: string;
-    availableSurveys: string[];
+    availableSurveyKeys: string[];
 }
+
+const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
 
 const formSchema = z.object({
     surveyKey: z.string().min(1, { message: 'Please select a survey' }),
-    exportFormat: z.string(),
-    keySeparator: z.string().min(1).max(1),
-    from: z.date(),
-    until: z.date(),
+    exportFormat: z.enum(
+        ['json', 'csv'],
+    ),
+    language: z.string().min(2),
     shortKeys: z.boolean(),
 })
 
-const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
+const SurveyInfoDownloader: React.FC<SurveyInfoDownloaderProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [successMsg, setSuccessMsg] = React.useState<string | undefined>(undefined);
@@ -39,10 +37,8 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             surveyKey: "",
-            exportFormat: "wide",
-            keySeparator: "-",
-            from: addDays(new Date(), -7),
-            until: new Date(),
+            exportFormat: "json",
+            language: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en',
             shortKeys: true,
         },
     })
@@ -50,17 +46,20 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
     function onSubmit(values: z.infer<typeof formSchema>) {
         setErrorMsg(undefined);
         setSuccessMsg(undefined);
-
         startTransition(async () => {
-
             const selectedSurveyKey = values.surveyKey;
             const exportFormat = values.exportFormat;
-            const keySeparator = values.keySeparator;
-            const queryStartDate = Math.round(values.from.getTime() / 1000);
-            const queryEndDate = Math.round(values.until.getTime() / 1000);
+            const language = values.language;
             const useShortKeys = values.shortKeys;
 
-            const resp = await fetch(`/api/data/responses?studyKey=${props.studyKey}&surveyKey=${selectedSurveyKey}&from=${queryStartDate}&until=${queryEndDate}&format=${exportFormat}&keySeparator=${keySeparator}&useShortKeys=${useShortKeys}`)
+            const queryParams = new URLSearchParams();
+            queryParams.append('surveyKey', selectedSurveyKey);
+            queryParams.append('format', exportFormat);
+            queryParams.append('language', language);
+            queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
+
+            const url = `/api/case-management-api/v1/studies/${props.studyKey}/data-exporter/survey-info?${queryParams.toString()}`;
+            const resp = await fetch(url)
             if (resp.status !== 200) {
                 if (resp.status === 401) {
                     await logout()
@@ -73,29 +72,27 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
             const fileName = resp.headers.get('Content-Disposition')?.split('filename=')[1];
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = (fileName || 'responses.csv').replaceAll('"', '');
+            link.download = (fileName || `${selectedSurveyKey}_info.${exportFormat}`).replaceAll('"', '');
             link.click();
-            setSuccessMsg('Downloaded successfully.');
-        })
-
-
+            setSuccessMsg('Download successful.');
+        });
     }
 
     return (
         <Card>
             <CardHeader >
-                <CardTitle >
-                    Response Downloader
+                <CardTitle className="text-lg" >
+                    Survey Info Downloader
                 </CardTitle>
-                <CardDescription>
-                    Query and download responses to your device.
+                <CardDescription className="text-xs">
+                    Download the history of the survey structure in a CSV or JSON format. This can be helpful when interpreting the response data.
                 </CardDescription>
-
             </CardHeader>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <CardContent>
                         <div className='space-y-6'>
+
 
                             <FormField
                                 control={form.control}
@@ -112,13 +109,13 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                                     <SelectValue placeholder="Select a survey" />
                                                 </SelectTrigger>
                                             </FormControl>
-                                            <SelectContent>
+                                            <SelectContent className='max-h-80'>
                                                 {
-                                                    props.availableSurveys.length === 0 &&
-                                                    <SelectItem value="">No surveys available in this study</SelectItem>
+                                                    props.availableSurveyKeys.length === 0 &&
+                                                    <SelectItem value="_">No surveys available in this study</SelectItem>
                                                 }
                                                 {
-                                                    props.availableSurveys.map((surveyKey) => {
+                                                    props.availableSurveyKeys.map((surveyKey) => {
                                                         return (
                                                             <SelectItem
                                                                 key={surveyKey}
@@ -133,12 +130,13 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                         </Select>
 
                                         <FormDescription className='text-xs'>
-                                            Download responses for this survey.
+                                            Download version infos for this survey.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
 
                             <FormField
                                 control={form.control}
@@ -156,8 +154,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="wide">CSV (wide)</SelectItem>
-                                                <SelectItem value="long">CSV (long)</SelectItem>
+                                                <SelectItem value="csv">CSV</SelectItem>
                                                 <SelectItem value="json">JSON</SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -170,59 +167,46 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                 )}
                             />
 
+
                             <FormField
                                 control={form.control}
-                                name="keySeparator"
+                                name="language"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Key separator</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter key separator" {...field} />
-                                        </FormControl>
+                                        <FormLabel>Language</FormLabel>
+
+                                        <Select
+                                            name={field.name}
+                                            onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a language" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    languages.map((lang) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={lang}
+                                                                value={lang}
+                                                            >
+                                                                {lang}
+                                                            </SelectItem>
+                                                        );
+                                                    })
+                                                }
+                                                <SelectItem value="ignored">Without labels</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
                                         <FormDescription className='text-xs'>
-                                            This character will be used to separate parts the slot keys in the output.
+                                            Content will be downloaded in this language if available.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
-                            <div className='flex flex-col sm:flex-row gap-3'>
-                                <FormField
-                                    control={form.control}
-                                    name="from"
-                                    render={({ field }) => (
-                                        <FormItem className='grow'>
-                                            <FormLabel>From</FormLabel>
-
-                                            <div>
-                                                <FormDatepicker field={field} />
-                                            </div>
-
-                                            <FormDescription className='text-xs'>
-                                                Download responses from this date.
-                                            </FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="until"
-                                    render={({ field }) => (
-                                        <FormItem className='grow'>
-                                            <FormLabel>Until</FormLabel>
-                                            <div>
-                                                <FormDatepicker field={field} />
-                                            </div>
-                                            <FormDescription className='text-xs'>
-                                                Download responses until this date.
-                                            </FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
 
                             <FormField
                                 control={form.control}
@@ -243,7 +227,6 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                     </FormItem>
                                 )}
                             />
-
                         </div>
 
                         {errorMsg && <p className='mt-6 flex gap-6 px-6 py-3 bg-red-100 rounded-lg text-red-600 items-center'>
@@ -259,7 +242,9 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                             </span>
                             {successMsg}
                         </p>}
+
                     </CardContent>
+
 
                     <CardFooter className='flex justify-end'>
                         <LoadingButton
@@ -273,7 +258,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                 </form>
             </Form>
         </Card>
-    );
-};
+    )
+}
 
-export default ResponseDownloader;
+export default SurveyInfoDownloader;

@@ -4,14 +4,14 @@ import LoadingButton from '@/components/LoadingButton';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
-import { getReportCount, startReportExport } from '@/lib/data/reports';
+import { getParticipantCount, startParticipantExport } from '@/lib/data/participants';
 import { toast } from 'sonner';
 
-interface ReportDownloaderProps {
+interface ParticipantDownloaderProps {
     studyKey: string;
 }
 
-const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
+const ParticipantDownloader: React.FC<ParticipantDownloaderProps> = (props) => {
     const router = useRouter();
 
     const [isCountPending, startCountTransition] = React.useTransition();
@@ -26,14 +26,14 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
     }, [])
 
     const onGetResultCount = () => {
-        // get count of Reports
+        // get count of participants
         setResultCount(undefined);
         setHasError(false);
         startCountTransition(async () => {
             try {
-                const resp = await getReportCount(props.studyKey, search)
+                const resp = await getParticipantCount(props.studyKey, search)
                 if (resp.error) {
-                    toast.error('Failed to get report count', {
+                    toast.error('Failed to get participant count', {
                         description: resp.error
                     });
                     setHasError(true);
@@ -43,7 +43,7 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
             } catch (e) {
                 console.error(e);
                 setHasError(true);
-                toast.error('Failed to get report count');
+                toast.error('Failed to get participant count');
             }
         })
     }
@@ -52,7 +52,7 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
         startTransition(async () => {
             try {
                 // start export task
-                const resp = await startReportExport(props.studyKey, search);
+                const resp = await startParticipantExport(props.studyKey, search);
                 if (resp.error || !resp.task) {
                     toast.error('Failed to start export task', {
                         description: resp.error
@@ -60,7 +60,7 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
                     return;
                 }
                 toast.success('Export task started');
-                router.push(`/tools/participants/${props.studyKey}/reports/exporter/${resp.task.id}`)
+                router.push(`/tools/participants/${props.studyKey}/participants/exporter/${resp.task.id}`)
             } catch (e) {
                 console.error(e);
                 toast.error('Failed to start export task');
@@ -72,8 +72,8 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
         <div className='space-y-4'>
             <div>
                 <Input
-                    id='Report-filter'
-                    name='Report-filter'
+                    id='participant-filter'
+                    name='participant-filter'
                     value={search}
                     onChange={(e) => {
                         setSearch(e.target.value)
@@ -89,12 +89,12 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
                         }
                     }}
                 />
-                {hasError && <p className='text-red-500 text-xs mt-1'>Failed to get report count</p>}
+                {hasError && <p className='text-red-500 text-xs mt-1'>Failed to get participant count</p>}
                 {isCountPending && <p className='text-xs mt-1'>
-                    Loading Report count...
+                    Loading participant count...
                 </p>}
                 {(!hasError && !isCountPending) && <p className='text-xs mt-1'>
-                    {resultCount === undefined ? 'Press enter or leave the input to submit...' : `The current query will return ${resultCount} reports.`}
+                    {resultCount === undefined ? 'Press enter or leave the input to submit...' : `The current query will return ${resultCount} participants.`}
                 </p>}
             </div>
 
@@ -113,4 +113,4 @@ const ReportDownloader: React.FC<ReportDownloaderProps> = (props) => {
     );
 };
 
-export default ReportDownloader;
+export default ParticipantDownloader;
