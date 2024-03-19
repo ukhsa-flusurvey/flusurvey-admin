@@ -38,6 +38,7 @@ export const {
 } = NextAuth({
     providers: providers,
     trustHost: true,
+    basePath: '/api/auth',
     session: {
         strategy: "jwt",
     },
