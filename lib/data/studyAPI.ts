@@ -39,7 +39,7 @@ export const getStudy = async (studyKey: string): Promise<{
         url,
         session.CASEaccessToken,
         {
-            revalidate: 1,
+            revalidate: 0,
         }
     );
     if (resp.status !== 200) {

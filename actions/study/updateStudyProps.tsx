@@ -1,9 +1,7 @@
 'use server';
 
 import { auth } from "@/auth";
-import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
-import { StudyProps } from "@/utils/server/types/studyInfos";
 import { revalidatePath } from "next/cache";
 import { Expression, LocalizedString } from "survey-engine/data_types";
 
