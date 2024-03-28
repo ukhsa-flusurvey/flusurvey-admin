@@ -203,7 +203,12 @@ const EmailContentPreviewAndEditor: React.FC<EmailContentPreviewAndEditorProps> 
 
                 {mode == 'preview' ? <ContentPreview
                     decodedTemplate={emailPreviewDocSrc ?? ''}
-                /> : <ContentEditor />}
+                /> : <ContentEditor
+                    content={emailPreviewDocSrc ?? ''}
+                    onChange={(newContent) => {
+                        onUpdateEmailTemplate(newContent);
+                    }}
+                />}
 
                 <LoadNewTemplateFormDisk
                     open={loadFileDialogOpen}

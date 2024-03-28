@@ -1,9 +1,7 @@
 'use client'
 
-import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import React, { useEffect, useState } from 'react';
-import { BsExclamationCircle, BsFileEarmarkCode } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
 import {
     deleteEmailTemplate,
@@ -185,78 +183,6 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
             </Card>
 
         </div>
-    );
-
-    return (
-        <form
-            className='w-full'
-        >
-
-
-
-
-            <TwoColumnsWithCards
-
-
-            >
-                <div className='flex flex-col gap-4'>
-
-
-
-
-                    <div>
-                        <div className='flex flex-col w-full max-w-full h-[566px]'>
-                            <Tabs aria-label="Preview mode" color="default" variant="solid">
-                                <Tab
-                                    key="source"
-                                    title={
-                                        <div className="flex items-center space-x-2">
-                                            <BsFileEarmarkCode />
-                                            <span>Source</span>
-                                        </div>
-                                    }
-                                >
-                                    <Code
-                                        className='h-[500px] w-full max-w-full overflow-x-scroll'
-                                    >
-                                        <ScrollShadow
-                                            className='h-full'
-                                            size={60}
-                                        >
-                                            {emailPreviewDocSrc ? <>{emailPreviewDocSrc.split('\n').map(
-                                                (line, i) => {
-                                                    let tabCount = 0;
-                                                    let spaceCount = 0;
-                                                    const tabMatcher = line.match(/^\t*/);
-                                                    if (tabMatcher && tabMatcher.length > 0) {
-                                                        tabCount = (tabMatcher[0] || '').length;
-                                                    }
-                                                    const spaceMatcher = line.match(/^\s*/);
-                                                    if (spaceMatcher && spaceMatcher.length > 0) {
-                                                        spaceCount = (spaceMatcher[0] || '').length;
-                                                    }
-                                                    return <div key={i} className='flex items-center'>
-                                                        <span className='text-default-400 text-sm w-6 mr-2'>{i + 1}</span>
-                                                        <span style={{ width: tabCount * 8 }}></span>
-                                                        <span style={{ width: spaceCount * 2 }}></span>
-                                                        {line}
-                                                    </div>
-                                                }
-                                            )}</> : <div className='flex flex-col items-center justify-center h-full'>
-                                                <p className='font-bold text-lg text-warning'>No template</p>
-                                                <BsExclamationCircle className='mt-2 text-4xl text-warning-300' />
-                                            </div>}
-                                        </ScrollShadow>
-                                    </Code>
-
-                                </Tab>
-
-                            </Tabs>
-                        </div>
-                    </div>
-                </div>
-            </TwoColumnsWithCards>
-        </form >
     );
 };
 
