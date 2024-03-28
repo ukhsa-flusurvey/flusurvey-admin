@@ -41,7 +41,7 @@ const Filepicker: React.FC<FilepickerProps> = (props) => {
         <div className=''>
             {props.label && (
                 <label htmlFor={props.id}
-                    className="block text-small font-medium text-foreground pb-1.5"
+                    className="block text-sm font-medium text-foreground pb-1.5"
                 >
                     {props.label}
                 </label>

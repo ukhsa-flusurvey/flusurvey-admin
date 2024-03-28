@@ -1,7 +1,8 @@
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
 import { BsInfoCircle } from "react-icons/bs";
-import { Card, CardBody } from "@nextui-org/card";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+
 
 
 const TwoColumnsWithCards: React.FC<{
@@ -15,12 +16,10 @@ const TwoColumnsWithCards: React.FC<{
                 <h3 className='text-xl font-bold'>{props.label}
                     {props.infoboxContent && (
 
-                        <Popover placement="bottom-start"
-                            backdrop="blur"
-                        >
+                        <Popover >
                             <PopoverTrigger>
-                                <Button variant='light' size="sm"
-                                    isIconOnly
+                                <Button variant='ghost'
+                                    size='icon'
                                     aria-label="Show additional info"
                                 >
                                     <BsInfoCircle />
@@ -33,16 +32,16 @@ const TwoColumnsWithCards: React.FC<{
                     )
                     }
                 </h3>
-                <p className='text-sm text-gray-500 group-hover:text-foreground'>{props.description}</p>
+                <p className='text-sm text-gray-500 group-hover:text-black'>{props.description}</p>
 
             </div>
             <Card
-                className='bg-white/70 flex-1'
-                isBlurred
+                variant={'opaque'}
+                className='flex-1'
             >
-                <CardBody className="p-6">
+                <CardContent>
                     {props.children}
-                </CardBody>
+                </CardContent>
             </Card>
         </div>
     );

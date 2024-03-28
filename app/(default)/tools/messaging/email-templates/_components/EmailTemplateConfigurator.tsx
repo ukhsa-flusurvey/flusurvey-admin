@@ -3,7 +3,6 @@
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import Filepicker from '@/components/inputs/Filepicker';
 import { EmailTemplate } from '@/utils/server/types/messaging';
-import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Switch, Tab, Tabs } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { decodeTemplate, encodeTemplate } from '../../schedules/_components/utils';
@@ -67,24 +66,24 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
     let errorComp: React.ReactNode = null;
     if (submitError) {
-        errorComp = <div className='bg-danger-50 gap-unit-md rounded-medium p-unit-md flex items-center'>
+        errorComp = <div className='bg-danger-50 gap-4 rounded-medium p-4 flex items-center'>
             <div className='text-danger text-2xl'>
                 <BsExclamationTriangle />
             </div>
             <div>
                 <p className='text-danger font-bold'>Something went wrong</p>
-                <p className='text-danger text-small'>{submitError}</p>
+                <p className='text-danger text-sm'>{submitError}</p>
             </div>
         </div>
     }
 
-    const submitSuccessComp = <div className='bg-success-50 border border-success-200 gap-unit-md rounded-medium p-unit-md flex items-center'>
+    const submitSuccessComp = <div className='bg-success-50 border border-success-200 gap-4 rounded-medium p-4 flex items-center'>
         <div className='text-success text-2xl'>
             <BsCheck />
         </div>
         <div>
             <p className='text-success font-bold'>Success</p>
-            <p className='text-success text-small'>Message template saved</p>
+            <p className='text-success text-sm'>Message template saved</p>
         </div>
     </div>
 
@@ -122,7 +121,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 })
             }}
         >
-            <h2 className="font-bold text-2xl mb-unit-sm flex items-start">
+            <h2 className="font-bold text-2xl mb-2 flex items-start">
                 <span className='grow'>
                     {props.emailTemplateConfig ? 'Edit edit template' : 'New template'}
                 </span>
@@ -167,7 +166,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 label="Message settings"
                 description="General settings for the message."
             >
-                <div className='flex flex-col gap-unit-md'>
+                <div className='flex flex-col gap-4'>
                     <Input
                         label='Message type'
                         isReadOnly={props.emailTemplateConfig !== undefined}
@@ -236,13 +235,13 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                         >
                             Override email headers
                         </Switch>
-                        <p className='text-tiny text-default-400'>
+                        <p className='text-xs text-neutral-600'>
                             Override the email headers for this message. This will override the default headers set in the email server configuration.
                         </p>
                         <div
-                            className={clsx('flex flex-col gap-unit-md mt-unit-md p-unit-md border border-default-200 rounded-medium',
+                            className={clsx('flex flex-col gap-4 mt-4 p-4 border border-default-200 rounded-medium',
                                 {
-                                    'hidden bg-default-100 opacity-50': !emailTemplateConfig.headerOverrides
+                                    'hidden bg-gray-100 opacity-50': !emailTemplateConfig.headerOverrides
                                 }
                             )}
                         >
@@ -332,7 +331,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 label="Content"
                 description="Set subject and content of the message for each language."
             >
-                <div className='flex flex-col gap-unit-md'>
+                <div className='flex flex-col gap-4'>
                     <div className='flex justify-end'>
                         <LanguageSelector
                             onLanguageChange={setSelectedLanguage}
@@ -439,15 +438,15 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                                         spaceCount = (spaceMatcher[0] || '').length;
                                                     }
                                                     return <div key={i} className='flex items-center'>
-                                                        <span className='text-default-400 text-small w-6 mr-unit-sm'>{i + 1}</span>
+                                                        <span className='text-default-400 text-sm w-6 mr-2'>{i + 1}</span>
                                                         <span style={{ width: tabCount * 8 }}></span>
                                                         <span style={{ width: spaceCount * 2 }}></span>
                                                         {line}
                                                     </div>
                                                 }
                                             )}</> : <div className='flex flex-col items-center justify-center h-full'>
-                                                <p className='font-bold text-large text-warning'>No template</p>
-                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
+                                                <p className='font-bold text-lg text-warning'>No template</p>
+                                                <BsExclamationCircle className='mt-2 text-4xl text-warning-300' />
                                             </div>}
                                         </ScrollShadow>
                                     </Code>
@@ -459,7 +458,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                         <div className="flex items-center space-x-2">
 
                                             <span>
-                                                <BsFiletypeHtml className='mr-unit-sm text-default-500' />
+                                                <BsFiletypeHtml className='mr-2 text-default-500' />
                                             </span>
                                             Email preview
                                         </div>
@@ -472,8 +471,8 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                                 style={{ width: '100%', height: '500px' }}
                                                 title="Email template preview"
                                             /> : <div className='flex flex-col items-center justify-center h-[500px]'>
-                                                <p className='font-bold text-large text-warning'>No template</p>
-                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
+                                                <p className='font-bold text-lg text-warning'>No template</p>
+                                                <BsExclamationCircle className='mt-2 text-4xl text-warning-300' />
                                             </div>}
                                     </div>
                                 </Tab>
@@ -486,10 +485,10 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
             <Divider />
 
-            <div className='mt-unit-lg flex flex-col gap-unit-lg'>
+            <div className='mt-6 flex flex-col gap-6'>
                 {errorComp}
                 {submitSuccess && submitSuccessComp}
-                <div className="flex justify-end gap-unit-md pb-unit-lg ">
+                <div className="flex justify-end gap-4 pb-6 ">
                     <Button
                         type='submit'
                         color='primary'

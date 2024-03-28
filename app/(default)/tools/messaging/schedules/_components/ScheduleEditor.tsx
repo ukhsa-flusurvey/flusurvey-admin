@@ -1,7 +1,6 @@
 'use client';
 import TwoColumnsWithCards from '@/components/TwoColumnsWithCards';
 import { MessageSchedule } from '@/utils/server/types/messaging';
-import { Button, Checkbox, Code, Divider, Input, ScrollShadow, Select, SelectItem, Switch, Tab, Tabs } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { deleteMessageSchedule, saveMessageSchedule } from '../../../../../../actions/messaging/schedules';
@@ -84,13 +83,13 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
     let errorComp: React.ReactNode = null;
     if (submitError) {
-        errorComp = <div className='bg-danger-50 gap-unit-md rounded-medium p-unit-md flex items-center'>
+        errorComp = <div className='bg-danger-50 gap-4 rounded-medium p-4 flex items-center'>
             <div className='text-danger text-2xl'>
                 <BsExclamationTriangle />
             </div>
             <div>
                 <p className='text-danger font-bold'>Something went wrong</p>
-                <p className='text-danger text-small'>{submitError}</p>
+                <p className='text-danger text-sm'>{submitError}</p>
             </div>
         </div>
     }
@@ -121,7 +120,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 })
             }}
         >
-            <h2 className="font-bold text-2xl mb-unit-sm flex items-start">
+            <h2 className="font-bold text-2xl mb-2 flex items-start">
                 <span className='grow'>
                     {props.schedule ? 'Edit schedule' : 'New schedule'}
                 </span>
@@ -157,7 +156,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 label='Schedule infos'
                 description='Set properties like how often the message should be sent and to whom.'
             >
-                <div className='flex flex-col gap-unit-md'>
+                <div className='flex flex-col gap-4'>
                     <Input
                         id='label'
                         type='text'
@@ -212,7 +211,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     </Select>
 
                     {schedule.type === 'study-participants' && (
-                        <div className='p-unit-md  flex flex-col gap-unit-md border border-default-200 rounded-medium'>
+                        <div className='p-4  flex flex-col gap-4 border border-neutral-200 rounded-medium'>
                             <Input
                                 label='From study (by study key)'
                                 placeholder='Enter the study key'
@@ -269,10 +268,10 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                         variant='bordered'
                         labelPlacement='outside'
                         description='The period in seconds after which the message will be sent again.'
-                        endContent={<span className='text-default-400'>seconds</span>}
+                        endContent={<span className='text-neutral-400'>seconds</span>}
                     />
 
-                    <div className='flex items-center gap-unit-md'>
+                    <div className='flex items-center gap-4'>
                         <div className='shrink-0'>
                             <Switch
                                 isSelected={schedule.until !== null && schedule.until !== undefined && schedule.until !== 0}
@@ -395,13 +394,13 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     >
                         Override email headers
                     </Switch>
-                    <p className='text-tiny text-default-400'>
+                    <p className='text-xs text-neutral-400'>
                         Override the email headers for this message. This will override the default headers set in the email server configuration.
                     </p>
                     <div
-                        className={clsx('flex flex-col gap-unit-md mt-unit-md p-unit-md border border-default-200 rounded-medium',
+                        className={clsx('flex flex-col gap-4 mt-4 p-4 border border-neutral-200 rounded-md',
                             {
-                                'bg-default-100 opacity-50': !schedule.template.headerOverrides
+                                'bg-neutral-100 opacity-50': !schedule.template.headerOverrides
                             }
                         )}
                     >
@@ -490,7 +489,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 label="Content"
                 description="Set subject and content of the message for each language."
             >
-                <div className='flex flex-col gap-unit-md'>
+                <div className='flex flex-col gap-4'>
                     <div className='flex justify-end'>
                         <LanguageSelector
                             onLanguageChange={setSelectedLanguage}
@@ -577,38 +576,35 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                                         </div>
                                     }
                                 >
-                                    <Code
+                                    <div
                                         className='h-[500px] w-full max-w-full overflow-x-scroll'
                                     >
-                                        <ScrollShadow
-                                            className='h-full'
-                                            size={60}
-                                        >
-                                            {emailPreviewDocSrc ? <>{emailPreviewDocSrc.split('\n').map(
-                                                (line, i) => {
-                                                    let tabCount = 0;
-                                                    let spaceCount = 0;
-                                                    const tabMatcher = line.match(/^\t*/);
-                                                    if (tabMatcher && tabMatcher.length > 0) {
-                                                        tabCount = (tabMatcher[0] || '').length;
-                                                    }
-                                                    const spaceMatcher = line.match(/^\s*/);
-                                                    if (spaceMatcher && spaceMatcher.length > 0) {
-                                                        spaceCount = (spaceMatcher[0] || '').length;
-                                                    }
-                                                    return <div key={i} className='flex items-center'>
-                                                        <span className='text-default-400 text-small w-6 mr-unit-sm'>{i + 1}</span>
-                                                        <span style={{ width: tabCount * 8 }}></span>
-                                                        <span style={{ width: spaceCount * 2 }}></span>
-                                                        {line}
-                                                    </div>
+
+                                        {emailPreviewDocSrc ? <>{emailPreviewDocSrc.split('\n').map(
+                                            (line, i) => {
+                                                let tabCount = 0;
+                                                let spaceCount = 0;
+                                                const tabMatcher = line.match(/^\t*/);
+                                                if (tabMatcher && tabMatcher.length > 0) {
+                                                    tabCount = (tabMatcher[0] || '').length;
                                                 }
-                                            )}</> : <div className='flex flex-col items-center justify-center h-full'>
-                                                <p className='font-bold text-large text-warning'>No template</p>
-                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
-                                            </div>}
-                                        </ScrollShadow>
-                                    </Code>
+                                                const spaceMatcher = line.match(/^\s*/);
+                                                if (spaceMatcher && spaceMatcher.length > 0) {
+                                                    spaceCount = (spaceMatcher[0] || '').length;
+                                                }
+                                                return <div key={i} className='flex items-center'>
+                                                    <span className='text-neutral-400 text-sm w-6 mr-2'>{i + 1}</span>
+                                                    <span style={{ width: tabCount * 8 }}></span>
+                                                    <span style={{ width: spaceCount * 2 }}></span>
+                                                    {line}
+                                                </div>
+                                            }
+                                        )}</> : <div className='flex flex-col items-center justify-center h-full'>
+                                            <p className='font-bold text-lg text-warning'>No template</p>
+                                            <BsExclamationCircle className='mt-2 text-4xl text-warning-300' />
+                                        </div>}
+
+                                    </div>
 
                                 </Tab>
                                 <Tab
@@ -617,7 +613,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                                         <div className="flex items-center space-x-2">
 
                                             <span>
-                                                <BsFiletypeHtml className='mr-unit-sm text-default-500' />
+                                                <BsFiletypeHtml className='mr-2 text-neutral-500' />
                                             </span>
                                             Email preview
                                         </div>
@@ -630,8 +626,8 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                                                 style={{ width: '100%', height: '500px' }}
                                                 title="Email template preview"
                                             /> : <div className='flex flex-col items-center justify-center h-[500px]'>
-                                                <p className='font-bold text-large text-warning'>No template</p>
-                                                <BsExclamationCircle className='mt-unit-sm text-4xl text-warning-300' />
+                                                <p className='font-bold text-lg text-warning'>No template</p>
+                                                <BsExclamationCircle className='mt-2 text-4xl text-warning-300' />
                                             </div>}
                                     </div>
                                 </Tab>
@@ -644,9 +640,9 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
 
             <Divider />
 
-            <div className='mt-unit-lg flex flex-col gap-unit-lg'>
+            <div className='mt-6 flex flex-col gap-6'>
                 {errorComp}
-                <div className="flex justify-end gap-unit-md pb-unit-lg ">
+                <div className="flex justify-end gap-4 pb-6 ">
                     <Button
                         type='submit'
                         color='primary'
