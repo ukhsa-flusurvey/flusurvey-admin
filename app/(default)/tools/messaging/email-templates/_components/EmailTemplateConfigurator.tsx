@@ -101,12 +101,12 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
     return (
         <div className='w-full h-full flex flex-col gap-1'>
-            <div>
+            {!props.isSystemTemplate && <div>
                 <BackButton
                     label='Back to email templates'
                     href={props.isGlobalTemplate ? '/tools/messaging/email-templates/global-templates' : '/tools/messaging/email-templates/study-templates'}
                 />
-            </div>
+            </div>}
 
             <Card
                 variant={'opaque'}
