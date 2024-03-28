@@ -6,7 +6,8 @@ import SurveySingleItemView from '../../SurveySingleItemView/SurveySingleItemVie
 import { checkSurveyItemsValidity, checkSurveyItemValidity } from 'survey-engine/validation-checkers';
 import { getItemComponentByRole, getLocaleStringTextByCode } from '../../SurveySingleItemView/utils';
 import { CustomSurveyResponseComponent } from '../../SurveySingleItemView/ResponseComponent/ResponseComponent';
-import { Button } from '@nextui-org/button';
+import { Button } from '@/components/ui/button';
+
 
 
 interface SurveyPageLocalisedTexts {
@@ -123,7 +124,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                 {props.showBackButton ?
                     <Button
                         color='primary'
-                        variant='bordered'
+                        variant='outline'
                         type="button"
                         id="back"
                         className='text-lg font-semibold'
@@ -139,7 +140,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     id="submit"
                     color='primary'
                     className='text-lg font-semibold'
-                    onPress={(event) => {
+                    onClick={(event) => {
                         handleClickWithValidation(props.onSubmit)
                     }
                     }
@@ -161,9 +162,9 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     type="button"
                     id="back"
                     color='primary'
-                    variant='bordered'
+                    variant={'outline'}
                     className='text-lg font-semibold'
-                    onPress={(event) => {
+                    onClick={(event) => {
                         props.onPreviousPage()
                     }}
                     disabled={props.loading}
@@ -178,7 +179,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                 name="next"
                 color='primary'
                 className='text-lg font-semibold'
-                onPress={(event) => {
+                onClick={(event) => {
                     handleClickWithValidation(props.onNextPage)
                 }}
                 disabled={props.loading}

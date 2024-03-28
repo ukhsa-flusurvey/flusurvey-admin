@@ -5,6 +5,13 @@
 @layer base {
     :root {
         --radius: 0.5rem;
+
+        --survey-card-bg: #234531;
+
+    }
+
+    .infectieradar-nl {
+        --survey-card-bg: #564532;
     }
 }
 
@@ -19,10 +26,6 @@
 
     .text-decoration-underline {
         @apply underline;
-    }
-
-    .text-primary {
-        @apply text-primary-600;
     }
 
     .sticky-top {

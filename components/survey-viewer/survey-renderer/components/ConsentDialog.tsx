@@ -2,8 +2,6 @@ import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
 import DialogBtn from './DialogBtn';
 
-
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import ReactMarkdown from 'react-markdown';
 
 
@@ -40,7 +38,15 @@ const ConsentDialog: React.FC<ConsentDialogProps> = (props) => {
     }, [props.open])
 
     return (
-        <Modal isOpen={props.open} isDismissable={false}
+        <div>
+            TODO:
+        </div>
+
+    );
+};
+
+export default ConsentDialog;
+{/* <Modal isOpen={props.open} isDismissable={false}
             backdrop='blur'
         >
             <ModalContent>
@@ -57,53 +63,48 @@ const ConsentDialog: React.FC<ConsentDialogProps> = (props) => {
                                         "pb-2 pt-3 bg-white overflow-auto")}
                                     ref={containerRef}
                                     onScroll={() => handleScroll()}
-                                    /*style={{
-                                      maxHeight: fullScreen ? 3000 : '60vh',
-                                    }}*/
-                                    tabIndex={0}
-                                >
-                                    <ReactMarkdown>
-                                        {props.content}
-                                    </ReactMarkdown>
-                                </div>
+
+        tabIndex = { 0}
+            >
+            <ReactMarkdown>
+                {props.content}
+            </ReactMarkdown>
+                                </div >
                                 : null}
 
-                        </ModalBody>
-                        <ModalFooter>
-                            <div className="container-fluid">
-                                <div className={clsx(
-                                    "bg-grey-1",
-                                    "pt-2 pb-4 pb-sm-3",
-                                    "row"
-                                    // styles.btns
-                                )}>
-                                    <div className="col-12 col-sm-6 p-0 pe-sm-1">
-                                        <DialogBtn
-                                            className="w-100"
-                                            color="primary"
-                                            onClick={props.onConfirmed}
-                                            label={props.acceptBtn}
-                                            disabled={!scrollComplete}
-                                        />
+                        </ModalBody >
+    <ModalFooter>
+        <div className="container-fluid">
+            <div className={clsx(
+                "bg-grey-1",
+                "pt-2 pb-4 pb-sm-3",
+                "row"
+                // styles.btns
+            )}>
+                <div className="col-12 col-sm-6 p-0 pe-sm-1">
+                    <DialogBtn
+                        className="w-100"
+                        color="primary"
+                        onClick={props.onConfirmed}
+                        label={props.acceptBtn}
+                        disabled={!scrollComplete}
+                    />
 
-                                    </div>
-                                    <div className="col-12 col-sm-6 p-0 ps-sm-2">
-                                        <DialogBtn
-                                            className="w-100 my-2 my-sm-0"
-                                            color="primary"
-                                            outlined={true}
-                                            onClick={props.onCancelled}
-                                            label={props.cancelBtn}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </ModalFooter>
+                </div>
+                <div className="col-12 col-sm-6 p-0 ps-sm-2">
+                    <DialogBtn
+                        className="w-100 my-2 my-sm-0"
+                        color="primary"
+                        outlined={true}
+                        onClick={props.onCancelled}
+                        label={props.cancelBtn}
+                    />
+                </div>
+            </div>
+        </div>
+    </ModalFooter>
                     </>
                 )}
-            </ModalContent>
-        </Modal>
-    );
-};
-
-export default ConsentDialog;
+            </ModalContent >
+        </Modal >
+    */}
