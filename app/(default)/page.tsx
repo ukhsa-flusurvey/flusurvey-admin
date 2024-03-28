@@ -27,7 +27,7 @@ const ToolCard: React.FC<ToolCardProps> = (props) => {
             href={props.href}
             prefetch={false}
         >
-            <Card className="p-3 hover:bg-slate-50">
+            <Card className="p-3 hover:bg-slate-50 cursor-pointer transition-colors duration-200 ease-in-out">
                 <div className="flex gap-4">
                     <div>
                         {props.icon}
