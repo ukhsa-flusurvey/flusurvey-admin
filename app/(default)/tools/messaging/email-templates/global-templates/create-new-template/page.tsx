@@ -22,12 +22,15 @@ export default function Page() {
                 ]
             }
         >
-            <div className="flex">
-                <EmailTemplateConfigurator
-                    emailTemplateConfig={undefined}
-                    isSystemTemplate={false}
-                    isGlobalTemplate={true}
-                />
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <EmailTemplateConfigurator
+                        emailTemplateConfig={undefined}
+                        isSystemTemplate={false}
+                        isGlobalTemplate={true}
+                    />
+                </div>
             </div>
         </SimpleBreadcrumbsPageLayout>
     );

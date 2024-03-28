@@ -18,18 +18,19 @@ interface StudyEmailTemplatesCardProps {
 
 const StudyEmailTemplatesCard: React.FC<StudyEmailTemplatesCardProps> = (props) => {
     return (
-        <div className="flex">
-            <ItemListCardWrapperWithAddButton
-                className='w-full sm:w-auto'
-                isLoading={props.isLoading}
-                title="Study Email Templates"
-                description="Configure email templates for study-specific messages."
-                addHref="/tools/messaging/email-templates/study-templates/create-new-template"
-                addLabel="Add New Template"
-            >
-                {props.children}
-            </ItemListCardWrapperWithAddButton>
-        </div>
+
+        <ItemListCardWrapperWithAddButton
+            className='w-full sm:w-auto h-full flex flex-col overflow-hidden'
+            contentClassName='grow overflow-y-auto pb-0 mb-4'
+            isLoading={props.isLoading}
+            title="Study Email Templates"
+            description="Configure email templates for study-specific messages."
+            addHref="/tools/messaging/email-templates/study-templates/create-new-template"
+            addLabel="Add New Template"
+        >
+            {props.children}
+        </ItemListCardWrapperWithAddButton>
+
     );
 }
 
@@ -48,10 +49,11 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
     let cardContent = null;
     const error = null;
     if (error) {
-        cardContent = <ErrorAlert
-            title="Error loading global templates"
+        cardContent = <div><ErrorAlert
+            title="Error loading study templates"
             error={error}
         />
+        </div>
     } else if (!studyTemplates || studyTemplates.length === 0) {
         cardContent = (
             <p className='py-6 text-center text-neutral-600'>
@@ -60,13 +62,13 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
         );
     } else {
         cardContent = (
-            <LinkMenu
-                className='max-h-[520px] overflow-y-auto'
-            >
-                {studyTemplates.map((template: any) => (
-                    <EmailTemplateLinkItem key={template.messageType} template={template} />
-                ))}
-            </LinkMenu>
+            <div className='grow overflow-y-auto'>
+                <LinkMenu>
+                    {studyTemplates.map((template: any) => (
+                        <EmailTemplateLinkItem key={template.messageType} template={template} />
+                    ))}
+                </LinkMenu>
+            </div>
         )
     }
 

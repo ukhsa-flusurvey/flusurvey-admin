@@ -2,7 +2,7 @@ import React from 'react';
 import CardWrapper from './CardWrapper';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronRight } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+
 
 interface ManagementUsersLoaderProps {
 }

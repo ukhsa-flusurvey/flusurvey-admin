@@ -1,5 +1,5 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
-
+const colors = require('tailwindcss/colors')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -17,7 +17,9 @@ module.exports = {
         extend: {
             // survey
             colors: {
-                surveyCard: 'var(--survey-card-bg)'
+                warning: colors.yellow,
+                danger: colors.red,
+                surveyCard: 'var(--survey-card-bg)',
             },
             // shadcn
             borderRadius: {

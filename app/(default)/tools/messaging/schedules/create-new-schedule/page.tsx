@@ -21,8 +21,11 @@ export default function Page() {
                 ]
             }
         >
-            <div className="flex w-full">
-                <ScheduleEditor />
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <ScheduleEditor />
+                </div>
             </div>
         </SimpleBreadcrumbsPageLayout>
     );
