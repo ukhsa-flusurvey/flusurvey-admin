@@ -14,6 +14,13 @@ import BackButton from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
 import EmailContentPreviewAndEditor from '../../email-templates/_components/EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
+import LoadingButton from '@/components/LoadingButton';
+import { Label } from '@/components/ui/label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
 
 const dateToInputStr = (date: Date) => {
@@ -104,6 +111,31 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
     }
 
 
+    const buttons = <div className="flex justify-end gap-4 ">
+        <LoadingButton
+            type='submit'
+            color='primary'
+            size='lg'
+            disabled={!schedule || !schedule.label || !schedule.template.translations || schedule.template.translations.length === 0 || !isDirty}
+            isLoading={isPending}
+            onClick={onSaveSchedule}
+        >
+            {props.schedule ? 'Save changes' : 'Create schedule'}
+        </LoadingButton>
+        <Button
+            type='button'
+            variant='outline'
+            disabled={isPending}
+            size='lg'
+            onClick={() => {
+                router.replace('/tools/messaging/schedules');
+            }}
+        >
+            Cancel
+        </Button>
+    </div>
+
+
 
     return (
         <div className='w-full h-full flex flex-col gap-1'>
@@ -138,27 +170,268 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 </CardHeader>
 
                 <CardContent
-                    className='w-full flex gap-4'
+                    className='w-full space-y-4'
                 >
-                    <Card className='grow'>
-                        <EmailContentPreviewAndEditor
-                            emailTemplateConfig={schedule.template}
-                            onChange={(newConfig) => {
-                                setIsDirty(true);
-                                setSchedule((s) => {
-                                    const newSchedule = { ...s };
-                                    newSchedule.template = newConfig;
-                                    return newSchedule;
-                                });
-                            }}
-                        />
-                    </Card>
-                    <div className='space-y-4'>
-                        <p>schedule edit</p>
-                        <Card>
-                            <MessageConfig
+                    <div>
+                        <Card className='p-4'>
+                            <TooltipProvider>
+                                <div>
+                                    <h3 className='font-bold text-xl mb-4'>
+                                        Schedule config
+                                    </h3>
+                                </div>
+                                <div className='grid grid-cols-2 gap-4'>
+                                    <div className='space-y-4'>
+                                        <div className='space-y-1'>
+                                            <Label className='flex gap-2 items-center'
+                                                htmlFor='schedule-label'
+                                            >
+                                                Label
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <Info className='size-4 text-neutral-600' />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className='max-w-64'>
+                                                        {'A label for this schedule. This will be used to identify the schedule in the list of schedules.'}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Input
+                                                id='schedule-label'
+                                                placeholder='add a label...'
+                                                value={schedule.label}
+                                                onChange={(event) => {
+                                                    const value = event.target.value;
+                                                    setIsDirty(true);
+                                                    setSchedule((s) => {
+                                                        const newSchedule = { ...s };
+                                                        newSchedule.label = value;
+                                                        return newSchedule;
+                                                    })
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className='space-y-1'>
+                                            <Label className='flex gap-2 items-center'
+                                                htmlFor='message-send-to'
+                                            >
+                                                Send to
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <Info className='size-4 text-neutral-600' />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className='max-w-96 space-y-3'>
+                                                        Target group of this message.
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Select
+                                                name='message-send-to'
+                                                value={schedule.type}
+                                                onValueChange={(value) => {
+                                                    setSchedule((s) => {
+                                                        const newSchedule = { ...s };
+
+                                                        newSchedule.type = value as 'all-users' | 'study-participants';
+                                                        return newSchedule;
+                                                    })
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="select a target group..." />
+                                                </SelectTrigger>
+                                                <SelectContent className='' align='end'>
+                                                    <SelectItem
+                                                        key='all-users'
+                                                        value='all-users'
+                                                    >
+                                                        All users
+                                                    </SelectItem>
+                                                    <SelectItem
+                                                        key='study-participants'
+                                                        value='study-participants'
+                                                    >
+                                                        Study participants
+                                                    </SelectItem>
+                                                </SelectContent>
+
+                                            </Select>
+                                        </div>
+
+                                        {schedule.type === 'study-participants' && (
+                                            <div className='p-4  flex flex-col gap-4 border border-neutral-200 rounded-md'>
+                                                <div className='space-y-1'>
+                                                    <Label className='flex gap-2 items-center'
+                                                        htmlFor='schedule-study-key'
+                                                    >
+                                                        Label
+                                                        <Tooltip>
+                                                            <TooltipTrigger>
+                                                                <Info className='size-4 text-neutral-600' />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='max-w-64'>
+                                                                {'The study key of the study from which to select participants.'}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </Label>
+                                                    <Input
+                                                        id='schedule-study-key'
+                                                        placeholder='add a study key...'
+                                                        value={schedule.studyKey ?? ''}
+                                                        onChange={(event) => {
+                                                            const value = event.target.value;
+                                                            setIsDirty(true);
+                                                            setSchedule((s) => {
+                                                                const newSchedule = { ...s };
+                                                                newSchedule.studyKey = value;
+                                                                return newSchedule;
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <NotImplemented>
+                                                    Add a condition to filter participants
+                                                </NotImplemented>
+                                            </div>
+                                        )}
+
+
+
+
+                                    </div>
+                                    <div className='space-y-4'>
+                                        <div className='space-y-1'>
+                                            <Label className='flex gap-2 items-center'
+                                                htmlFor='schedule-next-time'
+                                            >
+                                                Next time
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <Info className='size-4 text-neutral-600' />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className='max-w-64'>
+                                                        {'The next time the message will be sent.'}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Input
+                                                id='schedule-next-time'
+                                                type='datetime-local'
+                                                placeholder='enter next time...'
+                                                value={dateToInputStr(new Date(schedule.nextTime * 1000))}
+                                                min={dateToInputStr(currentDateTime)}
+                                                max={dateToInputStr(addMonths(currentDateTime, 12))}
+                                                onChange={(event) => {
+                                                    const value = event.target.value;
+                                                    setIsDirty(true);
+                                                    setSchedule({
+                                                        ...schedule,
+                                                        nextTime: Math.floor(new Date(value).getTime() / 1000)
+                                                    })
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className='space-y-1'>
+                                            <Label className='flex gap-2 items-center'
+                                                htmlFor='schedule-period'
+                                            >
+                                                Period
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <Info className='size-4 text-neutral-600' />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className='max-w-64'>
+                                                        {'The period in seconds after which the message will be sent again.'}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Input
+                                                id='schedule-period'
+                                                type='number'
+                                                placeholder='enter period...'
+                                                value={schedule.period.toString()}
+                                                min={0}
+                                                onChange={(event) => {
+                                                    const value = parseInt(event.target.value);
+                                                    setIsDirty(true);
+                                                    setSchedule({
+                                                        ...schedule,
+                                                        period: value
+                                                    })
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className='flex items-center gap-4'>
+                                            <div className='shrink-0 flex items-center'>
+                                                <Switch
+                                                    id='auto-delete'
+                                                    checked={schedule.until !== null && schedule.until !== undefined && schedule.until !== 0}
+                                                    onCheckedChange={(value) => {
+                                                        setSchedule((s) => {
+                                                            const newSchedule = { ...s };
+                                                            if (value) {
+                                                                newSchedule.until = Math.floor(addWeeks(new Date(), 1).getTime() / 1000);
+                                                            } else {
+                                                                newSchedule.until = undefined;
+                                                            }
+                                                            return newSchedule;
+                                                        })
+                                                    }}
+                                                />
+                                                <Label htmlFor='auto-delete' className='ml-2'>
+                                                    Auto delete
+                                                </Label>
+                                            </div>
+                                            <div className='grow'>
+                                                <div className='space-y-1'>
+                                                    <Label className='flex gap-2 items-center'
+                                                        htmlFor='schedule-until-time'
+                                                    >
+                                                        Until
+                                                        <Tooltip>
+                                                            <TooltipTrigger>
+                                                                <Info className='size-4 text-neutral-600' />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='max-w-64'>
+                                                                {'The date and time after which the message will not be sent anymore and the schedule wil be deleted.'}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </Label>
+                                                    <Input
+                                                        id='schedule-until-time'
+                                                        type='datetime-local'
+                                                        placeholder='enter a time...'
+                                                        disabled={!schedule.until}
+                                                        value={dateToInputStr(new Date((schedule.until || 0) * 1000))}
+                                                        min={dateToInputStr(currentDateTime)}
+                                                        max={dateToInputStr(addMonths(currentDateTime, 24))}
+                                                        onChange={(event) => {
+                                                            const value = event.target.value;
+                                                            setIsDirty(true);
+                                                            setSchedule({
+                                                                ...schedule,
+                                                                until: Math.floor(new Date(value).getTime() / 1000)
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </TooltipProvider>
+
+                        </Card>
+                    </div>
+                    <div className='flex gap-4'>
+                        <Card className='grow'>
+                            <EmailContentPreviewAndEditor
                                 emailTemplateConfig={schedule.template}
-                                isNewTemplate={true}
                                 onChange={(newConfig) => {
                                     setIsDirty(true);
                                     setSchedule((s) => {
@@ -169,7 +442,23 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                                 }}
                             />
                         </Card>
-                        <p>buttons</p>
+                        <div className='space-y-4'>
+                            <Card>
+                                <MessageConfig
+                                    emailTemplateConfig={schedule.template}
+                                    isNewTemplate={true}
+                                    onChange={(newConfig) => {
+                                        setIsDirty(true);
+                                        setSchedule((s) => {
+                                            const newSchedule = { ...s };
+                                            newSchedule.template = newConfig;
+                                            return newSchedule;
+                                        });
+                                    }}
+                                />
+                            </Card>
+                            {buttons}
+                        </div>
                     </div>
                 </CardContent>
 
@@ -177,206 +466,6 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
             </Card>
         </div>
     )
-
-    return (
-        <form
-            className='w-full'
-        >
-
-            <TwoColumnsWithCards
-                label='Schedule infos'
-                description='Set properties like how often the message should be sent and to whom.'
-            >
-                <div className='flex flex-col gap-4'>
-                    <Input
-                        id='label'
-                        type='text'
-                        label='Label'
-                        placeholder='Enter label'
-                        value={schedule.label}
-                        onValueChange={(value) => {
-                            setSchedule((s) => {
-                                const newSchedule = { ...s };
-                                newSchedule.label = value;
-                                return newSchedule;
-                            })
-                        }}
-                        variant='bordered'
-                        labelPlacement='outside'
-                        description='A label for this schedule. This will be used to identify the schedule in the list of schedules.'
-                    />
-
-
-                    <Select
-                        label='Send to'
-                        labelPlacement='outside'
-                        variant='bordered'
-                        placeholder='Select target group'
-                        description='Target group of this message.'
-                        selectedKeys={new Set([schedule.type])}
-                        onSelectionChange={(keys: Set<React.Key> | 'all') => {
-                            const selectedKey = (keys as Set<React.Key>).values().next().value;
-                            if (!selectedKey) return;
-                            setSchedule((s) => {
-                                const newSchedule = { ...s };
-
-                                newSchedule.type = selectedKey;
-                                return newSchedule;
-                            })
-                        }}
-                    >
-                        <SelectItem
-                            key='all-users'
-                            value='all-users'
-                            description='Consider all users in the system when sending the message'
-                        >
-                            All users
-                        </SelectItem>
-                        <SelectItem
-                            key='study-participants'
-                            value='study-participants'
-                            description='Only consider users that are participating in a specific study who fulfill a condition'
-                        >
-                            Study participants
-                        </SelectItem>
-                    </Select>
-
-                    {schedule.type === 'study-participants' && (
-                        <div className='p-4  flex flex-col gap-4 border border-neutral-200 rounded-medium'>
-                            <Input
-                                label='From study (by study key)'
-                                placeholder='Enter the study key'
-                                value={schedule.studyKey ?? ''}
-                                onValueChange={(value) => {
-                                    setSchedule((s) => {
-                                        const newSchedule = { ...s };
-                                        newSchedule.studyKey = value;
-                                        return newSchedule;
-                                    })
-                                }}
-                                variant='bordered'
-                                labelPlacement='outside'
-                                description='The study key of the study from which to select participants.'
-                            />
-                            <NotImplemented>
-                                Add a condition to filter participants
-                            </NotImplemented>
-                        </div>
-                    )}
-
-
-                    <Input
-                        type='datetime-local'
-                        label='Next time'
-                        placeholder='Enter next time'
-                        value={dateToInputStr(new Date(schedule.nextTime * 1000))}
-                        min={dateToInputStr(currentDateTime)}
-                        max={dateToInputStr(addMonths(currentDateTime, 12))}
-                        onValueChange={(value) => {
-                            setSchedule({
-                                ...schedule,
-                                nextTime: Math.floor(new Date(value).getTime() / 1000)
-                            })
-                        }}
-                        variant='bordered'
-                        labelPlacement='outside'
-                        description='The next time the message will be sent.'
-                    />
-
-                    <Input
-                        type='number'
-                        label='Period'
-                        placeholder='Enter period'
-                        value={schedule.period.toString()}
-                        min={0}
-                        onValueChange={(value) => {
-                            setSchedule({
-                                ...schedule,
-                                period: parseInt(value)
-                            })
-                        }
-                        }
-                        variant='bordered'
-                        labelPlacement='outside'
-                        description='The period in seconds after which the message will be sent again.'
-                        endContent={<span className='text-neutral-400'>seconds</span>}
-                    />
-
-                    <div className='flex items-center gap-4'>
-                        <div className='shrink-0'>
-                            <Switch
-                                isSelected={schedule.until !== null && schedule.until !== undefined && schedule.until !== 0}
-                                onValueChange={(value) => {
-                                    setSchedule((s) => {
-                                        const newSchedule = { ...s };
-                                        if (value) {
-                                            newSchedule.until = Math.floor(addWeeks(new Date(), 1).getTime() / 1000);
-                                        } else {
-                                            newSchedule.until = undefined;
-                                        }
-                                        return newSchedule;
-                                    })
-                                }}
-                            >
-                                Auto delete
-                            </Switch>
-                        </div>
-                        <div className='grow'>
-                            <Input
-                                id='until'
-                                type='datetime-local'
-                                label='Until (optional)'
-                                placeholder='Enter date time'
-                                isDisabled={!schedule.until}
-                                value={dateToInputStr(new Date((schedule.until || 0) * 1000))}
-                                min={dateToInputStr(currentDateTime)}
-                                max={dateToInputStr(addMonths(currentDateTime, 24))}
-                                onValueChange={(value) => {
-                                    setSchedule({
-                                        ...schedule,
-                                        until: Math.floor(new Date(value).getTime() / 1000)
-                                    })
-                                }}
-                                variant='bordered'
-                                labelPlacement='outside'
-                                description='The date and time after which the message will not be sent anymore and the schedule wil be deleted.'
-                            />
-                        </div>
-                    </div>
-                </div>
-            </TwoColumnsWithCards>
-
-
-
-            <div className='mt-6 flex flex-col gap-6'>
-                {errorComp}
-                <div className="flex justify-end gap-4 pb-6 ">
-                    <Button
-                        type='submit'
-                        color='primary'
-                        size='lg'
-                        isDisabled={!schedule || !schedule.label || !schedule.template.translations || schedule.template.translations.length === 0}
-                        isLoading={isPending}
-                    >
-                        {props.schedule ? 'Save changes' : 'Create schedule'}
-                    </Button>
-                    <Button
-                        type='button'
-                        color='danger'
-                        variant='ghost'
-                        isDisabled={isPending}
-                        size='lg'
-                        onPress={() => {
-                            router.replace('/tools/messaging/schedules');
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-
-            </div >
-        </form >
-    );
 };
 
 export default ScheduleEditor;
