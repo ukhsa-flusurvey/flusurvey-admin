@@ -1,14 +1,15 @@
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Container from "@/components/Container";
-import { Card, CardBody } from "@nextui-org/card";
 import Image from 'next/image';
-import { Link as NextUILink } from '@nextui-org/link'
 import NavbarAuth from "../../components/navbar/NavbarAuth";
 import StudyConfigIcon from "@/components/tool-icons/StudyConfigIcon";
 import ParticipantsIcon from "@/components/tool-icons/ParticipantsIcon";
 import UserManagementIcon from "@/components/tool-icons/UserManagementIcon";
 import MessagingIcon from "@/components/tool-icons/MessagingIcon";
 import EditorsIcon from "@/components/tool-icons/EditorsIcons";
+import { Card } from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const revalidate = 3600;
 
@@ -22,27 +23,22 @@ interface ToolCardProps {
 
 const ToolCard: React.FC<ToolCardProps> = (props) => {
     return (
-        <Card
-            as={NextUILink}
+        <Link
             href={props.href}
-            isPressable
-            radius="sm"
-            shadow="sm"
-            isHoverable
+            prefetch={false}
         >
-            <CardBody>
-                <div className="flex gap-unit-4">
+            <Card className="p-3 hover:bg-slate-50">
+                <div className="flex gap-4">
                     <div>
                         {props.icon}
                     </div>
                     <div>
                         <h3 className="text-md font-semibold">{props.title}</h3>
-                        <p className="text-small text-default-500">{props.description}</p>
+                        <p className="text-sm text-neutral-600">{props.description}</p>
                     </div>
                 </div>
-
-            </CardBody>
-        </Card>
+            </Card>
+        </Link>
     )
 }
 
@@ -57,10 +53,10 @@ export default async function Page() {
             >
                 <Container className="flex grow">
                     <div
-                        className="grow flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-unit-2"
+                        className="grow flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-2"
                     >
-                        <p className='font-normal text-cyan-800 text-tiny'>CASE ADMIN</p>
-                        <p className='font-semibold tracking-wider text-small'>{appName}</p>
+                        <p className='font-normal text-cyan-800 text-xs'>CASE ADMIN</p>
+                        <p className='font-semibold tracking-wider text-sm'>{appName}</p>
 
                     </div>
 
@@ -70,7 +66,7 @@ export default async function Page() {
                 </Container>
             </nav>
 
-            <div className="relative w-full h-80 py-unit-lg ">
+            <div className="relative w-full h-80 py-8 ">
                 <Image
                     src="/images/crowd.png"
                     fill
@@ -78,33 +74,34 @@ export default async function Page() {
                     className="object-cover"
                     alt=""
                 />
-                <Container className="h-full flex items-center justify-start">
-                    <Card
-                        isBlurred
-                        className=" bg-background/60 dark:bg-default-100/50 max-w-[610px]"
-                        shadow="sm"
-                    >
-                        <div className=" p-8 h-full my-auto flex flex-col justify-center">
-                            <div>
-                                <CaseAdminHeader
-                                    appName={appName}
-                                />
-                                <p className='mt-4'>This is the admin tool, to manage studies, surveys, messages and participants.</p>
+                <div className="absolute bottom-10 left-0 w-full">
+                    <Container className="h-full flex items-center justify-start ">
+                        <Card
+                            variant={'opaque'}
+                            className="border-none  max-w-[610px]"
+                        >
+                            <div className=" p-8 h-full my-auto flex flex-col justify-center">
+                                <div>
+                                    <CaseAdminHeader
+                                        appName={appName}
+                                    />
+                                    <p className='mt-4'>This is the admin tool, to manage studies, surveys, messages and participants.</p>
+                                </div>
                             </div>
-                        </div>
-                    </Card>
-                </Container>
+                        </Card>
+                    </Container>
+                </div>
             </div>
 
             <section>
-                <Container className="py-unit-xl">
-                    <div className=" mb-unit-lg">
-                        <h2 className="text-2xl font-bold mb-unit-1">Available Tools</h2>
-                        <p className="text-small text-default-500">
+                <Container className="py-8">
+                    <div className=" mb-6">
+                        <h2 className="text-2xl font-bold mb-1">Available Tools</h2>
+                        <p className="text-sm text-neutral-600">
                             Select one of the tools below to start managing your study system
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <ToolCard
                             title='Study configurator'
                             description='Create, edit or delete studies. Manage study rules and surveys.'
@@ -141,21 +138,24 @@ export default async function Page() {
 
             <div className="grow"></div>
 
-            <footer className="bg-content3">
-                <Container className="py-unit-xl flex justify-center text-sm text-default-600">
+            <footer className="bg-gray-100">
+                <Container className="py-6 flex items-center justify-center text-sm text-neutral-600">
                     <span className="me-1">© {(new Date()).getFullYear()},</span>
                     <span>CASE Admin Tool</span>
                     <span className="mx-1">by</span>
-                    <NextUILink
-                        href="https://coneno.com"
-                        isExternal={true}
-                        showAnchorIcon
-                        size="sm"
-                        color="foreground"
-                        className="text-default-600 hover:text-default-700"
+                    <Button variant={'link'}
+                        asChild
+                        className="text-neutral-600 hover:text-cyan-800"
                     >
-                        coneno
-                    </NextUILink>
+                        <Link
+                            href="https://coneno.com"
+                            prefetch={false}
+                            target="_blank"
+                        >
+                            coneno
+                        </Link>
+                    </Button>
+
                 </Container>
             </footer>
         </main>
