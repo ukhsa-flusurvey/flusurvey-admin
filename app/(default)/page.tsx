@@ -101,7 +101,7 @@ export default async function Page() {
                             Select one of the tools below to start managing your study system
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <ToolCard
                             title='Study configurator'
                             description='Create, edit or delete studies. Manage study rules and surveys.'
