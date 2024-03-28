@@ -1,4 +1,3 @@
-import SurveyEditor from "@/components/survey-editor-v0/SurveyEditor";
 import { getSurveyVersion, getSurveyVersions } from "@/lib/data/studyAPI";
 import BackButton from "../../../../../../../../components/BackButton";
 import ErrorAlert from "@/components/ErrorAlert";
@@ -59,7 +58,6 @@ export default async function Page(props: PageProps) {
             </div>
             <div>
                 Survey editor would open here for {surveyDef?.surveyDefinition.key}
-                <SurveyEditor></SurveyEditor>
             </div>
         </div>
     </>
