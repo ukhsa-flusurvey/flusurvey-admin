@@ -10,6 +10,7 @@ import { SurveyContext } from './surveyContext';
 import SurveyDocument from './components/SurveyDocument';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
+import SurveySimulator from './components/SurveySimulator';
 
 interface SurveyEditorProps {
     initialSurvey?: Survey;
@@ -83,7 +84,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <div>Advanced</div>;
             break;
         case 'simulator':
-            mainContent = <div>Simulator</div>;
+            mainContent = <SurveySimulator />;
             break;
     }
 

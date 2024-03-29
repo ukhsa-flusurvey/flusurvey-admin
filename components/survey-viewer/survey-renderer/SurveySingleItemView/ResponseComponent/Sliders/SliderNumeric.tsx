@@ -71,12 +71,15 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
             'px-[--survey-card-px-sm] sm:px-[--survey-card-px] pt-4',
         )}>
             {props.compDef.content ?
-                <Label htmlFor={fullKey} className="me-2">
+                <div
+                    className="me-2 text-sm"
+                    role='tooltip'
+                >
                     <span className='text-gray-600'>
                         {getLocaleStringTextByCode(props.compDef.content, props.languageCode)}
                     </span>
-                    <span className="ms-2 text-sm font-bold text-primary">{response ? inputValue : noResponseText}</span>
-                </Label>
+                    <span className="ms-2 font-bold text-primary">{response ? inputValue : noResponseText}</span>
+                </div>
                 : null}
             <div className="flex py-4">
                 <div className="grow">
