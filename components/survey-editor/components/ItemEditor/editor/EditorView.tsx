@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import ItemHeader from './components/ItemHeader';
 import ItemEditorTabs from './components/ItemEditorTabs';
 
+
 interface EditorViewProps {
     surveyItem?: SurveyItem;
     surveyItemList: Array<{ key: string, isGroup: boolean }>;
@@ -45,7 +46,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
     }
 
     return (
-        <div className='min-w-[400px] w-full h-full'>
+        <div className='min-w-[400px] w-full h-full flex flex-col'>
             <ItemHeader
                 surveyItem={props.surveyItem}
                 surveyItemList={props.surveyItemList}

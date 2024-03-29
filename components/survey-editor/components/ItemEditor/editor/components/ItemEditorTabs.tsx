@@ -4,6 +4,7 @@ import React from 'react';
 import ContentEditor from './ContentEditor';
 import { SurveyItem } from 'survey-engine/data_types';
 import ItemPreview from './ItemPreview';
+import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 
 interface ItemEditorTabsProps {
     surveyItem: SurveyItem;
@@ -11,6 +12,22 @@ interface ItemEditorTabsProps {
 }
 
 const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
+
+    const typeInfos = getItemTypeInfos(props.surveyItem);
+
+    if (typeInfos.key === 'pageBreak') {
+        return (
+            <div className='flex items-center justify-center grow'>
+                <p className='text-gray-600'>
+                    Page breaks does not have any content to edit.
+                </p>
+            </div>
+        );
+    }
+
+    console.log(typeInfos);
+
+
     return (
         <Tabs defaultValue="content" className="w-full p-4">
             <div className='flex justify-center'>
