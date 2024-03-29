@@ -126,7 +126,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
             if (props.showKeys) {
                 return <h5 className={clsx(
                     'px-4 sm:px-6 py-2 sm:py-4',
-                    'bg-gray-200',
+                    'bg-[--survey-card-header-bg]',
                     "text-primary-600 me-6 font-bold")}>{props.renderItem.key}</h5>
             }
             return null;
@@ -142,7 +142,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                     clsx(
                         'flex items-center rounded-t w-full',
                         'px-4 sm:px-6 py-2 sm:py-4',
-                        'bg-gray-200',
+                        'bg-[--survey-card-header-bg]',
                         getClassName(titleComp.style),
                         {
                             'bg-red-100': props.showInvalid
@@ -153,7 +153,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
 
                     <span className="m-0 font-bold text-xl">
                         {props.showKeys ?
-                            <span className="text-primary-600 me-2">{props.renderItem.key}</span>
+                            <span className="text-primary me-2">{props.renderItem.key}</span>
                             : null}
                         {content}
                         {requiredItem ?
@@ -202,11 +202,11 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
         <React.Fragment>
             <div
                 role='group'
-                className={'bg-surveyCard rounded'}>
+                className={'bg-[--survey-card-bg] rounded-[--survey-card-border-radius]'}>
                 <fieldset>
                     {renderTitleComp()}
                     <div className={clsx(
-                        'px-4 sm:px-6 py-4',
+                        //'px-4 sm:px-6 py-4',
                     )}
                     >
                         {renderBodyComponents()}
@@ -215,7 +215,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                         <p className={clsx(
                             'font-bold',
                             'px-4 sm:px-6 py-4',
-                            'bg-red-100  m-0 text-red-600 rounded-b'
+                            'bg-[--survey-card-invalid-bg]  m-0 text-[--survey-error-text-color] rounded-b-[--survey-card-border-radius]'
                         )}
                             style={{ fontSize: '1.1875rem' }}
                             role="alert"

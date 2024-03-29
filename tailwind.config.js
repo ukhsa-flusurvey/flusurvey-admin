@@ -19,7 +19,6 @@ module.exports = {
             colors: {
                 warning: colors.yellow,
                 danger: colors.red,
-                surveyCard: 'var(--survey-card-bg)',
             },
             // shadcn
             borderRadius: {

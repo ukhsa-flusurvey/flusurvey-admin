@@ -6,12 +6,19 @@
     :root {
         --radius: 0.5rem;
 
-        --survey-card-bg: #234531;
+        --survey-card-bg: #dddddd;
+        --survey-card-header-bg: #ababab;
+        --survey-card-border-radius: 0.5rem;
+
+        --survey-card-invalid-bg: #f8d7da;
+        --survey-error-text-color: #721c24;
+        --survey-warning-text-color: #856404;
+
 
     }
 
     .infectieradar-nl {
-        --survey-card-bg: #564532;
+        --survey-card-bg: #e3d9cd;
     }
 }
 
