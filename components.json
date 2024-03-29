@@ -1,11 +1,13 @@
 {
 	"style": "default",
 	"rsc": true,
+	"tsx": true,
 	"tailwind": {
 		"config": "tailwind.config.js",
 		"css": "styles/globals.css",
 		"baseColor": "slate",
-		"cssVariables": false
+		"cssVariables": true,
+		"prefix": ""
 	},
 	"aliases": {
 		"components": "@/components",

@@ -123,12 +123,6 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
 
     const renderTitleComp = (): React.ReactNode => {
         if (!titleComp) {
-            if (props.showKeys) {
-                return <h5 className={clsx(
-                    'px-4 sm:px-6 py-2 sm:py-4',
-                    'bg-[--survey-card-header-bg]',
-                    "text-primary-600 me-6 font-bold")}>{props.renderItem.key}</h5>
-            }
             return null;
         }
 
@@ -145,16 +139,13 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                         'bg-[--survey-card-header-bg]',
                         getClassName(titleComp.style),
                         {
-                            'bg-red-100': props.showInvalid
+                            'bg-[--survey-card-invalid-bg]': props.showInvalid
                         }
                     )}
             >
                 <div className="grow">
 
                     <span className="m-0 font-bold text-xl">
-                        {props.showKeys ?
-                            <span className="text-primary me-2">{props.renderItem.key}</span>
-                            : null}
                         {content}
                         {requiredItem ?
                             <span
@@ -162,8 +153,8 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                                 className={clsx(
                                     'ms-1',
                                     {
-                                        'text-primary-600': !props.showInvalid,
-                                        'text-red-600': props.showInvalid
+                                        'text-primary': !props.showInvalid,
+                                        'text-[--survey-error-text-color]': props.showInvalid
                                     }
                                 )}
                             >
@@ -202,7 +193,10 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
         <React.Fragment>
             <div
                 role='group'
-                className={'bg-[--survey-card-bg] rounded-[--survey-card-border-radius]'}>
+                className={'bg-[--survey-card-bg] rounded-[--survey-card-border-radius] relative'}>
+                {props.showKeys ?
+                    <span className="text-primary me-2 absolute -top-4 text-xs">{props.renderItem.key}</span>
+                    : null}
                 <fieldset>
                     {renderTitleComp()}
                     <div className={clsx(

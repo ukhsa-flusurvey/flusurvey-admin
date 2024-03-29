@@ -138,13 +138,14 @@ const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
         <div>
             <LanguageSelector onLanguageChange={setSelectedLanguage} />
 
-            <div className='border border-neutral-30 p-4 bg-white infectieradar-nl'>
+            <div className='border border-neutral-30 p-4 bg-white'>
                 <SurveySingleItemView
                     renderItem={dummyResolveItem(props.surveyItem as any)}
                     languageCode={selectedLanguage}
                     responseChanged={() => { }}
                     invalidWarning={'invalid warning'}
-                // showInvalid={true}
+                    showInvalid={false}
+                    showKeys={false}
                 />
             </div>
         </div>
