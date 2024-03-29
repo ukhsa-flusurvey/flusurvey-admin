@@ -18,7 +18,7 @@ const ErrorOrSuccessInlineAlert: React.FC<ErrorOrSuccessInlineAlertProps> = ({
                     className='text-red-600 font-bold flex items-center justify-end'
                     role='alert'
                 >
-                    <BsExclamationTriangle className='inline-block mr-unit-sm' />
+                    <BsExclamationTriangle className='inline-block mr-2' />
                     {errorMsg}
                 </div>}
             {
@@ -26,7 +26,7 @@ const ErrorOrSuccessInlineAlert: React.FC<ErrorOrSuccessInlineAlertProps> = ({
                     className='text-green-600 font-bold flex items-center justify-end'
                     role='alert'
                 >
-                    <BsCheckCircle className='inline-block mr-unit-sm' />
+                    <BsCheckCircle className='inline-block mr-2' />
                     {successMsg}
                 </div>
             }

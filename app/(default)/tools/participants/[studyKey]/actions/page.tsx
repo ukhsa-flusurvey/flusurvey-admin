@@ -12,8 +12,8 @@ export const dynamic = 'force-dynamic';
 
 const Page: React.FC<PageProps> = async (props) => {
     return (
-        <div className="px-unit-lg bg-white/60 h-full">
-            <div className="py-unit-sm">
+        <div className="px-6 bg-white/60 h-full">
+            <div className="py-2">
                 <Breadcrumbs
                     homeLink="/tools/study-configurator"
                     links={
@@ -28,8 +28,8 @@ const Page: React.FC<PageProps> = async (props) => {
                         ]
                     }
                 />
-                <main className="py-unit-lg">
-                    <div className="grid grid-cols-2 gap-unit-md">
+                <main className="py-6">
+                    <div className="grid grid-cols-2 gap-4">
                         <StudyActionsCard studyKey={props.params.studyKey} />
                     </div>
                 </main>

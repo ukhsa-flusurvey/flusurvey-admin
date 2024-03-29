@@ -7,14 +7,15 @@ interface LoadingButtonProps extends ButtonProps {
     isLoading?: boolean;
 }
 
-const LoadingButton: React.FC<LoadingButtonProps> = ({
+const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(({
     isLoading = false,
     disabled = false,
     className,
     ...props
-}) => {
+}, ref) => {
     return (
         <Button
+            ref={ref}
             disabled={isLoading || disabled}
             className={cn('flex items-center justify-center gap-2', className)}
             {...props}
@@ -26,6 +27,9 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
             {props.children}
         </Button>
     );
-};
+});
+
+LoadingButton.displayName = 'LoadingButton';
+
 
 export default LoadingButton;

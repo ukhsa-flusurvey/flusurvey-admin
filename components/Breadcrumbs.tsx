@@ -19,14 +19,14 @@ const Breadcrumbs = ({ links, homeLink }: {
         <nav className="flex items-center">
             <ul className="flex items-center">
                 {links.map((item, index) => (
-                    <li key={index} className="flex items-center text-small">
+                    <li key={index} className="flex items-center text-sm">
                         {
                             item.href !== undefined ? <Link href={item.href}
-                                className="text-default-600 hover:text-default-700 hover:underline"
+                                className="text-neutral-600 hover:text-neutral-700 hover:underline"
                             >
                                 {item.title}
                             </Link> :
-                                <span className="text-default-600">
+                                <span className="text-neutral-600">
                                     {item.title}
                                 </span>
                         }

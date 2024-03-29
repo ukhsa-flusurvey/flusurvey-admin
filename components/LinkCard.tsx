@@ -16,7 +16,7 @@ const LinkCard = (props: { href: string, title: string, description: string, ico
 
             >
                 <div className="p-3 flex items-center gap-3">
-                    <div className="text-default-400">
+                    <div className="text-neutral-600">
                         {props.icon}
                     </div>
                     <div className="grow">

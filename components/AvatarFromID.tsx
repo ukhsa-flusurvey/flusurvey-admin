@@ -1,8 +1,8 @@
 'use client'
 
-import { Skeleton } from '@nextui-org/react';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
+import { Skeleton } from './ui/skeleton';
 
 // Define the 8 color combinations
 const colorCombinations = [
@@ -77,7 +77,7 @@ function AvatarFromId({ userId, pixelSize }: {
 
     return (
         <div
-            className='p-unit-1 ring-foreground ring-opacity-50 ring-1 rounded-md inline-flex items-center justify-center'
+            className='p-1 ring-foreground ring-opacity-50 ring-1 rounded-md inline-flex items-center justify-center'
             style={{
                 backgroundColor: colors.bg,
             }}

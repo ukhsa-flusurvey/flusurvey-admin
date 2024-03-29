@@ -10,6 +10,7 @@ interface ItemListCardWrapperWithAddButtonProps {
     addHref: string;
     addLabel: string;
     className?: string;
+    contentClassName?: string;
 }
 
 export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithAddButtonProps> = (props) => {
@@ -27,7 +28,7 @@ export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithA
                 </CardDescription>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className={props.contentClassName}>
                 {props.children}
             </CardContent>
 

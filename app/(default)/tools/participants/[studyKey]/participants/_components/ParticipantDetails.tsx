@@ -79,8 +79,8 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
                     </div>
                 </div>
                 <div className=''>
-                    <div className='text-small text-foreground mb-unit-1 flex items-center gap-1'>
-                        <span className='text-default-400'><Activity className='size-4' /></span>
+                    <div className='text-sm text-foreground mb-1 flex items-center gap-1'>
+                        <span className='text-neutral-400'><Activity className='size-4' /></span>
                         Last activity
                     </div>
                     <div>

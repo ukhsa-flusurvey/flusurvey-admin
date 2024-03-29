@@ -1,14 +1,13 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
-const { nextui } = require("@nextui-org/react");
-
+const colors = require('tailwindcss/colors')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: ["class"],
     content: [
         "./app/**/*.{js,ts,jsx,tsx,mdx}",
         "./pages/**/*.{js,ts,jsx,tsx}",
         "./components/**/*.{js,ts,jsx,tsx}",
-        './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
     ],
     theme: {
         fontFamily: {
@@ -16,6 +15,12 @@ module.exports = {
             mono: [...fontFamily.mono],
         },
         extend: {
+            // survey
+            colors: {
+                warning: colors.yellow,
+                danger: colors.red,
+                surveyCard: 'var(--survey-card-bg)',
+            },
             // shadcn
             borderRadius: {
                 lg: `var(--radius)`,
@@ -38,12 +43,10 @@ module.exports = {
             },
         },
     },
-    darkMode: 'class',
     plugins: [
         require('@headlessui/tailwindcss')({ prefix: 'ui' }),
         require('@tailwindcss/typography'),
         require("tailwindcss-animate"),
-        nextui()
     ],
     safelist: [
         'fst-italic',

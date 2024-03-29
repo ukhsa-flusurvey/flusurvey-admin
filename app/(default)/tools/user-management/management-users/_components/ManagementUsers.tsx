@@ -45,7 +45,7 @@ const ManagementUsers: React.FC<ManagementUsersProps> = async (props) => {
     return (
         <CardWrapper>
             <ul
-                className='divide-y-1 divide-black/10'
+                className='divide-y divide-black/10'
             >
                 {users.map((user: any) => (
                     <ListItem key={user.id} user={user} />

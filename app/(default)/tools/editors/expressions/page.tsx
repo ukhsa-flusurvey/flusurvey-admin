@@ -44,9 +44,9 @@ const Page: React.FC<PageProps> = (props) => {
 
     return (
         <div>
-            <main className="px-unit-lg">
+            <main className="px-6">
 
-                <div className="flex justify-start items-center p-unit-lg h-full w-full overflow-x-scroll">
+                <div className="flex justify-start items-center p-6 h-full w-full overflow-x-scroll">
                     <Toaster></Toaster>
 
                     <ExpressionEditor

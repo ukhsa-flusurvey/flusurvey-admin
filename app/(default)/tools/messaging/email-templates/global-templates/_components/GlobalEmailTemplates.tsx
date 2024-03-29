@@ -18,7 +18,8 @@ const GlobalEmailTemplatesCard: React.FC<GlobalEmailTemplatesCardProps> = (props
     return (
         <div className="flex">
             <ItemListCardWrapperWithAddButton
-                className='w-full'
+                className='w-full sm:w-auto h-full flex flex-col overflow-hidden'
+                contentClassName='grow overflow-y-auto pb-0 mb-4'
                 isLoading={props.isLoading}
                 title="Global Email Templates"
                 description="Configure email templates for global messages, like newsletters, etc."
@@ -71,11 +72,13 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
         );
     } else {
         cardContent = (
-            <LinkMenu>
-                {relevantTemplates.map((template: any) => (
-                    <EmailTemplateLinkItem key={template.messageType} template={template} />
-                ))}
-            </LinkMenu>
+            <div className='grow overflow-y-auto'>
+                <LinkMenu>
+                    {relevantTemplates.map((template: any) => (
+                        <EmailTemplateLinkItem key={template.messageType} template={template} />
+                    ))}
+                </LinkMenu>
+            </div>
         )
     }
 

@@ -18,7 +18,7 @@ export const LinkMenu: React.FC<LinkMenuProps> = (props) => {
         <nav>
             <ul
                 className={cn(
-                    'divide-y-1 divide-black/10 rounded-lg overflow-hidden border drop-shadow-sm',
+                    'divide-y divide-neutral-200 rounded-lg overflow-hidden border drop-shadow-sm',
                     props.className
                 )}
             >
@@ -40,7 +40,7 @@ export const LinkMenuItem: React.FC<LinkMenuItemProps> = (props) => {
                     {props.children}
                 </div>
                 <div>
-                    <ChevronRight className="text-neutral-600 size-6" />
+                    <ChevronRight className="text-neutral-500 size-6" />
                 </div>
             </Link>
         </li>

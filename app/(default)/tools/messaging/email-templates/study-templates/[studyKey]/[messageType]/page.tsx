@@ -34,15 +34,18 @@ export default function Page(props: PageProps) {
                 ]
             }
         >
-            <div className="flex">
-                <Suspense fallback={<EmailTemplateConfigSkeleton />}>
-                    <EmailTemplateConfig
-                        messageType={props.params.messageType}
-                        studyKey={props.params.studyKey}
-                        isSystemTemplate={false}
-                        isGlobalTemplate={false}
-                    />
-                </Suspense>
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <Suspense fallback={<EmailTemplateConfigSkeleton />}>
+                        <EmailTemplateConfig
+                            messageType={props.params.messageType}
+                            studyKey={props.params.studyKey}
+                            isSystemTemplate={false}
+                            isGlobalTemplate={false}
+                        />
+                    </Suspense>
+                </div>
             </div>
         </SimpleBreadcrumbsPageLayout>
     );

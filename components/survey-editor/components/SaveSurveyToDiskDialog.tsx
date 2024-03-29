@@ -1,77 +1,101 @@
-import { Button, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import { SurveyEditor } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 import { format } from 'date-fns';
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
+import { SurveyContext } from '../surveyContext';
+import { toast } from 'sonner';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import LoadingButton from '@/components/LoadingButton';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface SaveSurveyToDiskDialogProps {
     isOpen: boolean;
-    onOpenChange: (isOpen: boolean) => void;
-    editorInstance: SurveyEditor;
+    onClose: () => void;
 }
 
 const SaveSurveyToDiskDialog: React.FC<SaveSurveyToDiskDialogProps> = ({
     isOpen,
-    onOpenChange,
-    editorInstance,
+    onClose,
 }) => {
+    const { survey } = useContext(SurveyContext);
     const [fileName, setFileName] = React.useState<string>('');
+    const [isPending, startTransition] = React.useTransition();
+    const saveButtonRef = React.useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        if (isOpen) {
-            const newFileName = `${editorInstance.getSurvey().surveyDefinition.key}_${format(new Date(), 'yyyy-MM-dd')}.json`;
+        if (isOpen && survey) {
+            const newFileName = `${survey.surveyDefinition.key}_${format(new Date(), 'yyyy-MM-dd')}.json`;
             setFileName(newFileName);
         }
-    }, [isOpen, editorInstance]);
+    }, [isOpen, survey]);
 
     const onSave = () => {
-        const survey = editorInstance.getSurveyJSON();
-        const blob = new Blob([survey], { type: 'application/json' });
+        const surveyStr = JSON.stringify(survey);
+        const blob = new Blob([surveyStr], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = fileName;
         link.click();
 
-        onOpenChange(false);
+        toast.success('Survey saved to disk');
+
+        onClose();
     }
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}
-            backdrop='blur'
+        <Dialog
+            open={isOpen}
+            onOpenChange={onClose}
         >
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader className="bg-content2 flex flex-col gap-1">Save to disk</ModalHeader>
-                        <Divider />
-                        <ModalBody>
-                            <div className='py-unit-md'>
-                                <Input
-                                    id='file-name'
-                                    label='File name'
-                                    labelPlacement='outside'
-                                    placeholder='Enter a file name'
-                                    description='The file will be saved in the downloads folder of your browser.'
-                                    variant='bordered'
-                                    value={fileName}
-                                    onValueChange={(val) => {
-                                        setFileName(val);
-                                    }}
-                                />
-                            </div>
-                        </ModalBody>
-                        <Divider />
-                        <ModalFooter>
-                            <Button color="danger" variant="light" onPress={onClose}>
-                                Cancel
-                            </Button>
-                            <Button color="primary" onPress={onSave}>
-                                Save
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Save to disk</DialogTitle>
+                </DialogHeader>
+
+                <div>
+                    <Label htmlFor='filename'>
+                        File name
+                    </Label>
+                    <Input
+                        id='filename'
+                        name='filename'
+                        className='my-1.5'
+                        value={fileName}
+                        onChange={(e) => setFileName(e.target.value)}
+                        placeholder='Enter a file name'
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                saveButtonRef.current?.click();
+                            }
+                        }}
+                    />
+                    <p className='text-xs'>
+                        The file will be saved in the downloads folder of your browser.
+                    </p>
+                </div>
+
+                <DialogFooter>
+                    <DialogClose
+                        asChild
+                    >
+                        <Button variant={'outline'}>
+                            Cancel
+                        </Button>
+                    </DialogClose>
+                    <LoadingButton
+                        ref={saveButtonRef}
+                        disabled={!fileName || fileName.length === 0 || !survey}
+                        isLoading={isPending}
+                        onClick={() => {
+                            startTransition(() => onSave());
+                        }}
+                    >
+                        Save
+                    </LoadingButton>
+                </DialogFooter>
+            </DialogContent>
+
+        </Dialog>
     );
 };
 

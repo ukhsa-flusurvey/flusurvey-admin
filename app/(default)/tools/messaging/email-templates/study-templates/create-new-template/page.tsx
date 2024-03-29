@@ -1,6 +1,8 @@
 import EmailTemplateConfigurator from "../../_components/EmailTemplateConfigurator";
 import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
 
+export const dynamic = 'force-dynamic';
+
 export default function Page() {
 
     return (
@@ -21,12 +23,16 @@ export default function Page() {
                 ]
             }
         >
-            <div className="flex">
-                <EmailTemplateConfigurator
-                    emailTemplateConfig={undefined}
-                    isSystemTemplate={false}
-                    isGlobalTemplate={false}
-                />
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <EmailTemplateConfigurator
+                        emailTemplateConfig={undefined}
+                        messageType={`new-message-${(Math.random() * 100).toFixed(0)}`}
+                        isSystemTemplate={false}
+                        isGlobalTemplate={false}
+                    />
+                </div>
             </div>
         </SimpleBreadcrumbsPageLayout>
     );

@@ -12,13 +12,18 @@ interface PageProps {
 export default function Page(props: PageProps) {
 
     return (
-        <main className="p-6">
-            <Suspense fallback={<EmailTemplateConfigSkeleton />}>
-                <EmailTemplateConfig
-                    messageType={props.params.messageType}
-                    isSystemTemplate={true}
-                />
-            </Suspense>
+        <main className="p-6 h-full">
+            <div
+                className="h-full w-full flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <Suspense fallback={<EmailTemplateConfigSkeleton />}>
+                        <EmailTemplateConfig
+                            messageType={props.params.messageType}
+                            isSystemTemplate={true}
+                        />
+                    </Suspense>
+                </div>
+            </div>
         </main>
     );
 }

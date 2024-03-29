@@ -76,7 +76,7 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className='py-unit-md flex flex-col'>
+                <div className='py-4 flex flex-col'>
                     <Filepicker
                         id='upload-survey-filepicker'
                         label='Select a file'
