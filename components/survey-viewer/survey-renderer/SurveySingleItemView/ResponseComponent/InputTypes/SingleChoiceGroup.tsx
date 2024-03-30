@@ -170,6 +170,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
                         <NumberInput
                             parentKey={props.parentKey}
                             key={option.key}
+                            embedded={true}
                             compDef={option}
                             prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
                             languageCode={props.languageCode}
@@ -255,7 +256,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
         <RadioGroup
             id={props.parentKey}
             aria-label="single choice options"
-            className=' flex flex-col py-4 gap-0'
+            className=' flex flex-col gap-0'
             value={getSelectedKey()}
             onValueChange={handleSelectionChange}
         >

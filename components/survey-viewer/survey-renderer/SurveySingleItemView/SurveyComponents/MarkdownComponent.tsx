@@ -22,6 +22,7 @@ const MarkdownComponent: React.FC<MarkdownComponentProps> = (props) => {
     return (
         <SimpleMarkdownRenderer
             className={clsx(
+                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
                 'prose',
                 className
             )}

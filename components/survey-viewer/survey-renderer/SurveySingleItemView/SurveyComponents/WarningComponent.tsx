@@ -13,8 +13,9 @@ const WarningComponent: React.FC<WarningComponentProps> = (props) => {
         <p
             className={
                 clsx(
-                    "m-0 mt-3",
+                    "m-0",
                     "font-bold text-[--survey-warning-text-color]",
+                    'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
                     getClassName(props.compDef.style),
                 )
             }>

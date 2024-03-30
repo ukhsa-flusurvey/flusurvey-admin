@@ -68,7 +68,7 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
 
     return (
         <div className={cn(
-            'px-[--survey-card-px-sm] sm:px-[--survey-card-px] pt-4',
+            'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
         )}>
             {props.compDef.content ?
                 <div
@@ -81,7 +81,7 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
                     <span className="ms-2 font-bold text-primary">{response ? inputValue : noResponseText}</span>
                 </div>
                 : null}
-            <div className="flex py-4">
+            <div className="flex pt-4">
                 <div className="grow">
                     <Slider
                         id={fullKey}

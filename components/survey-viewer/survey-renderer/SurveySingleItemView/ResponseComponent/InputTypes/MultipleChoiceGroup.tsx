@@ -243,6 +243,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                             parentKey={props.parentKey}
                             key={option.key}
                             compDef={option}
+                            embedded={true}
                             prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
                             languageCode={props.languageCode}
                             responseChanged={(response) => {
@@ -302,7 +303,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         <div
             id={props.parentKey}
             aria-label="multiple choice options"
-            className='flex flex-col py-4'
+            className='flex flex-col'
         >
             {
                 (props.compDef as ItemGroupComponent).items.map((option, index) =>
