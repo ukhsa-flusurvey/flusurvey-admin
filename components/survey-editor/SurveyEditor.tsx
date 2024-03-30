@@ -84,7 +84,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <div>Advanced</div>;
             break;
         case 'simulator':
-            mainContent = <SurveySimulator />;
+            mainContent = <SurveySimulator />
             break;
     }
 
