@@ -11,6 +11,7 @@ const EditorsAppbarBase: React.FC<EditorsAppbarProps> = (props) => {
             toolName='Standalone Editors'
             toolIcon={<EditorsIcon size="md" />}
             isBordered
+            ignoreAuth={true}
         >
         </AppbarBaseForTools>
     );

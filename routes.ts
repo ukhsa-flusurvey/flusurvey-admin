@@ -1,6 +1,7 @@
 export const PUBLIC_ROUTES = [
     { path: '/', exact: true },
     { path: '/service-status', exact: true },
+    { path: '/tools/survey-simulator', exact: false },
 
     // These routes and its children will be public
     { path: '/api/auth', exact: false },
