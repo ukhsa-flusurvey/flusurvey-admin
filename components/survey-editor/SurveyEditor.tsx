@@ -98,7 +98,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     onOpen={() => setOpenLoadDialog(true)}
                 />
 
-                <div className='p-6 grow overflow-hidden flex flex-col'>
+                <div className='grow overflow-hidden flex flex-col'>
                     {mainContent}
                 </div >
                 <LoadSurveyFromDisk

@@ -62,9 +62,8 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
 
     return (
-        <Card
-            variant='opaque'
-            className={cn('overflow-hidden border-black/20', props.className)}
+        <div
+            className={cn('overflow-hidden', props.className)}
         >
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel
@@ -94,10 +93,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                 onChangePath={(newPath) => {
                                     setCurrentPath(newPath);
                                 }}
-                                onAddItem={
-                                    () => { }
-                                    //addNewItem
-                                }
+                                onAddItem={onAddNewSurveyItem}
                                 onItemsReorder={(newGroup) => {
                                     editorInstance.updateSurveyItem(newGroup);
                                     setSurvey(editorInstance.getSurvey());
@@ -127,7 +123,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                 </ResizablePanel>
 
                 <ResizableHandle withHandle
-                    className='bg-black/20 cursor-col-resize'
+                    className='bg-neutral-300 cursor-col-resize'
                 />
 
                 <ResizablePanel
@@ -234,7 +230,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                 </ResizablePanel>
 
             </ResizablePanelGroup>
-        </Card>
+        </div>
     );
 };
 

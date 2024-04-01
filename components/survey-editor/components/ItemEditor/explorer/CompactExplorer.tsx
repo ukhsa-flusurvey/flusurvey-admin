@@ -72,7 +72,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
     const draggedItem = draggedId ? currentItems.find(item => item.id === draggedId) : null;
 
     return (
-        <nav className=' flex flex-col items-center py-2 gap-2'>
+        <nav className='flex flex-col items-center py-2 gap-2 bg-neutral-200 min-h-full'>
             <TooltipProvider>
                 {isAtRoot ? null : <><CompactExplorerNavItem
                     icon={ArrowLeft}

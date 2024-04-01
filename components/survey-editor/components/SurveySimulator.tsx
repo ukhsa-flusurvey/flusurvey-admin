@@ -270,7 +270,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     }
 
     return (
-        <div className='bg-white -m-6 flex grow overflow-hidden'>
+        <div className='bg-white flex grow overflow-hidden'>
             <ResizablePanelGroup direction='horizontal'>
                 <ResizablePanel
                     minSize={20}

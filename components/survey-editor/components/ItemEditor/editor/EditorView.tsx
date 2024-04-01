@@ -21,7 +21,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
 
     if (!props.surveyItem) {
         return (
-            <div className='flex items-center justify-center h-full w-full'>
+            <div className='flex items-center justify-center h-full w-full bg-white/80 backdrop-blur-md'>
                 <p className='text-gray-500'>Select an item to edit</p>
             </div>
         );
@@ -46,7 +46,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
     }
 
     return (
-        <div className='min-w-[400px] w-full h-full flex flex-col'>
+        <div className='min-w-[400px] w-full min-h-full flex flex-col bg-white'>
             <ItemHeader
                 surveyItem={props.surveyItem}
                 surveyItemList={props.surveyItemList}

@@ -76,7 +76,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
 
     return (
         <div className='h-full flex'>
-            <div className='border-r border-black/20 min-w-[220px] overflow-y-scroll' >
+            <div className='bg-white/60 backdrop-blur-md border-r border-black/20 min-w-[220px] overflow-y-scroll' >
                 <div className='font-mono bg-white/30 px-3 py-2 text-sm'>
                     {getItemKeyFromFullKey(props.root.key)}
                 </div>
