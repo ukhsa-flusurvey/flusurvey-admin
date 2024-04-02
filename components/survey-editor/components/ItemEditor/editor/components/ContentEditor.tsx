@@ -15,7 +15,7 @@ interface ContentEditorProps {
 }
 
 const ContentEditor: React.FC<ContentEditorProps> = (props) => {
-    const [selectedLanguage, setSelectedLanguage] = React.useState('en');
+    const [selectedLanguage, setSelectedLanguage] = React.useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
     const title = getItemComponentByRole((props.surveyItem as SurveySingleItem).components?.items, 'title');
     console.log(title)

@@ -46,7 +46,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
     }
 
     return (
-        <div className='min-w-[400px] w-full min-h-full flex flex-col bg-white'>
+        <div className='min-w-[400px] w-full min-h-full h-full flex flex-col bg-white'>
             <ItemHeader
                 surveyItem={props.surveyItem}
                 surveyItemList={props.surveyItemList}

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Asterisk, Bolt, Eye, Languages, ToggleLeft } from 'lucide-react';
+import { Asterisk, Bolt, Eye, Languages, List, ToggleLeft } from 'lucide-react';
 import React from 'react';
 import ContentEditor from './ContentEditor';
 import { SurveyItem } from 'survey-engine/data_types';
@@ -47,13 +47,16 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
             </div>
         );
     } else if (typeInfos.key === 'group') {
-        return (
-            <div className='flex items-center justify-center grow'>
-                <p className='text-gray-600'>
-                    Groups do not have any content to edit.
-                </p>
-            </div>
-        );
+        tabs = [
+            {
+                icon: <List className='me-1 size-4 text-neutral-500' />,
+                label: 'Items',
+            },
+            {
+                icon: <ToggleLeft className='me-1 size-4 text-neutral-500' />,
+                label: 'Condition',
+            }
+        ];
     } else if (typeInfos.key === 'surveyEnd' || typeInfos.key === 'display') {
         tabs = [
             {
@@ -76,53 +79,80 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
     }
 
 
-
     console.log(typeInfos);
 
 
     return (
-        <Tabs defaultValue="content" className="w-full p-4">
-            <div className='flex justify-center'>
-                <TabsList className=''>
-                    {tabs.map(tab => (
-                        <TabsTrigger value={tab.label.toLowerCase()} key={tab.label}>
-                            <span>
-                                {tab.icon}
-                            </span>
-                            {tab.label}
-                        </TabsTrigger>
-                    ))}
+        <div className='p-0 w-full overflow-hidden grow'>
+            <Tabs
+                key={props.surveyItem.key}
+                defaultValue={tabs[0].label.toLocaleLowerCase()}
+                className="p-4 overflow-x-scroll h-full overscroll-contain"
+            >
+                <div className='flex justify-center'>
+                    <TabsList className='flex flex-wrap h-auto'
 
-                </TabsList>
-            </div>
+                    >
+                        {tabs.map(tab => (
+                            <TabsTrigger value={tab.label.toLowerCase()} key={tab.label}>
+                                <span>
+                                    {tab.icon}
+                                </span>
+                                {tab.label}
+                            </TabsTrigger>
+                        ))}
 
-            <TabsContent value="content">
-                <ContentEditor
-                    surveyItem={props.surveyItem}
-                    onUpdateSurveyItem={props.onUpdateSurveyItem}
-                />
-            </TabsContent>
+                    </TabsList>
+                </div>
 
-            <TabsContent value="condition">
-                <div>Condition</div>
-            </TabsContent>
+                <TabsContent value="content">
+                    <ContentEditor
+                        surveyItem={props.surveyItem}
+                        onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    />
+                </TabsContent>
 
-            <TabsContent value="validation">
-                <div>Validation</div>
-            </TabsContent>
+                <TabsContent value="condition">
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
+                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
+                    </div>
+                </TabsContent>
 
-            <TabsContent value="advanced">
-                <div>Advanced</div>
-            </TabsContent>
+                <TabsContent value="validation">
+                    <div>Validation</div>
+                </TabsContent>
 
-            <TabsContent value="preview">
-                <ItemPreview
-                    surveyItem={props.surveyItem}
-                />
-            </TabsContent>
+                <TabsContent value="advanced">
+                    <div>Advanced</div>
+                </TabsContent>
+
+                <TabsContent value="preview">
+                    <ItemPreview
+                        surveyItem={props.surveyItem}
+                    />
+                </TabsContent>
 
 
-        </Tabs>
+            </Tabs>
+        </div>
     );
 };
 

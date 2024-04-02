@@ -1,8 +1,7 @@
-import { Card } from '@/components/ui/card';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { cn } from '@/lib/utils';
 import React, { useContext } from 'react';
-import { Survey, SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
+import { SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
 import { SurveyEditor as EditorInstance } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 import CompactExplorer from './explorer/CompactExplorer';
 import ExplorerColumn from './explorer/ExplorerColumn';
@@ -22,7 +21,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
         survey,
         setSurvey,
     } = useContext(SurveyContext);
-    const [isCollapsed, setIsCollapsed] = React.useState(false);
+    const [isCollapsed, setIsCollapsed] = React.useState(true);
     const [editorInstance, setEditorInstance] = React.useState<EditorInstance | undefined>(survey ? new EditorInstance(survey) : undefined);
     const [selectedItemKey, setSelectedItemKey] = React.useState<string | null>(null);
     const [currentPath, setCurrentPath] = React.useState<string | null>(null);
@@ -69,7 +68,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                 <ResizablePanel
                     minSize={15}
                     maxSize={60}
-                    defaultSize={33}
+                    defaultSize={1}
                     collapsedSize={1}
                     collapsible={true}
                     className='min-w-[56px]'

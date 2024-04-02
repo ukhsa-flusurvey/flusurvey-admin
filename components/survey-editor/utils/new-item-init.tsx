@@ -88,7 +88,7 @@ export const generateNewItemForType = (props: {
                 responseOptions: [],
                 metadata: {
                     editorItemColor: editorItemColor
-                }
+                },
             })
             break;
         case 'multipleChoice':

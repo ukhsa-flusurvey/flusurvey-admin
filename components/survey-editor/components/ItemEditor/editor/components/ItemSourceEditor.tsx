@@ -26,7 +26,7 @@ const ItemSourceEditor: React.FC<ItemSourceEditorProps> = (props) => {
     return (
         <div className='h-full p-3 flex flex-col gap-3'>
             <Editor
-                className='grow rounded-lg overflow-hidden '
+                className='grow rounded-lg overflow-hidden border border-border'
                 defaultLanguage="json"
                 value={editorContent}
                 options={{
