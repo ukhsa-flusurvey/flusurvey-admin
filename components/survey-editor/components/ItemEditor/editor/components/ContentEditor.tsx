@@ -1,21 +1,70 @@
 import LanguageSelector from '@/components/LanguageSelector';
+import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import { getItemComponentByRole } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { getLocalizedString } from '@/utils/getLocalisedString';
 import { GripVertical, MoreVertical } from 'lucide-react';
 import React from 'react';
 import { ItemGroupComponent, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
+import SurveyEndEditor from './ItemTypeContentEditors/SurveyEndEditor';
 
 interface ContentEditorProps {
     surveyItem: SurveyItem;
     onUpdateSurveyItem: (item: SurveyItem) => void;
 }
 
+
 const ContentEditor: React.FC<ContentEditorProps> = (props) => {
     const [selectedLanguage, setSelectedLanguage] = React.useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
+
+    const typeInfos = getItemTypeInfos(props.surveyItem);
+
+
+    if (typeInfos.key === 'surveyEnd') {
+        return (
+            <div className='py-4'>
+                <SurveyEndEditor
+                    surveyItem={props.surveyItem}
+                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                />
+            </div>
+        );
+    } else if (typeInfos.key === 'display') {
+        return (
+            <div className='flex items-center justify-center grow'>
+                <p className='text-gray-600'>
+                    TODO: Display content editor
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className='mx-auto'>
+            <p>
+                TODO: get header components
+            </p>
+            <p>
+                top component
+            </p>
+
+            <p>
+                response - specific to question type - single choice, multiple choice, etc. - hint for custom
+            </p>
+            <p>
+                bottom component
+            </p>
+            <p>
+                footnote
+            </p>
+        </div>
+    )
+
+
 
     const title = getItemComponentByRole((props.surveyItem as SurveySingleItem).components?.items, 'title');
     console.log(title)

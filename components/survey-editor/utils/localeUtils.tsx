@@ -1,3 +1,4 @@
+import { getLocalizedString } from "@/utils/getLocalisedString";
 import { ItemComponent, ItemGroupComponent, LocalizedObject, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
 
 const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
@@ -7,6 +8,21 @@ const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
         return acc;
     }, [] as string[]);
 }
+
+export const checkMissingTranslations = (locString?: LocalizedObject[]): string[] => {
+    const expectedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : ['en'];
+    const canidateLanguages = getLocStringLocales(locString);
+    const availableLangauges = canidateLanguages.filter(lang => {
+        const currentLocaleContent = getLocalizedString(locString, lang);
+        return currentLocaleContent !== undefined && currentLocaleContent !== '';
+    });
+    const missingLanguages = expectedLanguages.filter(lang => {
+        const t = availableLangauges.includes(lang);
+        return !t;
+    });
+    return missingLanguages;
+}
+
 
 const removeLocaleFromLocString = (locString: LocalizedObject[], localesToRemove: string[]): LocalizedObject[] => {
     return locString.filter((ls) => {

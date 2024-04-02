@@ -78,10 +78,6 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
         ]
     }
 
-
-    console.log(typeInfos);
-
-
     return (
         <div className='p-0 w-full overflow-hidden grow'>
             <Tabs
