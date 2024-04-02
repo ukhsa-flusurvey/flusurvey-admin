@@ -3,13 +3,13 @@ import { SurveyContext } from '../surveyContext';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
 import { Survey, SurveyContext as ContextValues, SurveySingleItemResponse } from 'survey-engine/data_types';
-import LanguageSelector from '@/components/LanguageSelector';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Eraser, Pencil } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import SurveyLanguageToggle from './general/SurveyLanguageToggle';
 
 
 interface SurveySimulatorProps {
@@ -203,10 +203,9 @@ const SurveyContextEditorDialog: React.FC<{
 
 
 const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
-    const { survey } = useContext(SurveyContext);
+    const { survey, selectedLanguage } = useContext(SurveyContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
-    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
     const [showKeys, setShowKeys] = React.useState<boolean>(false);
     const [currentResponses, setCurrentResponses] = React.useState<SurveySingleItemResponse[]>([]);
     const [surveyTexts, setSurveyTexts] = React.useState<SurveyTexts>({
@@ -264,6 +263,17 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        sendSimulatorConfig(
+            iframeRef,
+            {
+                ...currentConfig,
+                language: selectedLanguage
+            }
+        )
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedLanguage]);
+
 
     if (!survey) {
         return <div>No survey loaded</div>
@@ -298,19 +308,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                 <h2 className='font-bold'>Simulator config</h2>
                 <div>
                     <p className='text-sm font-semibold mb-1'>Language</p>
-                    <LanguageSelector
-                        onLanguageChange={(lang) => {
-                            if (lang !== selectedLanguage) {
-                                setSelectedLanguage(lang);
-                                sendSimulatorConfig(
-                                    iframeRef,
-                                    {
-                                        ...currentConfig,
-                                        language: lang
-                                    }
-                                )
-                            }
-                        }} />
+                    <SurveyLanguageToggle />
                 </div>
 
                 <div className='flex items-center gap-2'>

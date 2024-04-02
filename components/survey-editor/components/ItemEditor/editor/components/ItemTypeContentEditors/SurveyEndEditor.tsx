@@ -1,10 +1,12 @@
 import LanguageSelector from '@/components/LanguageSelector';
+import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { checkMissingTranslations } from '@/components/survey-editor/utils/localeUtils';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { getLocalizedString } from '@/utils/getLocalisedString';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import { useDebounceCallback } from 'usehooks-ts'
 
@@ -15,7 +17,7 @@ interface SurveyEndEditorProps {
 }
 
 const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
-    const [selectedLanguage, setSelectedLanguage] = React.useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
+    const { selectedLanguage } = useContext(SurveyContext);
     const [currentSurveyItem, setCurrentSurveyItem] = React.useState(props.surveyItem);
 
     const debouncedUpdate = useDebounceCallback(props.onUpdateSurveyItem, 700)
@@ -47,8 +49,7 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
     return (
         <div className='max-w-[800px] mx-auto'>
             <div className='flex justify-end'>
-                <LanguageSelector
-                    onLanguageChange={setSelectedLanguage}
+                <SurveyLanguageToggle
                     showBadgeForLanguages={checkMissingTranslations(surveyEndContent.content)}
                 />
             </div>

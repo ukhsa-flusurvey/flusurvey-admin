@@ -1,8 +1,8 @@
-import LanguageSelector from '@/components/LanguageSelector';
 import SurveySingleItemView from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/SurveySingleItemView';
-import { MoreHorizontal } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, LocalizedObject, LocalizedString, SurveyItem, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
+import SurveyLanguageToggle from '../../../general/SurveyLanguageToggle';
+import { SurveyContext } from '@/components/survey-editor/surveyContext';
 
 
 interface ItemPreviewProps {
@@ -133,12 +133,12 @@ export const expressionArgParser = (arg: ExpressionArg): any => {
 }
 
 const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
-    const [selectedLanguage, setSelectedLanguage] = useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? 'en');
+    const { selectedLanguage } = useContext(SurveyContext);
 
     return (
         <div className='max-w-[832px] mx-auto py-4 space-y-4'>
             <div className='flex justify-end'>
-                <LanguageSelector onLanguageChange={setSelectedLanguage} />
+                <SurveyLanguageToggle />
             </div>
 
             <div className='border border-neutral-200 p-4 bg-white shadow-md rounded-sm'>

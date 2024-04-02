@@ -24,6 +24,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
     const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
     const [survey, setSurvey] = React.useState<Survey | undefined>(props.initialSurvey);
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
 
     useEffect(() => {
@@ -89,7 +90,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     }
 
     return (
-        <SurveyContext.Provider value={{ survey, setSurvey }}>
+        <SurveyContext.Provider value={{ survey, setSurvey, selectedLanguage, setSelectedLanguage }}>
             <div className='bg-center bg-cover bg-[url(/images/sailing-ship.png)] h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
                 <SurveyEditorMenu
                     currentEditorMode={mode}
