@@ -144,14 +144,14 @@ export const SurveyItemTypeRegistry = [
     {
         key: 'singleChoice',
         label: 'Single choice',
-        description: 'Allows the participant to select one option from a list of options.',
+        description: 'Allows the participant to select one option from a radio group.',
         className: 'text-fuchsia-800',
         icon: CheckCircle2
     },
     {
         key: 'multipleChoice',
         label: 'Multiple choice',
-        description: 'Allows the participant to select multiple options from a list of options.',
+        description: 'Allows the participant to select multiple options from a list of checkboxes.',
         className: 'text-indigo-800',
         icon: CheckSquare2
     },

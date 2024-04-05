@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import Fuse from 'fuse.js';
 
 interface ItemCreatorProps {
     trigger: React.ReactNode;
@@ -120,7 +122,24 @@ interface SingleItemTypeSelectorDialogProps {
     onAddItem: (itemType: string) => void;
 }
 
+const options = {
+    includeScore: true,
+    ignoreLocation: true,
+    keys: [{ name: 'label', weight: 0.7 }, { name: 'description', weight: 0.5 }]
+}
+
+const fuse = new Fuse(SurveyItemTypeRegistry, options)
+
 const SingleItemTypeSelectorDialog: React.FC<SingleItemTypeSelectorDialogProps> = (props) => {
+    const [searchValue, setSearchValue] = React.useState('');
+
+    let filteredItemTypes = SurveyItemTypeRegistry;
+    if (searchValue) {
+        const result = fuse.search(searchValue);
+        filteredItemTypes = result.map(r => r.item);
+
+    }
+
     return (
         <Dialog
             open={props.open}
@@ -130,16 +149,29 @@ const SingleItemTypeSelectorDialog: React.FC<SingleItemTypeSelectorDialogProps> 
                 }
             }}>
 
-            <DialogContent className={"overflow-y-scroll max-h-screen"}>
+            <DialogContent className='max-h-full flex flex-col'>
                 <DialogHeader>
                     <DialogTitle>
                         What type of item do you want to add?
                     </DialogTitle>
                 </DialogHeader>
-                <ul className='mt-2'>
-                    {SurveyItemTypeRegistry.map((itemType, index) => {
+                <Input
+                    id='item-type-search'
+                    placeholder='Search for item type...'
+                    className='w-full'
+                    value={searchValue}
+                    onChange={(e) => {
+                        setSearchValue(e.target.value);
+                    }}
+                />
+                <ul className='mt-2 h-96 grow overflow-y-scroll'>
+                    {filteredItemTypes.length === 0 && (
+                        <p className='text-center text-sm'>
+                            No item types found. Try another search term.
+                        </p>
+                    )}
+                    {filteredItemTypes.map((itemType, index) => {
                         return (
-
                             <li key={itemType.key}>
                                 <Button
                                     className='w-full justify-start text-start h-auto px-3 py-2'
@@ -166,7 +198,7 @@ const SingleItemTypeSelectorDialog: React.FC<SingleItemTypeSelectorDialogProps> 
                                         </div>
                                     </div>
                                 </Button>
-                                {index < SurveyItemTypeRegistry.length - 1 && <Separator className='my-2' />}
+                                {index < filteredItemTypes.length - 1 && <Separator className='my-2' />}
                             </li>
                         );
                     })}
