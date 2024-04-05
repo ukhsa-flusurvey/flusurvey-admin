@@ -18,16 +18,7 @@ interface SurveyEndEditorProps {
 
 const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
-    const [currentSurveyItem, setCurrentSurveyItem] = React.useState(props.surveyItem);
 
-    const debouncedUpdate = useDebounceCallback(props.onUpdateSurveyItem, 700)
-
-    useEffect(() => {
-        if (currentSurveyItem !== props.surveyItem) {
-            debouncedUpdate(currentSurveyItem);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentSurveyItem]);
 
     let itemComponents = (props.surveyItem as SurveySingleItem).components?.items;
 
@@ -86,7 +77,7 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
                                 items: [updatedComponent],
                             }
                         } as SurveySingleItem;
-                        setCurrentSurveyItem(updatedItem);
+                        props.onUpdateSurveyItem(updatedItem);
                     }}
                 />
             </div>

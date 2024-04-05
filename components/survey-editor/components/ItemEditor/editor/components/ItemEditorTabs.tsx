@@ -1,10 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Asterisk, Bolt, Eye, Languages, List, ToggleLeft } from 'lucide-react';
+import { Asterisk, Bolt, Languages, List, ToggleLeft } from 'lucide-react';
 import React from 'react';
-import ContentEditor from './ContentEditor';
+import ContentEditor from './content-editor/ContentEditor';
 import { SurveyItem } from 'survey-engine/data_types';
-import ItemPreview from './ItemPreview';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
+
 
 interface ItemEditorTabsProps {
     surveyItem: SurveyItem;
@@ -31,10 +31,6 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
         {
             icon: <Bolt className='me-1 size-4 text-neutral-500' />,
             label: 'Advanced',
-        },
-        {
-            icon: <Eye className='me-1 size-4 text-neutral-500' />,
-            label: 'Preview',
         },
     ]
 
@@ -71,26 +67,23 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                 icon: <Bolt className='me-1 size-4 text-neutral-500' />,
                 label: 'Advanced',
             },
-            {
-                icon: <Eye className='me-1 size-4 text-neutral-500' />,
-                label: 'Preview',
-            },
+
         ]
     }
 
     return (
-        <div className='p-0 w-full overflow-hidden grow'>
+        <div className='p-0 w-full grow bg-background'>
             <Tabs
                 key={props.surveyItem.key}
                 defaultValue={tabs[0].label.toLocaleLowerCase()}
-                className="p-4 overflow-x-scroll h-full overscroll-contain"
+                className="h-full flex flex-col"
             >
-                <div className='flex justify-center'>
-                    <TabsList className='flex flex-wrap h-auto'
-
-                    >
+                <div className='flex justify-start border-b border-neutral-300'>
+                    <TabsList className='flex flex-wrap justify-start p-0 px-4 pt-0.5 h-auto  gap-1 bg-secondary w-full rounded-none'>
                         {tabs.map(tab => (
-                            <TabsTrigger value={tab.label.toLowerCase()} key={tab.label}>
+                            <TabsTrigger value={tab.label.toLowerCase()} key={tab.label}
+                                className='rounded-none rounded-t-md shadow-none border-t border-s border-e border-neutral-300 drop-shadow-none data-[state=active]:shadow-none mb-[-1px] data-[state=active]:ring-offset-0'
+                            >
                                 <span>
                                     {tab.icon}
                                 </span>
@@ -101,14 +94,18 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                     </TabsList>
                 </div>
 
-                <TabsContent value="content">
+                <TabsContent value="content"
+                    className='grow mt-0'
+                >
                     <ContentEditor
                         surveyItem={props.surveyItem}
                         onUpdateSurveyItem={props.onUpdateSurveyItem}
                     />
                 </TabsContent>
 
-                <TabsContent value="condition">
+                <TabsContent value="condition"
+                    className='overflow-x-scroll overflow-y-scroll overscroll-x-contain'
+                >
                     <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
                         Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
                     </div>
@@ -139,14 +136,6 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                 <TabsContent value="advanced">
                     <div>Advanced</div>
                 </TabsContent>
-
-                <TabsContent value="preview">
-                    <ItemPreview
-                        surveyItem={props.surveyItem}
-                    />
-                </TabsContent>
-
-
             </Tabs>
         </div>
     );

@@ -1,7 +1,7 @@
 import SurveySingleItemView from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/SurveySingleItemView';
 import React, { useContext } from 'react';
 import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, LocalizedObject, LocalizedString, SurveyItem, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
-import SurveyLanguageToggle from '../../../general/SurveyLanguageToggle';
+import SurveyLanguageToggle from '../../../../general/SurveyLanguageToggle';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 
 

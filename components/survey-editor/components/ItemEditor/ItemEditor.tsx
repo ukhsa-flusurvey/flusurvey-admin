@@ -79,7 +79,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                         setIsCollapsed(false);
                     }}
                 >
-                    <div className='w-full bg-black/10 overflow-auto h-full'
+                    <div className='w-full bg-black/10 overflow-auto overscroll-contain h-full'
                     >
                         {
                             isCollapsed && <CompactExplorer

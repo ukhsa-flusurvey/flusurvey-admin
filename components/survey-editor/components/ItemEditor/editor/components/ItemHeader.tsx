@@ -185,7 +185,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
 
     return (
         <TooltipProvider>
-            <div className='px-3 py-2 flex gap-3 items-center bg-black/5'>
+            <div className='px-3 py-2 flex gap-3 items-center bg-secondary'>
                 <Tooltip
                     delayDuration={0}
                 >
@@ -196,7 +196,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                                 color: item.color
                             }}>
                             <item.typeInfos.icon
-                                className='size-10'
+                                className='size-8'
                             />
                         </div>
                     </TooltipTrigger>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { SurveyItem } from 'survey-engine/data_types';
 import ItemSourceEditor from './components/ItemSourceEditor';
-import { Separator } from '@/components/ui/separator';
 import ItemHeader from './components/ItemHeader';
 import ItemEditorTabs from './components/ItemEditorTabs';
 
@@ -61,7 +60,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
                 onMoveItem={props.onMoveItem}
                 onChangeKey={props.onChangeKey}
             />
-            <Separator className='bg-black/20' />
+
 
             {editor}
         </div>
