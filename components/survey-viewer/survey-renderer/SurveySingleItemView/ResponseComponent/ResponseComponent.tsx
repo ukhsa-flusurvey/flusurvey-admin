@@ -121,11 +121,13 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         key={respComp.key ? respComp.key : 'p' + index.toString()}
                         compDef={respComp}
                         languageCode={props.languageCode}
+                        embedded={false}
                     />
                 case 'markdown':
                     return <MarkdownComponent key={index.toFixed()}
                         compDef={respComp}
                         languageCode={props.languageCode}
+                        embedded={false}
                     />;
                 case 'singleChoiceGroup':
                     return <SingleChoiceGroup

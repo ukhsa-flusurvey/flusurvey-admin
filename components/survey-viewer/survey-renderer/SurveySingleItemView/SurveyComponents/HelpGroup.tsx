@@ -20,9 +20,10 @@ const HelpGroup: React.FC<HelpGroupProps> = (props) => {
             {
                 props.componentGroup.items.map((item, index) => {
                     return <MarkdownComponent key={index.toFixed()}
-                        className='prose'
+                        className='prose prose-sm'
                         compDef={item}
                         languageCode={props.languageCode}
+                        embedded={true}
                     />
                 })
             }
@@ -50,7 +51,7 @@ const HelpGroup: React.FC<HelpGroupProps> = (props) => {
                     className="absolute right-0 w-60 sm:w-96 z-50 "
                     role='dialog'
                 >
-                    <div className='bg-white p-4 rounded shadow-sm'>
+                    <div className='bg-white p-4 shadow-sm border border-border rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius]'>
                         {renderContent()}
                     </div>
                 </Popover.Panel>

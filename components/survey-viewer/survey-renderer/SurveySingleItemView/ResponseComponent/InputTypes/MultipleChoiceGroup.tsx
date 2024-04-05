@@ -191,6 +191,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                         key={option.key}
                         compDef={option}
                         languageCode={props.languageCode}
+                        embedded={true}
                     />;
                 case 'option':
                     labelComponent = <span

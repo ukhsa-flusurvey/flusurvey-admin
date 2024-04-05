@@ -117,6 +117,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         compDef={item}
                         className={optionClassName}
                         languageCode={props.languageCode}
+                        embedded={true}
                     />
                 case 'markdown':
                     return <MarkdownComponent
@@ -124,6 +125,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         className={optionClassName}
                         compDef={item}
                         languageCode={props.languageCode}
+                        embedded={true}
                     />;
                 case 'input':
                     return <TextInput

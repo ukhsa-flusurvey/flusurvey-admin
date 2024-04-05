@@ -69,6 +69,7 @@ const ItemBodyComponent: React.FC<{
             return <TextViewComponent key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
+                embedded={false}
             />;
         case 'bullets':
             return <BulletList key={index.toFixed()}
@@ -79,6 +80,7 @@ const ItemBodyComponent: React.FC<{
             return <MarkdownComponent key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
+                embedded={false}
             />;
         case 'error':
             return <ErrorComponent key={index.toFixed()}
@@ -284,6 +286,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
+                embedded={false}
             />
         })
     }

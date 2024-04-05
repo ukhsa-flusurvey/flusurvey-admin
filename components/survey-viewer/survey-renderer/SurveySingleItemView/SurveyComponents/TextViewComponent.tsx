@@ -9,6 +9,7 @@ interface TextViewComponentProps {
     languageCode: string;
     className?: string;
     dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    embedded: boolean;
 }
 
 const supportedVariants = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'span'] as const;

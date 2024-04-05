@@ -9,6 +9,7 @@ interface MarkdownComponentProps {
     compDef: ItemComponent;
     languageCode: string;
     className?: string;
+    embedded: boolean;
 }
 
 const MarkdownComponent: React.FC<MarkdownComponentProps> = (props) => {
@@ -22,7 +23,9 @@ const MarkdownComponent: React.FC<MarkdownComponentProps> = (props) => {
     return (
         <SimpleMarkdownRenderer
             className={clsx(
-                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
+                {
+                    'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
+                },
                 'prose',
                 className
             )}
