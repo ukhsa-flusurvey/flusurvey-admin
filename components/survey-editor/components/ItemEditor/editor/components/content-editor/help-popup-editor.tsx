@@ -7,13 +7,14 @@ import { getItemComponentByRole } from '@/components/survey-viewer/survey-render
 import { getLocStringLocales, localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import EditorWrapper from './editor-wrapper';
 
-interface HelpGroupEditorProps {
+interface HelpPopupEditorProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const HelpGroupEditor: React.FC<HelpGroupEditorProps> = (props) => {
+const HelpPopupEditor: React.FC<HelpPopupEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
     const updateHelpGroup = (helpGroupContent?: ItemComponent): SurveySingleItem => {
@@ -115,12 +116,13 @@ const HelpGroupEditor: React.FC<HelpGroupEditorProps> = (props) => {
     }
 
     return (
-        <div className='p-4 mx-auto flex flex-col bg-neutral-50 rounded-md border border-border'>
+        <EditorWrapper>
             <Label
                 htmlFor='use-help-group'
-                className='flex items-center gap-2 w-fit'
+                className='flex items-center gap-2'
             >
-                <Switch id='use-help-group'
+                <Switch
+                    id='use-help-group'
                     checked={useHelpGroup}
                     onCheckedChange={onToggleHelpGroup}
                 />
@@ -161,9 +163,9 @@ const HelpGroupEditor: React.FC<HelpGroupEditorProps> = (props) => {
                 />
             </div>}
 
-        </div>
+        </EditorWrapper>
     );
 };
 
-export default HelpGroupEditor;
+export default HelpPopupEditor;
 

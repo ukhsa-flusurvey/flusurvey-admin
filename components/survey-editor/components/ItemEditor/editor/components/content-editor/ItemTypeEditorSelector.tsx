@@ -4,11 +4,14 @@ import { SurveyItem } from 'survey-engine/data_types';
 import SurveyEndEditor from './SurveyEndEditor';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
-import { CircleHelp } from 'lucide-react';
+import { CircleHelp, Heading1, Heading2, MessageSquareReply, PanelBottom, PanelTop, Subscript } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import '@mdxeditor/editor/style.css'
-import HelpGroupEditor from './help-group-editor';
+import HelpPopupEditor from './help-popup-editor';
+import SubtitleEditor from './subtitle-editor';
+import TitleEditor from './title-editor';
+import TopContentEditor from './top-content-editor';
 
 interface ItemTypeEditorSelectorProps {
     surveyItem: SurveyItem;
@@ -46,7 +49,80 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
                 <Accordion type="single" collapsible>
                     <AccordionItem value="title">
                         <AccordionTrigger>
-                            Title
+                            <span className='flex items-center font-bold'>
+                                <span>
+                                    <Heading1 className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Title
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <TitleEditor
+                                surveyItem={props.surveyItem}
+                                onUpdateSurveyItem={props.onUpdateSurveyItem}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="subtitle">
+                        <AccordionTrigger>
+                            <span className='flex items-center text-sm text-muted-foreground'>
+                                <span>
+                                    <Heading2 className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Subtitle
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <SubtitleEditor
+                                surveyItem={props.surveyItem}
+                                onUpdateSurveyItem={props.onUpdateSurveyItem}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="help-popup">
+                        <AccordionTrigger>
+                            <span className='flex items-center text-sm text-muted-foreground'>
+                                <span>
+                                    <CircleHelp className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Help/Info popup
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <HelpPopupEditor
+                                surveyItem={props.surveyItem}
+                                onUpdateSurveyItem={props.onUpdateSurveyItem}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="top-contents">
+                        <AccordionTrigger>
+                            <span className='flex items-center text-sm text-muted-foreground'>
+                                <span>
+                                    <PanelTop className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Top content (before response)
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <TopContentEditor
+                                surveyItem={props.surveyItem}
+                                onUpdateSurveyItem={props.onUpdateSurveyItem}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="response">
+                        <AccordionTrigger>
+                            <span className='flex items-center font-bold'>
+                                <span>
+                                    <MessageSquareReply className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Response options
+                            </span>
                         </AccordionTrigger>
                         <AccordionContent>
                             <div className='flex justify-center'>
@@ -75,47 +151,81 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
-                        <AccordionTrigger>Subtitle</AccordionTrigger>
-                        <AccordionContent className='p-2'>
-                            Yes. It adheres to the WAI-ARIA design pattern.
-                            <Input
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-3">
+
+                    <AccordionItem value="bottom-contents">
                         <AccordionTrigger>
-                            <span className='flex items-center'>
+                            <span className='flex items-center text-sm text-muted-foreground'>
                                 <span>
-                                    <CircleHelp className='size-4 mr-2' />
+                                    <PanelBottom className='size-4 mr-2 text-neutral-600' />
                                 </span>
-                                Help/Info popup
+                                Bottom content (after response)
                             </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <HelpGroupEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
+                            <div className='flex justify-center'>
+                                <div className='w-full max-w-[800px]'>
+                                    <SurveyLanguageToggle />
+                                    Yes. It adheres to the WAI-ARIA design pattern.
+                                    <Input />
+
+                                    <Collapsible className='group'>
+                                        <CollapsibleTrigger
+
+                                        >
+                                            <span
+                                                className='group-data-[state=open]:bg-red-500'
+                                            >
+                                                test
+                                            </span>
+                                            Can I use this in my project?</CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            Yes. Free to use for personal and commercial projects. No attribution
+                                            required.
+                                            <Input />
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                </div>
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="footnote">
+                        <AccordionTrigger>
+                            <span className='flex items-center text-sm text-muted-foreground'>
+                                <span>
+                                    <Subscript className='size-4 mr-2 text-neutral-600' />
+                                </span>
+                                Footnote
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <div className='flex justify-center'>
+                                <div className='w-full max-w-[800px]'>
+                                    <SurveyLanguageToggle />
+                                    Yes. It adheres to the WAI-ARIA design pattern.
+                                    <Input />
+
+                                    <Collapsible className='group'>
+                                        <CollapsibleTrigger
+
+                                        >
+                                            <span
+                                                className='group-data-[state=open]:bg-red-500'
+                                            >
+                                                test
+                                            </span>
+                                            Can I use this in my project?</CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            Yes. Free to use for personal and commercial projects. No attribution
+                                            required.
+                                            <Input />
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                </div>
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
-                <p>
-                    TODO: get header components
-                </p>
-                <p>
-                    top component
-                </p>
-
-                <p>
-                    response - specific to question type - single choice, multiple choice, etc. - hint for custom
-                </p>
-                <p>
-                    bottom component
-                </p>
-                <p>
-                    footnote
-                </p>
             </div>
         </div>
     );

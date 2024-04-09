@@ -9,6 +9,7 @@ import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-g
 import React, { useContext, useEffect } from 'react';
 import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import { useDebounceCallback } from 'usehooks-ts'
+import EditorWrapper from './editor-wrapper';
 
 
 interface SurveyEndEditorProps {
@@ -36,9 +37,8 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
 
     const currentLocaleContent = getLocalizedString(surveyEndContent.content, selectedLanguage);
 
-    console.log(currentLocaleContent)
     return (
-        <div className='max-w-[800px] mx-auto'>
+        <EditorWrapper>
             <div className='flex justify-end'>
                 <SurveyLanguageToggle
                     showBadgeForLanguages={checkMissingTranslations(surveyEndContent.content)}
@@ -81,7 +81,7 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
                     }}
                 />
             </div>
-        </div>
+        </EditorWrapper>
     );
 };
 
