@@ -32,28 +32,38 @@ const HelpPopupEditor: React.FC<HelpPopupEditorProps> = (props) => {
         if (props.surveyItem.components?.items) {
             existingComponents.push(...props.surveyItem.components.items);
         }
+
+        const newHelpGroup = {
+            role: 'helpGroup',
+            items: [helpGroupContent],
+            order: {
+                name: 'sequential'
+            }
+        }
+
+        const itemIndex = existingComponents.findIndex(comp => comp.role === 'helpGroup');
+        if (itemIndex !== -1) {
+            existingComponents[itemIndex] = newHelpGroup;
+        } else {
+            existingComponents.push(newHelpGroup);
+        }
+
+
         return {
             ...props.surveyItem,
             components: {
                 ...props.surveyItem.components,
                 items: [
                     ...existingComponents,
-                    {
-                        role: 'helpGroup',
-                        items: [helpGroupContent],
-                        order: {
-                            name: 'sequential'
-                        }
-                    }
+
                 ]
             } as ItemGroupComponent
         };
     }
 
     const onToggleHelpGroup = (checked: boolean) => {
-        console.log('use help group', checked);
         if (!checked) {
-            if (confirm('Are you sure you want to remove the help group? You will the current content.')) {
+            if (confirm('Are you sure you want to remove the help group? You will loose the current content.')) {
                 // clear content
                 props.onUpdateSurveyItem(updateHelpGroup(undefined));
             }

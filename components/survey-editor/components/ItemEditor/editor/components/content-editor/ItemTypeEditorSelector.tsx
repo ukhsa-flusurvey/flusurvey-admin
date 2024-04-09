@@ -12,6 +12,7 @@ import HelpPopupEditor from './help-popup-editor';
 import SubtitleEditor from './subtitle-editor';
 import TitleEditor from './title-editor';
 import TopContentEditor from './top-content-editor';
+import FootnoteEditor from './footnote-editor';
 
 interface ItemTypeEditorSelectorProps {
     surveyItem: SurveyItem;
@@ -199,30 +200,10 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
                             </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <div className='flex justify-center'>
-                                <div className='w-full max-w-[800px]'>
-                                    <SurveyLanguageToggle />
-                                    Yes. It adheres to the WAI-ARIA design pattern.
-                                    <Input />
-
-                                    <Collapsible className='group'>
-                                        <CollapsibleTrigger
-
-                                        >
-                                            <span
-                                                className='group-data-[state=open]:bg-red-500'
-                                            >
-                                                test
-                                            </span>
-                                            Can I use this in my project?</CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            Yes. Free to use for personal and commercial projects. No attribution
-                                            required.
-                                            <Input />
-                                        </CollapsibleContent>
-                                    </Collapsible>
-                                </div>
-                            </div>
+                            <FootnoteEditor
+                                surveyItem={props.surveyItem}
+                                onUpdateSurveyItem={props.onUpdateSurveyItem}
+                            />
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

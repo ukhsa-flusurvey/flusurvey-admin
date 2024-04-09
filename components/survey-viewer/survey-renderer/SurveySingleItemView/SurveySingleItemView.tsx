@@ -290,7 +290,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 return null;
             }
             return <TextViewComponent
-                className={clsx('mt-4 text-sm italic text-center')}
+                className={clsx('mt-2 text-sm italic text-center text-balance')}
                 key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
