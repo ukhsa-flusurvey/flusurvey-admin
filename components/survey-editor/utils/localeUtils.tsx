@@ -1,7 +1,7 @@
 import { getLocalizedString } from "@/utils/getLocalisedString";
-import { ItemComponent, ItemGroupComponent, LocalizedObject, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
+import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedObject, LocalizedString, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
 
-const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
+export const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
     if (!locString) return [];
     return locString.reduce((acc, cur) => {
         acc.push(cur.code);
@@ -161,4 +161,13 @@ export const renameLocales = (survey: Survey, oldLoc: string, newLoc: string): S
     );
     const newSurvey = JSON.parse(newSurveyJSON) as Survey;
     return newSurvey;
+}
+
+export const localisedObjectToMap = (loc?: LocalizedObject[]): Map<string, string> => {
+    const map = new Map<string, string>();
+    if (!loc) return map;
+    loc.forEach((item) => {
+        map.set(item.code, (item as LocalizedString).parts.map(p => (p as ExpressionArg).str).join(''));
+    });
+    return map;
 }

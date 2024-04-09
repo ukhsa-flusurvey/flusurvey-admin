@@ -62,8 +62,9 @@ const ContentEditor: React.FC<ContentEditorProps> = (props) => {
                             </span>
                         </div> : <div className='p-4'>
                             <h3 className='font-semibold text-base'>Edit content</h3>
+                            <p className='text-sm text-neutral-600'>Select the area you want to edit</p>
                             <ItemTypeEditorSelector
-                                surveyItem={props.surveyItem}
+                                surveyItem={currentSurveyItem}
                                 onUpdateSurveyItem={setCurrentSurveyItem}
                             />
                         </div>
@@ -125,7 +126,7 @@ const ContentEditor: React.FC<ContentEditorProps> = (props) => {
                                     </TooltipContent>
                                 </Tooltip>
                                 <ItemPreview
-                                    surveyItem={props.surveyItem}
+                                    surveyItem={currentSurveyItem}
                                 />
                             </TooltipProvider>
                         </div>
