@@ -61,7 +61,7 @@ const InitialisedMdxEditor: React.FC<InitialisedMdxEditorProps & MDXEditorProps>
             {...props}
             className={cn(
                 'min-w-full h-64 z-10 bg-white rounded-lg overflow-scroll border border-border',
-                'prose prose-p:mt-0 p:mb-2 prose-headings:mt-0 prose-li:my-1 prose-ul:my-0 prose-li:text-base prose-headings:mb-3',
+                'prose prose-p:mt-0 prose-p:mb-3 prose-headings:mt-0 prose-li:my-1 prose-ul:my-0 prose-li:text-base prose-headings:mb-3',
             )}
         />
     );
