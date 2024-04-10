@@ -9,6 +9,10 @@ import SurveyLanguageToggle from '@/components/survey-editor/components/general/
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Calendar, Plus, SquareFunction, Type } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 
 
 interface TitleEditorProps {
@@ -143,9 +147,89 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
         return null;
     }
 
+    const titleParts = (titleComponent as ItemGroupComponent).items || [];
+
     return (
-        <div>
-            <p>advanced: global header class name input, sortable styled content items for expression, date, or formatted text (edit + remove), add new item</p>
+        <div className='mt-6 space-y-4'>
+            <div className='flex justify-end'>
+                <SurveyLanguageToggle />
+            </div>
+
+            <div>
+                <p className='text-sm font-semibold mb-1.5'>Title parts:</p>
+                {titleParts.length === 0 && <p className='text-sm text-neutral-500'>No title parts defined yet.</p>}
+                <ul className='mb-2'>
+                    {titleParts.map((part, index) => {
+                        return <div key={index}>todo</div>
+                    })}
+                </ul>
+                <p>advanced:sortable styled content items for expression, date, or formatted text (edit + remove), add new item</p>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant={'outline'} size={'sm'}>
+                            <span><Plus className='size-4 me-2' /></span>Add new title part
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side='right'>
+                        <DropdownMenuItem className='flex items-center'>
+                            <span>
+                                <Type className='size-4 me-2 text-muted-foreground' />
+                            </span>
+                            Formatted text
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className='flex items-center'>
+                            <span>
+                                <SquareFunction className='size-4 me-2 text-muted-foreground' />
+                            </span>
+                            Expression
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className='flex items-center'>
+                            <span>
+                                <Calendar className='size-4 me-2 text-muted-foreground' />
+                            </span>
+                            Dynamic date
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+            </div>
+
+            <div className='space-y-1.5'>
+                <Label
+                    htmlFor='global-header-class-name'
+                >
+                    Item header CSS classes
+                </Label>
+                <Input
+                    id='global-header-class-name'
+                    placeholder='Enter optional CSS classes for the item header...'
+                    value={titleComponent.style?.find(style => style.key === 'className')?.value || ''}
+                    onChange={(e) => {
+                        const existingComponents = props.surveyItem.components?.items || [];
+                        const classNameIndex = titleComponent.style?.findIndex(style => style.key === 'className');
+                        if (classNameIndex === undefined || classNameIndex === -1) {
+                            existingComponents[titleComponentIndex].style = [
+                                {
+                                    key: 'className',
+                                    value: e.target.value,
+                                }
+                            ]
+                        } else {
+                            existingComponents[titleComponentIndex].style![classNameIndex].value = e.target.value;
+                        }
+
+                        props.onUpdateSurveyItem({
+                            ...props.surveyItem,
+                            components: {
+                                ...props.surveyItem.components,
+                                role: 'root',
+                                items: existingComponents,
+                            }
+                        })
+                    }}
+                />
+            </div>
+
         </div>
     );
 }
@@ -165,10 +249,7 @@ const determineAdvancedMode = (item: SurveySingleItem) => {
 }
 
 const TitleEditor: React.FC<TitleEditorProps> = (props) => {
-
-
     const isAdvancedMode = determineAdvancedMode(props.surveyItem);
-
 
     const onToggleAdvanceMode = (checked: boolean) => {
         if (!confirm('Are you sure you want to switch the editor mode? You will loose the current content.')) {
@@ -203,8 +284,6 @@ const TitleEditor: React.FC<TitleEditorProps> = (props) => {
         });
 
     }
-
-
 
     return (
         <EditorWrapper>
