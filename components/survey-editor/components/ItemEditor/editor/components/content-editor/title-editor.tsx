@@ -6,20 +6,21 @@ import { Switch } from '@/components/ui/switch';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Textarea } from '@/components/ui/textarea';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
-import { generateDateDisplayComp, generateExpressionDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
+import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Calendar, Plus, SquareFunction, Type } from 'lucide-react';
+import { Calendar, Plus, Type, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
+import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 
 
 interface TitleEditorProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
-
 
 
 const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
@@ -44,9 +45,6 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
     }
 
     const onToggleStickyHeader = (checked: boolean) => {
-        // remove classNames from style array
-        // or add sticky-top class
-
         const existingComponents = props.surveyItem.components?.items || [];
         if (checked) {
             if (classNameIndex === undefined) {
@@ -134,6 +132,51 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
     );
 }
 
+const AdvancedTitlePartEditor: React.FC<{
+    part: ItemComponent,
+    onUpdatePart: (part: ItemComponent) => void,
+    onDeletePart: () => void,
+}> = (props) => {
+
+    let type = 'formatted-text';
+    if (props.part.role === 'dateDisplay') {
+        type = 'dynamic-date';
+    }
+
+    let content: React.ReactNode = null;
+
+    switch (type) {
+        case 'formatted-text':
+            content = <p>formatted text</p>
+            break;
+        case 'dynamic-date':
+            content = <p>dynamic date</p>
+            break;
+    }
+
+    return (
+        <SortableItem
+            id={props.part.key || ''}
+        >
+            <div className='flex items-center p-2 border border-border rounded-md'>
+                <div>
+
+                </div>
+                <div className='grow'>
+                    {content}
+                </div>
+                <Button
+                    variant={'ghost'}
+                    size={'icon'}
+                    onClick={props.onDeletePart}
+                >
+                    <span><X className='size-4' /></span>
+                </Button>
+            </div>
+        </SortableItem>
+    )
+}
+
 const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
@@ -160,18 +203,6 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                     content: generateLocStrings(new Map([[selectedLanguage, '']])),
                     style: [],
                 }
-                break;
-            case 'expression':
-                newItem = generateExpressionDisplayComp(
-                    randomKey,
-                    {
-                        expression: {
-                            name: '',
-                        },
-                        languageCodes: [selectedLanguage],
-                        className: ''
-                    }
-                )
                 break;
             case 'dynamic-date':
                 newItem = generateDateDisplayComp(
@@ -214,12 +245,67 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                 <p className='text-sm font-semibold mb-1.5'>Title parts:</p>
                 {titleParts.length === 0 && <p className='text-sm text-neutral-500'>No title parts defined yet.</p>}
 
-                <ul className='mb-2'>
-                    {titleParts.map((part, index) => {
-                        return <div key={index}>todo</div>
+                <SortableWrapper
+                    sortableID='title-parts'
+                    items={titleParts.map((part, index) => {
+                        return {
+                            id: part.key || index.toString(),
+                        }
                     })}
-                    <p>advanced:sortable styled content items for expression, date, or formatted text (edit + remove)</p>
-                </ul>
+                    onDraggedIdChange={(id) => {
+                        //setDraggedId(id);
+                    }}
+                    onReorder={(activeIndex, overIndex) => {
+                        /*const newItems = [...currentGroup.items];
+                        newItems.splice(activeIndex, 1);
+                        newItems.splice(overIndex, 0, currentGroup.items[activeIndex]);
+                        const newGroup = {
+                            ...currentGroup,
+                            items: newItems,
+                        }
+                        props.onItemsReorder(newGroup);*/
+                    }}
+                    dragOverlayItem={null /*(draggedId && draggedItem) ?
+                        <CompactExplorerNavItem
+                            key={draggedItem.id}
+                            sortableID={draggedItem.id}
+                            icon={draggedItem.icon}
+                            isActive={draggedItem.isActive}
+                            tooltip={draggedItem.id}
+                            className={draggedItem.className}
+                            style={{
+                                color: draggedItem.textColor,
+                            }}
+                        />
+                        : null*/}
+                >
+                    <ol className='mb-2'>
+                        {titleParts.map((part, index) => {
+                            return <AdvancedTitlePartEditor
+                                key={index}
+                                part={part}
+                                onDeletePart={() => {
+                                    if (!confirm('Are you sure you want to delete this part?')) {
+                                        return;
+                                    }
+                                    const newParts = (titleComponent as ItemGroupComponent).items!.filter(p => p.key !== part.key);
+                                    (titleComponent as ItemGroupComponent).items = newParts;
+                                    const existingComponents = props.surveyItem.components?.items || [];
+                                    existingComponents[titleComponentIndex] = titleComponent;
+                                    props.onUpdateSurveyItem({
+                                        ...props.surveyItem,
+                                        components: {
+                                            ...props.surveyItem.components,
+                                            role: 'root',
+                                            items: existingComponents,
+                                        }
+                                    })
+                                }}
+                                onUpdatePart={() => { }}
+                            />
+                        })}
+                    </ol>
+                </SortableWrapper>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -235,14 +321,6 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                                 <Type className='size-4 me-2 text-muted-foreground' />
                             </span>
                             Formatted text
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className='flex items-center'
-                            onClick={() => onAddItem('expression')}
-                        >
-                            <span>
-                                <SquareFunction className='size-4 me-2 text-muted-foreground' />
-                            </span>
-                            Expression
                         </DropdownMenuItem>
                         <DropdownMenuItem className='flex items-center'
                             onClick={() => onAddItem('dynamic-date')}
