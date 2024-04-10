@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Textarea } from '@/components/ui/textarea';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
-import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
+import { generateDateDisplayComp, generateExpressionDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -149,6 +149,61 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
 
     const titleParts = (titleComponent as ItemGroupComponent).items || [];
 
+    const onAddItem = (type: 'formatted-text' | 'expression' | 'dynamic-date') => {
+        const randomKey = Math.random().toString(36).substring(7);
+        let newItem: ItemComponent | undefined = undefined;
+        switch (type) {
+            case 'formatted-text':
+                newItem = {
+                    key: randomKey,
+                    role: 'text',
+                    content: generateLocStrings(new Map([[selectedLanguage, '']])),
+                    style: [],
+                }
+                break;
+            case 'expression':
+                newItem = generateExpressionDisplayComp(
+                    randomKey,
+                    {
+                        expression: {
+                            name: '',
+                        },
+                        languageCodes: [selectedLanguage],
+                        className: ''
+                    }
+                )
+                break;
+            case 'dynamic-date':
+                newItem = generateDateDisplayComp(
+                    randomKey,
+                    {
+                        date: {
+                            name: 'timestampWithOffset',
+                        },
+                        dateFormat: 'yyyy-MM-dd',
+                        languageCodes: [selectedLanguage],
+                        className: ''
+                    }
+                )
+                break;
+        }
+        if (!newItem) {
+            return;
+        }
+        (titleComponent as ItemGroupComponent).items?.push(newItem);
+
+        const existingComponents = props.surveyItem.components?.items || [];
+        existingComponents[titleComponentIndex] = titleComponent;
+        props.onUpdateSurveyItem({
+            ...props.surveyItem,
+            components: {
+                ...props.surveyItem.components,
+                role: 'root',
+                items: existingComponents,
+            }
+        })
+    }
+
     return (
         <div className='mt-6 space-y-4'>
             <div className='flex justify-end'>
@@ -158,12 +213,14 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
             <div>
                 <p className='text-sm font-semibold mb-1.5'>Title parts:</p>
                 {titleParts.length === 0 && <p className='text-sm text-neutral-500'>No title parts defined yet.</p>}
+
                 <ul className='mb-2'>
                     {titleParts.map((part, index) => {
                         return <div key={index}>todo</div>
                     })}
+                    <p>advanced:sortable styled content items for expression, date, or formatted text (edit + remove)</p>
                 </ul>
-                <p>advanced:sortable styled content items for expression, date, or formatted text (edit + remove), add new item</p>
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant={'outline'} size={'sm'}>
@@ -171,19 +228,25 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side='right'>
-                        <DropdownMenuItem className='flex items-center'>
+                        <DropdownMenuItem className='flex items-center'
+                            onClick={() => onAddItem('formatted-text')}
+                        >
                             <span>
                                 <Type className='size-4 me-2 text-muted-foreground' />
                             </span>
                             Formatted text
                         </DropdownMenuItem>
-                        <DropdownMenuItem className='flex items-center'>
+                        <DropdownMenuItem className='flex items-center'
+                            onClick={() => onAddItem('expression')}
+                        >
                             <span>
                                 <SquareFunction className='size-4 me-2 text-muted-foreground' />
                             </span>
                             Expression
                         </DropdownMenuItem>
-                        <DropdownMenuItem className='flex items-center'>
+                        <DropdownMenuItem className='flex items-center'
+                            onClick={() => onAddItem('dynamic-date')}
+                        >
                             <span>
                                 <Calendar className='size-4 me-2 text-muted-foreground' />
                             </span>
