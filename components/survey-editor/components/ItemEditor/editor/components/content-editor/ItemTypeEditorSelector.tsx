@@ -48,167 +48,184 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
             <div className='mx-auto py-6'>
 
                 <Accordion type="single" collapsible>
-                    <AccordionItem value="title">
-                        <AccordionTrigger>
-                            <span className='flex items-center font-bold'>
-                                <span>
-                                    <Heading1 className='size-4 mr-2 text-neutral-600' />
+
+                    <div className='mb-6 ps-4 border-l-4 border-[--survey-card-header-bg]'>
+
+                        <h4 className='text-xs tracking-widest font-semibold'>
+                            Header
+                        </h4>
+                        <AccordionItem value="title">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm'>
+                                    <span>
+                                        <Heading1 className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Title
                                 </span>
-                                Title
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <TitleEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <TitleEditor
+                                    surveyItem={props.surveyItem}
+                                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
 
-                    <AccordionItem value="subtitle">
-                        <AccordionTrigger>
-                            <span className='flex items-center text-sm text-muted-foreground'>
-                                <span>
-                                    <Heading2 className='size-4 mr-2 text-neutral-600' />
+                        <AccordionItem value="subtitle">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm text-muted-foreground'>
+                                    <span>
+                                        <Heading2 className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Subtitle
                                 </span>
-                                Subtitle
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <SubtitleEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <SubtitleEditor
+                                    surveyItem={props.surveyItem}
+                                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
 
-                    <AccordionItem value="help-popup">
-                        <AccordionTrigger>
-                            <span className='flex items-center text-sm text-muted-foreground'>
-                                <span>
-                                    <CircleHelp className='size-4 mr-2 text-neutral-600' />
+                        <AccordionItem value="help-popup">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm text-muted-foreground'>
+                                    <span>
+                                        <CircleHelp className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Help/Info popup
                                 </span>
-                                Help/Info popup
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <HelpPopupEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <HelpPopupEditor
+                                    surveyItem={props.surveyItem}
+                                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </div>
 
-                    <AccordionItem value="top-contents">
-                        <AccordionTrigger>
-                            <span className='flex items-center text-sm text-muted-foreground'>
-                                <span>
-                                    <PanelTop className='size-4 mr-2 text-neutral-600' />
+
+                    <div className='mb-6 ps-4 border-l-4 border-[--survey-card-bg]'>
+
+                        <h4 className='text-xs tracking-widest font-semibold'>
+                            Body
+                        </h4>
+                        <AccordionItem value="top-contents">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm text-muted-foreground'>
+                                    <span>
+                                        <PanelTop className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Top content (before response)
                                 </span>
-                                Top content (before response)
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <TopContentEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <TopContentEditor
+                                    surveyItem={props.surveyItem}
+                                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
 
-                    <AccordionItem value="response">
-                        <AccordionTrigger>
-                            <span className='flex items-center font-bold'>
-                                <span>
-                                    <MessageSquareReply className='size-4 mr-2 text-neutral-600' />
+                        <AccordionItem value="response">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm'>
+                                    <span>
+                                        <MessageSquareReply className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Response options
                                 </span>
-                                Response options
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <div className='flex justify-center'>
-                                <div className='w-full max-w-[800px]'>
-                                    <SurveyLanguageToggle />
-                                    Yes. It adheres to the WAI-ARIA design pattern.
-                                    <Input />
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className='flex justify-center'>
+                                    <div className='w-full max-w-[800px]'>
+                                        <SurveyLanguageToggle />
+                                        Yes. It adheres to the WAI-ARIA design pattern.
+                                        <Input />
 
-                                    <Collapsible className='group'>
-                                        <CollapsibleTrigger
+                                        <Collapsible className='group'>
+                                            <CollapsibleTrigger
 
-                                        >
-                                            <span
-                                                className='group-data-[state=open]:bg-red-500'
                                             >
-                                                test
-                                            </span>
-                                            Can I use this in my project?</CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            Yes. Free to use for personal and commercial projects. No attribution
-                                            required.
-                                            <Input />
-                                        </CollapsibleContent>
-                                    </Collapsible>
+                                                <span
+                                                    className='group-data-[state=open]:bg-red-500'
+                                                >
+                                                    test
+                                                </span>
+                                                Can I use this in my project?</CollapsibleTrigger>
+                                            <CollapsibleContent>
+                                                Yes. Free to use for personal and commercial projects. No attribution
+                                                required.
+                                                <Input />
+                                            </CollapsibleContent>
+                                        </Collapsible>
+                                    </div>
                                 </div>
-                            </div>
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionContent>
+                        </AccordionItem>
 
-                    <AccordionItem value="bottom-contents">
-                        <AccordionTrigger>
-                            <span className='flex items-center text-sm text-muted-foreground'>
-                                <span>
-                                    <PanelBottom className='size-4 mr-2 text-neutral-600' />
+                        <AccordionItem value="bottom-contents">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm text-muted-foreground'>
+                                    <span>
+                                        <PanelBottom className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Bottom content (after response)
                                 </span>
-                                Bottom content (after response)
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <div className='flex justify-center'>
-                                <div className='w-full max-w-[800px]'>
-                                    <SurveyLanguageToggle />
-                                    Yes. It adheres to the WAI-ARIA design pattern.
-                                    <Input />
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className='flex justify-center'>
+                                    <div className='w-full max-w-[800px]'>
+                                        <SurveyLanguageToggle />
+                                        Yes. It adheres to the WAI-ARIA design pattern.
+                                        <Input />
 
-                                    <Collapsible className='group'>
-                                        <CollapsibleTrigger
+                                        <Collapsible className='group'>
+                                            <CollapsibleTrigger
 
-                                        >
-                                            <span
-                                                className='group-data-[state=open]:bg-red-500'
                                             >
-                                                test
-                                            </span>
-                                            Can I use this in my project?</CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            Yes. Free to use for personal and commercial projects. No attribution
-                                            required.
-                                            <Input />
-                                        </CollapsibleContent>
-                                    </Collapsible>
+                                                <span
+                                                    className='group-data-[state=open]:bg-red-500'
+                                                >
+                                                    test
+                                                </span>
+                                                Can I use this in my project?</CollapsibleTrigger>
+                                            <CollapsibleContent>
+                                                Yes. Free to use for personal and commercial projects. No attribution
+                                                required.
+                                                <Input />
+                                            </CollapsibleContent>
+                                        </Collapsible>
+                                    </div>
                                 </div>
-                            </div>
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </div>
 
-                    <AccordionItem value="footnote">
-                        <AccordionTrigger>
-                            <span className='flex items-center text-sm text-muted-foreground'>
-                                <span>
-                                    <Subscript className='size-4 mr-2 text-neutral-600' />
+                    <div className='ps-4 border-l-4 border-neutral-100'>
+                        <AccordionItem value="footnote">
+                            <AccordionTrigger>
+                                <span className='flex items-center text-sm text-muted-foreground'>
+                                    <span>
+                                        <Subscript className='size-4 mr-2 text-neutral-600' />
+                                    </span>
+                                    Footnote
                                 </span>
-                                Footnote
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <FootnoteEditor
-                                surveyItem={props.surveyItem}
-                                onUpdateSurveyItem={props.onUpdateSurveyItem}
-                            />
-                        </AccordionContent>
-                    </AccordionItem>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <FootnoteEditor
+                                    surveyItem={props.surveyItem}
+                                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </div>
                 </Accordion>
+
             </div>
-        </div>
+        </div >
     );
 };
 
