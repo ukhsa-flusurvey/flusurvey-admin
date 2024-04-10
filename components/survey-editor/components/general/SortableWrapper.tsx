@@ -4,16 +4,13 @@ import React, { useEffect } from 'react';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MeasuringStrategy, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
-import { LucideIcon } from 'lucide-react';
 
-interface SortableSurveyGroupWrapperProps {
+
+interface SortableWrapperProps {
     sortableID: string;
 
     items: Array<{
         id: string;
-        icon: LucideIcon;
-        isActive: boolean;
-        className?: string;
     }>;
     children: React.ReactNode;
     dragOverlayItem: React.ReactNode | null;
@@ -26,7 +23,7 @@ const activationConstraint = {
 };
 
 
-const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
+const SortableWrapper: React.FC<SortableWrapperProps> = ({
     onDraggedIdChange,
     ...props
 }) => {
@@ -114,4 +111,4 @@ const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
     );
 };
 
-export default SortableSurveyGroupWrapper;
+export default SortableWrapper;

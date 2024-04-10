@@ -11,7 +11,7 @@ import { SurveyGroupItem } from 'survey-engine/data_types';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '../../../utils/utils';
 import ItemCreator from './ItemCreator';
 
-import SortableSurveyGroupWrapper from './SortableSurveyGroupWrapper';
+import SortableWrapper from '../../general/SortableWrapper';
 
 interface CompactExplorerProps {
     root: SurveyGroupItem;
@@ -90,7 +90,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                 }
 
 
-                <SortableSurveyGroupWrapper
+                <SortableWrapper
                     sortableID={`compact-explorer-${props.currentPath}`}
                     items={currentItems}
                     onDraggedIdChange={(id) => {
@@ -151,7 +151,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
 
                     </ol>
 
-                </SortableSurveyGroupWrapper>
+                </SortableWrapper>
 
 
                 {currentGroup.items.length === 0 &&
