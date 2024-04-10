@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import EditorWrapper from './editor-wrapper';
-import { ItemComponent, SurveySingleItem } from 'survey-engine/data_types';
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
@@ -23,24 +23,8 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
 
     let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {
-        const existingComponents = props.surveyItem.components?.items || [];
-        existingComponents.push({
-            role: 'title',
-            content: generateLocStrings(new Map([[selectedLanguage, '']])),
-        } as ItemComponent);
-        props.onUpdateSurveyItem({
-            ...props.surveyItem,
-            components: {
-                ...props.surveyItem.components,
-                role: 'root',
-                items: existingComponents,
-            }
-        });
         return null;
     }
-
-
-
 
     const titleComponent = props.surveyItem.components?.items[titleComponentIndex];
     if (!titleComponent) {
@@ -149,6 +133,16 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
 const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
+    let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
+    if (titleComponentIndex === undefined || titleComponentIndex === -1) {
+        return null;
+    }
+
+    const titleComponent = props.surveyItem.components?.items[titleComponentIndex];
+    if (!titleComponent) {
+        return null;
+    }
+
     return (
         <div>
             <p>advanced: global header class name input, sortable styled content items for expression, date, or formatted text (edit + remove), add new item</p>
@@ -156,22 +150,62 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
     );
 }
 
+const determineAdvancedMode = (item: SurveySingleItem) => {
+    let titleComponentIndex = item.components?.items.findIndex(comp => comp.role === 'title');
+    if (titleComponentIndex === undefined || titleComponentIndex === -1) {
+        return false;
+    }
+
+    const titleComponent = item.components?.items[titleComponentIndex];
+    if (!titleComponent) {
+        return false;
+    }
+
+    return (titleComponent as ItemGroupComponent).items !== undefined && (titleComponent as ItemGroupComponent).content === undefined;
+}
+
 const TitleEditor: React.FC<TitleEditorProps> = (props) => {
+
+
+    const isAdvancedMode = determineAdvancedMode(props.surveyItem);
+
 
     const onToggleAdvanceMode = (checked: boolean) => {
         if (!confirm('Are you sure you want to switch the editor mode? You will loose the current content.')) {
             return
         }
 
+        const newTitleComp: ItemComponent = {
+            role: 'title',
+            items: undefined,
+        };
         if (checked) {
-            // switch to advanced mode
-        } else {
-            // switch to simple mode
+            (newTitleComp as ItemGroupComponent).items = [];
         }
+
+
+        let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
+        const existingComponents = props.surveyItem.components?.items || [];
+        if (titleComponentIndex === undefined || titleComponentIndex === -1) {
+            // add a new title component
+            existingComponents.push(newTitleComp);
+        } else {
+            // update the existing title component
+            existingComponents[titleComponentIndex] = newTitleComp;
+        }
+        props.onUpdateSurveyItem({
+            ...props.surveyItem,
+            components: {
+                ...props.surveyItem.components,
+                role: 'root',
+                items: existingComponents,
+            }
+        });
+
     }
 
-    // TODO: check if advanced mode should be used
-    const isAdvancedMode = false;
+
+
     return (
         <EditorWrapper>
             <div className='mb-4 flex justify-end'>
