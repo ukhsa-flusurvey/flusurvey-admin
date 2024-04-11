@@ -26,7 +26,7 @@ const MarkdownComponent: React.FC<MarkdownComponentProps> = (props) => {
                 {
                     'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
                 },
-                'prose',
+                'prose prose-p:break-words',
                 className
             )}
         >

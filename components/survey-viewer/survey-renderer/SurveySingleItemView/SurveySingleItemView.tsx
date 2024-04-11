@@ -311,7 +311,9 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 {props.showKeys ?
                     <span className="text-primary me-2 absolute -top-4 text-xs">{props.renderItem.key}</span>
                     : null}
-                <fieldset>
+                <fieldset
+                    className='min-w-64'
+                >
                     {renderItemHeader()}
 
                     <div className={clsx(
