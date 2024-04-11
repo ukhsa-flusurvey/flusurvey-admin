@@ -9,6 +9,7 @@ interface TextInputProps extends CommonResponseComponentProps {
     updateDelay?: number;
     onClick?: () => void;
     nonFullWidth?: boolean;
+    embedded?: boolean;
     defaultClassName?: string;
     inputClassName?: string;
 }
@@ -78,6 +79,7 @@ const TextInput: React.FC<TextInputProps> = (props) => {
                 props.defaultClassName,
                 "flex items-center flex-wrap text-base font-normal",
                 {
+                    'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
                     'w-full': !props.nonFullWidth,
                 },
                 getClassName(props.compDef.style),
