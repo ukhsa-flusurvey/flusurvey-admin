@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MeasuringStrategy, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MeasuringStrategy, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
 
 
 interface SortableWrapperProps {
     sortableID: string;
-
     items: Array<{
         id: string;
     }>;
@@ -35,8 +34,6 @@ const SortableWrapper: React.FC<SortableWrapperProps> = ({
         setIsMounted(true);
     }, []);
 
-
-
     const sensors = useSensors(
         useSensor(TouchSensor, {
             activationConstraint
@@ -44,9 +41,6 @@ const SortableWrapper: React.FC<SortableWrapperProps> = ({
         useSensor(MouseSensor, {
             activationConstraint
         }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
     );
 
     useEffect(() => {
