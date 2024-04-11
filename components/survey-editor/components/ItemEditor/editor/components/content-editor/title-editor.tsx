@@ -1,25 +1,15 @@
 import React, { useContext } from 'react';
 import EditorWrapper from './editor-wrapper';
-import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from 'survey-engine/data_types';
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Textarea } from '@/components/ui/textarea';
-import SurveyLanguageToggle, { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
-import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
+import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Calendar, GripHorizontal, Info, Plus, Type, X } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
-import SortableItem from '@/components/survey-editor/components/general/SortableItem';
-
-import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import FormattedTextListEditor from './formatted-text-list-editor';
 
 
