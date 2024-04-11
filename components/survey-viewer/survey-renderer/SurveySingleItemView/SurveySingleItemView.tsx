@@ -45,6 +45,8 @@ const ItemBodyComponent: React.FC<{
     switch (component.role) {
         case 'title':
             return null;
+        case 'subtitle':
+            return null;
         case 'helpGroup':
             return null;
         case 'footnote':
