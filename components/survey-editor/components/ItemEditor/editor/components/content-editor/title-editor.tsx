@@ -1,20 +1,25 @@
 import React, { useContext } from 'react';
 import EditorWrapper from './editor-wrapper';
-import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
+import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Textarea } from '@/components/ui/textarea';
-import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import SurveyLanguageToggle, { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Calendar, Grip, GripHorizontal, Plus, Type, X } from 'lucide-react';
+import { Calendar, GripHorizontal, Info, Plus, Type, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
+
+import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 
 interface TitleEditorProps {
@@ -138,6 +143,7 @@ const AdvancedTitlePartEditor: React.FC<{
     onDeletePart: () => void,
 }> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
+    const [hideSlotContent, setHideSlotContent] = React.useState<boolean>(false);
 
     let type = 'formatted-text';
     if (props.part.role === 'dateDisplay') {
@@ -148,10 +154,10 @@ const AdvancedTitlePartEditor: React.FC<{
 
     switch (type) {
         case 'formatted-text':
-
-
             content = <div className='space-y-3'>
-                <div className='space-y-1'>
+                <div className='space-y-1'
+                    data-no-dnd="true"
+                >
                     <Label
                         htmlFor={'title-part-input-' + props.part.key}
                         className='text-xs'
@@ -172,7 +178,9 @@ const AdvancedTitlePartEditor: React.FC<{
                     />
                 </div>
 
-                <div className='space-y-1'>
+                <div className='space-y-1'
+                    data-no-dnd="true"
+                >
                     <Label
                         htmlFor={'title-part-class-name-' + props.part.key}
                         className='text-xs'
@@ -203,7 +211,168 @@ const AdvancedTitlePartEditor: React.FC<{
             </div>
             break;
         case 'dynamic-date':
-            content = <p className='h-80'>dynamic date</p>
+            if (!props.part.content || props.part.content.length < 1) {
+                return null;
+            }
+            const currentExpValue = ((props.part.content[0] as LocalizedString).parts[0] as ExpressionArg).exp;
+            const args: ExpressionArg[] = [];
+            if (currentExpValue?.name !== '') {
+                args.push({
+                    exp: currentExpValue,
+                    dtype: 'exp'
+                });
+            }
+            const slotTypes = args.map(arg => arg.exp?.name);
+
+            content = <div className='space-y-3 pt-3'>
+
+                <div className='space-y-1.5'
+                    data-no-dnd="true"
+                >
+                    <ExpArgEditor
+                        depth={0}
+                        slotDef={{
+                            label: 'Date expression',
+                            isListSlot: false,
+                            required: true,
+                            allowedTypes: [{
+                                id: 'exp-slot',
+                                type: 'expression',
+                                allowedExpressionTypes: ['num'],
+                            }],
+                        }}
+                        currentIndex={0}
+                        availableExpData={args}
+                        availableMetadata={{
+                            slotTypes: slotTypes
+                        }}
+
+                        expRegistry={{
+                            expressionDefs: surveyEngineRegistry,
+                            builtInSlotTypes: supportedBuiltInSlotTypes,
+                            categories: surveyEngineCategories,
+                        }}
+
+                        context={{}}
+                        isHidden={hideSlotContent}
+                        onToggleHide={(hide) => { setHideSlotContent(hide) }}
+                        onChange={(newArgs, newSlotTypes) => {
+                            console.log(newArgs)
+                            console.log(newSlotTypes)
+                            const updatedExp = newArgs.length > 0 ? newArgs[0] : {
+                                dtype: 'exp',
+                                exp: {
+                                    name: newSlotTypes[0] || '',
+                                }
+                            };
+
+                            const updatedPart = generateDateDisplayComp(
+                                props.part.key || '',
+                                {
+                                    date: updatedExp?.exp || { name: '' },
+                                    dateFormat: props.part.style?.find(style => style.key === 'dateFormat')?.value || 'yyyy-MM-dd',
+                                    languageCodes: [...supportedLanguages],
+                                    className: props.part.style?.find(style => style.key === 'className')?.value || ''
+                                }
+                            )
+                            console.log(updatedPart);
+                            props.onUpdatePart(updatedPart);
+                        }}
+                    />
+
+                </div>
+
+                <div
+                    className='space-y-1'
+                    data-no-dnd="true"
+                >
+
+                    <Label
+                        htmlFor={'title-part-date-format-' + props.part.key}
+                        className='text-xs flex  items-center gap-2'
+                    >
+                        Date format
+                        <Tooltip
+                            delayDuration={50}
+                        >
+                            <TooltipTrigger>
+                                <span>
+                                    <Info className='size-3 text-neutral-500' />
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent className='max-w-80'>
+                                <p>
+                                    For more information on date formatting, please visit the date-fns documentation:
+                                </p>
+                                <a
+                                    href='https://date-fns.org/v3.6.0/docs/format'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className='text-primary underline'
+                                >
+                                    https://date-fns.org/v3.6.0/docs/format
+                                </a>
+                            </TooltipContent>
+                        </Tooltip>
+                    </Label>
+                    <Input
+                        id={'title-part-date-format-' + props.part.key}
+                        placeholder='Enter a date format...'
+                        value={props.part.style?.find(style => style.key === 'dateFormat')?.value || ''}
+                        onChange={(e) => {
+                            const updatedPart = { ...props.part };
+                            const classNameIndex = updatedPart.style?.findIndex(style => style.key === 'dateFormat');
+                            if (updatedPart.style === undefined) {
+                                updatedPart.style = [];
+                            }
+                            if (classNameIndex === undefined || classNameIndex === -1) {
+                                updatedPart.style.push(
+                                    {
+                                        key: 'dateFormat',
+                                        value: e.target.value,
+                                    }
+                                )
+                            } else {
+                                updatedPart.style![classNameIndex].value = e.target.value;
+                            }
+                            props.onUpdatePart(updatedPart);
+                        }}
+                    />
+                </div>
+                <div className='space-y-1'
+                    data-no-dnd="true"
+                >
+                    <Label
+                        htmlFor={'title-part-class-name-' + props.part.key}
+                        className='text-xs'
+                    >
+                        CSS classes
+                    </Label>
+                    <Input
+                        id={'title-part-class-name-' + props.part.key}
+                        placeholder='Enter optional CSS classes for the part...'
+                        value={props.part.style?.find(style => style.key === 'className')?.value || ''}
+                        onChange={(e) => {
+                            const updatedPart = { ...props.part };
+                            const classNameIndex = updatedPart.style?.findIndex(style => style.key === 'className');
+                            if (updatedPart.style === undefined) {
+                                updatedPart.style = [];
+                            }
+                            if (classNameIndex === undefined || classNameIndex === -1) {
+                                updatedPart.style.push(
+                                    {
+                                        key: 'className',
+                                        value: e.target.value,
+                                    }
+                                )
+                            } else {
+                                updatedPart.style![classNameIndex].value = e.target.value;
+                            }
+                            props.onUpdatePart(updatedPart);
+                        }}
+                    />
+                </div>
+            </div>
             break;
     }
 
@@ -211,7 +380,7 @@ const AdvancedTitlePartEditor: React.FC<{
         <SortableItem
             id={props.part.key || ''}
         >
-            <div className='p-2 border border-neutral-300 bg-slate-100 rounded-md relative space-y-1'>
+            <div className='p-4 border border-border bg-white rounded-md relative space-y-1 min-w-60 shadow-sm'>
                 <div className='absolute top-0 left-0 w-full flex justify-center'>
                     <GripHorizontal className='size-5 text-neutral-500' />
                 </div>
@@ -275,7 +444,7 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                             name: 'timestampWithOffset',
                         },
                         dateFormat: 'yyyy-MM-dd',
-                        languageCodes: [selectedLanguage],
+                        languageCodes: [...supportedLanguages],
                         className: ''
                     }
                 )
@@ -307,11 +476,19 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
             </div>
 
             <div>
-                <p className='text-sm font-semibold mb-2'>Title parts:</p>
-                {titleParts.length === 0 && <p className='text-sm text-neutral-500'>No title parts defined yet.</p>}
+                <p className='text-sm font-semibold'>
+                    Title parts:
+                    <span className='ps-2 text-muted-foreground'>
+                        ({titleParts.length})
+                    </span>
+                </p>
+                <span className='text-xs text-muted-foreground ms-1'>
+                    (drag and drop to reorder)
+                </span>
 
                 <SortableWrapper
                     sortableID='title-parts'
+                    direction='horizontal'
                     items={titleParts.map((part, index) => {
                         return {
                             id: part.key || index.toString(),
@@ -344,72 +521,79 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                         />
                         : null}
                 >
-                    <ol className='mb-4 space-y-2'>
-                        {titleParts.map((part, index) => {
-                            return <AdvancedTitlePartEditor
-                                key={index}
-                                part={part}
-                                onDeletePart={() => {
-                                    if (!confirm('Are you sure you want to delete this part?')) {
-                                        return;
-                                    }
-                                    const newParts = (titleComponent as ItemGroupComponent).items!.filter(p => p.key !== part.key);
-                                    (titleComponent as ItemGroupComponent).items = newParts;
-                                    const existingComponents = props.surveyItem.components?.items || [];
-                                    existingComponents[titleComponentIndex] = titleComponent;
-                                    props.onUpdateSurveyItem({
-                                        ...props.surveyItem,
-                                        components: {
-                                            ...props.surveyItem.components,
-                                            role: 'root',
-                                            items: existingComponents,
-                                        }
-                                    })
-                                }}
-                                onUpdatePart={(updatedPart) => {
-                                    (titleComponent as ItemGroupComponent).items[index] = updatedPart;
-                                    const existingComponents = props.surveyItem.components?.items || [];
-                                    existingComponents[titleComponentIndex] = titleComponent;
-                                    props.onUpdateSurveyItem({
-                                        ...props.surveyItem,
-                                        components: {
-                                            ...props.surveyItem.components,
-                                            role: 'root',
-                                            items: existingComponents,
-                                        }
-                                    })
 
-                                }}
-                            />
-                        })}
-                    </ol>
+                    <div className=' my-2 overflow-x-scroll overscroll-x-contain max-w-full'>
+                        <ol className='flex items-start gap-4 p-4 border border-border border-dashed rounded-md w-fit min-w-full' >
+
+                            {titleParts.map((part, index) => {
+                                return <AdvancedTitlePartEditor
+                                    key={part.key}
+                                    part={part}
+                                    onDeletePart={() => {
+                                        if (!confirm('Are you sure you want to delete this part?')) {
+                                            return;
+                                        }
+                                        const newParts = (titleComponent as ItemGroupComponent).items!.filter(p => p.key !== part.key);
+                                        (titleComponent as ItemGroupComponent).items = newParts;
+                                        const existingComponents = props.surveyItem.components?.items || [];
+                                        existingComponents[titleComponentIndex] = titleComponent;
+                                        props.onUpdateSurveyItem({
+                                            ...props.surveyItem,
+                                            components: {
+                                                ...props.surveyItem.components,
+                                                role: 'root',
+                                                items: existingComponents,
+                                            }
+                                        })
+                                    }}
+                                    onUpdatePart={(updatedPart) => {
+                                        (titleComponent as ItemGroupComponent).items[index] = updatedPart;
+                                        const existingComponents = props.surveyItem.components?.items || [];
+                                        existingComponents[titleComponentIndex] = titleComponent;
+                                        props.onUpdateSurveyItem({
+                                            ...props.surveyItem,
+                                            components: {
+                                                ...props.surveyItem.components,
+                                                role: 'root',
+                                                items: existingComponents,
+                                            }
+                                        })
+
+                                    }}
+                                />
+                            })}
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant={'outline'} size={'sm'} className='w-60'>
+                                        <span><Plus className='size-4 me-2' /></span>Add new
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent side='right'>
+                                    <DropdownMenuItem className='flex items-center'
+                                        onClick={() => onAddItem('formatted-text')}
+                                    >
+                                        <span>
+                                            <Type className='size-4 me-2 text-muted-foreground' />
+                                        </span>
+                                        Formatted text
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className='flex items-center'
+                                        onClick={() => onAddItem('dynamic-date')}
+                                    >
+                                        <span>
+                                            <Calendar className='size-4 me-2 text-muted-foreground' />
+                                        </span>
+                                        Dynamic date
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </ol>
+                    </div>
+
                 </SortableWrapper>
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant={'outline'} size={'sm'}>
-                            <span><Plus className='size-4 me-2' /></span>Add new title part
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent side='right'>
-                        <DropdownMenuItem className='flex items-center'
-                            onClick={() => onAddItem('formatted-text')}
-                        >
-                            <span>
-                                <Type className='size-4 me-2 text-muted-foreground' />
-                            </span>
-                            Formatted text
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className='flex items-center'
-                            onClick={() => onAddItem('dynamic-date')}
-                        >
-                            <span>
-                                <Calendar className='size-4 me-2 text-muted-foreground' />
-                            </span>
-                            Dynamic date
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+
 
             </div>
 
