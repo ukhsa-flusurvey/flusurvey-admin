@@ -10,7 +10,7 @@ import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/s
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Calendar, Plus, Type, X } from 'lucide-react';
+import { Calendar, Grip, GripHorizontal, Plus, Type, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
@@ -137,6 +137,7 @@ const AdvancedTitlePartEditor: React.FC<{
     onUpdatePart: (part: ItemComponent) => void,
     onDeletePart: () => void,
 }> = (props) => {
+    const { selectedLanguage } = useContext(SurveyContext);
 
     let type = 'formatted-text';
     if (props.part.role === 'dateDisplay') {
@@ -147,10 +148,62 @@ const AdvancedTitlePartEditor: React.FC<{
 
     switch (type) {
         case 'formatted-text':
-            content = <p>formatted text</p>
+
+
+            content = <div className='space-y-3'>
+                <div className='space-y-1'>
+                    <Label
+                        htmlFor={'title-part-input-' + props.part.key}
+                        className='text-xs'
+                    >
+                        Content
+                    </Label>
+                    <Textarea
+                        id={'title-part-input-' + props.part.key}
+                        value={localisedObjectToMap(props.part.content).get(selectedLanguage) || ''}
+                        onChange={(e) => {
+                            const updatedPart = { ...props.part };
+                            const updatedContent = localisedObjectToMap(updatedPart.content);
+                            updatedContent.set(selectedLanguage, e.target.value);
+                            updatedPart.content = generateLocStrings(updatedContent);
+                            props.onUpdatePart(updatedPart);
+                        }}
+                        placeholder='Enter content here for the selected language...'
+                    />
+                </div>
+
+                <div className='space-y-1'>
+                    <Label
+                        htmlFor={'title-part-class-name-' + props.part.key}
+                        className='text-xs'
+                    >
+                        CSS classes
+                    </Label>
+                    <Input
+                        id={'title-part-class-name-' + props.part.key}
+                        placeholder='Enter optional CSS classes for the part...'
+                        value={props.part.style?.find(style => style.key === 'className')?.value || ''}
+                        onChange={(e) => {
+                            const updatedPart = { ...props.part };
+                            const classNameIndex = updatedPart.style?.findIndex(style => style.key === 'className');
+                            if (classNameIndex === undefined || classNameIndex === -1) {
+                                updatedPart.style = [
+                                    {
+                                        key: 'className',
+                                        value: e.target.value,
+                                    }
+                                ]
+                            } else {
+                                updatedPart.style![classNameIndex].value = e.target.value;
+                            }
+                            props.onUpdatePart(updatedPart);
+                        }}
+                    />
+                </div>
+            </div>
             break;
         case 'dynamic-date':
-            content = <p>dynamic date</p>
+            content = <p className='h-80'>dynamic date</p>
             break;
     }
 
@@ -158,20 +211,29 @@ const AdvancedTitlePartEditor: React.FC<{
         <SortableItem
             id={props.part.key || ''}
         >
-            <div className='flex items-center p-2 border border-border rounded-md'>
-                <div>
-
+            <div className='p-2 border border-neutral-300 bg-slate-100 rounded-md relative space-y-1'>
+                <div className='absolute top-0 left-0 w-full flex justify-center'>
+                    <GripHorizontal className='size-5 text-neutral-500' />
                 </div>
+                <div className='flex items-center'>
+                    <span className='text-xs text-muted-foreground me-1'>key:</span>
+                    <span className='grow text-sm font-mono'>
+                        {props.part.key}
+                    </span>
+                    <Button
+                        variant={'ghost'}
+                        size={'icon'}
+                        className='size-8 hover:bg-danger-100'
+                        onClick={props.onDeletePart}
+                    >
+                        <span><X className='size-4' /></span>
+                    </Button>
+                </div>
+                <Separator />
                 <div className='grow'>
                     {content}
                 </div>
-                <Button
-                    variant={'ghost'}
-                    size={'icon'}
-                    onClick={props.onDeletePart}
-                >
-                    <span><X className='size-4' /></span>
-                </Button>
+
             </div>
         </SortableItem>
     )
@@ -179,6 +241,7 @@ const AdvancedTitlePartEditor: React.FC<{
 
 const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
+    const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
     let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {
@@ -235,6 +298,8 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
         })
     }
 
+    const draggedItem = draggedId ? titleParts.find(part => part.key === draggedId) : null;
+
     return (
         <div className='mt-6 space-y-4'>
             <div className='flex justify-end'>
@@ -242,7 +307,7 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
             </div>
 
             <div>
-                <p className='text-sm font-semibold mb-1.5'>Title parts:</p>
+                <p className='text-sm font-semibold mb-2'>Title parts:</p>
                 {titleParts.length === 0 && <p className='text-sm text-neutral-500'>No title parts defined yet.</p>}
 
                 <SortableWrapper
@@ -253,33 +318,33 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                         }
                     })}
                     onDraggedIdChange={(id) => {
-                        //setDraggedId(id);
+                        setDraggedId(id);
                     }}
                     onReorder={(activeIndex, overIndex) => {
-                        /*const newItems = [...currentGroup.items];
-                        newItems.splice(activeIndex, 1);
-                        newItems.splice(overIndex, 0, currentGroup.items[activeIndex]);
-                        const newGroup = {
-                            ...currentGroup,
-                            items: newItems,
-                        }
-                        props.onItemsReorder(newGroup);*/
+                        const newItems = [...titleParts];
+                        newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
+                        (titleComponent as ItemGroupComponent).items = newItems;
+
+                        const existingComponents = props.surveyItem.components?.items || [];
+                        existingComponents[titleComponentIndex] = titleComponent;
+                        props.onUpdateSurveyItem({
+                            ...props.surveyItem,
+                            components: {
+                                ...props.surveyItem.components,
+                                role: 'root',
+                                items: existingComponents,
+                            }
+                        })
                     }}
-                    dragOverlayItem={null /*(draggedId && draggedItem) ?
-                        <CompactExplorerNavItem
-                            key={draggedItem.id}
-                            sortableID={draggedItem.id}
-                            icon={draggedItem.icon}
-                            isActive={draggedItem.isActive}
-                            tooltip={draggedItem.id}
-                            className={draggedItem.className}
-                            style={{
-                                color: draggedItem.textColor,
-                            }}
+                    dragOverlayItem={(draggedId && draggedItem) ?
+                        <AdvancedTitlePartEditor
+                            part={draggedItem}
+                            onUpdatePart={() => { }}
+                            onDeletePart={() => { }}
                         />
-                        : null*/}
+                        : null}
                 >
-                    <ol className='mb-2'>
+                    <ol className='mb-4 space-y-2'>
                         {titleParts.map((part, index) => {
                             return <AdvancedTitlePartEditor
                                 key={index}
@@ -301,7 +366,20 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
                                         }
                                     })
                                 }}
-                                onUpdatePart={() => { }}
+                                onUpdatePart={(updatedPart) => {
+                                    (titleComponent as ItemGroupComponent).items[index] = updatedPart;
+                                    const existingComponents = props.surveyItem.components?.items || [];
+                                    existingComponents[titleComponentIndex] = titleComponent;
+                                    props.onUpdateSurveyItem({
+                                        ...props.surveyItem,
+                                        components: {
+                                            ...props.surveyItem.components,
+                                            role: 'root',
+                                            items: existingComponents,
+                                        }
+                                    })
+
+                                }}
                             />
                         })}
                     </ol>
