@@ -40,7 +40,6 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
     }, [open, props.groups, readClipboard])
 
     useEffect(() => {
-        console.log(clipboardValue)
         if (clipboardValue) {
             try {
                 const content = JSON.parse(clipboardValue);
