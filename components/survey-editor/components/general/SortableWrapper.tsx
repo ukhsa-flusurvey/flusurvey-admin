@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MeasuringStrategy, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MeasuringStrategy, useSensor, useSensors } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
+import { MouseSensor as LibMouseSensor, TouchSensor as LibTouchSensor } from '@dnd-kit/core';
+import { MouseEvent, TouchEvent } from 'react';
 
 
 interface SortableWrapperProps {
@@ -11,10 +13,34 @@ interface SortableWrapperProps {
     items: Array<{
         id: string;
     }>;
+    direction?: 'vertical' | 'horizontal';
     children: React.ReactNode;
     dragOverlayItem: React.ReactNode | null;
     onDraggedIdChange: (id: string | null) => void;
     onReorder: (activeIndex: number, overIndex: number) => void;
+}
+
+
+// Block DnD event propagation if element have "data-no-dnd" attribute
+const handler = ({ nativeEvent: event }: MouseEvent | TouchEvent) => {
+    let cur = event.target as HTMLElement;
+
+    while (cur) {
+        if (cur.dataset && cur.dataset.noDnd) {
+            return false;
+        }
+        cur = cur.parentElement as HTMLElement;
+    }
+
+    return true;
+};
+
+export class MouseSensor extends LibMouseSensor {
+    static activators = [{ eventName: 'onMouseDown', handler }] as typeof LibMouseSensor['activators'];
+}
+
+export class TouchSensor extends LibTouchSensor {
+    static activators = [{ eventName: 'onTouchStart', handler }] as typeof LibTouchSensor['activators'];
 }
 
 const activationConstraint = {
@@ -91,7 +117,7 @@ const SortableWrapper: React.FC<SortableWrapperProps> = ({
             <SortableContext
                 id={props.sortableID}
                 items={[...props.items]}
-                strategy={verticalListSortingStrategy}
+                strategy={props.direction === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}
             >
                 {props.children}
             </SortableContext>
