@@ -56,7 +56,13 @@ export const getLocaleStringDateByCode = (translations: LocalizedObject[] | unde
     if (typeof (parts[0]) === "number") {
         currentDate = new Date(parts[0] * 1000);
     }
-    return format(currentDate, dateFormat, { locale: dateLocales?.find(loc => loc.code === 'nl')?.locale })
+    let dateString = 'invalid date/format';
+    try {
+        dateString = format(currentDate, dateFormat, { locale: dateLocales?.find(loc => loc.code === code)?.locale });
+    } catch (error) {
+        console.error('Error formatting date: ' + error);
+    }
+    return dateString
 }
 
 export const getItemComponentByRole = (components: Array<ItemComponent> | undefined, role: string): ItemComponent | undefined => {
