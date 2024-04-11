@@ -5,7 +5,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import ItemPreview from './ItemPreview';
 import { useDebounceCallback } from 'usehooks-ts';
 import ItemTypeEditorSelector from './ItemTypeEditorSelector';
-import { Eye, Info, Pencil } from 'lucide-react';
+import { AlertTriangle, Eye, Info, Pencil } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ContentEditorProps {
@@ -100,35 +100,23 @@ const ContentEditor: React.FC<ContentEditorProps> = (props) => {
                                 <Eye className='size-4 text-neutral-500' />
                             </span>
                         </div> : <div className='p-4'>
-                            <TooltipProvider>
-                                <Tooltip delayDuration={500}>
-                                    <TooltipTrigger asChild>
-                                        <h3 className='font-semibold text-base flex items-center gap-2'>
-                                            <span
-                                                className='grow'
-                                            >Preview</span>
-                                            <span>
-                                                <Info className='size-4 text-neutral-500' />
-                                            </span>
-                                        </h3>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                        className='w-96'
-                                        //side='right'
-                                        align='end'
-                                    >
-                                        <p>
-                                            Hint: The preview ignores conditions, disabling and validation rules. Expression values are replaced with a placeholder.
-                                        </p>
-                                        <p>
-                                            Use the simulator to test the item with all rules applied.
-                                        </p>
-                                    </TooltipContent>
-                                </Tooltip>
-                                <ItemPreview
-                                    surveyItem={currentSurveyItem}
-                                />
-                            </TooltipProvider>
+
+                            <h3 className='font-semibold text-base flex items-center gap-2'>
+                                <span
+                                    className='grow'
+                                >Preview</span>
+                            </h3>
+                            <p className='text-xs text-muted-foreground bg-muted p-2 my-2 rounded flex gap-2 items-center'>
+                                <span>
+                                    <AlertTriangle className='size-4' />
+                                </span>
+                                Hint: The preview ignores conditions, disabling and validation rules. Dates, and expression values are replaced with a placeholder. Use the simulator to test the item with all rules applied.
+                            </p>
+
+                            <ItemPreview
+                                surveyItem={currentSurveyItem}
+                            />
+
                         </div>
                     }
                 </ResizablePanel>
