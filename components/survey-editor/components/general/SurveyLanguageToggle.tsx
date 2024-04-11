@@ -8,10 +8,12 @@ interface SurveyLanguageToggleProps {
     showBadgeForLanguages?: string[];
 }
 
+export const supportedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
+
 const SurveyLanguageToggle: React.FC<SurveyLanguageToggleProps> = (props) => {
     const { selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
 
-    const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
+    const languages = supportedLanguages;
 
     return (
         <div className='w-fit flex items-center gap-1 bg-muted p-0.5 rounded-md border border-neutral-200'>

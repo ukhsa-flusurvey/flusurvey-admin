@@ -49,7 +49,7 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
 
                 <Accordion type="single" collapsible>
 
-                    <div className='mb-6 ps-4 border-l-4 border-[--survey-card-header-bg]'>
+                    <div className='mb-6 p-4 rounded-md border border-l-4  border-l-[--survey-card-header-bg]'>
 
                         <h4 className='text-xs tracking-widest font-semibold'>
                             Header
@@ -107,7 +107,7 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
                     </div>
 
 
-                    <div className='mb-6 ps-4 border-l-4 border-[--survey-card-bg]'>
+                    <div className='mb-6 p-4 rounded-md border border-l-4  border-[--survey-card-bg]'>
 
                         <h4 className='text-xs tracking-widest font-semibold'>
                             Body
