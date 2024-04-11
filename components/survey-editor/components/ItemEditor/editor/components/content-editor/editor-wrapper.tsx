@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@/components/ui/tooltip';
 import React from 'react';
 
 interface EditorWrapperProps {
@@ -6,9 +7,11 @@ interface EditorWrapperProps {
 
 const EditorWrapper: React.FC<EditorWrapperProps> = (props) => {
     return (
-        <div className='p-4 mx-auto flex flex-col bg-neutral-50 rounded-md border border-border'>
-            {props.children}
-        </div>
+        <TooltipProvider>
+            <div className='p-4 mx-auto flex flex-col bg-neutral-50 rounded-md border border-border'>
+                {props.children}
+            </div>
+        </TooltipProvider>
     );
 };
 
