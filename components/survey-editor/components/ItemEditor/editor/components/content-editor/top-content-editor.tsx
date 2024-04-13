@@ -24,7 +24,7 @@ interface TopContentEditorProps {
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const TopContentItem = (props: {
+export const ContentItem = (props: {
     index: number, component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void,
     onDeleteComponent: () => void
@@ -304,7 +304,7 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                     props.onUpdateSurveyItem(newSurveyItem);
                 }}
                 dragOverlayItem={(draggedId && draggedItem) ?
-                    <TopContentItem
+                    <ContentItem
                         index={-1}
                         component={draggedItem}
                         onDeleteComponent={() => { }}
@@ -316,7 +316,7 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                 <div className=' my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
                     <ol className='flex flex-col gap-4 p-4 border border-border border-dashed rounded-md min-w-full'>
                         {topComponents.map((component, index) => {
-                            return <TopContentItem
+                            return <ContentItem
                                 key={component.key || index}
                                 index={index}
                                 component={component}
@@ -366,10 +366,6 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                     </ol>
                 </div>
             </SortableWrapper>
-
-            <p>sortable list of components: each item - edit key, edit content (depending on role), edit display condition, remove</p>
-
-
         </EditorWrapper>
     );
 };
