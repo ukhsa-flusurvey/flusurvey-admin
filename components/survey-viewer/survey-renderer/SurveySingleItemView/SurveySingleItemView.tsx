@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SurveySingleItem, ItemGroupComponent, ResponseItem, ItemComponent, isItemGroupComponent } from 'survey-engine/data_types';
-import { findBottomComponents, findResponseComponents, findTopComponents, getClassName, getItemComponentByRole, getItemComponentsByRole, getLocaleStringTextByCode } from './utils';
+import { filterForBodyComponents, findBottomComponents, findResponseComponents, findTopComponents, getClassName, getItemComponentByRole, getItemComponentsByRole, getLocaleStringTextByCode } from './utils';
 import HelpGroup from './SurveyComponents/HelpGroup';
 import TextViewComponent from './SurveyComponents/TextViewComponent';
 import ErrorComponent from './SurveyComponents/ErrorComponent';
@@ -134,16 +134,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
     const renderBodyComponents = (): React.ReactNode => {
         if (!props.renderItem.components) { return null; }
 
-        const relevantBodyComponents = props.renderItem.components.items.filter(comp => {
-            if (comp.displayCondition === false) {
-                return false;
-            }
-            if (comp.role === 'title' || comp.role === 'helpGroup' || comp.role === 'footnote') {
-                return false;
-            }
-            return true;
-        });
-
+        const relevantBodyComponents = filterForBodyComponents(props.renderItem.components.items);
         const topComponents = findTopComponents(relevantBodyComponents);
         const responseComponents = findResponseComponents(relevantBodyComponents);
         const bottomComponents = findBottomComponents(relevantBodyComponents);

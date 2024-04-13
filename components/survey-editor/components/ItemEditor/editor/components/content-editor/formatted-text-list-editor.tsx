@@ -4,6 +4,7 @@ import { ExpressionArg } from '@/components/expression-editor/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import SurveyLanguageToggle, { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
@@ -299,7 +300,7 @@ const FormattedTextListEditor: React.FC<FormattedTextListEditorProps> = (props) 
     const { selectedLanguage } = useContext(SurveyContext);
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
-    const onAddItem = (type: 'formatted-text' | 'dynamic-date') => {
+    const onAddItem = (type: string) => {
         const randomKey = Math.random().toString(36).substring(7);
         let newItem: ItemComponent | undefined = undefined;
         switch (type) {
@@ -401,31 +402,15 @@ const FormattedTextListEditor: React.FC<FormattedTextListEditorProps> = (props) 
                                 />
                             })}
 
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant={'outline'} size={'sm'} className='w-60'>
-                                        <span><Plus className='size-4 me-2' /></span>Add new
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent side='right'>
-                                    <DropdownMenuItem className='flex items-center'
-                                        onClick={() => onAddItem('formatted-text')}
-                                    >
-                                        <span>
-                                            <Type className='size-4 me-2 text-muted-foreground' />
-                                        </span>
-                                        Formatted text
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className='flex items-center'
-                                        onClick={() => onAddItem('dynamic-date')}
-                                    >
-                                        <span>
-                                            <Calendar className='size-4 me-2 text-muted-foreground' />
-                                        </span>
-                                        Dynamic date
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <AddDropdown
+                                options={[
+                                    { key: 'formatted-text', label: 'Formatted text', icon: <Type className='size-4 me-2 text-muted-foreground' /> },
+                                    { key: 'dynamic-date', label: 'Dynamic date', icon: <Calendar className='size-4 me-2 text-muted-foreground' /> },
+                                ]}
+                                onAddItem={(type) => {
+                                    onAddItem(type);
+                                }}
+                            />
                         </ol>
                     </div>
 

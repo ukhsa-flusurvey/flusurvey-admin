@@ -98,6 +98,18 @@ export const getInputMaxWidth = (styles?: Array<{ key: string, value: string }>)
     return getStyleValueByKey(styles, 'inputMaxWidth');
 }
 
+export const filterForBodyComponents = (components: Array<ItemComponent>): ItemComponent[] => {
+    return components.filter(comp => {
+        if (comp.displayCondition === false) {
+            return false;
+        }
+        if (comp.role === 'title' || comp.role === 'subtitle' || comp.role === 'helpGroup' || comp.role === 'footnote') {
+            return false;
+        }
+        return true;
+    });
+}
+
 export const findTopComponents = (components: Array<ItemComponent>): ItemComponent[] => {
     const firstRgIndex = components.findIndex(comp => comp.role === 'responseGroup');
     if (firstRgIndex < 0) {
