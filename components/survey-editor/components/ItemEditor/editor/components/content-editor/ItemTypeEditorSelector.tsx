@@ -35,10 +35,11 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
         );
     } else if (typeInfos.key === 'display') {
         return (
-            <div className='flex items-center justify-center grow'>
-                <p className='text-gray-600'>
-                    TODO: Display content editor
-                </p>
+            <div className='mt-4'>
+                <TopContentEditor
+                    surveyItem={props.surveyItem}
+                    onUpdateSurveyItem={props.onUpdateSurveyItem}
+                />
             </div>
         );
     }

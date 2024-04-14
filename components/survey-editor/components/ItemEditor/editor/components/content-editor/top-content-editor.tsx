@@ -22,7 +22,7 @@ import MarkdownContentEditor from './markdown-content-editor';
 
 const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
-        <div className='p-4 ps-6 h-[280px] space-y-4 overflow-y-scroll'>
+        <div className='p-4 ps-6 h-[290px] space-y-4 overflow-y-scroll'>
             {props.children}
         </div>
     )
@@ -47,16 +47,20 @@ export const ContentItem = (props: {
     const renderContent = () => {
         if (props.component.role === 'markdown') {
             return <div className='p-4 ps-6'>
-                <MarkdownContentEditor
-                    content={currentContent}
-                    onUpdateContent={(content) => {
-                        const updatedPart = { ...props.component };
-                        const updatedContent = localisedObjectToMap(updatedPart.content);
-                        updatedContent.set(selectedLanguage, content);
-                        updatedPart.content = generateLocStrings(updatedContent);
-                        props.onUpdateComponent(updatedPart);
-                    }}
-                />
+                <div
+                    data-no-dnd="true"
+                >
+                    <MarkdownContentEditor
+                        content={currentContent}
+                        onUpdateContent={(content) => {
+                            const updatedPart = { ...props.component };
+                            const updatedContent = localisedObjectToMap(updatedPart.content);
+                            updatedContent.set(selectedLanguage, content);
+                            updatedPart.content = generateLocStrings(updatedContent);
+                            props.onUpdateComponent(updatedPart);
+                        }}
+                    />
+                </div>
             </div>
         }
 
