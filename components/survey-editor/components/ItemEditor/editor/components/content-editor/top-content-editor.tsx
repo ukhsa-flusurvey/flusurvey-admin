@@ -19,6 +19,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import MarkdownContentEditor from './markdown-content-editor';
 
+
+const TabWrapper = (props: { children: React.ReactNode }) => {
+    return (
+        <div className='p-4 ps-6 h-[280px] space-y-4 overflow-y-scroll'>
+            {props.children}
+        </div>
+    )
+}
+
 interface TopContentEditorProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
@@ -51,7 +60,11 @@ export const ContentItem = (props: {
             </div>
         }
 
-        return <div className='p-4 ps-6 space-y-4'>
+        return <TabWrapper>
+            <div className='flex gap-2 items-center'>
+                <span className='text-xs'>Type:</span>
+                <span className='uppercase font-bold'>{props.component.role}</span>
+            </div>
             <div className='space-y-1.5'
                 data-no-dnd="true"
             >
@@ -109,8 +122,7 @@ export const ContentItem = (props: {
                 />
 
             </div>
-
-        </div>
+        </TabWrapper>
     }
 
     return (<SortableItem
@@ -130,12 +142,12 @@ export const ContentItem = (props: {
                     {
                         label: 'Condition',
                         icon: <ToggleLeft className='me-1 size-3 text-muted-foreground' />,
-                        content: <div className='p-4 ps-6'>TODO: condition editor</div>
+                        content: <TabWrapper>TODO: condition editor</TabWrapper>
                     },
                     {
                         label: 'Settings',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
-                        content: <div className='p-4 ps-6 space-y-4'>
+                        content: <TabWrapper>
                             <div className='space-y-1.5'
                                 data-no-dnd="true"
                             >
@@ -191,7 +203,7 @@ export const ContentItem = (props: {
                             >
                                 Delete component
                             </Button>
-                        </div>
+                        </TabWrapper>
                     }
                 ]}
             />
