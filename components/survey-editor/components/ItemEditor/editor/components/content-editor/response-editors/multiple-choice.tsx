@@ -29,21 +29,21 @@ const getOptionType = (option: ItemComponent): string => {
 
 const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
-        <div className='p-4 ps-6 max-h-[300px] space-y-4 overflow-y-scroll'>
+        <div className='p-4 ps-6 space-y-4 overflow-y-scroll'>
             {props.children}
         </div>
     )
 }
 
 const KeyAndType = (props: { compKey?: string, type: string }) => {
-    return <p className='text-xs font-semibold flex justify-between'>
+    return <div className='text-xs font-semibold flex justify-between'>
         <Badge className='h-auto py-0'>
             {props.compKey}
         </Badge>
         <span className='text-muted-foreground'>
             {props.type}
         </span>
-    </p>
+    </div>
 }
 
 export const ContentItem = (props: {
@@ -316,7 +316,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                     />
                     : null}
             >
-                <div className='max-h-[550px] overflow-y-scroll'>
+                <div className='overflow-y-scroll'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {responseItems.map((component, index) => {
                             return <ContentItem
