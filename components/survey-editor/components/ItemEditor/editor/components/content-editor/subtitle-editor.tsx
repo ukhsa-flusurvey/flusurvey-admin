@@ -41,12 +41,6 @@ const SimpleSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
 
     const titleMap = localisedObjectToMap(subtitleComponent.content);
 
-    const classNameIndex = subtitleComponent.style?.findIndex(style => style.key === 'className');
-    let hasStickyHeader = false;
-    if (classNameIndex !== undefined && classNameIndex !== -1) {
-        hasStickyHeader = subtitleComponent.style![classNameIndex].value.includes('sticky-top');
-    }
-
     const onUpdateContent = (content: string) => {
         titleMap.set(selectedLanguage, content);
 
@@ -63,10 +57,7 @@ const SimpleSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
     }
 
     return (
-        <div className='mt-6 space-y-4'>
-            <div className='flex justify-end'>
-                <SurveyLanguageToggle />
-            </div>
+        <div className='mt-4 space-y-4'>
             <div className='space-y-1.5'>
                 <Label
                     htmlFor='subtitle-input'
@@ -185,7 +176,8 @@ const SubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
 
     return (
         <EditorWrapper>
-            <div className='mb-4 flex justify-end'>
+            <div className='mb-4 flex justify-between'>
+                <SurveyLanguageToggle />
                 <Label
                     htmlFor="subtitle-advanced-mode-switch"
                     className='flex items-center gap-2'

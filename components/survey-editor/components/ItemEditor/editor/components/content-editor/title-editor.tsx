@@ -90,10 +90,7 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
     }
 
     return (
-        <div className='mt-6 space-y-4'>
-            <div className='flex justify-end'>
-                <SurveyLanguageToggle />
-            </div>
+        <div className='mt-4 space-y-4'>
             <div className='space-y-1.5'>
                 <Label
                     htmlFor='title-input'
@@ -263,7 +260,8 @@ const TitleEditor: React.FC<TitleEditorProps> = (props) => {
 
     return (
         <EditorWrapper>
-            <div className='mb-4 flex justify-end'>
+            <div className='mb-4 flex justify-between'>
+                <SurveyLanguageToggle />
                 <Label
                     htmlFor="advanced-mode-switch"
                     className='flex items-center gap-2'

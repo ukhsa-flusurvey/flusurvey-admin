@@ -3,12 +3,11 @@ import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry
 import { ExpressionArg } from '@/components/expression-editor/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
-import SurveyLanguageToggle, { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
+import { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -339,9 +338,6 @@ const FormattedTextListEditor: React.FC<FormattedTextListEditorProps> = (props) 
 
     return (
         <div>
-            <div className='flex justify-end'>
-                <SurveyLanguageToggle />
-            </div>
 
             <div>
                 <p className='text-sm font-semibold'>

@@ -12,6 +12,8 @@ import { Binary, Calendar, CheckSquare, Clock, Cog, FormInput, GripVertical, Hea
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TextViewContentEditor from './text-view-content-editor';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -49,7 +51,8 @@ const KeyAndType = (props: { compKey?: string, type: string }) => {
 export const ContentItem = (props: {
     index: number, component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void,
-    onDeleteComponent: () => void
+    onDeleteComponent: () => void,
+    existingKeys?: string[]
 
 }) => {
     const { selectedLanguage } = useContext(SurveyContext);
@@ -147,7 +150,62 @@ export const ContentItem = (props: {
                         label: 'Settings',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            todo: edit key & delete option
+                            <div className='space-y-1.5'
+                                data-no-dnd="true"
+                            >
+                                <Label
+                                    htmlFor='key'
+                                >
+                                    Key
+                                </Label>
+                                <div className='flex gap-2'>
+                                    <Input
+                                        id='key'
+                                        value={currentKey}
+                                        onChange={(e) => {
+                                            setCurrentKey(e.target.value);
+                                        }}
+                                    />
+
+                                    <Button
+                                        variant={'outline'}
+                                        disabled={currentKey === props.component.key}
+                                        onClick={() => {
+                                            setCurrentKey(props.component.key || '');
+                                        }}
+                                    >
+                                        Reset
+                                    </Button>
+                                    <Button
+                                        variant={'outline'}
+                                        disabled={currentKey === props.component.key || !currentKey || props.existingKeys?.includes(currentKey)}
+                                        onClick={() => {
+                                            props.onUpdateComponent({
+                                                ...props.component,
+                                                key: currentKey,
+                                            });
+                                        }}
+                                    >
+                                        Apply
+                                    </Button>
+                                </div>
+                                {(props.existingKeys?.includes(currentKey || '') && currentKey !== props.component.key) && <p className='text-danger-600 text-sm font-semibold'>Key already in use</p>}
+
+                            </div>
+                            <Separator />
+                            <Button
+                                data-no-dnd="true"
+                                variant={'outline'}
+                                className='hover:bg-danger-100'
+                                onClick={() => {
+                                    if (!confirm('Are you sure you want to delete this component?')) {
+                                        return;
+                                    }
+                                    props.onDeleteComponent();
+                                }}
+                            >
+                                Delete component
+                            </Button>
                         </TabWrapper>
                     },
                 ]}
@@ -286,6 +344,8 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
         props.onUpdateSurveyItem(newSurveyItem);
     }
 
+    const usedKeys = responseItems.map(comp => comp.key || '');
+
     return (
         <div className='mt-4'>
             <p>each item: delete item, edit key, disabled, display condition</p>
@@ -323,18 +383,10 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                                 key={component.key || index}
                                 index={index}
                                 component={component}
+                                existingKeys={usedKeys}
                                 onDeleteComponent={() => {
-
-
-                                    /*const newItems = allItemComponents.filter(comp => comp.key !== component.key);
-                                    const newSurveyItem = {
-                                        ...props.surveyItem,
-                                        components: {
-                                            ...props.surveyItem.components as ItemComponent,
-                                            items: newItems,
-                                        }
-                                    }
-                                    props.onUpdateSurveyItem(newSurveyItem);*/
+                                    const newItems = responseItems.filter(comp => comp.key !== component.key);
+                                    updateSurveyItemWithNewOptions(newItems);
                                 }}
                                 onUpdateComponent={(updatedItem) => {
                                     const newItems = responseItems.map((comp => {
