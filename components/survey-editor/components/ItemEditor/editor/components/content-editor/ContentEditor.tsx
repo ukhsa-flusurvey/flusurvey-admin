@@ -60,9 +60,7 @@ const ContentEditor: React.FC<ContentEditorProps> = (props) => {
                             <span>
                                 <Pencil className='size-4 text-neutral-500' />
                             </span>
-                        </div> : <div className='p-4'>
-                            <h3 className='font-semibold text-base'>Edit content</h3>
-                            <p className='text-sm text-neutral-600'>Select the area you want to edit</p>
+                        </div> : <div className='px-4 pb-4'>
                             <ItemTypeEditorSelector
                                 surveyItem={currentSurveyItem}
                                 onUpdateSurveyItem={setCurrentSurveyItem}

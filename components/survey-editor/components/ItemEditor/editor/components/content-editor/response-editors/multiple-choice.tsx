@@ -103,6 +103,7 @@ export const ContentItem = (props: {
                     <TextViewContentEditor
                         component={props.component}
                         onChange={props.onUpdateComponent}
+                        hideToggle={true}
                     />
                 </div>;
             case 'numberInput':
@@ -287,7 +288,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
 
     return (
         <div className='mt-4'>
-            <p>add items: section-header (text), option with simple label, option with formatted label, option with text input, number input, cloze, time input, date input</p>
             <p>each item: delete item, edit key, disabled, display condition</p>
             <p className='font-semibold mb-2'>Options: <span className='text-muted-foreground'>({responseItems.length})</span></p>
             <SortableWrapper

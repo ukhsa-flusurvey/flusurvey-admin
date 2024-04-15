@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
+import FormattedTextListEditor from '../formatted-text-list-editor';
 
 interface TextViewContentEditorProps {
     component: ItemComponent;
@@ -36,7 +37,7 @@ const SimpleModeEditor: React.FC<{
             <Label
                 htmlFor={props.component.key}
             >
-                Title
+                Content
             </Label>
             <Input
                 id={props.component.key}
@@ -85,8 +86,22 @@ const AdvancedMode: React.FC<{
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
 }> = (props) => {
+
+    const parts = (props.component as ItemGroupComponent).items || [];
+
+    const onPartsChange = (newParts: ItemComponent[]) => {
+        props.onChange({
+            ...props.component,
+            items: newParts,
+        })
+    }
+
     return <div>
-        Advanced Mode: sortable list of formatted text and dates
+        <FormattedTextListEditor
+            sortableID={props.component.key + 'formatted-text-list'}
+            parts={parts}
+            onChange={onPartsChange}
+        />
     </div>
 }
 
