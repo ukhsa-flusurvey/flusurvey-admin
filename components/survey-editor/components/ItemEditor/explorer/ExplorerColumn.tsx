@@ -8,7 +8,7 @@ import { BoxSelect, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getItemColor, getItemTypeInfos, getItemKeyFromFullKey, isValidSurveyItemGroup } from '../../../utils/utils';
 import { cn } from '@/lib/utils';
-import SortableSurveyGroupWrapper from './SortableSurveyGroupWrapper';
+import SortableWrapper from '../../general/SortableWrapper';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 
 interface ExplorerColumnProps {
@@ -76,7 +76,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
 
     return (
         <div className='h-full flex'>
-            <div className='border-r border-black/20 min-w-[220px] overflow-y-scroll' >
+            <div className='bg-white/60 backdrop-blur-md border-r border-black/20 min-w-[220px] overflow-y-scroll' >
                 <div className='font-mono bg-white/30 px-3 py-2 text-sm'>
                     {getItemKeyFromFullKey(props.root.key)}
                 </div>
@@ -92,7 +92,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
                         </p>
                     </div>}
 
-                <SortableSurveyGroupWrapper
+                <SortableWrapper
                     sortableID={`column-explorer-${props.root.key}`}
                     items={currentItems}
                     onDraggedIdChange={(id) => {
@@ -173,7 +173,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
                         ))}
                     </ol>
 
-                </SortableSurveyGroupWrapper>
+                </SortableWrapper>
 
                 <Separator className='bg-black/20' />
                 <div className='px-1 py-1'>

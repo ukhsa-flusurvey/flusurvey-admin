@@ -59,7 +59,7 @@ export const generateNewItemForType = (props: {
             newSurveyItem = newGroup.get();
             break
         case 'surveyEnd':
-            const editor = new ItemEditor(undefined, { itemKey: newItemKey, type: 'surveyEnd', isGroup: false });
+            const editor = new ItemEditor(undefined, { itemKey: parentKey + '.' + newItemKey, type: 'surveyEnd', isGroup: false });
 
             editor.setTitleComponent(
                 generateTitleComponent(new Map<string, string>())
@@ -88,7 +88,7 @@ export const generateNewItemForType = (props: {
                 responseOptions: [],
                 metadata: {
                     editorItemColor: editorItemColor
-                }
+                },
             })
             break;
         case 'multipleChoice':

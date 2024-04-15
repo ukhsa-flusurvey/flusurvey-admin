@@ -17,7 +17,8 @@ const nextConfig = {
                     },
                     {
                         key: 'Content-Security-Policy',
-                        value: process.env.HEADER_CSP || "default-src 'self'; frame-ancestors 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: *; frame-src data: *",
+                        // https://cdn.jsdelivr.net is needed for Monaco Editor
+                        value: process.env.HEADER_CSP || "default-src 'self' https://cdn.jsdelivr.net; frame-ancestors 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' 'unsafe-eval' 'unsafe-inline' data: * blob: *; connect-src 'self'; img-src 'self' data: *; frame-src data: *",
                     },
                     {
                         key: 'Permissions-Policy',

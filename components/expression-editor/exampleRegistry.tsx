@@ -1,3 +1,4 @@
+import { miscExpressions } from "./registries/common"
 import { ExpressionDef, SlotInputDef } from "./utils"
 
 export const testExpressionCategories = [
@@ -257,48 +258,7 @@ const participantStateServerExpressions: ExpressionDef[] = [
     }
 ]
 
-const miscExpressions: ExpressionDef[] = [
-    {
-        categories: ['misc'],
-        id: 'timestampWithOffset',
-        label: 'GET TIMESTAMP',
-        returnType: 'num',
-        icon: 'calendar',
-        slots: [
-            {
-                label: 'Offset',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'time-delta-picker',
-                        type: 'time-delta',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num'],
-                        excludedExpressions: ['timestampWithOffset']
-                    }
-                ]
-            },
-            {
-                label: 'Reference date',
-                required: false,
-                allowedTypes: [
-                    {
-                        id: 'date-picker',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ]
-    }
-]
+
 
 
 export const testServerExpressionRegistry: ExpressionDef[] = [

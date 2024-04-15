@@ -1,24 +1,46 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MeasuringStrategy, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MeasuringStrategy, useSensor, useSensors } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
-import { LucideIcon } from 'lucide-react';
+import { MouseSensor as LibMouseSensor, TouchSensor as LibTouchSensor } from '@dnd-kit/core';
+import { MouseEvent, TouchEvent } from 'react';
 
-interface SortableSurveyGroupWrapperProps {
+
+interface SortableWrapperProps {
     sortableID: string;
-
     items: Array<{
         id: string;
-        icon: LucideIcon;
-        isActive: boolean;
-        className?: string;
     }>;
+    direction?: 'vertical' | 'horizontal';
     children: React.ReactNode;
     dragOverlayItem: React.ReactNode | null;
     onDraggedIdChange: (id: string | null) => void;
     onReorder: (activeIndex: number, overIndex: number) => void;
+}
+
+
+// Block DnD event propagation if element have "data-no-dnd" attribute
+const handler = ({ nativeEvent: event }: MouseEvent | TouchEvent) => {
+    let cur = event.target as HTMLElement;
+
+    while (cur) {
+        if (cur.dataset && cur.dataset.noDnd) {
+            return false;
+        }
+        cur = cur.parentElement as HTMLElement;
+    }
+
+    return true;
+};
+
+export class MouseSensor extends LibMouseSensor {
+    static activators = [{ eventName: 'onMouseDown', handler }] as typeof LibMouseSensor['activators'];
+}
+
+export class TouchSensor extends LibTouchSensor {
+    static activators = [{ eventName: 'onTouchStart', handler }] as typeof LibTouchSensor['activators'];
 }
 
 const activationConstraint = {
@@ -26,7 +48,7 @@ const activationConstraint = {
 };
 
 
-const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
+const SortableWrapper: React.FC<SortableWrapperProps> = ({
     onDraggedIdChange,
     ...props
 }) => {
@@ -38,8 +60,6 @@ const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
         setIsMounted(true);
     }, []);
 
-
-
     const sensors = useSensors(
         useSensor(TouchSensor, {
             activationConstraint
@@ -47,9 +67,6 @@ const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
         useSensor(MouseSensor, {
             activationConstraint
         }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
     );
 
     useEffect(() => {
@@ -100,7 +117,7 @@ const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
             <SortableContext
                 id={props.sortableID}
                 items={[...props.items]}
-                strategy={verticalListSortingStrategy}
+                strategy={props.direction === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}
             >
                 {props.children}
             </SortableContext>
@@ -114,4 +131,4 @@ const SortableSurveyGroupWrapper: React.FC<SortableSurveyGroupWrapperProps> = ({
     );
 };
 
-export default SortableSurveyGroupWrapper;
+export default SortableWrapper;

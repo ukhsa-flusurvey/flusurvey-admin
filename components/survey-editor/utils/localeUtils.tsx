@@ -1,12 +1,28 @@
-import { ItemComponent, ItemGroupComponent, LocalizedObject, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
+import { getLocalizedString } from "@/utils/getLocalisedString";
+import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedObject, LocalizedString, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
 
-const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
+export const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
     if (!locString) return [];
     return locString.reduce((acc, cur) => {
         acc.push(cur.code);
         return acc;
     }, [] as string[]);
 }
+
+export const checkMissingTranslations = (locString?: LocalizedObject[]): string[] => {
+    const expectedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : ['en'];
+    const canidateLanguages = getLocStringLocales(locString);
+    const availableLangauges = canidateLanguages.filter(lang => {
+        const currentLocaleContent = getLocalizedString(locString, lang);
+        return currentLocaleContent !== undefined && currentLocaleContent !== '';
+    });
+    const missingLanguages = expectedLanguages.filter(lang => {
+        const t = availableLangauges.includes(lang);
+        return !t;
+    });
+    return missingLanguages;
+}
+
 
 const removeLocaleFromLocString = (locString: LocalizedObject[], localesToRemove: string[]): LocalizedObject[] => {
     return locString.filter((ls) => {
@@ -145,4 +161,13 @@ export const renameLocales = (survey: Survey, oldLoc: string, newLoc: string): S
     );
     const newSurvey = JSON.parse(newSurveyJSON) as Survey;
     return newSurvey;
+}
+
+export const localisedObjectToMap = (loc?: LocalizedObject[]): Map<string, string> => {
+    const map = new Map<string, string>();
+    if (!loc) return map;
+    loc.forEach((item) => {
+        map.set(item.code, (item as LocalizedString).parts.map(p => (p as ExpressionArg).str).join(''));
+    });
+    return map;
 }

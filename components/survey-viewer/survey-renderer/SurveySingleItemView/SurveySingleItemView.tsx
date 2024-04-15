@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SurveySingleItem, ItemGroupComponent, ResponseItem, ItemComponent, isItemGroupComponent } from 'survey-engine/data_types';
-import { getClassName, getItemComponentByRole, getItemComponentsByRole, getLocaleStringTextByCode } from './utils';
+import { filterForBodyComponents, findBottomComponents, findResponseComponents, findTopComponents, getClassName, getItemComponentByRole, getItemComponentsByRole, getLocaleStringTextByCode } from './utils';
 import HelpGroup from './SurveyComponents/HelpGroup';
 import TextViewComponent from './SurveyComponents/TextViewComponent';
 import ErrorComponent from './SurveyComponents/ErrorComponent';
@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import BulletList from './SurveyComponents/BulletList';
 import MarkdownComponent from './SurveyComponents/MarkdownComponent';
 import { renderFormattedContent } from './renderUtils';
+import { cn } from '@/lib/utils';
 
 interface SurveySingleItemViewProps {
     renderItem: SurveySingleItem;
@@ -23,6 +24,81 @@ interface SurveySingleItemViewProps {
     dateLocales?: Array<{ code: string, locale: any, format: string }>;
 }
 
+const ItemBodyComponent: React.FC<{
+    itemKey: string;
+    component: ItemComponent,
+    index: number,
+    showKeys?: boolean;
+    languageCode: string;
+    responsePrefill?: ResponseItem;
+    requiredItem?: boolean;
+    customResponseComponents?: Array<CustomSurveyResponseComponent>;
+    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    setTouched: (touched: boolean) => void;
+    setResponse: (response: ResponseItem | undefined) => void;
+}> = (props) => {
+    const { component, index, requiredItem } = props;
+
+    if (component.displayCondition === false) {
+        return null;
+    }
+    switch (component.role) {
+        case 'title':
+            return null;
+        case 'subtitle':
+            return null;
+        case 'helpGroup':
+            return null;
+        case 'footnote':
+            return null;
+        case 'responseGroup':
+            return <ResponseComponent key={index.toFixed()}
+                itemKey={props.itemKey}
+                languageCode={props.languageCode}
+                compDef={component}
+                prefill={props.responsePrefill}
+                isRequired={requiredItem ? true : false}
+                dateLocales={props.dateLocales ? props.dateLocales : []}
+                responseChanged={(response) => {
+                    console.log('new response set', response)
+                    props.setTouched(true);
+                    props.setResponse(response);
+                }}
+                showOptionKey={props.showKeys}
+                customResponseComponents={props.customResponseComponents}
+            />
+        case 'text':
+            return <TextViewComponent key={index.toFixed()}
+                compDef={component}
+                languageCode={props.languageCode}
+                embedded={false}
+            />;
+        case 'bullets':
+            return <BulletList key={index.toFixed()}
+                compDef={component}
+                languageCode={props.languageCode}
+            />
+        case 'markdown':
+            return <MarkdownComponent key={index.toFixed()}
+                compDef={component}
+                languageCode={props.languageCode}
+                embedded={false}
+            />;
+        case 'error':
+            return <ErrorComponent key={index.toFixed()}
+                compDef={component}
+                languageCode={props.languageCode}
+            />
+        case 'warning':
+            return <WarningComponent key={index.toFixed()}
+                compDef={component}
+                languageCode={props.languageCode}
+            />
+        default:
+            console.warn('component role not implemented: ' + component.role);
+            return <p key={index.toFixed()}>{component.role} not implemented</p>
+    }
+}
 
 const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.responsePrefill);
@@ -53,124 +129,141 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
 
     const requiredItem = props.renderItem.validations?.find(val => val.type === 'hard');
 
+
+
     const renderBodyComponents = (): React.ReactNode => {
         if (!props.renderItem.components) { return null; }
-        return <React.Fragment>
-            {
-                props.renderItem.components.items.map((component: ItemComponent, index: number) => {
-                    if (component.displayCondition === false) {
-                        return null;
+
+        const relevantBodyComponents = filterForBodyComponents(props.renderItem.components.items);
+        const topComponents = findTopComponents(relevantBodyComponents);
+        const responseComponents = findResponseComponents(relevantBodyComponents);
+        const bottomComponents = findBottomComponents(relevantBodyComponents);
+
+        return <>
+            {/* Top components: */}
+            {topComponents.length > 0 && <div className={cn(
+                'py-2 sm:py-4',
+                {
+                    'pb-0 sm:pb-0': responseComponents.length > 0
+                }
+            )}>
+                {topComponents.map((comp, index) => <ItemBodyComponent
+                    key={index.toFixed()}
+                    itemKey={props.renderItem.key}
+                    component={comp}
+                    index={index}
+                    showKeys={props.showKeys}
+                    languageCode={props.languageCode}
+                    responsePrefill={props.responsePrefill}
+                    requiredItem={requiredItem ? true : false}
+                    customResponseComponents={props.customResponseComponents}
+                    dateLocales={props.dateLocales ? props.dateLocales : []}
+                    setTouched={setTouched}
+                    setResponse={setResponse}
+                />)}
+            </div>}
+
+            {/* Response components: */}
+            {responseComponents.length > 0 && <div
+                className={cn(
+                    'py-2 sm:py-4',
+                    {
+                        'pt-0 sm:pt-0': topComponents.length > 0
                     }
-                    switch (component.role) {
-                        case 'title':
-                            return null;
-                        case 'helpGroup':
-                            return null;
-                        case 'footnote':
-                            return null;
-                        case 'responseGroup':
-                            return <ResponseComponent key={index.toFixed()}
-                                itemKey={props.renderItem.key}
-                                languageCode={props.languageCode}
-                                compDef={component}
-                                prefill={props.responsePrefill}
-                                isRequired={requiredItem ? true : false}
-                                dateLocales={props.dateLocales ? props.dateLocales : []}
-                                responseChanged={(response) => {
-                                    console.log('new response set', response)
-                                    setTouched(true);
-                                    setResponse(response);
-                                }}
-                                showOptionKey={props.showKeys}
-                                customResponseComponents={props.customResponseComponents}
-                            />
-                        case 'text':
-                            return <TextViewComponent key={index.toFixed()}
-                                compDef={component}
-                                languageCode={props.languageCode}
-                            />;
-                        case 'bullets':
-                            return <BulletList key={index.toFixed()}
-                                compDef={component}
-                                languageCode={props.languageCode}
-                            />
-                        case 'markdown':
-                            return <MarkdownComponent key={index.toFixed()}
-                                compDef={component}
-                                languageCode={props.languageCode}
-                            />;
-                        case 'error':
-                            return <ErrorComponent key={index.toFixed()}
-                                compDef={component}
-                                languageCode={props.languageCode}
-                            />
-                        case 'warning':
-                            return <WarningComponent key={index.toFixed()}
-                                compDef={component}
-                                languageCode={props.languageCode}
-                            />
-                        default:
-                            console.warn('component role not implemented: ' + component.role);
-                            return <p key={index.toFixed()}>{component.role} not implemented</p>
-                    }
-                })
-            }
-        </React.Fragment>;
+                )}
+            >
+                {responseComponents.map((comp, index) => <ItemBodyComponent
+                    key={index.toFixed()}
+                    itemKey={props.renderItem.key}
+                    component={comp}
+                    index={index}
+                    showKeys={props.showKeys}
+                    languageCode={props.languageCode}
+                    responsePrefill={props.responsePrefill}
+                    requiredItem={requiredItem ? true : false}
+                    customResponseComponents={props.customResponseComponents}
+                    dateLocales={props.dateLocales ? props.dateLocales : []}
+                    setTouched={setTouched}
+                    setResponse={setResponse}
+                />)}
+            </div>}
+
+            {/* Bottom components: */}
+            {bottomComponents.length > 0 && <div
+                className={cn(
+                    'pb-2 sm:pb-4',
+                )}
+            >
+                {bottomComponents.map((comp, index) => <ItemBodyComponent
+                    key={index.toFixed()}
+                    itemKey={props.renderItem.key}
+                    component={comp}
+                    index={index}
+                    showKeys={props.showKeys}
+                    languageCode={props.languageCode}
+                    responsePrefill={props.responsePrefill}
+                    requiredItem={requiredItem ? true : false}
+                    customResponseComponents={props.customResponseComponents}
+                    dateLocales={props.dateLocales ? props.dateLocales : []}
+                    setTouched={setTouched}
+                    setResponse={setResponse}
+                />)}
+            </div>}
+        </>
     }
 
-    // const titleComp = props.renderItem.components ? getItemComponentTranslationByRole(props.renderItem.components.items, 'title', props.languageCode) : undefined;
     const titleComp = getItemComponentByRole(props.renderItem.components?.items, 'title')
+    let subTitleComp = getItemComponentByRole(props.renderItem.components?.items, 'subtitle')
+    // fallback to legacy survey subtitle
+    if (!subTitleComp && titleComp && titleComp.description) {
+        subTitleComp = {
+            key: 'legacy-subtitle',
+            role: 'text',
+            content: titleComp.description,
+        }
+    }
 
-    const renderTitleComp = (): React.ReactNode => {
+    const renderItemHeader = (): React.ReactNode => {
         if (!titleComp) {
-            if (props.showKeys) {
-                return <h5 className={clsx(
-                    'px-4 sm:px-6 py-2 sm:py-4',
-                    'bg-gray-200',
-                    "text-primary-600 me-6 font-bold")}>{props.renderItem.key}</h5>
-            }
             return null;
         }
 
-        let content = renderFormattedContent(titleComp, props.languageCode, undefined, props.dateLocales ? props.dateLocales : []);
-
-        const description = getLocaleStringTextByCode(titleComp.description, props.languageCode);
+        const titleContent = renderFormattedContent(titleComp, props.languageCode, undefined, props.dateLocales ? props.dateLocales : []);
+        const subTitleContent = subTitleComp ? renderFormattedContent(subTitleComp, props.languageCode, 'italic', props.dateLocales ? props.dateLocales : []) : null;
 
         return (
             <legend
                 className={
                     clsx(
-                        'flex items-center rounded-t w-full',
-                        'px-4 sm:px-6 py-2 sm:py-4',
-                        'bg-gray-200',
+                        'flex items-center w-full',
+                        'rounded-t-[--survey-card-border-radius-sm] sm:rounded-t-[--survey-card-border-radius]',
+                        'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                        'bg-[--survey-card-header-bg]',
                         getClassName(titleComp.style),
                         {
-                            'bg-red-100': props.showInvalid
+                            'bg-[--survey-card-invalid-bg]': props.showInvalid
                         }
                     )}
             >
                 <div className="grow">
-
-                    <span className="m-0 font-bold text-xl">
-                        {props.showKeys ?
-                            <span className="text-primary-600 me-2">{props.renderItem.key}</span>
-                            : null}
-                        {content}
+                    <span className="m-0 font-bold text-lg sm:text-xl">
+                        {titleContent}
                         {requiredItem ?
                             <span
                                 aria-required="true"
                                 className={clsx(
                                     'ms-1',
                                     {
-                                        'text-primary-600': !props.showInvalid,
-                                        'text-red-600': props.showInvalid
+                                        'text-primary': !props.showInvalid,
+                                        'text-[--survey-error-text-color]': props.showInvalid
                                     }
                                 )}
                             >
                                 {'*'}
                             </span> : null}
                     </span>
-                    {description ? <p className="m-0 italic">{description} </p> : null}
+
+                    {subTitleContent && <div>{subTitleContent}</div>}
                 </div>
 
                 {renderHelpGroup()}
@@ -190,10 +283,11 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 return null;
             }
             return <TextViewComponent
-                className={clsx('mt-4')}
+                className={clsx('mt-2 text-sm italic text-center text-balance')}
                 key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
+                embedded={false}
             />
         })
     }
@@ -202,22 +296,33 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
         <React.Fragment>
             <div
                 role='group'
-                className={'bg-surveyCard rounded'}>
-                <fieldset>
-                    {renderTitleComp()}
+                className={cn('bg-[--survey-card-bg] rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius] relative',
+                    {
+                        'mt-2': props.showKeys,
+                    }
+                )}>
+                {props.showKeys ?
+                    <span className="text-primary me-2 absolute -top-4 text-xs">{props.renderItem.key}</span>
+                    : null}
+                <fieldset
+                    className='min-w-64'
+                >
+                    {renderItemHeader()}
+
                     <div className={clsx(
-                        'px-4 sm:px-6 py-4',
+                        //'px-4 sm:px-6 py-4',
                     )}
                     >
                         {renderBodyComponents()}
                     </div>
+
                     {props.showInvalid ?
                         <p className={clsx(
-                            'font-bold',
-                            'px-4 sm:px-6 py-4',
-                            'bg-red-100  m-0 text-red-600 rounded-b'
+                            'font-bold text-base sm:text-lg',
+                            'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                            'rounded-b-[--survey-card-border-radius-sm] sm:rounded-b-[--survey-card-border-radius]',
+                            'bg-[--survey-card-invalid-bg]  m-0 text-[--survey-error-text-color]'
                         )}
-                            style={{ fontSize: '1.1875rem' }}
                             role="alert"
                         >
                             {props.invalidWarning}
@@ -225,6 +330,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                         : null}
                 </fieldset>
             </div>
+
             {renderFootnote()}
         </React.Fragment>
     );

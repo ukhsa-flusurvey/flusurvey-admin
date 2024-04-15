@@ -3,6 +3,7 @@ import { Editor } from '@monaco-editor/react';
 import { SurveyItem } from 'survey-engine/data_types';
 import { Button } from '@/components/ui/button';
 
+
 interface ItemSourceEditorProps {
     surveyItem: SurveyItem;
     onExitSourceMode: () => void;
@@ -23,9 +24,9 @@ const ItemSourceEditor: React.FC<ItemSourceEditorProps> = (props) => {
     }
 
     return (
-        <div className='h-full p-3 flex flex-col gap-3'>
+        <div className='h-full p-3 flex flex-col gap-3 border-t border-neutral-300'>
             <Editor
-                className='grow rounded-lg overflow-hidden '
+                className='grow rounded-lg overflow-hidden border border-border'
                 defaultLanguage="json"
                 value={editorContent}
                 options={{

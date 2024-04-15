@@ -24,6 +24,7 @@ const BulletList: React.FC<BulletListProps> = (props) => {
                         key={index.toFixed()}
                         languageCode={props.languageCode}
                         compDef={item}
+                        embedded={true}
                     />
                 }
             )}

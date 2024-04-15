@@ -7,6 +7,8 @@ import { checkSurveyItemsValidity, checkSurveyItemValidity } from 'survey-engine
 import { getItemComponentByRole, getLocaleStringTextByCode } from '../../SurveySingleItemView/utils';
 import { CustomSurveyResponseComponent } from '../../SurveySingleItemView/ResponseComponent/ResponseComponent';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Loader } from 'lucide-react';
 
 
 
@@ -117,10 +119,14 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
     const surveyEnd = () => {
         const titleComp = getItemComponentByRole(props.surveyEndItem?.components?.items, 'title');
         return <div
-            className="bg-gray-100 rounded px-4 sm:px-6 py-4 sm:py-6"
+            className={cn(
+                "bg-[--survey-card-bg]",
+                'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                "rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius]"
+            )}
         >
-            {titleComp ? <h5 className="text-primary-600 text-xl font-bold mb-4">{getLocaleStringTextByCode(titleComp.content, props.selectedLanguage)}</h5> : null}
-            <div className='flex gap-4'>
+            {titleComp ? <h5 className="text-primary text-xl font-bold mb-4">{getLocaleStringTextByCode(titleComp.content, props.selectedLanguage)}</h5> : null}
+            <div className='flex gap-2 sm:gap-4'>
                 {props.showBackButton ?
                     <Button
                         color='primary'
@@ -147,6 +153,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     disabled={props.loading}
                     autoFocus={false}
                 >
+                    {props.loading && <Loader className='size-5 me-2 animate-spin' />}
                     {props.localisedTexts.submitBtn}
                 </Button>
             </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { SurveyItem } from 'survey-engine/data_types';
 import ItemSourceEditor from './components/ItemSourceEditor';
-import { Separator } from '@/components/ui/separator';
 import ItemHeader from './components/ItemHeader';
 import ItemEditorTabs from './components/ItemEditorTabs';
+
 
 interface EditorViewProps {
     surveyItem?: SurveyItem;
@@ -20,7 +20,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
 
     if (!props.surveyItem) {
         return (
-            <div className='flex items-center justify-center h-full w-full'>
+            <div className='flex items-center justify-center h-full w-full bg-white/80 backdrop-blur-md'>
                 <p className='text-gray-500'>Select an item to edit</p>
             </div>
         );
@@ -45,7 +45,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
     }
 
     return (
-        <div className='min-w-[400px] w-full h-full'>
+        <div className='min-w-[400px] w-full min-h-full h-full flex flex-col bg-white'>
             <ItemHeader
                 surveyItem={props.surveyItem}
                 surveyItemList={props.surveyItemList}
@@ -60,7 +60,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
                 onMoveItem={props.onMoveItem}
                 onChangeKey={props.onChangeKey}
             />
-            <Separator className='bg-black/20' />
+
 
             {editor}
         </div>
