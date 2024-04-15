@@ -329,8 +329,8 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                     : null}
             >
 
-                <div className=' my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
-                    <ol className='flex flex-col gap-4 p-4 border border-border border-dashed rounded-md min-w-full'>
+                <div className='my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
+                    <ol className='flex flex-col gap-4 min-w-full'>
                         {topComponents.map((component, index) => {
                             return <ContentItem
                                 key={component.key || index}

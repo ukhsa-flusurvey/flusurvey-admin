@@ -207,6 +207,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                             parentKey={props.parentKey}
                             key={option.key}
                             compDef={option}
+                            embedded={true}
                             prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
                             languageCode={props.languageCode}
                             responseChanged={(response) => {

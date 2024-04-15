@@ -48,20 +48,8 @@ const TextViewComponent: React.FC<TextViewComponentProps> = (props) => {
         getClassName(props.compDef.style)
     );
 
-    let content = renderFormattedContent(props.compDef, props.languageCode, undefined, props.dateLocales ? props.dateLocales : []);
+    const content = renderFormattedContent(props.compDef, props.languageCode, undefined, props.dateLocales ? props.dateLocales : []);
 
-    /*
-  const content = isItemGroupComponent(props.compDef) ?
-    <React.Fragment>
-      {props.compDef.items.map((part, index) =>
-        <span
-          key={index.toFixed()}
-          className={getClassName(part.style)}
-        >{getLocaleStringTextByCode(part.content, props.languageCode)}</span>
-      )}
-    </React.Fragment>
-    : getLocaleStringTextByCode(props.compDef.content, props.languageCode);
-  */
     const TextTag = variant ? variant : 'p';
 
     return (<TextTag className={className}>
