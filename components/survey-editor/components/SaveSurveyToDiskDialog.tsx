@@ -7,6 +7,7 @@ import LoadingButton from '@/components/LoadingButton';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 
 interface SaveSurveyToDiskDialogProps {
     isOpen: boolean;
@@ -19,6 +20,7 @@ const SaveSurveyToDiskDialog: React.FC<SaveSurveyToDiskDialogProps> = ({
 }) => {
     const { survey } = useContext(SurveyContext);
     const [fileName, setFileName] = React.useState<string>('');
+    const [useIndentation, setUseIndentation] = React.useState<boolean>(true);
     const [isPending, startTransition] = React.useTransition();
     const saveButtonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -30,7 +32,7 @@ const SaveSurveyToDiskDialog: React.FC<SaveSurveyToDiskDialogProps> = ({
     }, [isOpen, survey]);
 
     const onSave = () => {
-        const surveyStr = JSON.stringify(survey);
+        const surveyStr = JSON.stringify(survey, null, useIndentation ? 2 : 0);
         const blob = new Blob([surveyStr], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
@@ -72,6 +74,21 @@ const SaveSurveyToDiskDialog: React.FC<SaveSurveyToDiskDialogProps> = ({
                     <p className='text-xs'>
                         The file will be saved in the downloads folder of your browser.
                     </p>
+                </div>
+
+                <div>
+                    <Label htmlFor='use-indentation'
+                        className='flex items-center gap-2'
+                    >
+                        <Switch
+                            id='use-indentation'
+                            name='use-indentation'
+                            className='my-1.5'
+                            checked={useIndentation}
+                            onCheckedChange={setUseIndentation}
+                        />
+                        Use indentation
+                    </Label>
                 </div>
 
                 <DialogFooter>
