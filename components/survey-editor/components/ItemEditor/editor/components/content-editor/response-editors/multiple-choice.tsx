@@ -348,7 +348,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
 
     return (
         <div className='mt-4'>
-            <p>each item: delete item, edit key, disabled, display condition</p>
             <p className='font-semibold mb-2'>Options: <span className='text-muted-foreground'>({responseItems.length})</span></p>
             <SortableWrapper
                 sortableID={'response-group-editor'}

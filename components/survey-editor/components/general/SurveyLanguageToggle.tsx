@@ -10,10 +10,17 @@ interface SurveyLanguageToggleProps {
 
 export const supportedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
 
+export const hasOnlySingleLanguage = supportedLanguages.length < 2;
+
+
 const SurveyLanguageToggle: React.FC<SurveyLanguageToggleProps> = (props) => {
     const { selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
 
     const languages = supportedLanguages;
+
+    if (hasOnlySingleLanguage) {
+        return null;
+    }
 
     return (
         <div className='w-fit flex items-center gap-1 bg-muted p-0.5 rounded-md border border-neutral-200'>
