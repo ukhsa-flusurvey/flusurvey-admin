@@ -11,6 +11,8 @@ import SurveyDocument from './components/SurveyDocument';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';
+import WelcomeScreen from './components/welcome-screen';
+import InitNewSurveyDialog from './components/init-new-survey-dialog';
 
 interface SurveyEditorProps {
     initialSurvey?: Survey;
@@ -23,6 +25,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
     const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
+    const [openNewDialog, setOpenNewDialog] = React.useState<boolean>(false);
     const [survey, setSurvey] = React.useState<Survey | undefined>(props.initialSurvey);
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
@@ -50,6 +53,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                         break;
                     case 's':
                         event.preventDefault();
+                        if (!survey) {
+                            break;
+                        }
                         setOpenSaveDialog(true);
                         break;
                     case 'o':
@@ -68,7 +74,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [survey]);
 
 
     let mainContent: React.ReactNode = null;
@@ -89,14 +95,28 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             break;
     }
 
+    if (!survey) {
+        mainContent = (<WelcomeScreen
+            onCreateSurvey={() => {
+                setOpenNewDialog(true);
+            }}
+            onOpenSurvey={() => {
+                setOpenLoadDialog(true);
+            }}
+        />
+        );
+    }
+
     return (
         <SurveyContext.Provider value={{ survey, setSurvey, selectedLanguage, setSelectedLanguage }}>
             <div className='bg-center bg-cover bg-[url(/images/sailing-ship.png)] h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
                 <SurveyEditorMenu
                     currentEditorMode={mode}
                     onChangeMode={setMode}
+                    noSurveyOpen={!survey}
                     onSave={() => setOpenSaveDialog(true)}
                     onOpen={() => setOpenLoadDialog(true)}
+                    onNew={() => setOpenNewDialog(true)}
                 />
 
                 <div className='grow overflow-hidden flex flex-col'>
@@ -109,6 +129,10 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 <SaveSurveyToDiskDialog
                     isOpen={openSaveDialog}
                     onClose={() => setOpenSaveDialog(false)}
+                />
+                <InitNewSurveyDialog
+                    isOpen={openNewDialog}
+                    onClose={() => setOpenNewDialog(false)}
                 />
                 <Toaster />
             </div >

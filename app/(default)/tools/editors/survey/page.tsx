@@ -6,7 +6,7 @@ import { Survey } from "survey-engine/data_types";
 export default async function Page() {
     return (
         <SurveyEditor
-            initialSurvey={weeklySurveyJSON as Survey}
+        // initialSurvey={weeklySurveyJSON as Survey}
         />
     )
 }
