@@ -1,7 +1,11 @@
+import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 
 interface TextViewContentEditorProps {
@@ -19,8 +23,61 @@ const SimpleModeEditor: React.FC<{
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
 }> = (props) => {
+    const { selectedLanguage } = useContext(SurveyContext);
+
+
+    const classNameIndex = props.component.style?.findIndex(style => style.key === 'className');
+    const className = (props.component.style !== undefined && classNameIndex !== undefined && classNameIndex > -1) ? props.component.style[classNameIndex].value : '';
+
+    const contentMap = localisedObjectToMap(props.component.content);
+
     return <div>
-        Simple Mode: edit content and CSS classes
+        <div className='space-y-1.5'>
+            <Label
+                htmlFor={props.component.key}
+            >
+                Title
+            </Label>
+            <Input
+                id={props.component.key}
+                value={contentMap.get(selectedLanguage) || ''}
+                onChange={(e) => {
+                    contentMap.set(selectedLanguage, e.target.value);
+                    props.onChange({
+                        ...props.component,
+                        content: generateLocStrings(contentMap),
+                    })
+                }}
+                placeholder='Enter content here for the selected language...'
+            />
+        </div>
+        <div className='space-y-1.5 mt-4'>
+            <Label
+                htmlFor={props.component.key + 'className'}
+            >
+                CSS classes
+            </Label>
+            <Input
+                id={props.component.key + 'className'}
+                value={className}
+                onChange={(e) => {
+                    const newStyle = [...props.component.style || []];
+                    const index = newStyle.findIndex(s => s.key === 'className');
+                    if (index > -1) {
+                        newStyle[index] = { key: 'className', value: e.target.value };
+                    } else {
+                        newStyle.push({ key: 'className', value: e.target.value });
+                    }
+
+                    props.onChange({
+                        ...props.component,
+                        style: newStyle,
+                    })
+                }}
+                placeholder='Enter optional CSS classes...'
+            />
+        </div>
+
     </div>
 }
 
