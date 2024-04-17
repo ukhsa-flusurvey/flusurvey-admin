@@ -8,12 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Binary, Calendar, CheckSquare, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
+import { ArrowRight, Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TextViewContentEditor from './text-view-content-editor';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -38,7 +39,7 @@ const TabWrapper = (props: { children: React.ReactNode }) => {
 }
 
 const KeyAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between'>
+    return <div className='text-xs font-semibold flex justify-between w-full'>
         <Badge className='h-auto py-0'>
             {props.compKey}
         </Badge>
@@ -48,6 +49,27 @@ const KeyAndType = (props: { compKey?: string, type: string }) => {
     </div>
 }
 
+const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
+    return <div className='space-y-4'>
+        <Collapsible defaultOpen={props.defaultOpen}
+            className='group'
+        >
+            <CollapsibleTrigger asChild>
+                <div className='flex w-full gap-2'>
+                    <KeyAndType compKey={props.compKey} type={props.type} />
+                    <span>
+                        <ChevronDown className="size-4 group-data-[state=open]:rotate-180 transition-transform duration-500" />
+                    </span>
+                </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+                {props.children}
+            </CollapsibleContent>
+        </Collapsible>
+    </div>
+}
+
+
 export const ContentItem = (props: {
     index: number, component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void,
@@ -56,7 +78,7 @@ export const ContentItem = (props: {
 
 }) => {
     const { selectedLanguage } = useContext(SurveyContext);
-    const [currentKey, setCurrentKey] = React.useState(props.component.key);
+    const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
 
     const optionType = getOptionType(props.component);
 
@@ -64,9 +86,11 @@ export const ContentItem = (props: {
         switch (optionType) {
             case 'option':
                 const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
-                return <div className='space-y-4'>
-                    <KeyAndType compKey={props.component.key} type='SIMPLE OPTION' />
-
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='SIMPLE OPTION'
+                    defaultOpen={props.index > -1}
+                >
                     <div className='space-y-1.5'
                         data-no-dnd="true"
                     >
@@ -88,17 +112,20 @@ export const ContentItem = (props: {
                             }}
                         />
                     </div>
-                </div>;
+                </OptionContentTabCollapsible>;
             case 'formattedOption':
-                return <div className='space-y-4'>
-                    <KeyAndType compKey={props.component.key} type='FORMATTED OPTION' />
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='FORMATTED OPTION'
+                    defaultOpen={props.index > -1}
+                >
                     <TextViewContentEditor
                         component={props.component}
                         onChange={props.onUpdateComponent}
                         hideToggle={true}
                         useAdvancedMode={true}
                     />
-                </div>;
+                </OptionContentTabCollapsible>;
             case 'input':
                 return <div>Option with text input</div>;
             case 'text':
