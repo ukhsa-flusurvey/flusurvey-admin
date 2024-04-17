@@ -15,6 +15,7 @@ import TextViewContentEditor from './text-view-content-editor';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import TextInputContentConfig from './text-input-content-config';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -62,7 +63,7 @@ const OptionContentTabCollapsible = (props: { compKey?: string, type: string, ch
                     </span>
                 </div>
             </CollapsibleTrigger>
-            <CollapsibleContent>
+            <CollapsibleContent className='pt-4'>
                 {props.children}
             </CollapsibleContent>
         </Collapsible>
@@ -127,7 +128,17 @@ export const ContentItem = (props: {
                     />
                 </OptionContentTabCollapsible>;
             case 'input':
-                return <div>Option with text input</div>;
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='WITH TEXT INPUT'
+                    defaultOpen={props.index > -1}
+                >
+                    <TextInputContentConfig
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                    />
+                </OptionContentTabCollapsible>;
+
             case 'text':
                 return <div>
                     <TextViewContentEditor
