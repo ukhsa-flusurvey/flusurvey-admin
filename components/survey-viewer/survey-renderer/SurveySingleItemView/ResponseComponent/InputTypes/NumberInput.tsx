@@ -149,7 +149,7 @@ const NumberInput: React.FC<NumberInputProps> = (props) => {
             step={stepSize ? stepSize as number : undefined}
         />
 
-        {placeAfter ? <label htmlFor={fullKey} className="ms-1">
+        {placeAfter ? <label htmlFor={fullKey} className="ms-2">
             {getLocaleStringTextByCode(content, props.languageCode)}
         </label> : null}
     </Label>
