@@ -14,6 +14,7 @@ interface DatePickerProps {
     depth?: number;
     currentValue?: number;
     onValueChange: (value: number) => void;
+    onClearSlot: () => void;
 }
 
 
@@ -33,6 +34,7 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
             }}
             depth={props.depth}
             isInvalid={props.currentValue === undefined || props.currentValue === 0}
+            onClearSlot={props.onClearSlot}
         >
             <div className='px-2 py-2'>
 

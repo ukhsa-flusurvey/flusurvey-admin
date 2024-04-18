@@ -144,8 +144,8 @@ const FormattedPartEditor: React.FC<{
                         isHidden={hideSlotContent}
                         onToggleHide={(hide) => { setHideSlotContent(hide) }}
                         onChange={(newArgs, newSlotTypes) => {
-                            console.log(newArgs)
-                            console.log(newSlotTypes)
+                            //console.log(newArgs)
+                            //console.log(newSlotTypes)
                             const updatedExp = newArgs.length > 0 ? newArgs[0] : {
                                 dtype: 'exp',
                                 exp: {

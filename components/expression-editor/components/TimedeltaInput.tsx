@@ -10,6 +10,7 @@ interface TimedeltaInputProps {
     depth?: number;
     currentValue?: number;
     onValueChange: (value: number | undefined) => void;
+    onClearSlot: () => void;
 }
 
 const units = ['seconds', 'minutes', 'hours', 'days', 'weeks'];
@@ -79,6 +80,7 @@ const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
             }}
             depth={props.depth}
             isInvalid={props.currentValue === undefined}
+            onClearSlot={props.onClearSlot}
         >
             <div className='px-2 py-2 grid grid-cols-1 md:grid-cols-2 gap-2'>
                 <Input

@@ -192,7 +192,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     }
 
 
-    // TODO: extract values for current slot type
+    // extract values for current slot type
     const currentSlotType = currentSlotTypes.at(props.currentIndex) || '';
     const expressionDef = props.expRegistry.expressionDefs.find((expDef) => expDef.id === currentSlotType)
     const isExpression = expressionDef !== undefined;
@@ -210,6 +210,24 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             onArgsChange={(newArgs) => {
                 props.onChange?.(
                     newArgs,
+                    currentSlotTypes
+                )
+            }}
+            onClearSlot={() => {
+                const currentIndex = props.currentIndex;
+                const currentData = props.availableExpData || [];
+                if (currentData.length < currentIndex) {
+                    currentData.fill(undefined, currentData.length, currentIndex)
+                }
+                const currentSlotTypes = props.availableMetadata?.slotTypes || []
+                if (currentSlotTypes.length < currentIndex) {
+                    currentSlotTypes.fill(undefined, currentSlotTypes.length, currentIndex)
+                }
+
+                currentSlotTypes[currentIndex] = undefined;
+                currentData[currentIndex] = undefined;
+                props.onChange?.(
+                    currentData,
                     currentSlotTypes
                 )
             }}

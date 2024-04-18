@@ -11,6 +11,13 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         categories: ['variables'],
     },
     {
+        id: 'number-input',
+        type: 'num',
+        icon: 'form-input',
+        label: 'Number input',
+        categories: ['variables'],
+    },
+    {
         id: 'date-picker',
         type: 'date',
         icon: 'calendar',
