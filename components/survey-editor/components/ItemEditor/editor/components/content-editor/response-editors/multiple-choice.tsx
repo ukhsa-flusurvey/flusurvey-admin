@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { ArrowRight, Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
+import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TextViewContentEditor from './text-view-content-editor';
@@ -32,7 +32,7 @@ const getOptionType = (option: ItemComponent): string => {
     return option.role;
 }
 
-const TabWrapper = (props: { children: React.ReactNode }) => {
+export const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
         <div className='p-4 ps-6 space-y-4 overflow-y-scroll'>
             {props.children}
@@ -40,7 +40,7 @@ const TabWrapper = (props: { children: React.ReactNode }) => {
     )
 }
 
-const KeyAndType = (props: { compKey?: string, type: string }) => {
+export const KeyAndType = (props: { compKey?: string, type: string }) => {
     return <div className='text-xs font-semibold flex justify-between w-full'>
         <Badge className='h-auto py-0'>
             {props.compKey}
@@ -51,7 +51,7 @@ const KeyAndType = (props: { compKey?: string, type: string }) => {
     </div>
 }
 
-const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
+export const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
     return <div className='space-y-4'>
         <Collapsible defaultOpen={props.defaultOpen}
             className='group'
