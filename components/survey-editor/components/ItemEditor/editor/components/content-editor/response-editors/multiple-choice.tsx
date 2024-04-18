@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import TextInputContentConfig from './text-input-content-config';
+import NumberInputContentConfig from './number-input-content-config';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -148,7 +149,16 @@ export const ContentItem = (props: {
                     />
                 </div>;
             case 'numberInput':
-                return <div>Option with number input</div>;
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='WITH NUMBER INPUT'
+                    defaultOpen={props.index > -1}
+                >
+                    <NumberInputContentConfig
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                    />
+                </OptionContentTabCollapsible>;
             case 'cloze':
                 return <div>Option with cloze</div>;
             case 'timeInput':
