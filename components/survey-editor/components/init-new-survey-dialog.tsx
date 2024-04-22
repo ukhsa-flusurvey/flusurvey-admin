@@ -24,6 +24,9 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
             surveyDefinition: {
                 key: surveyKey,
                 items: [],
+                selectionMethod: {
+                    name: 'sequential'
+                },
             },
             versionId: '',
 
