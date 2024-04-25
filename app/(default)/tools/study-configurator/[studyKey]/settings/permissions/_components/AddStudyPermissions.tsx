@@ -12,10 +12,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import LoadingButton from '@/components/LoadingButton';
 import { toast } from 'sonner';
 import { addStudyPermission } from '@/actions/study/permissions';
@@ -130,49 +128,51 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                     <PopoverContent className="w-96 p-0" align='start'>
                         <Command>
                             <CommandInput placeholder="Search for user..." />
-                            <CommandEmpty>No users found.</CommandEmpty>
-                            <CommandGroup className='max-h-64 overflow-y-scroll'>
-                                {props.users.map((user) => (
-                                    <CommandItem
-                                        value={user.id}
-                                        key={user.id}
-                                        className='w-full flex'
-                                        onSelect={() => {
-                                            form.setValue("subjectId", user.id)
-                                            form.clearErrors("subjectId")
-                                            setUserSelectionPopoverOpen(false)
-                                        }}
-                                    >
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                user.id === field.value
-                                                    ? "opacity-100"
-                                                    : "opacity-0"
-                                            )}
-                                        />
-                                        <div className='flex items-center gap-3 grow'>
-                                            <div className='grow'>
-                                                <p>
-                                                    {user.username}
-                                                </p>
-                                                <p className='text-xs'>
-                                                    {user.email}
-                                                </p>
-                                            </div>
+                            <CommandList>
+                                <CommandEmpty>No users found.</CommandEmpty>
+                                <CommandGroup className='max-h-64 overflow-y-scroll'>
+                                    {props.users.map((user) => (
+                                        <CommandItem
+                                            value={user.id}
+                                            key={user.id}
+                                            className='w-full flex'
+                                            onSelect={() => {
+                                                form.setValue("subjectId", user.id)
+                                                form.clearErrors("subjectId")
+                                                setUserSelectionPopoverOpen(false)
+                                            }}
+                                        >
+                                            <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    user.id === field.value
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                )}
+                                            />
+                                            <div className='flex items-center gap-3 grow'>
+                                                <div className='grow'>
+                                                    <p>
+                                                        {user.username}
+                                                    </p>
+                                                    <p className='text-xs'>
+                                                        {user.email}
+                                                    </p>
+                                                </div>
 
-                                            <div>
-                                                <Avatar className='size-7'>
-                                                    <AvatarImage src={user.imageUrl || ""} />
-                                                    <AvatarFallback className="bg-slate-400">
-                                                        <UserRound className='text-white size-5' />
-                                                    </AvatarFallback>
-                                                </Avatar>
+                                                <div>
+                                                    <Avatar className='size-7'>
+                                                        <AvatarImage src={user.imageUrl || ""} />
+                                                        <AvatarFallback className="bg-slate-400">
+                                                            <UserRound className='text-white size-5' />
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            </CommandList>
                         </Command>
                     </PopoverContent>
                 </Popover>
@@ -216,33 +216,35 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                     >
                         <Command>
                             <CommandInput placeholder="Search for action..." />
-                            <CommandEmpty>No actions found.</CommandEmpty>
-                            <CommandGroup className='max-h-64 overflow-y-scroll'>
-                                {Object.keys(studyActionInfos).map((action) => (
+                            <CommandList>
+                                <CommandEmpty>No actions found.</CommandEmpty>
+                                <CommandGroup className='max-h-64 overflow-y-scroll'>
+                                    {Object.keys(studyActionInfos).map((action) => (
 
-                                    <CommandItem
-                                        value={action}
-                                        key={action}
-                                        onSelect={() => {
-                                            form.setValue("action", action)
-                                            form.clearErrors("action")
-                                            setActionSelectionPopoverOpen(false)
-                                        }}
-                                    >
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                action === field.value
-                                                    ? "opacity-100"
-                                                    : "opacity-0"
-                                            )}
-                                        />
-                                        <p>
-                                            {action}
-                                        </p>
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
+                                        <CommandItem
+                                            value={action}
+                                            key={action}
+                                            onSelect={() => {
+                                                form.setValue("action", action)
+                                                form.clearErrors("action")
+                                                setActionSelectionPopoverOpen(false)
+                                            }}
+                                        >
+                                            <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    action === field.value
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                )}
+                                            />
+                                            <p>
+                                                {action}
+                                            </p>
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            </CommandList>
                         </Command>
                     </PopoverContent>
                 </Popover>
