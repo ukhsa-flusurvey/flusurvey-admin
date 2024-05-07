@@ -214,8 +214,15 @@ export const SurveyItemTypeRegistry = [
     },
     {
         key: 'responsiveMatrix',
+        label: 'Simple Matrix',
+        description: 'Same response slots arranged in a matrix. Different view modes are available per screen size.',
+        className: 'text-purple-800',
+        icon: Grid3X3,
+    },
+    {
+        key: 'matrix',
         label: 'Matrix',
-        description: 'Response slots arranged in a matrix. Different view modes are available per screen size.',
+        description: 'Rows and columns of response slots can be used for more complex questions.',
         className: 'text-purple-800',
         icon: Grid3X3,
     },

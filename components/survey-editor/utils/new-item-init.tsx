@@ -5,6 +5,7 @@ import { Group } from "case-editor-tools/surveys/types";
 import { ItemEditor } from "case-editor-tools/surveys/survey-editor/item-editor";
 import { SurveyItems } from "case-editor-tools/surveys/survey-items";
 import { ComponentGenerators } from "case-editor-tools/surveys/utils/componentGenerators";
+import { initMatrixQuestion } from "case-editor-tools/surveys/responseTypeGenerators/matrixGroupComponent";
 
 // generate random 3 letter string
 const randomString = (targetLength: number = 3) => {
@@ -203,6 +204,19 @@ export const generateNewItemForType = (props: {
                     editorItemColor: editorItemColor
                 }
             });
+            break;
+        case 'matrix':
+            const matrixEditor = new ItemEditor(undefined, { itemKey: parentKey + '.' + newItemKey, isGroup: false });
+
+            matrixEditor.setTitleComponent(
+                generateTitleComponent(new Map<string, string>())
+            );
+            const rg = matrixEditor.addNewResponseComponent({ role: 'responseGroup' });
+            const rg_inner = initMatrixQuestion('mat', [],)
+
+            matrixEditor.addExistingResponseComponent(rg_inner, rg?.key);
+
+            newSurveyItem = matrixEditor.getItem();
             break;
         case 'clozeQuestion':
             newSurveyItem = SurveyItems.clozeQuestion({
