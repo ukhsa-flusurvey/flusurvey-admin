@@ -57,7 +57,7 @@ const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
 
     return (
         <div className='pt-6 pb-12 px-6  h-auto flex justify-center'>
-            <div className='max-w-[800px]'>
+            <div className='max-w-[800px] w-full'>
                 <SurveyView
                     key={counter.toString()}
                     instanceKey={counter.toString()}

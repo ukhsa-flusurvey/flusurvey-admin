@@ -17,7 +17,7 @@ interface MatrixProps {
 const RowEditor = (props: {}) => {
     return <div>
         <p>
-            each row: key editor, row label, sortable columns, delete row
+            each row: key editor, row label, sortable columns, delete row, edit key, edit display condition
         </p>
     </div>
 }

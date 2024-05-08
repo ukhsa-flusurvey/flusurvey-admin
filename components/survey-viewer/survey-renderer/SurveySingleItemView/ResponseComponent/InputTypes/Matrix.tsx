@@ -246,18 +246,23 @@ const Matrix: React.FC<MatrixProps> = (props) => {
     */
 
     const renderResponseRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
+        const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || 'Row label is typically a question';
+
         return <div
             key={compDef.key}
             role="row"
-            className="flex flex-col md:flex-row   border-b border-[--survey-card-table-border-color] last:border-b-0">
+            className="flex flex-col md:flex-row  border-b border-[--survey-card-table-border-color] last:border-b-0">
             <div role='rowheader'
-                className="font-bold mb-1 flex-1 md:hidden">Row label is typically a question
+                className="font-bold flex-1 px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-1.5 md:hidden">
+                {rowLabel}
             </div>
 
 
-            <div className='flex flex-col sm:flex-row w-full'>
-                <div role="rowheader" className="hidden md:block font-bold mb-1 flex-1 ">Row label is typically a question</div>
-                <div role="cell" className="flex-1 ">
+            <div className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2'>
+                <div role="rowheader" className="hidden md:flex font-bold flex-1 min-w-0 px-2 py-1.5">
+                    {rowLabel}
+                </div>
+                <div role="cell" className="flex-1 px-2 py-1.5">
                     <div className='block md:hidden' role="columnheader">
                         Header 1
                     </div>
@@ -265,22 +270,23 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                         Data 1
                     </div>
                 </div>
-                <div role="cell" className="flex-1 truncate">
-                    <div className='block md:hidden ' role="columnheader">
-                        Headerwithlonglabel
-                    </div>
-                    <div>
-                        Data 2
-                    </div>
-                </div>
-                <div role="cell" className="flex-1">
+                <div role="cell" className="flex-1 px-2 py-1.5">
                     <div className='block md:hidden' role="columnheader">
-                        Header 3
+                        Header 1
                     </div>
                     <div>
-                        Data 3
+                        Data 1
                     </div>
                 </div>
+                <div role="cell" className="flex-1 px-2 py-1.5">
+                    <div className='block md:hidden' role="columnheader">
+                        Header 1
+                    </div>
+                    <div>
+                        Data 1
+                    </div>
+                </div>
+
 
             </div>
         </div>
@@ -423,15 +429,18 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             }
             return <div
                 key={cell.key ? cell.key : index.toString()}
-                role="columnheader" className="font-bold flex-1 truncate px-2 py-1 text-center"
+                role="columnheader" className="font-bold flex-1 truncate px-2 py-1.5 text-center"
             >
                 {currentCellContent}
             </div>
         });
 
-        return <div role="rowgroup" className="items-center border-b border-[--survey-card-table-border-color] hidden md:flex">
-            <div role="columnheader" className="font-bold flex-1 px-2"></div>
-            {cells}
+        return <div role="rowgroup" className="hidden md:block border-b border-[--survey-card-table-border-color] ">
+            <div role="row" className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2'>
+                <div role="columnheader" className="font-bold flex-1 px-2 py-1.5"></div>
+                {cells}
+            </div>
+
         </div>
     }
 
