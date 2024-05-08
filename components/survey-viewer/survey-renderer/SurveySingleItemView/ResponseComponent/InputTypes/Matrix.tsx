@@ -25,7 +25,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [response]);
 
-    const radioSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    /*const radioSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!rowKey) { return; }
         const selectedValue = event.target.value;
 
@@ -55,7 +55,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                 items: items
             }
         });
-    }
+    }*/
 
     const checkboxSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!rowKey) { return; }
@@ -180,6 +180,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         return true;
     }
 
+    /*
     const renderRadioRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
         const rowKey = [props.parentKey, compDef.key].join('.');
 
@@ -210,13 +211,13 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                         onChange={radioSelectionChanged(compDef.key)}
                         disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
                     />
-                    /*  <Radio
+                    <Radio
                         checked={isResponseSet(compDef.key, cell.key)}
                         onChange={radioSelectionChanged(compDef.key)}
                         value={cell.key}
                         disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
                         inputProps={{ 'aria-label': cell.key }}
-                      />;*/
+                      />;
                     break;
                 default:
                     console.warn('cell role for matrix question unknown: ', cell.role);
@@ -242,108 +243,148 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             {cells}
         </tr>
     }
+    */
 
     const renderResponseRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
-        const rowKey = [props.parentKey, compDef.key].join('.');
-        const cells = (compDef as ItemGroupComponent).items.map((cell, cIndex) => {
-            const cellKey = [rowKey, cell.key].join('.');
-            let currentCellContent: React.ReactNode | null;
-            const isLast = index === matrixDef.items.length - 1;
-            switch (cell.role) {
-                case 'label':
-                    currentCellContent = getLocaleStringTextByCode(cell.content, props.languageCode);
-                    if (cIndex === 0) {
-                        return <th
-                            key={cell.key ? cell.key : cIndex.toString()}
-                            className={clsx(
-                                "px-2 py-1",
-                                {
-                                    "border-b border-gray-200": !isLast
+        return <div
+            key={compDef.key}
+            role="row"
+            className="flex flex-col md:flex-row   border-b border-[--survey-card-table-border-color] last:border-b-0">
+            <div role='rowheader'
+                className="font-bold mb-1 flex-1 md:hidden">Row label is typically a question
+            </div>
 
-                                })}
-                        >{currentCellContent}</th>
-                    }
-                    break;
-                case 'check':
-                    currentCellContent = <input
-                        className="form-checkbox text-primary-600 w-5 h-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        type="checkbox"
-                        id={cellKey}
-                        value={cell.key}
-                        aria-label={cell.key}
-                        checked={isResponseSet(compDef.key, cell.key)}
-                        onChange={checkboxSelectionChanged(compDef.key)}
-                        disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-                    />
-                    /*
-                    <Checkbox
-                      checked={isResponseSet(compDef.key, cell.key)}
-                      value={cell.key}
-                      onChange={checkboxSelectionChanged(compDef.key)}
-                      inputProps={{ 'aria-label': cell.key }}
-                      disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-                    />;*/
-                    break
-                case 'input':
-                    currentCellContent = <div
-                        className="w-full"
-                        style={{
-                            minWidth: 120,
-                        }}
-                    >
-                        <TextInput
-                            parentKey={cellKey}
-                            compDef={cell}
-                            languageCode={props.languageCode}
-                            responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-                            prefill={getCellResponse(compDef.key, cell.key)}
-                            dateLocales={props.dateLocales}
-                        />
+
+            <div className='flex flex-col sm:flex-row w-full'>
+                <div role="rowheader" className="hidden md:block font-bold mb-1 flex-1 ">Row label is typically a question</div>
+                <div role="cell" className="flex-1 ">
+                    <div className='block md:hidden' role="columnheader">
+                        Header 1
                     </div>
-                    break
-                case 'numberInput':
-                    currentCellContent =
-                        <NumberInput
-                            parentKey={cellKey}
-                            embedded={true}
-                            compDef={cell}
-                            languageCode={props.languageCode}
-                            responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-                            prefill={getCellResponse(compDef.key, cell.key)}
-                            dateLocales={props.dateLocales}
-                        />
-                    break
-                case 'dropDownGroup':
-                    currentCellContent = <DropDownGroup
-                        compDef={cell}
-                        languageCode={props.languageCode}
-                        responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-                        prefill={getCellResponse(compDef.key, cell.key)}
-                        fullWidth={true}
-                        parentKey={cellKey}
-                        dateLocales={props.dateLocales}
-                    />
-                    break;
-                default:
-                    console.warn('cell role for matrix question unknown: ', cell.role);
-                    break;
-            }
-            return <td
-                key={cell.key ? cell.key : cIndex.toString()}
-                className={clsx(
-                    "px-2 py-1",
-                    {
-                        "border-b border-gray-200": !isLast
+                    <div>
+                        Data 1
+                    </div>
+                </div>
+                <div role="cell" className="flex-1 truncate">
+                    <div className='block md:hidden ' role="columnheader">
+                        Headerwithlonglabel
+                    </div>
+                    <div>
+                        Data 2
+                    </div>
+                </div>
+                <div role="cell" className="flex-1">
+                    <div className='block md:hidden' role="columnheader">
+                        Header 3
+                    </div>
+                    <div>
+                        Data 3
+                    </div>
+                </div>
 
-                    })}
-            >{currentCellContent}</td>
-        }
+            </div>
+        </div>
 
-        );
-        return <tr key={compDef.key}
-        >
-            {cells}
-        </tr>
+        // const rowKey = [props.parentKey, compDef.key].join('.');
+        // const cells = (compDef as ItemGroupComponent).items.map((cell, cIndex) => {
+        //     const cellKey = [rowKey, cell.key].join('.');
+        //     let currentCellContent: React.ReactNode | null;
+        //     const isLast = index === matrixDef.items.length - 1;
+        //     switch (cell.role) {
+        //         case 'label':
+        //             currentCellContent = getLocaleStringTextByCode(cell.content, props.languageCode);
+        //             if (cIndex === 0) {
+        //                 return <th
+        //                     key={cell.key ? cell.key : cIndex.toString()}
+        //                     className={clsx(
+        //                         "px-2 py-1",
+        //                         {
+        //                             "border-b border-gray-200": !isLast
+
+        //                         })}
+        //                 >{currentCellContent}</th>
+        //             }
+        //             break;
+        //         case 'check':
+        //             currentCellContent = <input
+        //                 className="form-checkbox text-primary-600 w-5 h-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
+        //                 type="checkbox"
+        //                 id={cellKey}
+        //                 value={cell.key}
+        //                 aria-label={cell.key}
+        //                 checked={isResponseSet(compDef.key, cell.key)}
+        //                 onChange={checkboxSelectionChanged(compDef.key)}
+        //                 disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
+        //             />
+        //             /*
+        //             <Checkbox
+        //               checked={isResponseSet(compDef.key, cell.key)}
+        //               value={cell.key}
+        //               onChange={checkboxSelectionChanged(compDef.key)}
+        //               inputProps={{ 'aria-label': cell.key }}
+        //               disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
+        //             />;*/
+        //             break
+        //         case 'input':
+        //             currentCellContent = <div
+        //                 className="w-full"
+        //                 style={{
+        //                     minWidth: 120,
+        //                 }}
+        //             >
+        //                 <TextInput
+        //                     parentKey={cellKey}
+        //                     compDef={cell}
+        //                     languageCode={props.languageCode}
+        //                     responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+        //                     prefill={getCellResponse(compDef.key, cell.key)}
+        //                     dateLocales={props.dateLocales}
+        //                 />
+        //             </div>
+        //             break
+        //         case 'numberInput':
+        //             currentCellContent =
+        //                 <NumberInput
+        //                     parentKey={cellKey}
+        //                     embedded={true}
+        //                     compDef={cell}
+        //                     languageCode={props.languageCode}
+        //                     responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+        //                     prefill={getCellResponse(compDef.key, cell.key)}
+        //                     dateLocales={props.dateLocales}
+        //                 />
+        //             break
+        //         case 'dropDownGroup':
+        //             currentCellContent = <DropDownGroup
+        //                 compDef={cell}
+        //                 languageCode={props.languageCode}
+        //                 responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+        //                 prefill={getCellResponse(compDef.key, cell.key)}
+        //                 fullWidth={true}
+        //                 parentKey={cellKey}
+        //                 dateLocales={props.dateLocales}
+        //             />
+        //             break;
+        //         default:
+        //             console.warn('cell role for matrix question unknown: ', cell.role);
+        //             break;
+        //     }
+        //     return <td
+        //         key={cell.key ? cell.key : cIndex.toString()}
+        //         className={clsx(
+        //             "px-2 py-1",
+        //             {
+        //                 "border-b border-gray-200": !isLast
+
+        //             })}
+        //     >{currentCellContent}</td>
+        // }
+
+        // );
+        // return <tr key={compDef.key}
+        // >
+        //     {cells}
+        // </tr>
     }
 
     const renderTableRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
@@ -351,8 +392,9 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             return null;
         }
         switch (compDef.role) {
-            case 'radioRow':
+            /*case 'radioRow':
                 return renderRadioRow(compDef, index);
+                */
             case 'responseRow':
                 return renderResponseRow(compDef, index);
             case 'headerRow':
@@ -387,7 +429,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             </div>
         });
 
-        return <div role="rowgroup" className="items-center border-b hidden md:flex">
+        return <div role="rowgroup" className="items-center border-b border-[--survey-card-table-border-color] hidden md:flex">
             <div role="columnheader" className="font-bold flex-1 px-2"></div>
             {cells}
         </div>
@@ -400,48 +442,8 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         <div role="table" aria-label="Example table" className="flex flex-col">
             {/* Table Header for large screens */}
             {renderHeaderRow(headerRow as ItemGroupComponent)}
-
-
             {/* Rows */}
-
-
-            <div role="row" className="flex flex-col md:flex-row  border-b">
-                <div role='rowheader'
-                    className="font-bold mb-1 flex-1 md:hidden">Row label is typically a question
-                </div>
-
-
-                <div className='flex flex-col sm:flex-row w-full'>
-                    <div role="rowheader" className="hidden md:block font-bold mb-1 flex-1 ">Row label is typically a question</div>
-                    <div role="cell" className="flex-1 ">
-                        <div className='block md:hidden' role="columnheader">
-                            Header 1
-                        </div>
-                        <div>
-                            Data 1
-                        </div>
-                    </div>
-                    <div role="cell" className="flex-1 truncate">
-                        <div className='block md:hidden ' role="columnheader">
-                            Headerwithlonglabel
-                        </div>
-                        <div>
-                            Data 2
-                        </div>
-                    </div>
-                    <div role="cell" className="flex-1">
-                        <div className='block md:hidden' role="columnheader">
-                            Header 3
-                        </div>
-                        <div>
-                            Data 3
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Repeat for more rows as needed */}
+            {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
         </div >)
 
 
