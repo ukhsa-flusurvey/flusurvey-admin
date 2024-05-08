@@ -5,6 +5,7 @@ import EditorWrapper from '../editor-wrapper';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
+import Matrix from './matrix';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -41,6 +42,9 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'responsiveBipolarLikertScaleArray':
             break;
         case 'responsiveMatrix':
+            break;
+        case 'matrix':
+            content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'matrix':
             break;

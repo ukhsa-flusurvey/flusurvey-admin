@@ -368,6 +368,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         if (!header) {
             return null;
         }
+
         const cells = header.items.map((cell, index) => {
             let currentCellContent: React.ReactNode | null;
             switch (cell.role) {
@@ -378,45 +379,93 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                     console.warn('cell role for matrix header unknown: ', cell.role);
                     break;
             }
-            return <th
+            return <div
                 key={cell.key ? cell.key : index.toString()}
-                className={"px-2 py-1"}
+                role="columnheader" className="font-bold flex-1 truncate px-2 py-1 text-center"
             >
                 {currentCellContent}
-            </th>
-        })
-        return <tr
-            key={header.key ? header.key : "header"}
-            className="border-b border-gray-200"
-        >
+            </div>
+        });
+
+        return <div role="rowgroup" className="items-center border-b hidden md:flex">
+            <div role="columnheader" className="font-bold flex-1 px-2"></div>
             {cells}
-        </tr>
+        </div>
     }
 
     const matrixDef = (props.compDef as ItemGroupComponent);
     const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
 
     return (
-        <div className="flex justify-center text-center"
-            style={{
-                overflowX: 'auto',
-            }}
-        >
-            <table className="w-full my-0 mx-auto"
+        <div role="table" aria-label="Example table" className="flex flex-col">
+            {/* Table Header for large screens */}
+            {renderHeaderRow(headerRow as ItemGroupComponent)}
+
+
+            {/* Rows */}
+
+
+            <div role="row" className="flex flex-col md:flex-row  border-b">
+                <div role='rowheader'
+                    className="font-bold mb-1 flex-1 md:hidden">Row label is typically a question
+                </div>
+
+
+                <div className='flex flex-col sm:flex-row w-full'>
+                    <div role="rowheader" className="hidden md:block font-bold mb-1 flex-1 ">Row label is typically a question</div>
+                    <div role="cell" className="flex-1 ">
+                        <div className='block md:hidden' role="columnheader">
+                            Header 1
+                        </div>
+                        <div>
+                            Data 1
+                        </div>
+                    </div>
+                    <div role="cell" className="flex-1 truncate">
+                        <div className='block md:hidden ' role="columnheader">
+                            Headerwithlonglabel
+                        </div>
+                        <div>
+                            Data 2
+                        </div>
+                    </div>
+                    <div role="cell" className="flex-1">
+                        <div className='block md:hidden' role="columnheader">
+                            Header 3
+                        </div>
+                        <div>
+                            Data 3
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* Repeat for more rows as needed */}
+        </div >)
+
+
+    /*
+            <div className="flex justify-center text-center"
                 style={{
-                    borderCollapse: 'collapse',
-                    overflow: 'hidden',
+                    overflowX: 'auto',
                 }}
             >
-                <thead>
-                    {renderHeaderRow(headerRow as ItemGroupComponent)}
-                </thead>
-                <tbody>
-                    {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
-                </tbody>
-            </table>
-        </div>
-    );
+                <table className="w-full my-0 mx-auto"
+                    style={{
+                        borderCollapse: 'collapse',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <thead>
+                        {renderHeaderRow(headerRow as ItemGroupComponent)}
+                    </thead>
+                    <tbody>
+                        {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
+                    </tbody>
+                </table>
+            </div>
+        );*/
 };
 
 export default Matrix;
