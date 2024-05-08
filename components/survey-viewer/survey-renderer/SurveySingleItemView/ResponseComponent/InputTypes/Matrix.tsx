@@ -264,7 +264,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             </div>
 
 
-            <div className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2'>
+            <div className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2 md:items-center'>
                 <div role="rowheader" className="hidden md:flex font-bold flex-1 min-w-0 px-2 py-1.5">
                     {rowLabel}
                 </div>
