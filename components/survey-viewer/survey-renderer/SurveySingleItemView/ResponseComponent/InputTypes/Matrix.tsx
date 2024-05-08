@@ -245,11 +245,17 @@ const Matrix: React.FC<MatrixProps> = (props) => {
     }
     */
 
+
+    const matrixDef = (props.compDef as ItemGroupComponent);
+    const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
+
     const renderResponseRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
-        const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || 'Row label is typically a question';
+        const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || '';
+        const rowKey = [props.parentKey, compDef.key].join('.');
+
 
         return <div
-            key={compDef.key}
+            key={rowKey}
             role="row"
             className="flex flex-col md:flex-row  border-b border-[--survey-card-table-border-color] last:border-b-0">
             <div role='rowheader'
@@ -262,38 +268,36 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                 <div role="rowheader" className="hidden md:flex font-bold flex-1 min-w-0 px-2 py-1.5">
                     {rowLabel}
                 </div>
-                <div role="cell" className="flex-1 px-2 py-1.5">
-                    <div className='block md:hidden' role="columnheader">
-                        Header 1
-                    </div>
-                    <div>
-                        Data 1
-                    </div>
-                </div>
-                <div role="cell" className="flex-1 px-2 py-1.5">
-                    <div className='block md:hidden' role="columnheader">
-                        Header 1
-                    </div>
-                    <div>
-                        Data 1
-                    </div>
-                </div>
-                <div role="cell" className="flex-1 px-2 py-1.5">
-                    <div className='block md:hidden' role="columnheader">
-                        Header 1
-                    </div>
-                    <div>
-                        Data 1
-                    </div>
-                </div>
+                {compDef.items.map((cell, cindex) => {
+                    const cellKey = [rowKey, cell.key].join('.');
+                    const headerLabel = (headerRow) && getLocaleStringTextByCode((headerRow as ItemGroupComponent).items.at(cindex)?.content, props.languageCode) || '';
 
 
+                    return <div key={cellKey}
+                        role="cell" className="flex-1 px-2 py-1.5">
+                        <div className='block md:hidden text-sm font-semibold mb-1' role="columnheader">
+                            {headerLabel}
+                        </div>
+                        <div>
+                            <DropDownGroup
+                                compDef={cell}
+                                languageCode={props.languageCode}
+                                responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+                                prefill={getCellResponse(compDef.key, cell.key)}
+                                fullWidth={true}
+                                parentKey={cellKey}
+                                dateLocales={props.dateLocales}
+                            />
+
+                        </div>
+                    </div>
+                })}
             </div>
         </div>
 
-        // const rowKey = [props.parentKey, compDef.key].join('.');
+        //
         // const cells = (compDef as ItemGroupComponent).items.map((cell, cIndex) => {
-        //     const cellKey = [rowKey, cell.key].join('.');
+        //
         //     let currentCellContent: React.ReactNode | null;
         //     const isLast = index === matrixDef.items.length - 1;
         //     switch (cell.role) {
@@ -444,8 +448,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         </div>
     }
 
-    const matrixDef = (props.compDef as ItemGroupComponent);
-    const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
 
     return (
         <div role="table" aria-label="Example table" className="flex flex-col">
