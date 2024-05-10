@@ -6,6 +6,7 @@ import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
 import Matrix from './matrix';
+import ValidatedRandomQuestion from './validated-random-question';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -53,6 +54,9 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'consent':
             break;
         case 'dropdown':
+            break;
+        case 'validatedRandomQuestion':
+            content = <ValidatedRandomQuestion surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         default:
             content = (

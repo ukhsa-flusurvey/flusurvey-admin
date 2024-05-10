@@ -4,7 +4,7 @@ import {
     CornerDownLeft,
     Folder,
     GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, PenLine, Send, Settings2, SquareStack,
-    TextCursorInput, UnfoldHorizontal
+    TextCursorInput, UnfoldHorizontal, BotOff
 } from "lucide-react";
 import { ItemGroupComponent, SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from "survey-engine/data_types";
 
@@ -101,6 +101,8 @@ export const determineItemType = (item: SurveySingleItem): string => {
             return 'clozeQuestion';
         case 'consent':
             return 'consent';
+        case 'validatedRandomQuestion':
+            return 'validatedRandomQuestion';
         default:
             console.warn('Unknown response item role: ', mainResponseItem.role);
             return mainResponseItem.role;
@@ -246,7 +248,14 @@ export const SurveyItemTypeRegistry = [
         description: 'Allows the participant to select one option from a list of options.',
         className: 'text-fuchsia-800',
         icon: ChevronDownSquare,
-    }
+    },
+    {
+        key: 'validatedRandomQuestion',
+        label: 'Validated Random Question',
+        description: 'Selects a random question from a list of questions and accept only valid responses.',
+        className: 'text-blue-800',
+        icon: BotOff,
+    },
 ]
 
 export const builtInItemColors = [
