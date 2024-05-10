@@ -343,7 +343,7 @@ const RowEditor = (props: {
                                     Row label
                                 </Label>
                                 <Input
-                                    id={props.component.key + '-option-label'}
+                                    id={props.component.key + '-row-label'}
                                     placeholder='Enter label for selected language...'
                                     value={rowLabel}
                                     onChange={(e) => {
