@@ -264,7 +264,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             </div>
 
 
-            <div className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2 md:items-center'>
+            <div className='flex flex-col sm:flex-row grow px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2 md:items-center'>
                 <div role="rowheader" className="hidden md:flex font-bold flex-1 min-w-0 px-2 py-1.5">
                     {rowLabel}
                 </div>
@@ -274,7 +274,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
 
 
                     return <div key={cellKey}
-                        role="cell" className="flex-1 px-2 py-1.5">
+                        role="cell" className="flex-1 px-2 py-0.5 sm:1.5">
                         <div className='block md:hidden text-sm font-semibold mb-1' role="columnheader">
                             {headerLabel}
                         </div>
@@ -439,8 +439,8 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             </div>
         });
 
-        return <div role="rowgroup" className="hidden md:block border-b border-[--survey-card-table-border-color] ">
-            <div role="row" className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] -mx-2'>
+        return <div role="rowgroup" className="hidden md:flex border-b border-[--survey-card-table-border-color] w-full">
+            <div role="row" className='flex flex-col sm:flex-row w-full px-[--survey-card-px-sm] sm:px-[--survey-card-px] grow -mx-2'>
                 <div role="columnheader" className="font-bold flex-1 px-2 py-1.5"></div>
                 {cells}
             </div>
@@ -456,29 +456,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             {/* Rows */}
             {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
         </div >)
-
-
-    /*
-            <div className="flex justify-center text-center"
-                style={{
-                    overflowX: 'auto',
-                }}
-            >
-                <table className="w-full my-0 mx-auto"
-                    style={{
-                        borderCollapse: 'collapse',
-                        overflow: 'hidden',
-                    }}
-                >
-                    <thead>
-                        {renderHeaderRow(headerRow as ItemGroupComponent)}
-                    </thead>
-                    <tbody>
-                        {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
-                    </tbody>
-                </table>
-            </div>
-        );*/
 };
 
 export default Matrix;
