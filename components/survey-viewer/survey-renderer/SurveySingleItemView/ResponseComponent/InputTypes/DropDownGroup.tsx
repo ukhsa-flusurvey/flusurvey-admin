@@ -4,6 +4,8 @@ import { ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
 import { CommonResponseComponentProps, getLocaleStringTextByCode } from '../../utils';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SelectGroup } from '@radix-ui/react-select';
+import { Dot, MoreHorizontal } from 'lucide-react';
 
 
 interface DropDownGroupProps extends CommonResponseComponentProps {
@@ -56,11 +58,8 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
     };
 
     const renderedInput = <Select
-
-
         value={getSelectedKey()}
         onValueChange={handleSelectionChange}
-
     >
         <SelectTrigger
             id={props.parentKey}
@@ -68,21 +67,34 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
             <SelectValue
                 placeholder={getLocaleStringTextByCode(props.compDef.description, props.languageCode)} />
         </SelectTrigger>
-        <SelectContent>
-            {
-                (props.compDef as ItemGroupComponent).items.map(
-                    item => {
-                        if (item.displayCondition) {
-                            return null;
+        <SelectContent
+            className='max-w-[95vw]'
+        >
+            <SelectGroup
+                className='overflow-y-auto max-h-[210px]'
+            >
+                <span className='flex justify-center bg-muted/50 rounded-sm'>
+                    <Dot className='size-3 text-muted-foreground' />
+                </span>
+                {
+                    (props.compDef as ItemGroupComponent).items.map(
+                        item => {
+                            if (item.displayCondition) {
+                                return null;
+                            }
+                            return <SelectItem
+                                className='flex w-full flex-wrap'
+                                key={item.key}
+                                value={item.key || ''}>
+                                {getLocaleStringTextByCode(item.content, props.languageCode)}
+                            </SelectItem>
                         }
-                        return <SelectItem
-                            key={item.key}
-                            value={item.key || ''}>
-                            {getLocaleStringTextByCode(item.content, props.languageCode)}
-                        </SelectItem>
-                    }
-                )
-            }
+                    )
+                }
+                <span className='flex justify-center bg-muted/50 rounded-sm'>
+                    <Dot className='size-3 text-muted-foreground' />
+                </span>
+            </SelectGroup>
         </SelectContent>
     </Select>;
 
