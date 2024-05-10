@@ -229,6 +229,36 @@ export const generateNewItemForType = (props: {
                 }
             });
             break;
+        case 'validatedRandomQuestion':
+            const vrqKey = parentKey + '.' + newItemKey;
+            const vrQEditor = new ItemEditor(undefined, { itemKey: vrqKey, isGroup: false });
+
+            vrQEditor.setTitleComponent(
+                generateTitleComponent(new Map<string, string>())
+            );
+
+            vrQEditor.addExistingResponseComponent({
+                key: 'vrq',
+                role: 'validatedRandomQuestion',
+                items: [],
+            },
+                vrQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            );
+
+            vrQEditor.addValidation({
+                key: 'v1',
+                type: 'hard',
+                rule: {
+                    name: 'hasResponse',
+                    data: [
+                        { str: vrqKey },
+                        { str: 'rg' }
+                    ]
+                }
+            })
+
+            newSurveyItem = vrQEditor.getItem();
+            break;
         case 'dropdown':
             newSurveyItem = SurveyItems.dropDown({
                 parentKey: parentKey,
