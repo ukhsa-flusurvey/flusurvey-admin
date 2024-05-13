@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, LocalizedObject, LocalizedString, SurveyItem, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
 import SurveyLanguageToggle from '../../../../general/SurveyLanguageToggle';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { nl } from 'date-fns/locale';
 
 
 interface ItemPreviewProps {
@@ -149,6 +150,9 @@ const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
                     invalidWarning={'invalid warning'}
                     showInvalid={false}
                     showKeys={false}
+                    dateLocales={[{
+                        code: 'nl', locale: nl, format: 'PPP'
+                    }]}
                 />
             </div>
         </div>

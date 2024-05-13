@@ -1,35 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ResponseItem } from 'survey-engine/data_types';
-// import DatePicker, { registerLocale } from "react-datepicker";
 import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode } from '../../utils';
-import { format, getYear, getMonth } from 'date-fns';
-import { addYears, getUnixTime, eachMonthOfInterval, startOfYear, endOfYear } from 'date-fns';
+import { format } from 'date-fns';
+import { addYears, getUnixTime } from 'date-fns';
 import YearMonthSelector from './YearMonthSelector';
 import clsx from 'clsx';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-
+import { CalendarDaysIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Calendar } from '@/components/ui/calendar';
+import 'react-day-picker/dist/style.css';
 
 
 interface DateInputProps extends CommonResponseComponentProps {
     openCalendar: boolean | undefined;
     defaultClassName?: string;
+    embedded?: boolean;
 }
 
 const DateInput: React.FC<DateInputProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-    // const datePickerRef = useRef<DatePicker>(null);
-    const wrapperRef = useRef<HTMLDivElement>(null);
+
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         props.prefill && props.prefill.value ? new Date(parseInt(props.prefill.value) * 1000) : undefined,
     );
-
-    useEffect(() => {
-        props.dateLocales?.forEach(loc => {
-            // registerLocale(loc.code, loc.locale);
-        })
-    }, [props.dateLocales]);
 
     useEffect(() => {
         if (touched) {
@@ -40,12 +36,6 @@ const DateInput: React.FC<DateInputProps> = (props) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [response]);
-
-    useEffect(() => {
-        if (props.openCalendar) {
-            // datePickerRef.current?.setOpen(true)
-        }
-    }, [props.openCalendar]);
 
     const handleDateChange = (date: Date | undefined) => {
         setTouched(true);
@@ -76,67 +66,6 @@ const DateInput: React.FC<DateInputProps> = (props) => {
     const minDate = props.compDef.properties?.min ? new Date((props.compDef.properties?.min as number) * 1000) : new Date(1900, 1);
     const maxDate = props.compDef.properties?.max ? new Date((props.compDef.properties?.max as number) * 1000) : addYears(new Date(), 100);
 
-    const DatepickerContainer = ({ className, children }: any) => {
-        return (
-            <div className="shadow bg-white">
-                <div className="react-datepicker__triangle"></div>
-                <span className={className} >{children}</span>
-            </div>
-        )
-    }
-
-    const DatepickerHeader = ({ date, decreaseMonth, increaseMonth, changeYear, changeMonth, prevMonthButtonDisabled, nextMonthButtonDisabled }: any) => {
-        const years = new Array<number>();
-        for (let i = getYear(minDate); i <= getYear(maxDate); i++) {
-            years.push(i);
-        }
-        years.reverse();
-
-        const referenceYear = getYear(new Date());
-        const months = eachMonthOfInterval({
-            start: startOfYear(new Date(referenceYear, 0, 2)),
-            end: endOfYear(new Date(referenceYear, 0, 2)),
-        }).map(m => {
-            return format(m, 'MMM', { locale: props.dateLocales?.find(l => l.code === props.languageCode)?.locale })
-        });
-
-        return (
-            <div className="my-1 flex justify-between items-center">
-                <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled} className="datepicker-arrow-btn p-0 ms-3 ">
-                    <ArrowLeft className="h-5 w-5" />
-                </button>
-                <select
-                    className='form-select rounded text-black'
-                    value={getYear(date)}
-                    onChange={({ target: { value } }) => changeYear(value)}
-                    style={{ minWidth: 95 }}
-                >
-                    {years.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-
-                <select
-                    className='form-select rounded text-black ms-1'
-                    value={months[getMonth(date)]}
-                    onChange={({ target: { value } }) => changeMonth(months.indexOf(value))}
-                >
-                    {months.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-
-                <button onClick={increaseMonth} disabled={nextMonthButtonDisabled} className="datepicker-arrow-btn p-0 me-3">
-                    <ArrowRight className='w-5 h-5' />
-                </button>
-            </div>
-        )
-    }
-
     let datepicker = <p>{'...'}</p>;
     switch (props.compDef.properties?.dateInputMode) {
         case 'YM':
@@ -161,45 +90,56 @@ const DateInput: React.FC<DateInputProps> = (props) => {
             />
             break;
         default:
-            datepicker = <div
-                ref={wrapperRef}
-                tabIndex={0}
-                className="border-0 bg-white p-0 flex flex-row items-center rounded focus:outline-none focus:ring-2 focus:ring-primary-600/60"
-            // onClick={() => datePickerRef.current?.setOpen(true)}
-            >
-                <p>
-                    TODO date picker
-                </p>
-                {/*}
-        <DatePicker
-          id={props.parentKey}
-          ref={datePickerRef}
-          className="form-control border-0 shadow-none p-2 rounded focus:ring-0 focus:outline-none"
-          selected={selectedDate}
-          locale={props.languageCode}
-          onChange={(date) => handleDateChange(date ? date as Date : undefined)}
-          dateFormat={props.dateLocales?.find(loc => loc.code === props.languageCode)?.format}
-          placeholderText={getLocaleStringTextByCode(props.compDef.description, props.languageCode)}
-          minDate={props.compDef.properties?.min ? new Date((props.compDef.properties?.min as number) * 1000) : undefined}
-          maxDate={props.compDef.properties?.max ? new Date((props.compDef.properties?.max as number) * 1000) : undefined}
-          onCalendarOpen={() => wrapperRef.current?.focus()}
-          autoComplete="off"
-          disabled={props.compDef.disabled !== undefined || props.disabled === true}
-          popperPlacement="top"
-          disabledKeyboardNavigation
-          calendarContainer={DatepickerContainer}
-          renderCustomHeader={DatepickerHeader}
-        />
-  <CalendarDaysIcon className="m-1 hidden sm:inline-block w-5 h-5" />*/}
-            </div>
+            datepicker = <Popover>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant={"outline"}
+                        className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !selectedDate && "text-muted-foreground"
+                        )}
+                    >
+                        <CalendarDaysIcon className="m-1 hidden sm:inline-block size-4" />
+                        {selectedDate ? format(selectedDate, "PPP", {
+                            locale: props.dateLocales.find(dl => dl.code === props.languageCode)?.locale
+                        }) : <span>
+                            {getLocaleStringTextByCode(props.compDef.description, props.languageCode)}
+                        </span>}
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                    <Calendar
+                        mode="single"
+                        locale={props.dateLocales.find(dl => dl.code === props.languageCode)?.locale}
+                        captionLayout="dropdown-buttons"
+                        selected={selectedDate}
+                        fromDate={minDate}
+                        toDate={maxDate}
+                        onSelect={handleDateChange}
+                        initialFocus
+                        className='p-0'
+                        classNames={{
+                            caption_label: 'flex items-center text-sm font-medium',
+                            dropdown: 'rdp-dropdown bg-card',
+                            dropdown_icon: 'ml-2',
+                            dropdown_year: 'rdp-dropdown_year ml-3',
+                            button: '',
+                            button_reset: '',
+                        }}
+                    />
+                </PopoverContent>
+            </Popover>
             break;
     }
 
     return (
         <div className={clsx(
             props.defaultClassName,
-            "flex items-center",
-            getClassName(props.compDef.style)
+            "flex items-center gap-2 grow",
+            {
+                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
+            },
+            getClassName(props.compDef.style),
         )}>
             {props.compDef.content ?
                 <label className="me-1"
