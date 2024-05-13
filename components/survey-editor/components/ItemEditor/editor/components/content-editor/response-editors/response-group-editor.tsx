@@ -47,8 +47,6 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'matrix':
             content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
-        case 'matrix':
-            break;
         case 'clozeQuestion':
             break;
         case 'consent':
