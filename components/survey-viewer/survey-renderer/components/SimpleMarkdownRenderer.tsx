@@ -1,6 +1,5 @@
+import EmbeddedMarkdownRenderer from '@/components/embedded-markdown-renderer';
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from "rehype-raw";
 
 
 interface MarkdownRendererProps {
@@ -10,21 +9,11 @@ interface MarkdownRendererProps {
 
 const SimpleMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
     return (
-        <ReactMarkdown
+        <EmbeddedMarkdownRenderer
             className={props.className}
-            components={{
-                a: ({ node, ...props }) => {
-                    return <a
-                        className='text-primary hover:underline'
-                        href={props.href as string} {...props} />
-                }
-            }}
-            rehypePlugins={[
-                rehypeRaw
-            ]}
         >
             {props.children}
-        </ReactMarkdown>
+        </EmbeddedMarkdownRenderer>
     );
 };
 

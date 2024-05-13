@@ -6,9 +6,9 @@ import { format, getYear, getMonth } from 'date-fns';
 import { addYears, getUnixTime, eachMonthOfInterval, startOfYear, endOfYear } from 'date-fns';
 import YearMonthSelector from './YearMonthSelector';
 import clsx from 'clsx';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { ArrowRightIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
-import NotImplemented from '@/components/NotImplemented';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
+
 
 
 interface DateInputProps extends CommonResponseComponentProps {
@@ -103,7 +103,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
         return (
             <div className="my-1 flex justify-between items-center">
                 <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled} className="datepicker-arrow-btn p-0 ms-3 ">
-                    <ArrowLeftIcon className="h-5 w-5" />
+                    <ArrowLeft className="h-5 w-5" />
                 </button>
                 <select
                     className='form-select rounded text-black'
@@ -131,7 +131,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                 </select>
 
                 <button onClick={increaseMonth} disabled={nextMonthButtonDisabled} className="datepicker-arrow-btn p-0 me-3">
-                    <ArrowRightIcon className='w-5 h-5' />
+                    <ArrowRight className='w-5 h-5' />
                 </button>
             </div>
         )
@@ -167,9 +167,9 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                 className="border-0 bg-white p-0 flex flex-row items-center rounded focus:outline-none focus:ring-2 focus:ring-primary-600/60"
             // onClick={() => datePickerRef.current?.setOpen(true)}
             >
-                <NotImplemented>
-                    date picker for preview
-                </NotImplemented>
+                <p>
+                    TODO date picker
+                </p>
                 {/*}
         <DatePicker
           id={props.parentKey}
