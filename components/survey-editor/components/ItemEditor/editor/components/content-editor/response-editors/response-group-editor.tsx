@@ -5,6 +5,11 @@ import EditorWrapper from '../editor-wrapper';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
+import Matrix from './matrix';
+import ValidatedRandomQuestion from './validated-random-question';
+import DateInputContentConfig from './date-input-content-config';
+import TextInput from './text-input';
+import DateInput from './date-input';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -25,10 +30,12 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <MultipleChoice surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'dateInput':
+            content = <DateInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'timeInput':
             break;
         case 'textInput':
+            content = <TextInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'multilineTextInput':
             break;
@@ -43,12 +50,16 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'responsiveMatrix':
             break;
         case 'matrix':
+            content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'clozeQuestion':
             break;
         case 'consent':
             break;
         case 'dropdown':
+            break;
+        case 'validatedRandomQuestion':
+            content = <ValidatedRandomQuestion surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         default:
             content = (

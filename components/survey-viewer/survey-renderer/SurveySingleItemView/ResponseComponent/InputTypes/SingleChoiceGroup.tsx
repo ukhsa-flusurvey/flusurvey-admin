@@ -200,6 +200,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
                         parentKey={optionKey}
                         key={option.key}
                         compDef={option}
+                        embedded={true}
                         prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
                         languageCode={props.languageCode}
                         responseChanged={setResponseForKey(option.key)}

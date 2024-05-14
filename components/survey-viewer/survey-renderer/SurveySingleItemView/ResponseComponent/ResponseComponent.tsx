@@ -24,6 +24,7 @@ import ClozeQuestion from './InputTypes/ClozeQuestion';
 import { CommonResponseComponentProps } from '../utils';
 import Time from './InputTypes/Time';
 import Consent from './InputTypes/Consent';
+import ValidatedRandomQuestion from './InputTypes/validated-random-question';
 
 
 interface ResponseComponentProps {
@@ -324,6 +325,16 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                     />
                 case 'cloze':
                     return <ClozeQuestion
+                        parentKey={currentKeyPath}
+                        key={respComp.key}
+                        languageCode={props.languageCode}
+                        compDef={respComp}
+                        prefill={getPrefillForItem(respComp)}
+                        responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
+                        dateLocales={props.dateLocales}
+                    />
+                case 'validatedRandomQuestion':
+                    return <ValidatedRandomQuestion
                         parentKey={currentKeyPath}
                         key={respComp.key}
                         languageCode={props.languageCode}
