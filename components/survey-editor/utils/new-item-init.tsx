@@ -166,6 +166,7 @@ export const generateNewItemForType = (props: {
                     editorItemColor: editorItemColor
                 }
             });
+            break;
         case 'responsiveSingleChoiceArray':
             newSurveyItem = SurveyItems.responsiveSingleChoiceArray({
                 parentKey: parentKey,
