@@ -9,6 +9,7 @@ import { Dot } from 'lucide-react';
 
 interface DropDownGroupProps extends CommonResponseComponentProps {
     fullWidth?: boolean;
+    embedded?: boolean;
     defaultClassName?: string;
 }
 
@@ -100,7 +101,12 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
     return (
         <div className={clsx(
             props.defaultClassName,
-            "flex items-center my-2")}>
+            "flex items-center my-2",
+            {
+                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
+
+            },
+        )}>
             {props.compDef.content ?
                 <Label
                     htmlFor={props.parentKey}

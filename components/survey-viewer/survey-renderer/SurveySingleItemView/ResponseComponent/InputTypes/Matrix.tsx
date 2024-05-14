@@ -281,6 +281,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                         <div>
                             <DropDownGroup
                                 compDef={cell}
+                                embedded={true}
                                 languageCode={props.languageCode}
                                 responseChanged={handleCellResponseChange(compDef.key, cell.key)}
                                 prefill={getCellResponse(compDef.key, cell.key)}

@@ -99,6 +99,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                     return <DropDownGroup
                         key={optionKey}
                         compDef={item}
+                        embedded={true}
                         languageCode={props.languageCode}
                         responseChanged={handleItemResponse(item.key ? item.key : 'undefined')}
                         prefill={(prefill && prefill.key === item.key) ? prefill : undefined}
