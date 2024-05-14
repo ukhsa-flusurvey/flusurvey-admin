@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import TextInputContentConfig from './text-input-content-config';
 import NumberInputContentConfig from './number-input-content-config';
+import DateInputContentConfig from './date-input-content-config';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -164,7 +165,16 @@ export const ContentItem = (props: {
             case 'timeInput':
                 return <div>Option with time input</div>;
             case 'dateInput':
-                return <div>Option with date input</div>;
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='WITH DATE INPUT'
+                    defaultOpen={props.index > -1}
+                >
+                    <DateInputContentConfig
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                    />
+                </OptionContentTabCollapsible>;
             default:
                 return <div>Unknown option type</div>;
         }

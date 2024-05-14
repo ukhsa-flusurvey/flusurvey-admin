@@ -7,8 +7,9 @@ import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
 import Matrix from './matrix';
 import ValidatedRandomQuestion from './validated-random-question';
-import DateInputContent from './date-input-content';
+import DateInputContentConfig from './date-input-content-config';
 import TextInput from './text-input';
+import DateInput from './date-input';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -29,7 +30,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <MultipleChoice surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'dateInput':
-            // content = <DateInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            content = <DateInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'timeInput':
             break;
