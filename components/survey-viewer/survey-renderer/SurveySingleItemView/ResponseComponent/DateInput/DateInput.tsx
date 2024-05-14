@@ -102,7 +102,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                         <CalendarDaysIcon className="m-1 hidden sm:inline-block size-4" />
                         {selectedDate ? format(selectedDate, "PPP", {
                             locale: props.dateLocales.find(dl => dl.code === props.languageCode)?.locale
-                        }) : <span>
+                        }) : <span className='truncate'>
                             {getLocaleStringTextByCode(props.compDef.description, props.languageCode)}
                         </span>}
                     </Button>
@@ -132,21 +132,22 @@ const DateInput: React.FC<DateInputProps> = (props) => {
             break;
     }
 
+    const labelText = getLocaleStringTextByCode(props.compDef.content, props.languageCode);
+
     return (
         <div className={clsx(
             props.defaultClassName,
-            "flex items-center gap-2 grow",
+            "flex items-center gap-2 grow flex-wrap",
             {
                 'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
             },
             getClassName(props.compDef.style),
         )}>
-            {props.compDef.content ?
-                <label className="me-1"
-                    htmlFor={props.parentKey}
-                >
-                    {getLocaleStringTextByCode(props.compDef.content, props.languageCode)}
-                </label>
+            {labelText ? <label className=""
+                htmlFor={props.parentKey}
+            >
+                {labelText}
+            </label>
                 : null}
             {datepicker}
         </div >
