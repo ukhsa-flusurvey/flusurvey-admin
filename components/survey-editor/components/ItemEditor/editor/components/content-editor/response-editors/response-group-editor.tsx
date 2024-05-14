@@ -7,9 +7,9 @@ import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
 import Matrix from './matrix';
 import ValidatedRandomQuestion from './validated-random-question';
-import DateInputContentConfig from './date-input-content-config';
 import TextInput from './text-input';
 import DateInput from './date-input';
+import SliderNumeric from './slider-numeric';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -42,6 +42,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'numericInput':
             break;
         case 'sliderNumeric':
+            content = <SliderNumeric surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'responsiveSingleChoiceArray':
             break;
