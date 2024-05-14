@@ -99,7 +99,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
     const isSimpleSelect = slotDef.allowedTypes?.length === 1 && slotDef.allowedTypes[0].type === 'select';
 
-    const isDefined = currentSlotTypes.at(props.currentIndex) !== undefined;
+    const isDefined = currentSlotTypes.at(props.currentIndex) !== undefined && currentSlotTypes.at(props.currentIndex) !== '';
 
     // Empty slot:
     if (!isDefined && !isSimpleSelect) {

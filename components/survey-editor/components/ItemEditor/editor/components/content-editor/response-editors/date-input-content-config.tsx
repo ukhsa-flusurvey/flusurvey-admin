@@ -6,6 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
+import ExpArgEditorForDate from './exp-arg-editor-for-date';
 
 interface DateInputContentConfigProps {
     component: ItemComponent;
@@ -20,6 +21,9 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
     const currentMode = props.component.properties?.dateInputMode as ExpressionArg || {
         str: 'YMD',
     };
+
+    const currentMin = props.component.properties?.min as ExpressionArg | undefined;
+    const currentMax = props.component.properties?.max as ExpressionArg | undefined;
 
     return (
         <div className='space-y-4'>
@@ -102,11 +106,38 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
             </div>
 
             <div>
-                min
+                <ExpArgEditorForDate
+                    label='Min'
+                    expArg={currentMin}
+                    onChange={(argValue) => {
+                        const currentData = props.component.properties || {};
+                        currentData.min = argValue;
+                        props.onChange({
+                            ...props.component,
+                            properties: {
+                                ...currentData,
+                            }
+                        })
+
+                    }}
+                />
             </div>
 
             <div>
-                max
+                <ExpArgEditorForDate
+                    label='Max'
+                    expArg={currentMax}
+                    onChange={(argValue) => {
+                        const currentData = props.component.properties || {};
+                        currentData.max = argValue;
+                        props.onChange({
+                            ...props.component,
+                            properties: {
+                                ...currentData,
+                            }
+                        })
+                    }}
+                />
             </div>
         </div>
 
