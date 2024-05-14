@@ -1,13 +1,13 @@
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import TextInputContentConfig from './text-input-content-config';
+import NumberInputContentConfig from './number-input-content-config';
 
-interface TextInputProps {
+interface NumberInputProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const TextInput: React.FC<TextInputProps> = (props) => {
+const NumberInput: React.FC<NumberInputProps> = (props) => {
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
@@ -17,14 +17,14 @@ const TextInput: React.FC<TextInputProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const textInputCompIndex = rg.items.findIndex(comp => comp.role === 'input');
-    if (textInputCompIndex === undefined || textInputCompIndex === -1) {
-        return <p>Text input not found</p>;
+    const numberInputCompIndex = rg.items.findIndex(comp => comp.role === 'numberInput');
+    if (numberInputCompIndex === undefined || numberInputCompIndex === -1) {
+        return <p>Number input not found</p>;
     }
 
     const onChange = (newComp: ItemComponent) => {
         const existingComponents = props.surveyItem.components?.items || [];
-        (existingComponents[rgIndex] as ItemGroupComponent).items[textInputCompIndex] = newComp;
+        (existingComponents[rgIndex] as ItemGroupComponent).items[numberInputCompIndex] = newComp;
         props.onUpdateSurveyItem({
             ...props.surveyItem,
             components: {
@@ -37,11 +37,11 @@ const TextInput: React.FC<TextInputProps> = (props) => {
     };
 
     return (
-        <TextInputContentConfig
-            component={rg.items[textInputCompIndex]}
+        <NumberInputContentConfig
+            component={rg.items[numberInputCompIndex]}
             onChange={onChange}
         />
     );
 };
 
-export default TextInput;
+export default NumberInput;

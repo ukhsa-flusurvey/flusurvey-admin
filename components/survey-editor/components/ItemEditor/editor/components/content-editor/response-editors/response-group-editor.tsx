@@ -10,6 +10,7 @@ import ValidatedRandomQuestion from './validated-random-question';
 import TextInput from './text-input';
 import DateInput from './date-input';
 import SliderNumeric from './slider-numeric';
+import NumberInput from './number-input';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -40,6 +41,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'multilineTextInput':
             break;
         case 'numericInput':
+            content = <NumberInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'sliderNumeric':
             content = <SliderNumeric surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
