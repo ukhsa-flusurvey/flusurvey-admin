@@ -11,6 +11,7 @@ import TextInput from './text-input';
 import DateInput from './date-input';
 import SliderNumeric from './slider-numeric';
 import NumberInput from './number-input';
+import DropdownEditor from './dropdown-editor';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -60,6 +61,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'consent':
             break;
         case 'dropdown':
+            content = <DropdownEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'validatedRandomQuestion':
             content = <ValidatedRandomQuestion surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

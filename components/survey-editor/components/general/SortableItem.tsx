@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 export default function SortableItem(props: {
     id: string;
     children: React.ReactNode;
+    className?: string;
 }) {
     const {
         attributes,
@@ -27,7 +28,8 @@ export default function SortableItem(props: {
             {...listeners}
             className={cn(
                 'cursor-pointer relative',
-                { 'opacity-75': isDragging }
+                { 'opacity-75': isDragging },
+                props.className
             )}
         >
             {props.children}

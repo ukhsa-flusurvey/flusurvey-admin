@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import DropdownContentConfig from './dropdown-content-config';
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;
@@ -50,44 +51,14 @@ const CellItem = (props: {
                             />
 
                             <div className=''>
-                                <Label
-                                    htmlFor={props.component.key + '-dropdown-options'}
-                                >
-                                    <span>Dropdown options</span>
-                                </Label>
-                                <Textarea
-                                    id={props.component.key + '-dropdown-options'}
-                                    className='my-1'
-                                    value={dropdownOptions}
-                                    placeholder='Enter dropdown options...'
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        const newDropdownOptions = value.split('\n');
-
-                                        const newDropdownOptionItems = newDropdownOptions.map((label, index) => {
-                                            const existingDropdownOptionItem = dropdownOptionItems.length < index + 1 ? {
-                                                key: index.toString(),
-                                                role: 'text',
-                                                content: generateLocStrings(new Map([[selectedLanguage, label]]))
-                                            } : {
-                                                ...dropdownOptionItems[index],
-                                            }
-
-                                            const updatedContent = localisedObjectToMap(existingDropdownOptionItem.content);
-                                            updatedContent.set(selectedLanguage, label);
-                                            existingDropdownOptionItem.content = generateLocStrings(updatedContent);
-                                            return existingDropdownOptionItem;
-                                        })
-
-                                        props.onUpdateComponent({
-                                            ...props.component,
-                                            items: newDropdownOptionItems,
-                                        })
+                                <DropdownContentConfig
+                                    hideLabel={true}
+                                    component={props.component}
+                                    onChange={(newComp) => {
+                                        props.onUpdateComponent(newComp);
                                     }}
                                 />
-                                <p className='text-xs'>
-                                    One option label per line.
-                                </p>
+
                             </div>
                         </TabWrapper>
                     },
