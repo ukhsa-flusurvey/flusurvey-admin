@@ -1,5 +1,3 @@
-import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { getInputMaxWidth, getLabelPlacementStyle } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
@@ -9,8 +7,9 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
+import ExpArgEditorForNum from './exp-arg-editor-for-num';
 
 interface NumberInputContentConfigProps {
     component: ItemComponent;
@@ -20,12 +19,15 @@ interface NumberInputContentConfigProps {
 const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
-    const [currentExpArgSlot, setCurrentExpArgSlot] = useState<string | undefined>(undefined)
 
     const currentLabel = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
     const currentPlaceholder = localisedObjectToMap(props.component.description).get(selectedLanguage) || '';
     const inputMaxWidth = getInputMaxWidth(props.component.style);
     const placeAfter = getLabelPlacementStyle(props.component.style) === 'after';
+
+    const currentMin = props.component.properties?.min as ExpressionArg | undefined;
+    const currentMax = props.component.properties?.max as ExpressionArg | undefined;
+    const currentStep = props.component.properties?.stepSize as ExpressionArg | undefined;
 
     return (
         <div className='space-y-4'
@@ -168,82 +170,49 @@ const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props
 
             <Separator />
 
-
-
-            <ExpArgEditor
-                availableExpData={[
-                    props.component.properties?.min as ExpressionArg | undefined,
-                ]}
-                availableMetadata={{
-                    slotTypes: currentExpArgSlot ? [currentExpArgSlot] : []
-                }}
-                expRegistry={{
-                    expressionDefs: surveyEngineRegistry,
-                    builtInSlotTypes: supportedBuiltInSlotTypes,
-                    categories: surveyEngineCategories,
-                }}
-                currentIndex={0}
-                slotDef={{
-                    label: 'Min',
-                    required: false,
-                    allowedTypes: [
-                        {
-                            id: 'numeric-input',
-                            type: 'num'
-                        },
-                        {
-                            id: 'exp-slot',
-                            type: 'expression',
-                            allowedExpressionTypes: ['num']
+            <ExpArgEditorForNum
+                label='Min'
+                expArg={currentMin}
+                onChange={(argValue) => {
+                    const currentData = props.component.properties || {};
+                    currentData.min = argValue;
+                    props.onChange({
+                        ...props.component,
+                        properties: {
+                            ...currentData,
                         }
-                    ],
-
+                    })
                 }}
-                onChange={(newArgs, slotTypes) => {
-                    // console.log('newArgs', newArgs);
-                    // console.log('slotTypes', slotTypes);
-                    setCurrentExpArgSlot(slotTypes[0])
-                    const updatedComponent = { ...props.component };
-                    updatedComponent.properties = {
-                        ...updatedComponent.properties,
-                        min: newArgs[0]
-                    }
-                    props.onChange(updatedComponent);
-                }}
-
-
             />
-            <ExpArgEditor
-                availableExpData={[]}
-                expRegistry={{
-                    builtInSlotTypes: [],
-                    expressionDefs: [],
-                    categories: [],
-                }}
-                currentIndex={0}
-                slotDef={{
-                    label: 'Max',
-                    required: false,
-                    allowedTypes: [],
 
+            <ExpArgEditorForNum
+                label='Max'
+                expArg={currentMax}
+                onChange={(argValue) => {
+                    const currentData = props.component.properties || {};
+                    currentData.max = argValue;
+                    props.onChange({
+                        ...props.component,
+                        properties: {
+                            ...currentData,
+                        }
+                    })
                 }}
-
             />
-            <ExpArgEditor
-                availableExpData={[]}
-                expRegistry={{
-                    builtInSlotTypes: [],
-                    expressionDefs: [],
-                    categories: [],
-                }}
-                currentIndex={0}
-                slotDef={{
-                    label: 'Step size',
-                    required: false,
-                    allowedTypes: [],
 
+            <ExpArgEditorForNum
+                label='Step'
+                expArg={currentStep}
+                onChange={(argValue) => {
+                    const currentData = props.component.properties || {};
+                    currentData.stepSize = argValue;
+                    props.onChange({
+                        ...props.component,
+                        properties: {
+                            ...currentData,
+                        }
+                    })
                 }}
-
             />
 
         </div>
