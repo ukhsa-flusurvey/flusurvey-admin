@@ -137,7 +137,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
     return (
         <div className={clsx(
             props.defaultClassName,
-            "flex items-center gap-2 grow flex-wrap",
+            "flex items-center gap-2 grow flex-wrap md:flex-nowrap",
             {
                 'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
             },
