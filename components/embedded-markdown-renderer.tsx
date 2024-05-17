@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import ContentLink from './content-link';
 import { cn } from '@/lib/utils';
 import { H1, H2 } from './headings';
+import rehypeRaw from 'rehype-raw'
 
 
 interface MarkdownRendererProps {
@@ -82,6 +83,9 @@ const EmbeddedMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
                 li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
                     <li className={cn("mt-0", className)} {...props} />
                 ),
+                u: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+                    <u className={cn("underline-offset-4", className)} {...props} />
+                ),
                 blockquote: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
                     <blockquote
                         className={cn("mt-3 border-l-2 pl-6 italic", className)}
@@ -89,6 +93,7 @@ const EmbeddedMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
                     />
                 ),
             }}
+            rehypePlugins={[rehypeRaw]}
         >
             {props.children}
         </ReactMarkdown>
