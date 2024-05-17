@@ -77,7 +77,7 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
                     <Dot className='size-3 text-muted-foreground' />
                 </span>
                 {
-                    (props.compDef as ItemGroupComponent).items.map(
+                    (props.compDef as ItemGroupComponent).items?.map(
                         item => {
                             if (item.displayCondition) {
                                 return null;

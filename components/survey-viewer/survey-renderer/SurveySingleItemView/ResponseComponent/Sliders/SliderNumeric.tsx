@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ItemComponent, ResponseItem } from 'survey-engine/data_types';
 import { getLocaleStringTextByCode } from '../../utils';
 import { Slider } from './SliderPrimitive';
-import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 
@@ -66,6 +65,11 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
     const fullKey = [props.parentKey, props.compDef.key].join('.');
     const noResponseText = getLocaleStringTextByCode(props.compDef.description, props.languageCode);
 
+    const minValue = props.compDef.properties?.min as number || 0;
+    const maxValue = props.compDef.properties?.max !== undefined ? props.compDef.properties?.max as number : 100;
+    const stepSize = props.compDef.properties?.stepSize as number || 1;
+
+
     return (
         <div className={cn(
             'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
@@ -88,17 +92,17 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
                         aria-labelledby={props.compDef.content ? "slider-numeric" : undefined}
                         value={[typeof inputValue === 'number' ? inputValue : 0]}
                         onValueChange={handleSliderChange(props.compDef.key)}
-                        min={props.compDef.properties?.min as number}
-                        max={props.compDef.properties?.max as number}
-                        step={props.compDef.properties?.stepSize as number}
+                        min={minValue}
+                        max={maxValue}
+                        step={stepSize}
                     />
                     <div className="flex px-1 font-bold text-lg mt-2">
                         <span className="text-center">
-                            {props.compDef.properties?.min as number}
+                            {minValue}
                         </span>
                         <span className='grow'></span>
                         <span className="text-center">
-                            {props.compDef.properties?.max as number}
+                            {maxValue}
                         </span>
                     </div>
                 </div>
