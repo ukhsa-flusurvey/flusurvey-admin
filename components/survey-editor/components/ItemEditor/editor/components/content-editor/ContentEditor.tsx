@@ -6,7 +6,7 @@ import ItemPreview from './ItemPreview';
 import { useDebounceCallback } from 'usehooks-ts';
 import ItemTypeEditorSelector from './ItemTypeEditorSelector';
 import { AlertTriangle, Eye, Info, Pencil } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 
 interface ContentEditorProps {
     surveyItem: SurveyItem;
@@ -29,10 +29,7 @@ const ContentEditor: React.FC<ContentEditorProps> = (props) => {
     }, [currentSurveyItem]);
 
 
-
     return (
-
-
         <div className='grow h-full'>
             <ResizablePanelGroup direction='horizontal' >
                 <ResizablePanel

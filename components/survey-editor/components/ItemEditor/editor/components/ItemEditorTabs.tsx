@@ -4,6 +4,7 @@ import React from 'react';
 import ContentEditor from './content-editor/ContentEditor';
 import { SurveyItem } from 'survey-engine/data_types';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
+import ValidationsTab from './validation-editor/validations-tab';
 
 
 interface ItemEditorTabsProps {
@@ -130,7 +131,10 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                 </TabsContent>
 
                 <TabsContent value="validation">
-                    <div>Validation</div>
+                    <ValidationsTab
+                        surveyItem={props.surveyItem}
+                        onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    />
                 </TabsContent>
 
                 <TabsContent value="advanced">
