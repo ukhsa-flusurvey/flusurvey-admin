@@ -16,7 +16,8 @@ import {
     BoldItalicUnderlineToggles,
     ListsToggle,
     diffSourcePlugin,
-    DiffSourceToggleWrapper
+    DiffSourceToggleWrapper,
+    linkPlugin
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import './markdown-editor.css'
@@ -36,6 +37,7 @@ const InitialisedMdxEditor: React.FC<InitialisedMdxEditorProps & MDXEditorProps>
                 headingsPlugin(),
                 listsPlugin(),
                 quotePlugin(),
+                linkPlugin(),
                 thematicBreakPlugin(),
                 markdownShortcutPlugin(),
                 diffSourcePlugin({ viewMode: 'rich-text' }),
