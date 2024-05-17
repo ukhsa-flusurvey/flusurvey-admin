@@ -12,6 +12,7 @@ import DateInput from './date-input';
 import SliderNumeric from './slider-numeric';
 import NumberInput from './number-input';
 import DropdownEditor from './dropdown-editor';
+import Consent from './consent';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -59,6 +60,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'clozeQuestion':
             break;
         case 'consent':
+            content = <Consent surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'dropdown':
             content = <DropdownEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

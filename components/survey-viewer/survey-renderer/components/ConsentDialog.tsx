@@ -1,8 +1,8 @@
-import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
-import DialogBtn from './DialogBtn';
 
-import ReactMarkdown from 'react-markdown';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import SimpleMarkdownRenderer from './SimpleMarkdownRenderer';
+import { Separator } from '@/components/ui/separator';
 
 
 interface ConsentDialogProps {
@@ -11,10 +11,9 @@ interface ConsentDialogProps {
     content?: string;
     cancelBtn: string;
     acceptBtn: string;
-    size?: 'sm' | 'lg' | 'xl';
-    fullScreenFrom?: 'sm-down' | 'md-down' | 'lg-down' | 'xl-down' | 'xxl-down';
     onConfirmed: () => void;
     onCancelled: () => void;
+    onClose: () => void;
     dialogPaddingXClass?: string;
     dialogPaddingYClass?: string;
 }
@@ -38,73 +37,58 @@ const ConsentDialog: React.FC<ConsentDialogProps> = (props) => {
     }, [props.open])
 
     return (
-        <div>
-            TODO:
-        </div>
+        <AlertDialog
+            open={props.open}
+            onOpenChange={(open) => {
+                if (!open) {
+                    props.onClose();
+                }
+            }}
+        >
 
+            <AlertDialogContent className='overflow-y-scroll max-h-svh pb-12 sm:pb-6'>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        {props.title}
+                    </AlertDialogTitle>
+                </AlertDialogHeader>
+                <Separator />
+
+                <div
+                    ref={containerRef}
+                    onScroll={() => handleScroll()}
+                    tabIndex={0}
+                >
+                    {props.content ? <div>
+                        <SimpleMarkdownRenderer>
+                            {props.content}
+                        </SimpleMarkdownRenderer>
+                    </div> : null}
+
+
+                </div>
+
+                <AlertDialogFooter>
+                    <AlertDialogCancel
+                        onClick={() => {
+                            props.onCancelled();
+                        }}
+                    >
+                        {props.cancelBtn}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        disabled={!scrollComplete}
+                        onClick={() => {
+                            props.onConfirmed();
+                        }}
+                    >
+                        {props.acceptBtn}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+
+            </AlertDialogContent>
+        </AlertDialog>
     );
 };
 
 export default ConsentDialog;
-{/* <Modal isOpen={props.open} isDismissable={false}
-            backdrop='blur'
-        >
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader>
-                            {props.title}
-                        </ModalHeader>
-                        <ModalBody>
-                            {props.content ?
-                                <div
-                                    className={clsx(
-                                        // styles.content,
-                                        "pb-2 pt-3 bg-white overflow-auto")}
-                                    ref={containerRef}
-                                    onScroll={() => handleScroll()}
-
-        tabIndex = { 0}
-            >
-            <ReactMarkdown>
-                {props.content}
-            </ReactMarkdown>
-                                </div >
-                                : null}
-
-                        </ModalBody >
-    <ModalFooter>
-        <div className="container-fluid">
-            <div className={clsx(
-                "bg-grey-1",
-                "pt-2 pb-4 pb-sm-3",
-                "row"
-                // styles.btns
-            )}>
-                <div className="col-12 col-sm-6 p-0 pe-sm-1">
-                    <DialogBtn
-                        className="w-100"
-                        color="primary"
-                        onClick={props.onConfirmed}
-                        label={props.acceptBtn}
-                        disabled={!scrollComplete}
-                    />
-
-                </div>
-                <div className="col-12 col-sm-6 p-0 ps-sm-2">
-                    <DialogBtn
-                        className="w-100 my-2 my-sm-0"
-                        color="primary"
-                        outlined={true}
-                        onClick={props.onCancelled}
-                        label={props.cancelBtn}
-                    />
-                </div>
-            </div>
-        </div>
-    </ModalFooter>
-                    </>
-                )}
-            </ModalContent >
-        </Modal >
-    */}
