@@ -5128,10 +5128,17 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-survey-engine@^1.2.0, survey-engine@^1.2.1:
+survey-engine@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.2.1.tgz#214099ca904782c454e14962b43624f3899b16f9"
   integrity sha512-q+9m16D+Zfu5F7u0BMol5HcrfXwQaVbrfQgEyo7HMt5BLsSL6aOwvznvQaHT0wdfCruAY3Dc3LHr/ZQ6qjVdyQ==
+  dependencies:
+    date-fns "^2.29.3"
+
+survey-engine@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.2.5.tgz#a2eacc3b8ee9fb6b2edbf52d0a009d23c6f9ab65"
+  integrity sha512-kB4lduviQk0hx0ihTm5If8GJbkdyB02mCXnzQOq0pMf0jQuTQw5MjYqSRG/YL76eihkenlAB7HQ4Hmlv2dlGAg==
   dependencies:
     date-fns "^2.29.3"
 

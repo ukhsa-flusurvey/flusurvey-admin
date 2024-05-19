@@ -60,6 +60,7 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
     const renderedInput = <Select
         value={getSelectedKey()}
         onValueChange={handleSelectionChange}
+        disabled={props.compDef.disabled === true || props.disabled === true}
     >
         <SelectTrigger
             id={props.parentKey}

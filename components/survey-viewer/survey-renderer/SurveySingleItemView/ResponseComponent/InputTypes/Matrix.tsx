@@ -272,7 +272,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                     const cellKey = [rowKey, cell.key].join('.');
                     const headerLabel = (headerRow) && getLocaleStringTextByCode((headerRow as ItemGroupComponent).items.at(cindex)?.content, props.languageCode) || '';
 
-
                     return <div key={cellKey}
                         role="cell" className="flex-1 px-2 py-0.5 sm:1.5">
                         <div className='block md:hidden text-sm font-semibold mb-1' role="columnheader">
