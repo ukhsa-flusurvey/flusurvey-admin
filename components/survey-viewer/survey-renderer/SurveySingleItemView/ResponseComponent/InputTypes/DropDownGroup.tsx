@@ -98,6 +98,8 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
         </SelectContent>
     </Select>;
 
+    const labelText = getLocaleStringTextByCode(props.compDef.content, props.languageCode);
+
     return (
         <div className={clsx(
             props.defaultClassName,
@@ -107,11 +109,11 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
 
             },
         )}>
-            {props.compDef.content ?
+            {labelText ?
                 <Label
                     htmlFor={props.parentKey}
                     className="m-0 me-2 shrink" style={{ minWidth: 80 }}>
-                    {getLocaleStringTextByCode(props.compDef.content, props.languageCode)}
+                    {labelText}
                 </Label>
                 : null}
             {renderedInput}
