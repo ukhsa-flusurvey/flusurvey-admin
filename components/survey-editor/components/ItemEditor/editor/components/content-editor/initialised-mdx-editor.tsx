@@ -17,7 +17,9 @@ import {
     ListsToggle,
     diffSourcePlugin,
     DiffSourceToggleWrapper,
-    linkPlugin
+    linkPlugin,
+    imagePlugin,
+    jsxPlugin
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import './markdown-editor.css'
@@ -38,6 +40,8 @@ const InitialisedMdxEditor: React.FC<InitialisedMdxEditorProps & MDXEditorProps>
                 listsPlugin(),
                 quotePlugin(),
                 linkPlugin(),
+                imagePlugin(),
+                jsxPlugin(),
                 thematicBreakPlugin(),
                 markdownShortcutPlugin(),
                 diffSourcePlugin({ viewMode: 'rich-text' }),
