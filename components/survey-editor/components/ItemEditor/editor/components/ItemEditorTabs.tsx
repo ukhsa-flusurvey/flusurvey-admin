@@ -5,6 +5,7 @@ import ContentEditor from './content-editor/ContentEditor';
 import { SurveyItem } from 'survey-engine/data_types';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import ValidationsTab from './validation-editor/validations-tab';
+import GroupItemsEditor from './group-items-editor/group-items-editor';
 
 
 interface ItemEditorTabsProps {
@@ -94,6 +95,13 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
 
                     </TabsList>
                 </div>
+
+                <TabsContent value="items">
+                    <GroupItemsEditor
+                        surveyItem={props.surveyItem}
+                        onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    />
+                </TabsContent>
 
                 <TabsContent value="content"
                     className='grow mt-0'
