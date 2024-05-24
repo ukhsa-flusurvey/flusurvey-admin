@@ -22,7 +22,7 @@ const SurveyVersionMenu: React.FC<SurveyVersionMenuProps> = (props) => {
     const router = useRouter();
 
     const onOpenInEditor = () => {
-        router.push(`/tools/study-configurator/${props.studyKey}/surveys/${props.surveyKey}/${props.versionId}`);
+        router.push(`/tools/editors/survey-from-server?studyKey=${props.studyKey}&surveyKey=${props.surveyKey}&versionId=${props.versionId}`);
     }
 
     const onDownload = () => {

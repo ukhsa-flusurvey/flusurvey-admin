@@ -81,7 +81,7 @@ const SurveyOverview: React.FC<SurveyOverviewProps> = async (props) => {
                     asChild
                 >
                     <Link
-                        href={`/tools/study-configurator/${props.studyKey}/surveys/${props.surveyKey}/${latestVersionId}`}
+                        href={`/tools/editors/survey-from-server?studyKey=${props.studyKey}&surveyKey=${props.surveyKey}&versionId=${latestVersionId}`}
                     >
                         Open Current Version in Editor
                     </Link>
