@@ -289,9 +289,9 @@ export const getItemColorFromID = (id: string): string => {
 
 export const getItemColor = (surveyItem: SurveyItem): string | undefined => {
     if ((surveyItem as SurveySingleItem).type === 'pageBreak') {
-        return undefined;
+        return '#991b1b';
     } else if ((surveyItem as SurveySingleItem).type === 'surveyEnd') {
-        return undefined;
+        return '#991b1b';
     }
 
     const itemColor = surveyItem.metadata?.editorItemColor || getItemColorFromID(surveyItem.key);
