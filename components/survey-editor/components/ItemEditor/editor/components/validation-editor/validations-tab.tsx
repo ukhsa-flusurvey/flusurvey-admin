@@ -2,8 +2,9 @@ import AddDropdown from '@/components/survey-editor/components/general/add-dropd
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import { CheckCircle } from 'lucide-react';
 import React from 'react';
-import { SurveyItem, SurveySingleItem, Validation } from 'survey-engine/data_types';
+import { ItemGroupComponent, SurveyItem, SurveySingleItem, Validation } from 'survey-engine/data_types';
 import ValidationEditorItem from './validation-editor-item';
+import { SurveyEngine } from 'case-editor-tools/surveys/survey-engine-expressions';
 
 interface ValidationsTabProps {
     surveyItem: SurveyItem;
@@ -16,15 +17,8 @@ const ValidationsTab: React.FC<ValidationsTabProps> = (props) => {
 
     const onAddValidation = (newValidationType: string) => {
 
-        if (newValidationType === 'simpleRequired') {
-            const typeInfos = getItemTypeInfos(props.surveyItem);
 
-            // handle special question types where we need to generate validation per row / columns etc.
-            if (typeInfos.key === 'responsiveSingleChoiceArray') {
-                // TODO: handle this
-                return;
-            }
-            // add simple has response validation
+        if (newValidationType === 'simpleRequired') {
             const newValidation: Validation = {
                 key: Math.random().toString(36).substring(9),
                 type: 'hard',
@@ -36,6 +30,36 @@ const ValidationsTab: React.FC<ValidationsTabProps> = (props) => {
                     ]
                 }
             }
+
+            const typeInfos = getItemTypeInfos(props.surveyItem);
+
+            // handle special question types where we need to generate validation per row / columns etc.
+            if (typeInfos.key === 'responsiveSingleChoiceArray') {
+                // todo: find rows
+                const rg = (props.surveyItem as SurveySingleItem).components?.items.find(c => c.role === 'responseGroup');
+                if (!rg) {
+                    return;
+                }
+                const rsca = (rg as ItemGroupComponent).items?.find(c => c.role === 'responsiveSingleChoiceArray');
+                if (!rsca) {
+                    return;
+                }
+                console.log(rsca)
+
+                const rows = (rsca as ItemGroupComponent).items?.filter(c => c.role === 'row');
+                if (!rows || rows.length === 0) {
+                    return;
+                }
+
+                newValidation.rule = SurveyEngine.logic.and(
+                    ...rows.map(c => SurveyEngine.hasResponse(
+                        props.surveyItem.key,
+                        `rg.rsca.${c.key}`
+                    ))
+                )
+            }
+
+
             props.onUpdateSurveyItem({
                 ...props.surveyItem,
                 validations: [
