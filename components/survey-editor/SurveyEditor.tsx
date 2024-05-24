@@ -16,6 +16,10 @@ import InitNewSurveyDialog from './components/init-new-survey-dialog';
 
 interface SurveyEditorProps {
     initialSurvey?: Survey;
+    notLatestVersion?: boolean;
+    embedded?: boolean;
+    onUploadNewVersion?: (survey?: Survey) => void;
+    onExit?: () => void;
 }
 
 
@@ -114,9 +118,13 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     currentEditorMode={mode}
                     onChangeMode={setMode}
                     noSurveyOpen={!survey}
+                    embedded={props.embedded}
                     onSave={() => setOpenSaveDialog(true)}
                     onOpen={() => setOpenLoadDialog(true)}
                     onNew={() => setOpenNewDialog(true)}
+                    onExit={() => { props.onExit && props.onExit() }}
+                    onUploadNewVersion={() => { props.onUploadNewVersion && props.onUploadNewVersion(survey) }}
+                    notLatestVersion={props.notLatestVersion}
                 />
 
                 <div className='grow overflow-hidden flex flex-col'>
