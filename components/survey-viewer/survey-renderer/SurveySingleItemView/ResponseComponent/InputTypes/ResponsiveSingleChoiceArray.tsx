@@ -323,27 +323,11 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
             return <p>No options found.</p>;
         }
 
-        const useFixedLayout = props.compDef.style?.find(st => st.key === 'tableModeLayout')?.value === 'fixed';
-        const useFirstColWidth = props.compDef.style?.find(st => st.key === 'tableModeFirstColWidth')?.value;
-        const tableClassName = props.compDef.style?.find(st => st.key === 'tableModeClassName')?.value;
-        const tableOptionsClassName = options.style?.find(st => st.key === 'tableModeClassName')?.value;
-
         return <div className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'>
-            <table className={clsx(
-                "table m-0 ",
-                tableClassName
-            )}
-                style={useFixedLayout ? {
-                    tableLayout: 'fixed',
-                } : undefined}
-            >
+            <table className={"table m-0 "}>
                 <thead>
-                    <tr
-                        className={cn(
-                            tableOptionsClassName)}>
-                        <th scope="col" style={useFirstColWidth ? {
-                            width: useFirstColWidth
-                        } : undefined}></th>
+                    <tr>
+                        <th scope="col"></th>
 
                         {options.items.map(item => <th
                             key={props.compDef + '.' + item.key}
