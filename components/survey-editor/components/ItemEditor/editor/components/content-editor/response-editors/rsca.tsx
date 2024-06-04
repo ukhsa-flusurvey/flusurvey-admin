@@ -1,13 +1,16 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
+import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Check, Circle, Trash2, X } from 'lucide-react';
-import React from 'react';
+import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
+import { Check, Circle, GripHorizontal, GripVertical, Trash2, X } from 'lucide-react';
+import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
 interface RscaProps {
@@ -57,13 +60,15 @@ const KeyEditor = (props: {
     }
 
 
-    return <div className='flex items-center gap-2'>
+    return <div className='flex items-center gap-2'
+        data-no-dnd="true"
+    >
         <Label htmlFor={'item-key-' + props.currentKey}>
             Key
         </Label>
         <Input
             id={'validation-key-' + props.currentKey}
-            className='w-full'
+            className='w-32'
             value={editedKey}
             onChange={(e) => {
                 const value = e.target.value;
@@ -104,12 +109,17 @@ const OptionEditor = (props: {
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
 }) => {
+    const { selectedLanguage } = useContext(SurveyContext);
 
+    const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
 
     return <SortableItem
         id={props.option.key!}
     >
-        <div className='flex border border-border rounded-md p-2 relative'>
+        <div className='border border-border rounded-md p-2 relative space-y-2 bg-slate-50'>
+            <div className='absolute left-1/2 top-0'>
+                <GripHorizontal className='size-4' />
+            </div>
             <div className='flex items-center gap-2 w-full'>
                 <div className='grow'>
                     <KeyEditor
@@ -136,6 +146,30 @@ const OptionEditor = (props: {
                     <Trash2 className='size-4' />
                 </Button>
             </div>
+
+            <Label
+                className='flex items-center gap-2'
+                htmlFor={`option-label-${props.option.key}`}
+            >
+                <span>
+                    Label
+                </span>
+                <Input
+                    id={`option-label-${props.option.key}`}
+                    className='w-full'
+                    value={optionLabel || ''}
+                    placeholder='Enter option label...'
+                    onChange={(e) => {
+                        const updatedComponent = { ...props.option };
+                        const updatedContent = localisedObjectToMap(updatedComponent.content);
+                        updatedContent.set(selectedLanguage, e.target.value);
+                        updatedComponent.content = generateLocStrings(updatedContent);
+                        props.onChange(updatedComponent)
+                    }}
+                />
+            </Label>
+
+
         </div>
 
     </SortableItem>
