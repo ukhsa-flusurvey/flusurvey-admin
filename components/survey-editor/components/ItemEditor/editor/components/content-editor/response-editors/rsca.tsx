@@ -1,6 +1,10 @@
+import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Circle } from 'lucide-react';
 import React from 'react';
-import { ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
 interface RscaProps {
     surveyItem: SurveySingleItem;
@@ -28,6 +32,40 @@ const ModeSelector = (props: {
                 <SelectItem value='table'>Table</SelectItem>
             </SelectContent>
         </Select>
+    </div>
+}
+
+const OptionsEditor = (props: {
+    options: ItemComponent[],
+    onChange: (newOptions: ItemComponent[]) => void
+}) => {
+    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+
+
+    return <div>
+        <p className='font-semibold'>
+            Options ({props.options.length})
+        </p>
+        <p className='text-sm text-muted-foreground'>
+            These options will be used for each row
+            (drag and drop to reorder)
+        </p>
+        <AddDropdown
+            options={[
+                { key: 'option', label: 'Option', icon: <Circle className='size-4 text-neutral-500 me-2' /> },
+            ]}
+            onAddItem={(type) => {
+                if (type === 'option') {
+                    const newOption: ItemComponent = {
+                        key: Math.random().toString(36).substring(9),
+                        role: 'option',
+                    }
+                    props.onChange([...props.options, newOption]);
+                }
+            }}
+        />
+
+
     </div>
 }
 
@@ -59,6 +97,10 @@ const Rsca: React.FC<RscaProps> = (props) => {
     const lgMode = styles?.find(st => st.key === 'lgMode')?.value;
     const xlMode = styles?.find(st => st.key === 'xlMode')?.value;
 
+    const useVerticalModeReverseOrder = styles?.find(st => st.key === 'verticalModeReverseOrder')?.value === 'true';
+
+    const options = (rscaGroup.items.find(comp => comp.role === 'options') as ItemGroupComponent)?.items || [];
+
     const onChangeRSCA = (newRSCA: ItemGroupComponent) => {
         const existingItems = props.surveyItem.components?.items || [];
         (existingItems[rgIndex] as ItemGroupComponent).items[rscaGroupIndex] = newRSCA;
@@ -88,11 +130,26 @@ const Rsca: React.FC<RscaProps> = (props) => {
     }
 
     return (
-        <div>
-            <p>Rsca</p>
-            <p>
-                options: list of options with labels
-            </p>
+        <div className='space-y-4'>
+            <OptionsEditor
+                options={options}
+                onChange={(newOptions) => {
+                    const optionsIndex = rscaGroup.items.findIndex(comp => comp.role === 'options');
+                    if (optionsIndex === -1) {
+                        rscaGroup.items.push({
+                            role: 'options',
+                            items: newOptions
+                        });
+                    } else {
+                        rscaGroup.items[optionsIndex] = {
+                            role: 'options',
+                            items: newOptions
+                        };
+                    }
+                    onChangeRSCA(rscaGroup);
+                }}
+            />
+
             <p>
                 sortable rows:
                 key,
@@ -140,6 +197,46 @@ const Rsca: React.FC<RscaProps> = (props) => {
                 />
             </div>
 
+            <div className='space-y-2'>
+                <p className='font-semibold'>
+                    Reverse option order in vertical mode:
+                </p>
+
+                <Label
+                    className='flex items-center gap-2'
+                    htmlFor='vertical-mode-reverse-order'
+                >
+                    <Switch
+                        id='vertical-mode-reverse-order'
+                        checked={useVerticalModeReverseOrder}
+                        onCheckedChange={(checked) => {
+                            let existingStyles = [...styles];
+
+                            const verticalModeReverseOrderKey = 'verticalModeReverseOrder';
+
+                            if (checked) {
+                                const index = existingStyles.findIndex(st => st.key === verticalModeReverseOrderKey);
+
+                                if (index > -1) {
+                                    existingStyles[index] = { key: verticalModeReverseOrderKey, value: 'true' };
+                                } else {
+                                    existingStyles.push({ key: verticalModeReverseOrderKey, value: 'true' });
+                                }
+                            } else {
+                                existingStyles = existingStyles.filter(st => st.key !== verticalModeReverseOrderKey);
+                            }
+
+                            rscaGroup.style = existingStyles;
+                            onChangeRSCA(rscaGroup);
+                        }}
+                    />
+
+                    <span>
+                        {useVerticalModeReverseOrder ? 'Yes' : 'No'}
+                    </span>
+                </Label>
+
+            </div>
         </div>
     );
 };
