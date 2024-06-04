@@ -60,6 +60,56 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
         setSurvey(editorInstance.getSurvey());
     }
 
+    const onInsertFromClipboard = async (parentKey: string) => {
+        try {
+            const clipboardContent = await navigator.clipboard.readText();
+            const content = JSON.parse(clipboardContent);
+
+            if (!content || !content.key || content.key === '') {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+            const oldKey = content.key as string;
+            let copiedItemKey = oldKey.split('.').pop();
+            if (copiedItemKey === undefined) {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+            const parentItem = editorInstance.findSurveyItem(parentKey);
+            if (!parentItem || !isValidSurveyItemGroup(parentItem)) {
+                console.warn('Parent not found or not a group: ', parentKey);
+                toast.error('Parent not found or not a group');
+                return;
+            }
+
+            // check if item already exists
+            const existingItem = parentItem.items?.find(item => {
+                const itemKey = item.key.split('.').pop();
+                return itemKey === copiedItemKey;
+            })
+            if (existingItem) {
+                copiedItemKey = copiedItemKey + '_copy';
+            }
+
+            const newKey = parentKey + '.' + copiedItemKey;
+            let newClipboardContent = clipboardContent.replaceAll(`"${oldKey}"`, `"${newKey}"`);
+            newClipboardContent = newClipboardContent.replaceAll(`"${oldKey}.`, `"${newKey}.`);
+            const contentToInsert = JSON.parse(newClipboardContent);
+
+            const createdItem = editorInstance.addExistingSurveyItem(contentToInsert, parentKey);
+            if (createdItem) {
+                setSelectedItemKey(createdItem.key);
+            } else {
+                toast.error('Failed to insert item');
+            }
+        } catch (error) {
+            toast.error('Error reading clipboard content');
+            console.error(error);
+        }
+
+    }
 
     return (
         <ItemEditorContext.Provider value={{ selectedItemKey, setSelectedItemKey, currentPath, setCurrentPath }}>
@@ -95,6 +145,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                         setCurrentPath(newPath);
                                     }}
                                     onAddItem={onAddNewSurveyItem}
+                                    onInsertFromClipboard={onInsertFromClipboard}
                                     onItemsReorder={(newGroup) => {
                                         editorInstance.updateSurveyItem(newGroup);
                                         setSurvey(editorInstance.getSurvey());
@@ -114,6 +165,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                         setCurrentPath(newPath);
                                     }}
                                     onAddItem={onAddNewSurveyItem}
+                                    onInsertFromClipboard={onInsertFromClipboard}
                                     onItemsReorder={(newGroup) => {
                                         editorInstance.updateSurveyItem(newGroup);
                                         setSurvey(editorInstance.getSurvey());

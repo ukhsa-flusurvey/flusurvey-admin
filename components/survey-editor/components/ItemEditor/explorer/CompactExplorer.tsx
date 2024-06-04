@@ -23,6 +23,7 @@ interface CompactExplorerProps {
         itemType: string;
         parentKey: string;
     }) => void;
+    onInsertFromClipboard: (parentKey: string) => void;
     onItemsReorder: (newGroup: SurveyGroupItem) => void;
 }
 
@@ -172,6 +173,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                     }
                     parentKey={props.currentPath || ''}
                     onAddItem={props.onAddItem}
+                    onInsertFromClipboard={props.onInsertFromClipboard}
                 />
 
             </TooltipProvider>

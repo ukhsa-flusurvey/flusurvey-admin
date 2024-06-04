@@ -21,6 +21,7 @@ interface ExplorerColumnProps {
         itemType: string;
         parentKey: string;
     }) => void;
+    onInsertFromClipboard: (parentKey: string) => void;
     onItemsReorder: (newGroup: SurveyGroupItem) => void;
 }
 
@@ -190,6 +191,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
                         }
                         parentKey={props.root.key}
                         onAddItem={props.onAddItem}
+                        onInsertFromClipboard={props.onInsertFromClipboard}
                     />
                 </div>
             </div>
@@ -206,6 +208,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
                         onChangePath={props.onChangePath}
                         onAddItem={props.onAddItem}
                         onItemsReorder={props.onItemsReorder}
+                        onInsertFromClipboard={props.onInsertFromClipboard}
                     />
                 </div>}
 
