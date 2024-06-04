@@ -71,6 +71,11 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
             }
 
             const oldKey = content.key as string;
+            if (oldKey === parentKey) {
+                toast.error("Can't insert item into itself");
+                return;
+            }
+
             let copiedItemKey = oldKey.split('.').pop();
             if (copiedItemKey === undefined) {
                 toast.error('Clipboard content is not valid');
