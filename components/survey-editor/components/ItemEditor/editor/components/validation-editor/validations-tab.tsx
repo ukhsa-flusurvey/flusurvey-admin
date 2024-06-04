@@ -44,7 +44,6 @@ const ValidationsTab: React.FC<ValidationsTabProps> = (props) => {
                 if (!rsca) {
                     return;
                 }
-                console.log(rsca)
 
                 const rows = (rsca as ItemGroupComponent).items?.filter(c => c.role === 'row');
                 if (!rows || rows.length === 0) {

@@ -13,6 +13,7 @@ import SliderNumeric from './slider-numeric';
 import NumberInput from './number-input';
 import DropdownEditor from './dropdown-editor';
 import Consent from './consent';
+import Rsca from './rsca';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -49,6 +50,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <SliderNumeric surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'responsiveSingleChoiceArray':
+            content = <Rsca surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'responsiveBipolarLikertScaleArray':
             break;
