@@ -29,6 +29,7 @@ const ItemBodyComponent: React.FC<{
     component: ItemComponent,
     index: number,
     showKeys?: boolean;
+    showErrors?: boolean;
     languageCode: string;
     responsePrefill?: ResponseItem;
     requiredItem?: boolean;
@@ -85,6 +86,9 @@ const ItemBodyComponent: React.FC<{
                 embedded={false}
             />;
         case 'error':
+            if (!props.showErrors) {
+                return null;
+            }
             return <ErrorComponent key={index.toFixed()}
                 compDef={component}
                 languageCode={props.languageCode}
@@ -153,6 +157,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                     component={comp}
                     index={index}
                     showKeys={props.showKeys}
+                    showErrors={props.showInvalid}
                     languageCode={props.languageCode}
                     responsePrefill={props.responsePrefill}
                     requiredItem={requiredItem ? true : false}
@@ -178,6 +183,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                     component={comp}
                     index={index}
                     showKeys={props.showKeys}
+                    showErrors={props.showInvalid}
                     languageCode={props.languageCode}
                     responsePrefill={props.responsePrefill}
                     requiredItem={requiredItem ? true : false}
@@ -200,6 +206,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                     component={comp}
                     index={index}
                     showKeys={props.showKeys}
+                    showErrors={props.showInvalid}
                     languageCode={props.languageCode}
                     responsePrefill={props.responsePrefill}
                     requiredItem={requiredItem ? true : false}
