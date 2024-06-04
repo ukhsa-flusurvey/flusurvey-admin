@@ -15,7 +15,7 @@ const ErrorComponent: React.FC<ErrorComponentProps> = (props) => {
                 clsx(
                     "m-0",
                     "font-bold text-[--survey-error-text-color]",
-                    'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                    'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
                     getClassName(props.compDef.style),
                 )
             }
