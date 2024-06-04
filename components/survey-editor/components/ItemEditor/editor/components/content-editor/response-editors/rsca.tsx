@@ -1,6 +1,7 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
+import TabCard from '@/components/survey-editor/components/general/tab-card';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
@@ -9,9 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Check, Circle, GripHorizontal, GripVertical, Trash2, X } from 'lucide-react';
+import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
+import { TabWrapper } from './multiple-choice';
+import { Separator } from '@/components/ui/separator';
 
 interface RscaProps {
     surveyItem: SurveySingleItem;
@@ -181,10 +184,7 @@ const OptionsEditor = (props: {
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
-
-
     const draggedItem = props.options.find(option => option.key === draggedId);
-
 
     return <div>
         <p className='font-semibold'>
@@ -267,6 +267,316 @@ const OptionsEditor = (props: {
     </div>
 }
 
+const RowEditor = (props: {
+    row: ItemComponent;
+    existingKeys?: string[];
+    onChange: (newRow: ItemComponent) => void;
+    onDelete: () => void;
+}) => {
+    const { selectedLanguage } = useContext(SurveyContext);
+
+    const rowLabel = localisedObjectToMap(props.row.content).get(selectedLanguage) || '';
+
+    const horizontalModeLabelPlacement = props.row.style?.find(s => s.key === 'horizontalModeLabelPlacement')?.value || 'bottom';
+    const horizontalModeClassName = props.row.style?.find(s => s.key === 'horizontalModeClassName')?.value;
+    const verticalModeClassName = props.row.style?.find(s => s.key === 'verticalModeClassName')?.value;
+    const tableModeClassName = props.row.style?.find(s => s.key === 'tableModeClassName')?.value;
+
+    return <SortableItem
+        id={props.row.key!}
+    >
+        <div className='relative'>
+            <div className='absolute left-0 top-1/2'>
+                <GripVertical className='size-4' />
+            </div>
+            <TabCard
+                tabs={[
+                    {
+                        label: 'General',
+                        icon: <Languages className='me-1 size-3 text-muted-foreground' />,
+                        content: <TabWrapper>
+                            <div className='flex justify-between gap-2 items-center'>
+                                <KeyEditor
+                                    currentKey={props.row.key || ''}
+                                    existingKeys={props.existingKeys}
+                                    onChange={(newKey) => {
+                                        props.onChange({
+                                            ...props.row,
+                                            key: newKey
+                                        })
+                                    }}
+                                />
+                                <Button
+                                    variant='ghost'
+                                    size='sm'
+                                    onClick={() => {
+                                        if (!confirm('Are you sure you want to delete this row?')) {
+                                            return;
+                                        }
+                                        props.onDelete();
+                                    }}
+                                >
+                                    <Trash2 className='size-4' />
+                                </Button>
+                            </div>
+                            <div
+                                data-no-dnd="true"
+                                className='flex items-center gap-2'
+                            >
+                                <Label
+                                    htmlFor={`row-label-${props.row.key}`}
+                                >
+                                    Label
+                                </Label>
+                                <Input
+                                    id={`row-label-${props.row.key}`}
+                                    className='w-full'
+                                    value={rowLabel || ''}
+                                    placeholder='Enter row label...'
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        const updatedComponent = { ...props.row };
+                                        const updatedContent = localisedObjectToMap(updatedComponent.content);
+                                        updatedContent.set(selectedLanguage, e.target.value);
+                                        updatedComponent.content = generateLocStrings(updatedContent);
+                                        props.onChange(updatedComponent);
+                                    }}
+                                />
+                            </div>
+                        </TabWrapper>
+                    },
+                    {
+                        label: 'Condition',
+                        icon: <ToggleLeft className='me-1 size-3 text-muted-foreground' />,
+                        content: <TabWrapper>
+                            TODO: condition editor
+                        </TabWrapper>
+                    },
+                    {
+                        label: 'Extras',
+                        icon: <Cog className='me-1 size-3 text-muted-foreground' />,
+                        content: <TabWrapper>
+                            <div>
+                                <p className='font-semibold text-sm mb-1.5'>Option label placement in horizontal mode:</p>
+                                <Select
+                                    value={horizontalModeLabelPlacement}
+                                    onValueChange={(value) => {
+                                        const existingStyles = [...props.row.style || []];
+                                        const index = existingStyles.findIndex(st => st.key === 'horizontalModeLabelPlacement');
+                                        if (value === 'bottom') {
+                                            if (index > -1) {
+                                                existingStyles.splice(index, 1);
+                                            }
+                                        } else {
+                                            if (index > -1) {
+                                                existingStyles[index] = { key: 'horizontalModeLabelPlacement', value };
+                                            } else {
+                                                existingStyles.push({ key: 'horizontalModeLabelPlacement', value });
+                                            }
+                                        }
+
+                                        props.onChange({
+                                            ...props.row,
+                                            style: existingStyles
+                                        })
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a label placement..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value='bottom'>Bottom</SelectItem>
+                                        <SelectItem value='top'>Top</SelectItem>
+                                        <SelectItem value='none'>Hidden</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div>
+                                <p className='font-semibold text-sm mb-1.5'>Row class name in horizontal mode:</p>
+                                <Input
+                                    value={horizontalModeClassName}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        const existingStyles = [...props.row.style || []];
+                                        const index = existingStyles.findIndex(st => st.key === 'horizontalModeClassName');
+                                        if (value === '') {
+                                            if (index > -1) {
+                                                existingStyles.splice(index, 1);
+                                            }
+                                        } else {
+                                            if (index > -1) {
+                                                existingStyles[index] = { key: 'horizontalModeClassName', value };
+                                            } else {
+                                                existingStyles.push({ key: 'horizontalModeClassName', value });
+                                            }
+                                        }
+
+                                        props.onChange({
+                                            ...props.row,
+                                            style: existingStyles
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <Separator />
+                            <div>
+                                <p className='font-semibold text-sm mb-1.5'>Row class name in vertical mode:</p>
+                                <Input
+                                    value={verticalModeClassName}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        const existingStyles = [...props.row.style || []];
+                                        const index = existingStyles.findIndex(st => st.key === 'verticalModeClassName');
+                                        if (value === '') {
+                                            if (index > -1) {
+                                                existingStyles.splice(index, 1);
+                                            }
+                                        } else {
+                                            if (index > -1) {
+                                                existingStyles[index] = { key: 'verticalModeClassName', value };
+                                            } else {
+                                                existingStyles.push({ key: 'verticalModeClassName', value });
+                                            }
+                                        }
+
+                                        props.onChange({
+                                            ...props.row,
+                                            style: existingStyles
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <Separator />
+
+                            <div>
+                                <p className='font-semibold text-sm mb-1.5'>Row class name in table mode:</p>
+                                <Input
+                                    value={tableModeClassName}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        const existingStyles = [...props.row.style || []];
+                                        const index = existingStyles.findIndex(st => st.key === 'tableModeClassName');
+                                        if (value === '') {
+                                            if (index > -1) {
+                                                existingStyles.splice(index, 1);
+                                            }
+                                        } else {
+                                            if (index > -1) {
+                                                existingStyles[index] = { key: 'tableModeClassName', value };
+                                            } else {
+                                                existingStyles.push({ key: 'tableModeClassName', value });
+                                            }
+                                        }
+
+                                        props.onChange({
+                                            ...props.row,
+                                            style: existingStyles
+                                        })
+                                    }}
+                                />
+                            </div>
+
+                        </TabWrapper>
+                    }
+                ]}
+            />
+
+        </div>
+    </SortableItem>
+}
+
+const RowsEditor = (props: {
+    rows: ItemComponent[],
+    onChange: (newRows: ItemComponent[]) => void
+}) => {
+    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+
+    const draggedItem = props.rows.find(row => row.key === draggedId);
+
+
+    return <div>
+        <p className='font-semibold'>
+            Rows ({props.rows.length})
+        </p>
+        <p className='text-sm text-muted-foreground'>
+            (drag to reorder)
+        </p>
+
+        <SortableWrapper
+            sortableID={`rows-for-rsca`}
+            items={props.rows.map((option, index) => {
+                return {
+                    id: option.key || index.toString(),
+                }
+            })}
+            onDraggedIdChange={(id) => {
+                setDraggedId(id);
+            }}
+            onReorder={(activeIndex, overIndex) => {
+                const newItems = [...props.rows];
+                newItems.splice(activeIndex, 1);
+                newItems.splice(overIndex, 0, props.rows[activeIndex]);
+                props.onChange(newItems);
+
+            }}
+            dragOverlayItem={(draggedId && draggedItem) ?
+                <RowEditor
+                    row={draggedItem}
+                    onChange={(newRow) => { }}
+                    onDelete={() => { }}
+                />
+                : null}
+        >
+
+            <ol className='px-1 space-y-2 py-4'>
+                {props.rows.length === 0 && <p className='text-sm text-primary'>
+                    No rows defined.
+                </p>}
+                {props.rows.map((row, index) => {
+                    return <RowEditor
+                        key={row.key || index}
+                        row={row}
+                        existingKeys={props.rows.map(o => o.key || index.toString())}
+                        onChange={(newRow) => {
+                            const newOptions = props.rows.map((o) => {
+                                if (o.key === row.key) {
+                                    return newRow;
+                                }
+                                return o;
+                            });
+                            props.onChange(newOptions);
+                        }}
+                        onDelete={() => {
+                            const newOptions = props.rows.filter((o) => {
+                                return o.key !== row.key;
+                            });
+                            props.onChange(newOptions);
+                        }}
+                    />
+                })}
+            </ol>
+        </SortableWrapper>
+
+
+
+        <AddDropdown
+            options={[
+                { key: 'row', label: 'New row', icon: <Rows className='size-4 text-neutral-500 me-2' /> },
+            ]}
+            onAddItem={(type) => {
+                if (type === 'row') {
+                    const newRow: ItemComponent = {
+                        key: Math.random().toString(36).substring(9),
+                        role: 'row',
+                    }
+                    props.onChange([...props.rows, newRow]);
+                }
+            }}
+        />
+    </div>
+}
+
 const Rsca: React.FC<RscaProps> = (props) => {
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
@@ -298,6 +608,7 @@ const Rsca: React.FC<RscaProps> = (props) => {
     const useVerticalModeReverseOrder = styles?.find(st => st.key === 'verticalModeReverseOrder')?.value === 'true';
 
     const options = (rscaGroup.items.find(comp => comp.role === 'options') as ItemGroupComponent)?.items || [];
+    const rows = (rscaGroup.items.filter(comp => comp.role === 'row') as ItemGroupComponent[]) || [];
 
     const onChangeRSCA = (newRSCA: ItemGroupComponent) => {
         const existingItems = props.surveyItem.components?.items || [];
@@ -348,17 +659,15 @@ const Rsca: React.FC<RscaProps> = (props) => {
                 }}
             />
 
-            <p>
-                sortable rows:
-                key,
-                label,
-                display condition
-                horizontalModeLabelPlacement: top, none, undefined
-                horizontalModeClassName: string
-                tableModeClassName: string
-                verticalModeReverseOrder: true | false, undefined
-                verticalModeClassName: string
-            </p>
+            <RowsEditor
+                rows={rows}
+                onChange={(r) => {
+                    const newRows = rscaGroup.items.filter(comp => comp.role !== 'row');
+                    newRows.push(...r);
+                    rscaGroup.items = newRows;
+                    onChangeRSCA(rscaGroup);
+                }}
+            />
 
             <div className='space-y-2'>
                 <p className='font-semibold'>
