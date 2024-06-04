@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { cn } from '@/lib/utils';
 import React, { useContext } from 'react';
-import { SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
+import { Survey, SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
 import { SurveyEditor as EditorInstance } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 import CompactExplorer from './explorer/CompactExplorer';
 import ExplorerColumn from './explorer/ExplorerColumn';
@@ -60,6 +60,61 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
         setSurvey(editorInstance.getSurvey());
     }
 
+    const onInsertFromClipboard = async (parentKey: string) => {
+        try {
+            const clipboardContent = await navigator.clipboard.readText();
+            const content = JSON.parse(clipboardContent);
+
+            if (!content || !content.key || content.key === '') {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+            const oldKey = content.key as string;
+            if (oldKey === parentKey) {
+                toast.error("Can't insert item into itself");
+                return;
+            }
+
+            let copiedItemKey = oldKey.split('.').pop();
+            if (copiedItemKey === undefined) {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+            const parentItem = editorInstance.findSurveyItem(parentKey);
+            if (!parentItem || !isValidSurveyItemGroup(parentItem)) {
+                console.warn('Parent not found or not a group: ', parentKey);
+                toast.error('Parent not found or not a group');
+                return;
+            }
+
+            // check if item already exists
+            const existingItem = parentItem.items?.find(item => {
+                const itemKey = item.key.split('.').pop();
+                return itemKey === copiedItemKey;
+            })
+            if (existingItem) {
+                copiedItemKey = copiedItemKey + '_copy';
+            }
+
+            const newKey = parentKey + '.' + copiedItemKey;
+            let newClipboardContent = clipboardContent.replaceAll(`"${oldKey}"`, `"${newKey}"`);
+            newClipboardContent = newClipboardContent.replaceAll(`"${oldKey}.`, `"${newKey}.`);
+            const contentToInsert = JSON.parse(newClipboardContent);
+
+            const createdItem = editorInstance.addExistingSurveyItem(contentToInsert, parentKey);
+            if (createdItem) {
+                setSelectedItemKey(createdItem.key);
+            } else {
+                toast.error('Failed to insert item');
+            }
+        } catch (error) {
+            toast.error('Error reading clipboard content');
+            console.error(error);
+        }
+
+    }
 
     return (
         <ItemEditorContext.Provider value={{ selectedItemKey, setSelectedItemKey, currentPath, setCurrentPath }}>
@@ -95,6 +150,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                         setCurrentPath(newPath);
                                     }}
                                     onAddItem={onAddNewSurveyItem}
+                                    onInsertFromClipboard={onInsertFromClipboard}
                                     onItemsReorder={(newGroup) => {
                                         editorInstance.updateSurveyItem(newGroup);
                                         setSurvey(editorInstance.getSurvey());
@@ -114,6 +170,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                         setCurrentPath(newPath);
                                     }}
                                     onAddItem={onAddNewSurveyItem}
+                                    onInsertFromClipboard={onInsertFromClipboard}
                                     onItemsReorder={(newGroup) => {
                                         editorInstance.updateSurveyItem(newGroup);
                                         setSurvey(editorInstance.getSurvey());
@@ -206,11 +263,16 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     setSurvey(editorInstance.getSurvey());
                                 }}
                                 onChangeKey={(oldKey, newKey) => {
-                                    editorInstance.changeItemKey(oldKey, newKey);
+                                    let surveyJSON = editorInstance.getSurveyJSON();
+                                    surveyJSON = surveyJSON.replaceAll(`"${oldKey}"`, `"${newKey}"`);
+                                    surveyJSON = surveyJSON.replaceAll(`"${oldKey}.`, `"${newKey}.`);
+                                    const survey = JSON.parse(surveyJSON) as Survey;
+                                    setEditorInstance(new EditorInstance(survey));
+
                                     setSelectedItemKey(newKey);
-                                    setSurvey(editorInstance.getSurvey());
+                                    setSurvey(survey);
                                     toast(`Key changed from "${oldKey}" to "${newKey}"`, {
-                                        description: 'References to the item are not updated. Please update them manually.'
+                                        description: 'References to the item are also updated.'
                                     });
                                 }}
                                 onUpdateSurveyItem={(item) => {

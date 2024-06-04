@@ -61,6 +61,54 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
         props.onUpdateSurveyItem(groupItem);
     }
 
+    const onInsertFromClipboard = async (parentKey: string) => {
+        try {
+            const clipboardContent = await navigator.clipboard.readText();
+            const content = JSON.parse(clipboardContent);
+
+            if (!content || !content.key || content.key === '') {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+            const oldKey = content.key as string;
+            if (oldKey === parentKey) {
+                toast.error("Can't insert item into itself");
+                return;
+            }
+
+            let copiedItemKey = oldKey.split('.').pop();
+            if (copiedItemKey === undefined) {
+                toast.error('Clipboard content is not valid');
+                return;
+            }
+
+
+
+            // check if item already exists
+            const existingItem = groupItem.items?.find(item => {
+                const itemKey = item.key.split('.').pop();
+                return itemKey === copiedItemKey;
+            })
+            if (existingItem) {
+                copiedItemKey = copiedItemKey + '_copy';
+            }
+
+            const newKey = parentKey + '.' + copiedItemKey;
+            let newClipboardContent = clipboardContent.replaceAll(`"${oldKey}"`, `"${newKey}"`);
+            newClipboardContent = newClipboardContent.replaceAll(`"${oldKey}.`, `"${newKey}.`);
+            const contentToInsert = JSON.parse(newClipboardContent);
+
+            groupItem.items.push(contentToInsert);
+            toast.success('New item inserted');
+            props.onUpdateSurveyItem(groupItem);
+        } catch (error) {
+            toast.error('Error reading clipboard content');
+            console.error(error);
+        }
+
+    }
+
     return (
         <div className='flex-1 pb-6'>
             <h3 className='font-semibold text-base'>Items of {groupItem.key} </h3>
@@ -166,6 +214,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                     }
                     parentKey={groupItem.key}
                     onAddItem={onAddNewSurveyItem}
+                    onInsertFromClipboard={onInsertFromClipboard}
                 />
             </div>
         </div>

@@ -21,11 +21,13 @@ interface ItemCreatorProps {
         itemType: string;
         parentKey: string;
     }) => void;
+    onInsertFromClipboard: (parentKey: string) => void;
 }
 
 
 const ItemCreator: React.FC<ItemCreatorProps> = (props) => {
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
 
     return (
         <>
@@ -40,7 +42,11 @@ const ItemCreator: React.FC<ItemCreatorProps> = (props) => {
                             iconClassName={'text-neutral-600'}
                             label={'Paste'}
                             description={'Paste a copied item.'}
-                            disabled={true} // TODO: check if copied item is available
+                            onClick={() => {
+                                props.onInsertFromClipboard(
+                                    props.parentKey
+                                );
+                            }}
                         />
                     </DropdownMenuGroup>
 
