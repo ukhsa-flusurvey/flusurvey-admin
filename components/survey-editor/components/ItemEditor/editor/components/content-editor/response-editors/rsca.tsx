@@ -1,3 +1,5 @@
+import SortableItem from '@/components/survey-editor/components/general/SortableItem';
+import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -35,11 +37,27 @@ const ModeSelector = (props: {
     </div>
 }
 
+const OptionEditor = (props: {
+    option: ItemComponent,
+    onChange: (newOption: ItemComponent) => void
+}) => {
+    return <SortableItem
+        id={props.option.key!}
+
+    >
+        todo
+    </SortableItem>
+}
+
 const OptionsEditor = (props: {
     options: ItemComponent[],
     onChange: (newOptions: ItemComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
+
+
+
+    const draggedItem = props.options.find(option => option.key === draggedId);
 
 
     return <div>
@@ -50,6 +68,52 @@ const OptionsEditor = (props: {
             These options will be used for each row
             (drag and drop to reorder)
         </p>
+
+
+
+        <SortableWrapper
+            sortableID={`options-for-rsca`}
+            items={props.options.map((option, index) => {
+                return {
+                    id: option.key || index.toString(),
+                }
+            })}
+            onDraggedIdChange={(id) => {
+                setDraggedId(id);
+            }}
+            onReorder={(activeIndex, overIndex) => {
+                const newItems = [...props.options];
+                newItems.splice(activeIndex, 1);
+                newItems.splice(overIndex, 0, props.options[activeIndex]);
+                props.onChange(newItems);
+
+            }}
+            dragOverlayItem={(draggedId && draggedItem) ?
+                <OptionEditor
+                    option={draggedItem}
+                    onChange={(newOption) => { }}
+                />
+                : null}
+        >
+
+            <ol className='px-1 space-y-2 py-4'>
+                {props.options.length === 0 && <p className='text-sm text-primary'>
+                    No options defined.
+                </p>}
+                {props.options.map((option, index) => {
+                    return <OptionEditor
+                        key={option.key || index}
+                        option={option}
+                        onChange={(newOption) => {
+                            const newOptions = [...props.options];
+                            newOptions[index] = newOption;
+                            props.onChange(newOptions);
+                        }}
+                    />
+                })}
+            </ol>
+        </SortableWrapper>
+
         <AddDropdown
             options={[
                 { key: 'option', label: 'Option', icon: <Circle className='size-4 text-neutral-500 me-2' /> },
@@ -64,8 +128,6 @@ const OptionsEditor = (props: {
                 }
             }}
         />
-
-
     </div>
 }
 
