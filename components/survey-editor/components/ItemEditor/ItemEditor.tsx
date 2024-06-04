@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { cn } from '@/lib/utils';
 import React, { useContext } from 'react';
-import { SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
+import { Survey, SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
 import { SurveyEditor as EditorInstance } from 'case-editor-tools/surveys/survey-editor/survey-editor';
 import CompactExplorer from './explorer/CompactExplorer';
 import ExplorerColumn from './explorer/ExplorerColumn';
@@ -258,11 +258,16 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     setSurvey(editorInstance.getSurvey());
                                 }}
                                 onChangeKey={(oldKey, newKey) => {
-                                    editorInstance.changeItemKey(oldKey, newKey);
+                                    let surveyJSON = editorInstance.getSurveyJSON();
+                                    surveyJSON = surveyJSON.replaceAll(`"${oldKey}"`, `"${newKey}"`);
+                                    surveyJSON = surveyJSON.replaceAll(`"${oldKey}.`, `"${newKey}.`);
+                                    const survey = JSON.parse(surveyJSON) as Survey;
+                                    setEditorInstance(new EditorInstance(survey));
+
                                     setSelectedItemKey(newKey);
-                                    setSurvey(editorInstance.getSurvey());
+                                    setSurvey(survey);
                                     toast(`Key changed from "${oldKey}" to "${newKey}"`, {
-                                        description: 'References to the item are not updated. Please update them manually.'
+                                        description: 'References to the item are also updated.'
                                     });
                                 }}
                                 onUpdateSurveyItem={(item) => {
