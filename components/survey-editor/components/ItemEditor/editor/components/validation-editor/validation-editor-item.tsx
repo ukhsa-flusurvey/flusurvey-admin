@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Check, Trash2, X } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Validation } from 'survey-engine/data_types';
 
 interface ValidationEditorItemProps {

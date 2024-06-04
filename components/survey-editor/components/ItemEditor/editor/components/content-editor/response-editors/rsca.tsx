@@ -1,10 +1,12 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Circle } from 'lucide-react';
+import { Check, Circle, Trash2, X } from 'lucide-react';
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
@@ -37,15 +39,105 @@ const ModeSelector = (props: {
     </div>
 }
 
-const OptionEditor = (props: {
-    option: ItemComponent,
-    onChange: (newOption: ItemComponent) => void
+const KeyEditor = (props: {
+    currentKey: string;
+    existingKeys?: string[];
+    onChange: (newKey: string) => void;
 }) => {
+    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
+
+    const hasValidKey = (key: string): boolean => {
+        if (key.length < 1) {
+            return false;
+        }
+        if (props.existingKeys?.includes(key)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    return <div className='flex items-center gap-2'>
+        <Label htmlFor={'item-key-' + props.currentKey}>
+            Key
+        </Label>
+        <Input
+            id={'validation-key-' + props.currentKey}
+            className='w-full'
+            value={editedKey}
+            onChange={(e) => {
+                const value = e.target.value;
+
+                setEditedKey(value);
+            }}
+        />
+        {editedKey !== props.currentKey &&
+            <div className='flex items-center'>
+                <Button
+                    variant='ghost'
+                    className='text-destructive'
+                    size='icon'
+                    onClick={() => {
+                        setEditedKey(props.currentKey);
+                    }}
+                >
+                    <X className='size-4' />
+                </Button>
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    className='text-primary'
+                    disabled={!hasValidKey(editedKey)}
+                    onClick={() => {
+                        props.onChange(editedKey);
+                    }}
+                >
+                    <Check className='size-4' />
+                </Button>
+            </div>}
+    </div>
+}
+
+const OptionEditor = (props: {
+    option: ItemComponent;
+    existingKeys?: string[];
+    onChange: (newOption: ItemComponent) => void;
+    onDelete: () => void;
+}) => {
+
+
     return <SortableItem
         id={props.option.key!}
-
     >
-        todo
+        <div className='flex border border-border rounded-md p-2 relative'>
+            <div className='flex items-center gap-2 w-full'>
+                <div className='grow'>
+                    <KeyEditor
+                        currentKey={props.option.key || ''}
+                        existingKeys={props.existingKeys}
+                        onChange={(newKey) => {
+                            props.onChange({
+                                ...props.option,
+                                key: newKey
+                            })
+                        }}
+                    />
+                </div>
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => {
+                        if (!confirm('Are you sure you want to delete this option?')) {
+                            return;
+                        }
+                        props.onDelete();
+                    }}
+                >
+                    <Trash2 className='size-4' />
+                </Button>
+            </div>
+        </div>
+
     </SortableItem>
 }
 
@@ -69,8 +161,6 @@ const OptionsEditor = (props: {
             (drag and drop to reorder)
         </p>
 
-
-
         <SortableWrapper
             sortableID={`options-for-rsca`}
             items={props.options.map((option, index) => {
@@ -92,6 +182,7 @@ const OptionsEditor = (props: {
                 <OptionEditor
                     option={draggedItem}
                     onChange={(newOption) => { }}
+                    onDelete={() => { }}
                 />
                 : null}
         >
@@ -104,9 +195,20 @@ const OptionsEditor = (props: {
                     return <OptionEditor
                         key={option.key || index}
                         option={option}
+                        existingKeys={props.options.map(o => o.key || index.toString())}
                         onChange={(newOption) => {
-                            const newOptions = [...props.options];
-                            newOptions[index] = newOption;
+                            const newOptions = props.options.map((o) => {
+                                if (o.key === option.key) {
+                                    return newOption;
+                                }
+                                return o;
+                            });
+                            props.onChange(newOptions);
+                        }}
+                        onDelete={() => {
+                            const newOptions = props.options.filter((o) => {
+                                return o.key !== option.key;
+                            });
                             props.onChange(newOptions);
                         }}
                     />
