@@ -1,11 +1,11 @@
 import React from 'react';
-import { SurveyItem } from 'survey-engine/data_types';
+import { SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import { builtInItemColors, getItemColor, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { PopoverClose, PopoverTrigger } from '@radix-ui/react-popover';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopy, CodeSquare, MoreVertical, Move, SquarePen, Trash2, X } from 'lucide-react';
+import { ClipboardCopy, CodeSquare, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
@@ -38,6 +38,24 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     }
 
     const hideColorPicker = item.typeInfos.key === 'pageBreak' || item.typeInfos.key === 'surveyEnd';
+
+    const confidentialSymbol = () => {
+        const confidentialMode = (props.surveyItem as SurveySingleItem).confidentialMode;
+        if (!confidentialMode) {
+            return null;
+        }
+        return <Tooltip>
+            <TooltipTrigger asChild>
+                <span className='px-2'>
+                    <ShieldCheck className='size-5' />
+                </span>
+            </TooltipTrigger>
+            <TooltipContent className='max-w-64'>
+                {`This item is confidential with mode "${confidentialMode}" . Responses will be saved in the confidential data store.`}
+            </TooltipContent>
+        </Tooltip>
+    }
+
 
     const colorPicker = hideColorPicker ? null : (<Popover>
         <PopoverTrigger
@@ -216,8 +234,8 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                     }}
                 />
 
+                {confidentialSymbol()}
                 {colorPicker}
-
                 {itemMenu}
             </div>
             {moveItemDialog}

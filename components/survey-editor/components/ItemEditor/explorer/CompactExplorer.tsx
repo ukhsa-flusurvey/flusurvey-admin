@@ -7,7 +7,7 @@ import CompactExplorerNavItem from './CompactExplorerNavItem';
 import { Plus, ArrowLeft } from 'lucide-react';
 
 
-import { SurveyGroupItem } from 'survey-engine/data_types';
+import { SurveyGroupItem, SurveySingleItem } from 'survey-engine/data_types';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '../../../utils/utils';
 import ItemCreator from './ItemCreator';
 
@@ -66,6 +66,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
             isActive,
             isGroup,
             textColor: isActive ? undefined : itemColor,
+            isConfidential: (surveyItem as SurveySingleItem).confidentialMode !== undefined
         }
     })
 
@@ -138,6 +139,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                                 isDragged={draggedId === item.id}
                                 tooltip={item.id}
                                 className={item.className}
+                                isConfidential={item.isConfidential}
                                 onClick={() => {
                                     if (props.onSelectItem) {
                                         props.onSelectItem(item.id);

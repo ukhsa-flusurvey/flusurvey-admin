@@ -6,6 +6,7 @@ import { SurveyItem } from 'survey-engine/data_types';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import ValidationsTab from './validation-editor/validations-tab';
 import GroupItemsEditor from './group-items-editor/group-items-editor';
+import AdvancedConfigs from './advanced-configs/advanced-configs';
 
 
 interface ItemEditorTabsProps {
@@ -146,7 +147,10 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                 </TabsContent>
 
                 <TabsContent value="advanced">
-                    <div>Advanced</div>
+                    <AdvancedConfigs
+                        surveyItem={props.surveyItem}
+                        onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    />
                 </TabsContent>
             </Tabs>
         </div>
