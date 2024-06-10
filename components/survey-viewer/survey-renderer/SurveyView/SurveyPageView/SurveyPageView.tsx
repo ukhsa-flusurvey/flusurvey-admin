@@ -37,6 +37,7 @@ interface SurveyPageViewProps {
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
     dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    hideButtons?: boolean;
 }
 
 const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
@@ -197,6 +198,13 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
         </div>
     );
 
+    const buttonGroup = () => {
+        if (props.hideButtons) {
+            return null;
+        }
+        return props.isLastPage ? surveyEnd() : surveyNavigation()
+    }
+
     return (
         <div className='flex flex-col gap-4'>
             {
@@ -207,7 +215,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     </div>
                 )
             }
-            {props.isLastPage ? surveyEnd() : surveyNavigation()}
+            {buttonGroup()}
         </div>
     );
 };

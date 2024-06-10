@@ -20,6 +20,7 @@ interface SurveyViewProps {
     submitBtnText: string;
     invalidResponseText: string;
     hideBackButton?: boolean;
+    hideButtons?: boolean;
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
     dateLocales?: Array<{ code: string, locale: any, format: string }>;
@@ -101,6 +102,7 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
             showKeys={props.showKeys}
             customResponseComponents={props.customResponseComponents}
             dateLocales={props.dateLocales}
+            hideButtons={props.hideButtons}
         />;
     }
 
