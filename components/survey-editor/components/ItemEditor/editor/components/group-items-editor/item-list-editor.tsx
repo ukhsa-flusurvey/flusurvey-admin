@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from '../../../explorer/ItemCreator';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Shield } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
@@ -42,6 +42,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
             isPathActive,
             isGroup,
             label: isPageBreak ? 'Page break' : itemKey,
+            isConfidential: (surveyItem as SurveySingleItem).confidentialMode !== undefined,
         }
     })
 
@@ -191,6 +192,9 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                                 <span className={cn(
                                     'grow',
                                 )}>{item.label}</span>
+                                {item.isConfidential && <span className='p-1 bg-neutral-600/90 rounded-full text-white'>
+                                    <Shield className='size-4' />
+                                </span>}
 
                             </Button>
                         </SortableItem>

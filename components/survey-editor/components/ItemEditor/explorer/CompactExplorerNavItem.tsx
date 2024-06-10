@@ -1,7 +1,7 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { BoxSelect, LucideIcon } from 'lucide-react';
+import { BoxSelect, LucideIcon, Shield } from 'lucide-react';
 
 
 interface CompactExplorerNavItemProps {
@@ -12,6 +12,7 @@ interface CompactExplorerNavItemProps {
     isDragged?: boolean;
     tooltip?: string;
     style?: React.CSSProperties;
+    isConfidential?: boolean;
     onClick?: () => void;
     onDoubleClick?: () => void;
 }
@@ -37,6 +38,9 @@ const CompactExplorerNavItem: React.FC<CompactExplorerNavItemProps> & { EmptyLis
                     onClick={props.onClick}
                     style={props.style}
                 >
+                    {props.isConfidential && <span className='p-1 absolute -top-1 -right-1 bg-neutral-600/90 rounded-full text-white'>
+                        <Shield className='size-2' />
+                    </span>}
                     <props.icon className='size-6' />
                 </Button>
             </TooltipTrigger>

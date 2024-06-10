@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import React, { useEffect } from 'react';
 import { SurveyGroupItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from './ItemCreator';
-import { BoxSelect, ChevronRight, Plus } from 'lucide-react';
+import { BoxSelect, ChevronRight, Plus, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getItemColor, getItemTypeInfos, getItemKeyFromFullKey, isValidSurveyItemGroup } from '../../../utils/utils';
 import { cn } from '@/lib/utils';
@@ -69,6 +69,7 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
             isActive,
             isPathActive,
             isGroup,
+            isConfidential: (surveyItem as SurveySingleItem).confidentialMode !== undefined,
             label: isPageBreak ? 'Page break' : itemKey,
         }
     })
@@ -169,6 +170,9 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
                                         'grow',
                                     )}>{item.label}</span>
                                     {item.isGroup && <ChevronRight className='size-4' />}
+                                    {item.isConfidential && <span className='p-1 bg-neutral-600/90 rounded-full text-white'>
+                                        <Shield className='size-4' />
+                                    </span>}
                                 </Button>
                             </SortableItem>
                         ))}
