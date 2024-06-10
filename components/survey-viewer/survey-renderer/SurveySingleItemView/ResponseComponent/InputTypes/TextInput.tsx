@@ -77,7 +77,7 @@ const TextInput: React.FC<TextInputProps> = (props) => {
             htmlFor={fullKey}
             className={clsx(
                 props.defaultClassName,
-                "flex items-center flex-wrap text-base font-normal",
+                "flex flex-col items-start md:flex-row md:items-center flex-wrap text-base font-normal",
                 {
                     'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
                     'w-full': !props.nonFullWidth,
