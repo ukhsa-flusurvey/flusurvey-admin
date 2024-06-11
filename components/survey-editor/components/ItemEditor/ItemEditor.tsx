@@ -24,7 +24,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
     } = useContext(SurveyContext);
     const [isCollapsed, setIsCollapsed] = React.useState(true);
     const [editorInstance, setEditorInstance] = React.useState<EditorInstance | undefined>(survey ? new EditorInstance(survey) : undefined);
-    const [selectedItemKey, setSelectedItemKey] = React.useState<string | null>(null);
+    const [selectedItemKey, setSelectedItemKey] = React.useState<string | null>(survey?.surveyDefinition.key || null);
     const [currentPath, setCurrentPath] = React.useState<string | null>(null);
     //const [counter, setCounter] = React.useState(0);
 
