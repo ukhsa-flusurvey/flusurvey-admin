@@ -144,7 +144,7 @@ const ValidatedRandomQuestion: React.FC<ValidatedRandomQuestionProps> = (props) 
                             <Label
                                 htmlFor={index + 'responses'}
                             >
-                                Accepted responses (one per line)
+                                Accepted responses (one per line, ignores letter case)
                             </Label>
                             <Textarea
                                 id={index + 'responses'}

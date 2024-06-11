@@ -60,7 +60,7 @@ const ValidatedRandomQuestion: React.FC<ValidatedRandomQuestionProps> = (props) 
     useEffect(() => {
         const value = currentValue.toLowerCase().trim();
 
-        const acceptedAnswers = ((currentQuestion as ItemGroupComponent)?.items || []).map(item => getLocaleStringTextByCode(item.content, props.languageCode));
+        const acceptedAnswers = ((currentQuestion as ItemGroupComponent)?.items || []).map(item => getLocaleStringTextByCode(item.content, props.languageCode)?.toLowerCase().trim());
         const hasCorrectValue = acceptedAnswers.indexOf(value) > -1;
 
         const newResponse = hasCorrectValue ? {
