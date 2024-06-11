@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import React, { useEffect } from 'react';
 import CompactExplorerNavItem from './CompactExplorerNavItem';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, Home } from 'lucide-react';
 
 
 import { SurveyGroupItem, SurveySingleItem } from 'survey-engine/data_types';
@@ -76,7 +76,18 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
     return (
         <nav className='flex flex-col items-center py-2 gap-2 bg-secondary/90 min-h-full'>
             <TooltipProvider>
-                {isAtRoot ? null : <><CompactExplorerNavItem
+                {isAtRoot ? <>
+                    <CompactExplorerNavItem
+                        icon={Home}
+                        tooltip='Open root group'
+                        onClick={() => {
+                            props.onSelectItem(currentGroup.key);
+                        }}
+                    />
+                    <Separator
+                        className='bg-black/20'
+                    />
+                </> : <><CompactExplorerNavItem
                     icon={ArrowLeft}
                     tooltip='Go back'
                     onClick={() => {

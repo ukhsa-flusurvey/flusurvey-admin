@@ -140,7 +140,10 @@ const KeyPreviewAndEditor: React.FC<KeyPreviewAndEditorProps> = (props) => {
                     className='text-green-600'
                     disabled={!validNewKey(newKey)}
                     onClick={() => {
-                        const newFullKey = [props.parentKey, newKey].join('.');
+                        let newFullKey = [props.parentKey, newKey].join('.');
+                        if (props.parentKey === '') {
+                            newFullKey = newKey;
+                        }
                         props.onChangeKey(newFullKey);
                         setEditMode(false)
                     }}

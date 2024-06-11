@@ -79,9 +79,14 @@ const ExplorerColumn: React.FC<ExplorerColumnProps> = (props) => {
     return (
         <div className='h-full flex'>
             <div className='bg-white/60 backdrop-blur-md border-r border-black/20 min-w-[220px] overflow-y-scroll' >
-                <div className='font-mono bg-white/30 px-3 py-2 text-sm'>
+                <button className='font-mono bg-white/30 px-3 py-2 text-sm w-full text-start outline-none'
+                    type='button'
+                    onClick={() => {
+                        props.onSelectItem(props.root.key);
+                    }}
+                >
                     {getItemKeyFromFullKey(props.root.key)}
-                </div>
+                </button>
                 <Separator className='bg-black/20' />
 
                 {currentItems.length === 0 &&
