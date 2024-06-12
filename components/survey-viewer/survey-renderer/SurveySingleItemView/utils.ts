@@ -10,6 +10,7 @@ export interface CommonResponseComponentProps {
     languageCode: string;
     showOptionKey?: boolean;
     disabled?: boolean;
+    showErrors?: boolean;
     dateLocales: Array<{ code: string, locale: any, format: string }>;
 }
 
