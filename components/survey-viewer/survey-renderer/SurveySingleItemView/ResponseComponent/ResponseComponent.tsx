@@ -35,6 +35,7 @@ interface ResponseComponentProps {
     languageCode: string;
     isRequired: boolean;
     showOptionKey?: boolean;
+    showErrors?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
     dateLocales: Array<{ code: string, locale: any, format: string }>;
 }
@@ -312,6 +313,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         prefill={getPrefillForItem(respComp)}
                         responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
                         dateLocales={props.dateLocales}
+                        showErrors={props.showErrors}
                     />
                 case 'responsiveBipolarLikertScaleArray':
                     return <ResponsiveBipolarLikertScaleArray

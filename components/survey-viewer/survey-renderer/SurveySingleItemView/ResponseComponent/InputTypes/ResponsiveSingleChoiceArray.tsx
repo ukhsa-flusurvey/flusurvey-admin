@@ -55,6 +55,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
     const [touched, setTouched] = useState(false);
     const { width = 0 } = useWindowSize()
     const [options, setOptions] = useState<ItemGroupComponent | undefined>();
+    const [errorHint, setErrorHint] = useState<ItemComponent | undefined>(undefined);
 
 
     useEffect(() => {
@@ -69,6 +70,11 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
             return;
         }
         setOptions(options);
+
+        const errorComp = props.compDef.items.find(item => item.role === 'rowErrorHint');
+        if (errorComp) {
+            setErrorHint(errorComp);
+        }
     }, [props.compDef]);
 
     useEffect(() => {
@@ -127,6 +133,16 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
         return resp !== undefined;
     }
 
+    const rowHasResponse = (rowKey: string | undefined): boolean => {
+        if (!rowKey) { return false; }
+
+        if (!response || !response.items || response.items.length < 1) {
+            return false;
+        }
+        const rowResponse = response.items.find(item => item.key === rowKey);
+        return rowResponse !== undefined;
+    }
+
     const renderVerticalMode = (namePrefix: string) => {
         if (!isItemGroupComponent(props.compDef)) {
             return <p>Empty</p>;
@@ -157,6 +173,9 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                             className={clsx(
                                 'py-2',
                                 rowClassName,
+                                {
+                                    'bg-[--survey-card-invalid-bg]': props.showErrors && !rowHasResponse(item.key)
+                                },
                             )}
                         >
                             <p
@@ -189,8 +208,15 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                     />
                                 })}
                             </fieldset>
+                            {(errorHint && props.showErrors && !rowHasResponse(item.key)) && <div
+                                className='text-[--survey-error-text-color] text-sm font-bold mt-1 px-[--survey-card-px-sm] sm:px-[--survey-card-px]'
+                                role='alert'
+                            >
+                                {renderFormattedContent(errorHint, props.languageCode, undefined, props.dateLocales)}
+                            </div>}
                         </div>;
                     case 'options':
+                    case 'rowErrorHint':
                         return undefined;
                     default:
                         return <p>Unknown item role: {item.role}</p>
@@ -212,6 +238,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
             key={rowKey}
             className={clsx(
                 'pt-2 pb-2 last:pb-0',
+
                 rowClassName,
             )}
         >
@@ -228,6 +255,9 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                 name={htmlKey}
                 className={clsx(
                     "flex",
+                    {
+                        'bg-[--survey-card-invalid-bg]  rounded-sm': props.showErrors && !rowHasResponse(rowKey)
+                    },
                 )}
                 aria-describedby={htmlLabelKey}
             >
@@ -283,6 +313,12 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                     )
                 }
             </fieldset>
+            {(errorHint && props.showErrors && !rowHasResponse(rowKey)) && <div
+                className='text-[--survey-error-text-color] text-sm font-bold mt-1'
+                role='alert'
+            >
+                {renderFormattedContent(errorHint, props.languageCode, undefined, props.dateLocales)}
+            </div>}
         </div>
     }
 
@@ -306,6 +342,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                     case 'row':
                         return renderHorizontalRow(item, options, index === rows.length - 1, namePrefix);
                     case 'options':
+                    case 'rowErrorHint':
                         return undefined;
                     default:
                         return <p>Unknown item role: {item.role}</p>
@@ -353,6 +390,13 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                         className='text-start'
                                     >
                                         {renderFormattedContent(item, props.languageCode, undefined, props.dateLocales)}
+
+                                        {(errorHint && props.showErrors && !rowHasResponse(item.key)) && <div
+                                            className='text-[--survey-error-text-color] text-sm'
+                                            role='alert'
+                                        >
+                                            {renderFormattedContent(errorHint, props.languageCode, undefined, props.dateLocales)}
+                                        </div>}
                                     </th>
                                     {options.items.map(oi => <td
                                         key={props.compDef + '.' + oi.key}
@@ -372,15 +416,22 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                 </React.Fragment>
                                 break;
                             case 'options':
+                            case 'rowErrorHint':
                                 return undefined;
                             default:
                                 break;
                         }
                         const rowClassName = item.style?.find(st => st.key === 'tableModeClassName')?.value;
+
+
+
                         return <tr key={props.compDef + '.' + item.key}
                             className={cn(
                                 'border-b border-[--survey-card-table-border-color] last:border-b-0',
-                                rowClassName
+                                rowClassName,
+                                {
+                                    'bg-[--survey-card-invalid-bg]': props.showErrors && !rowHasResponse(item.key)
+                                },
                             )}
 
                         >

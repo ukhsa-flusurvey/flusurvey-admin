@@ -578,6 +578,7 @@ const RowsEditor = (props: {
 }
 
 const Rsca: React.FC<RscaProps> = (props) => {
+    const { selectedLanguage } = useContext(SurveyContext);
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {
@@ -609,6 +610,7 @@ const Rsca: React.FC<RscaProps> = (props) => {
 
     const options = (rscaGroup.items.find(comp => comp.role === 'options') as ItemGroupComponent)?.items || [];
     const rows = (rscaGroup.items.filter(comp => comp.role === 'row') as ItemGroupComponent[]) || [];
+    const errorHintComp = rscaGroup.items.find(comp => comp.role === 'rowErrorHint');
 
     const onChangeRSCA = (newRSCA: ItemGroupComponent) => {
         const existingItems = props.surveyItem.components?.items || [];
@@ -741,6 +743,44 @@ const Rsca: React.FC<RscaProps> = (props) => {
                     <span>
                         {useVerticalModeReverseOrder ? 'Yes' : 'No'}
                     </span>
+                </Label>
+
+            </div>
+
+            <div className='space-y-2'>
+
+                <Label
+                    htmlFor='row-error-hint'
+                    className='space-y-1.5'
+                >
+                    <span className='font-semibold text-base'>
+                        Error message if row is empty:
+                    </span>
+
+                    <Input
+                        id='row-error-hint'
+                        className='w-full'
+                        value={errorHintComp ? localisedObjectToMap(errorHintComp.content).get(selectedLanguage) || '' : ''}
+                        onChange={(e) => {
+                            const updatedComponent = errorHintComp ? { ...errorHintComp } : {
+                                key: Math.random().toString(36).substring(9),
+                                role: 'rowErrorHint',
+                            };
+                            const updatedContent = localisedObjectToMap(updatedComponent.content);
+                            updatedContent.set(selectedLanguage, e.target.value);
+                            updatedComponent.content = generateLocStrings(updatedContent);
+
+
+                            const index = rscaGroup.items.findIndex(comp => comp.role === 'rowErrorHint');
+                            if (index === -1) {
+                                rscaGroup.items.push(updatedComponent);
+                            } else {
+                                rscaGroup.items[index] = updatedComponent;
+                            }
+                            onChangeRSCA(rscaGroup);
+                        }}
+                        placeholder='Enter error message...'
+                    />
                 </Label>
 
             </div>

@@ -67,6 +67,7 @@ const ItemBodyComponent: React.FC<{
                 }}
                 showOptionKey={props.showKeys}
                 customResponseComponents={props.customResponseComponents}
+                showErrors={props.showErrors}
             />
         case 'text':
             return <TextViewComponent key={index.toFixed()}
