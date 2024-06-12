@@ -5135,10 +5135,10 @@ survey-engine@^1.2.0:
   dependencies:
     date-fns "^2.29.3"
 
-survey-engine@^1.2.8:
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.2.8.tgz#7e56eb84f3217f4aaf3930745df09b801c60763e"
-  integrity sha512-hvMV+gPsxEX0Hb1+e8JMgThRl3QGKHXnFngGT6LjyeQutglX8ev4YX6f/EZ9SZhe/oHq6uFex+cqRrz9pF0IgA==
+survey-engine@^1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.2.9.tgz#8ac33dcbb9c9779eb8cea72996d4ae71121d4fbd"
+  integrity sha512-ofnouU/1NcpQGlRqjZ8kWJ6udwf18al8ezeRbQbmHo+f/LWbpKxxMaMK34OROn1/YbAI0G0doinqY6R0/tGW1w==
   dependencies:
     date-fns "^2.29.3"
 
