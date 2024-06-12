@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Survey, SurveySingleItemResponse, SurveyContext } from 'survey-engine/data_types';
 import { SurveyEngineCore } from 'survey-engine/engine';
 import { CustomSurveyResponseComponent } from '../SurveySingleItemView/ResponseComponent/ResponseComponent';
@@ -36,6 +36,8 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
 
     const [responseCount, setResponseCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
+
+    const surveyRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setSurveyEngine(new SurveyEngineCore(props.survey, props.context, props.prefills));
@@ -89,6 +91,7 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
             onNextPage={() => {
                 setCurrentPage(prev => prev + 1);
                 resetScrollPosition();
+                surveyRef.current?.focus();
             }}
             surveyEndItem={surveyEngine.getSurveyEndItem()}
             onSubmit={onSubmit}
@@ -107,7 +110,10 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
     }
 
     return (
-        <>
+        <div
+            ref={surveyRef}
+            className='focus:outline-none'
+            tabIndex={-1}>
             {surveyPages.length > 1 ?
                 <div className="p-6">
                     <SurveyProgress
@@ -116,7 +122,7 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
                     />
                 </div> : null}
             {renderCurrentPage()}
-        </>
+        </div>
     );
 };
 
