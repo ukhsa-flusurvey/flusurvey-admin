@@ -450,7 +450,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
 
 
     return (
-        <div role="table" aria-label="Example table" className="flex flex-col">
+        <div role="table" className="flex flex-col">
             {/* Table Header for large screens */}
             {renderHeaderRow(headerRow as ItemGroupComponent)}
             {/* Rows */}
