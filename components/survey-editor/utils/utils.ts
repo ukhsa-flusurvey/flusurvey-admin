@@ -4,7 +4,8 @@ import {
     CornerDownLeft,
     Folder,
     GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, PenLine, Send, Settings2, SquareStack,
-    TextCursorInput, UnfoldHorizontal, BotOff
+    TextCursorInput, UnfoldHorizontal, BotOff,
+    Contact
 } from "lucide-react";
 import { ItemGroupComponent, SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from "survey-engine/data_types";
 
@@ -255,6 +256,13 @@ export const SurveyItemTypeRegistry = [
         description: 'Selects a random question from a list of questions and accept only valid responses.',
         className: 'text-blue-800',
         icon: BotOff,
+    },
+    {
+        key: 'contact',
+        label: 'Contact Form Question',
+        description: 'Name, email, phone or address of the participant.',
+        className: 'text-blue-800',
+        icon: Contact,
     },
 ]
 
