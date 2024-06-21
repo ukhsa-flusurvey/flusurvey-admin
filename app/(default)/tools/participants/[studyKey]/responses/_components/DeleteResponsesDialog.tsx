@@ -63,7 +63,9 @@ const DeleteResponsesDialog: React.FC<DeleteResponsesDialogProps> = (props) => {
                 }
             }}
         >
-            <DialogContent>
+            <DialogContent
+                closeBtnAriaLabel='Close'
+            >
                 <DialogHeader>
                     <DialogTitle>
                         Delete responses
