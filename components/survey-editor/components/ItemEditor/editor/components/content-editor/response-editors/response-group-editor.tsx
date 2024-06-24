@@ -14,6 +14,7 @@ import NumberInput from './number-input';
 import DropdownEditor from './dropdown-editor';
 import Consent from './consent';
 import Rsca from './rsca';
+import ContactForm from './contact-form';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -63,6 +64,9 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             break;
         case 'consent':
             content = <Consent surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            break;
+        case 'contact':
+            content = <ContactForm surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'dropdown':
             content = <DropdownEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

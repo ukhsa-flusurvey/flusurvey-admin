@@ -102,6 +102,8 @@ export const determineItemType = (item: SurveySingleItem): string => {
             return 'clozeQuestion';
         case 'consent':
             return 'consent';
+        case 'contact':
+            return 'contact';
         case 'validatedRandomQuestion':
             return 'validatedRandomQuestion';
         default:
