@@ -286,6 +286,24 @@ export const generateNewItemForType = (props: {
                 }
             });
             break;
+        case 'contact':
+            const contactKey = parentKey + '.' + newItemKey;
+            const contactQEditor = new ItemEditor(undefined, { itemKey: contactKey, isGroup: false });
+
+            contactQEditor.setTitleComponent(
+                generateTitleComponent(new Map<string, string>())
+            );
+
+            contactQEditor.addExistingResponseComponent({
+                key: 'contact',
+                role: 'contact',
+                items: [],
+            },
+                contactQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            );
+
+            newSurveyItem = contactQEditor.getItem();
+            break;
 
         default:
             console.warn('Unknown item type', newItemType);

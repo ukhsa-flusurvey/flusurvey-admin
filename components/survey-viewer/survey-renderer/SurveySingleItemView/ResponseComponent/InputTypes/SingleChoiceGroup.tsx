@@ -236,14 +236,15 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
             {props.showOptionKey ?
                 <span className="text-primary me-2 text-xs">{option.key}</span>
                 : null}
-
-            <RadioGroupItem
-                value={option.key}
-                id={optionKey + '-radio'}
-                aria-label={ariaLabel}
-                className='bg-background size-5'
-                disabled={isDisabled}
-            />
+            <span>
+                <RadioGroupItem
+                    value={option.key}
+                    id={optionKey + '-radio'}
+                    aria-label={ariaLabel}
+                    className='bg-background size-5'
+                    disabled={isDisabled}
+                />
+            </span>
 
             {labelComponent}
 

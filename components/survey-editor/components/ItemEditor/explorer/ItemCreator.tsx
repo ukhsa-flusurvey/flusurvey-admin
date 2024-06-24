@@ -155,7 +155,9 @@ const SingleItemTypeSelectorDialog: React.FC<SingleItemTypeSelectorDialogProps> 
                 }
             }}>
 
-            <DialogContent className='max-h-full flex flex-col'>
+            <DialogContent className='max-h-full flex flex-col'
+                closeBtnAriaLabel='Close'
+            >
                 <DialogHeader>
                     <DialogTitle>
                         What type of item do you want to add?

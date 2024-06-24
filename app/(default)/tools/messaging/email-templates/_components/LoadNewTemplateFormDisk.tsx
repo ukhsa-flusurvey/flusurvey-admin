@@ -15,7 +15,9 @@ const LoadNewTemplateFormDisk: React.FC<LoadNewTemplateFormDiskProps> = (props) 
             onOpenChange={props.onClose}
         >
 
-            <DialogContent>
+            <DialogContent
+                closeBtnAriaLabel='Close'
+            >
                 <Filepicker
                     label='Pick a new file to replace/set the current template'
                     id='template-upload'

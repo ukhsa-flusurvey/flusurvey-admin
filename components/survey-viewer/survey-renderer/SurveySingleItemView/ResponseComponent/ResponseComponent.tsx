@@ -25,6 +25,7 @@ import { CommonResponseComponentProps } from '../utils';
 import Time from './InputTypes/Time';
 import Consent from './InputTypes/Consent';
 import ValidatedRandomQuestion from './InputTypes/validated-random-question';
+import ContactForm from './InputTypes/contact-form';
 
 
 interface ResponseComponentProps {
@@ -337,6 +338,16 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                     />
                 case 'validatedRandomQuestion':
                     return <ValidatedRandomQuestion
+                        parentKey={currentKeyPath}
+                        key={respComp.key}
+                        languageCode={props.languageCode}
+                        compDef={respComp}
+                        prefill={getPrefillForItem(respComp)}
+                        responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
+                        dateLocales={props.dateLocales}
+                    />
+                case 'contact':
+                    return <ContactForm
                         parentKey={currentKeyPath}
                         key={respComp.key}
                         languageCode={props.languageCode}
