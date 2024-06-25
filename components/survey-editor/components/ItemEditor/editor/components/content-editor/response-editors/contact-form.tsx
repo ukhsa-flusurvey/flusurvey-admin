@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { tr } from 'date-fns/locale';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
@@ -235,6 +234,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     // field config components:
     const fullNameComp = contactComp.items.find(item => item.role === 'fullName');
+    const companyComp = contactComp.items.find(item => item.role === 'company');
     const emailComp = contactComp.items.find(item => item.role === 'email');
     const phoneComp = contactComp.items.find(item => item.role === 'phone');
     const addressComp = contactComp.items.find(item => item.role === 'address');
@@ -627,6 +627,21 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                 }}
                 id='fullName'
                 fieldName='Full name'
+                selectedLanguage={selectedLanguage}
+            />
+
+
+            <SimpleFieldConfigs
+                component={companyComp as ItemGroupComponent}
+                onChange={(newComp) => {
+                    if (newComp === undefined) {
+                        onRemoveField('company');
+                        return;
+                    }
+                    onChange(newComp);
+                }}
+                id='company'
+                fieldName='Company name'
                 selectedLanguage={selectedLanguage}
             />
 
