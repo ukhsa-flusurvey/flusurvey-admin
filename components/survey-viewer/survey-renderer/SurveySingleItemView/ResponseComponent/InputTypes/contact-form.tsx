@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CommonResponseComponentProps, getItemComponentByRole, getLocaleStringTextByCode } from '../../utils';
-import { AtSign, Mailbox, Pen, Phone, User } from 'lucide-react';
+import { AtSign, Building, Mailbox, Pen, Phone, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogClose, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -27,6 +27,7 @@ interface FormFieldConfig {
 
 interface ContactValues {
     fullName?: string;
+    company?: string;
     email?: string;
     phone?: string;
     address?: {
@@ -49,6 +50,7 @@ interface ContactFormDialogProps {
     },
     fieldConfig: {
         fullName?: FormFieldConfig,
+        company?: FormFieldConfig,
         email?: FormFieldConfig,
         phone?: FormFieldConfig,
         address?: {
@@ -67,6 +69,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
     const [isOpen, setIsOpen] = React.useState(false);
 
     const useFullName = props.fieldConfig.fullName !== undefined;
+    const useCompany = props.fieldConfig.company !== undefined;
     const useEmail = props.fieldConfig.email !== undefined;
     const usePhone = props.fieldConfig.phone !== undefined;
     const useAddress = props.fieldConfig.address !== undefined;
@@ -76,8 +79,12 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
             return new RegExp(props.fieldConfig.fullName?.pattern || '').test(value)
         }, {
             message: props.fieldConfig.fullName?.error
-        }
-        ) : z.string().optional(),
+        }) : z.string().optional(),
+        company: useCompany ? z.string().refine((value) => {
+            return new RegExp(props.fieldConfig.company?.pattern || '').test(value)
+        }, {
+            message: props.fieldConfig.company?.error
+        }) : z.string().optional(),
         email: useEmail ? z.string().email(props.fieldConfig.email?.error).refine((email => {
             return new RegExp(props.fieldConfig.email?.pattern || '').test(email);
         }), {
@@ -116,6 +123,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             fullName: props.values?.fullName || '',
+            company: props.values?.company || '',
             email: props.values?.email || '',
             phone: props.values?.phone || '',
             address: props.values?.address || {
@@ -130,6 +138,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
     function onSubmit(values: z.infer<typeof formSchema>) {
         props.onChange({
             fullName: values.fullName,
+            company: values.company,
             email: values.email,
             phone: values.phone,
             address: {
@@ -194,6 +203,27 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                                     </FormControl>
                                     <FormDescription>
                                         {props.fieldConfig.fullName?.description}
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
+
+                        {props.fieldConfig.company !== undefined && <FormField
+                            control={form.control}
+                            name="company"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Company</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder={props.fieldConfig.company?.placeholder}
+                                            autoComplete='organization'
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>
+                                        {props.fieldConfig.company?.description}
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -410,6 +440,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     // Field components:
     const fullNameComp = getItemComponentByRole(compDef.items, 'fullName');
+    const companyComp = getItemComponentByRole(compDef.items, 'company');
     const emailComp = getItemComponentByRole(compDef.items, 'email');
     const phoneComp = getItemComponentByRole(compDef.items, 'phone');
     const addressComp = getItemComponentByRole(compDef.items, 'address');
@@ -422,6 +453,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     const contactValues = {
         fullName: getResponseValue(response, 'fullName') || '',
+        company: getResponseValue(response, 'company') || '',
         email: getResponseValue(response, 'email') || '',
         phone: getResponseValue(response, 'phone') || '',
         address: {
@@ -454,6 +486,14 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                             {contactValues.fullName}
                         </p>
                     </div>}
+                {contactValues.company && <div className='flex gap-2 items-center'>
+                    <span className='pt-0'>
+                        <Building className='size-5 text-muted-foreground' />
+                    </span>
+                    <p className='flex flex-col'>
+                        <span>{contactValues.company}</span>
+                    </p>
+                </div>}
                 {contactValues.email && <div className='flex gap-2 items-center'>
                     <span className='pt-0'>
                         <AtSign className='size-5 text-muted-foreground' />
@@ -499,6 +539,10 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                             {
                                 key: 'fullName',
                                 value: newValues.fullName
+                            },
+                            {
+                                key: 'company',
+                                value: newValues.company
                             },
                             {
                                 key: 'email',
@@ -555,6 +599,13 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                         pattern: fullNameComp?.properties?.pattern,
                         error: getLocaleStringTextByCode((fullNameComp as ItemGroupComponent).items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
                         description: getLocaleStringTextByCode((fullNameComp as ItemGroupComponent).items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
+                    } : undefined,
+                    company: companyComp ? {
+                        label: getLocaleStringTextByCode(companyComp?.content, props.languageCode) || '',
+                        placeholder: getLocaleStringTextByCode(companyComp?.description, props.languageCode) || '',
+                        pattern: companyComp?.properties?.pattern,
+                        error: getLocaleStringTextByCode((companyComp as ItemGroupComponent).items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
+                        description: getLocaleStringTextByCode((companyComp as ItemGroupComponent).items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
                     } : undefined,
                     email: emailComp ? {
                         label: getLocaleStringTextByCode(emailComp?.content, props.languageCode) || '',
