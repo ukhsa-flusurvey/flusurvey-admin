@@ -214,7 +214,9 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                             name="company"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>Company</FormLabel>
+                                    <FormLabel>
+                                        {props.fieldConfig.company?.label}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder={props.fieldConfig.company?.placeholder}
