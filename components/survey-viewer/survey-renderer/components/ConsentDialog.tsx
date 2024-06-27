@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import SimpleMarkdownRenderer from './SimpleMarkdownRenderer';
 import { Separator } from '@/components/ui/separator';
 
@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 interface ConsentDialogProps {
     open: boolean;
     title: string;
+    description: string;
     content?: string;
     cancelBtn: string;
     acceptBtn: string;
@@ -51,6 +52,9 @@ const ConsentDialog: React.FC<ConsentDialogProps> = (props) => {
                     <AlertDialogTitle>
                         {props.title}
                     </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {props.description}
+                    </AlertDialogDescription>
                 </AlertDialogHeader>
                 <Separator />
 

@@ -236,7 +236,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
             {props.showOptionKey ?
                 <span className="text-primary me-2 text-xs">{option.key}</span>
                 : null}
-            <span>
+            <span className='flex items-center justify-center'>
                 <RadioGroupItem
                     value={option.key}
                     id={optionKey + '-radio'}

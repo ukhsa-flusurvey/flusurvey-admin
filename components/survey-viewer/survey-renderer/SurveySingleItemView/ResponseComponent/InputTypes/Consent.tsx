@@ -52,6 +52,7 @@ const Consent: React.FC<ConsentProps> = (props) => {
     const labelComp = items.find(item => item.role === 'label');
     const contentComp = items.find(item => item.role === 'content')
     const dialogTitle = getLocaleStringTextByCode(items.find(item => item.role === 'title')?.content, props.languageCode)
+    const dialogDescription = getLocaleStringTextByCode(items.find(item => item.role === 'description')?.content, props.languageCode)
     const dialogAcceptBtn = getLocaleStringTextByCode(items.find(item => item.role === 'acceptBtn')?.content, props.languageCode)
     const dialogRejectBtn = getLocaleStringTextByCode(items.find(item => item.role === 'rejectBtn')?.content, props.languageCode)
 
@@ -91,6 +92,7 @@ const Consent: React.FC<ConsentProps> = (props) => {
                 acceptBtn={dialogAcceptBtn ? dialogAcceptBtn : 'Accept'}
                 cancelBtn={dialogRejectBtn ? dialogRejectBtn : 'Reject'}
                 title={dialogTitle ? dialogTitle : 'Consent'}
+                description={dialogDescription ? dialogDescription : ''}
                 content={getLocaleStringTextByCode(contentComp.content, props.languageCode)}
                 onConfirmed={() => accept()}
                 onCancelled={() => reject()}

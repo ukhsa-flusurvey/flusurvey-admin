@@ -36,12 +36,16 @@ const Consent: React.FC<ConsentProps> = (props) => {
 
     const labelComp = consentComp.items.find(item => item.role === 'label');
     const titleComp = consentComp.items.find(item => item.role === 'title');
+    const descriptionComp = consentComp.items.find(item => item.role === 'description');
     const contentComp = consentComp.items.find(item => item.role === 'content')
 
     const acceptBtn = consentComp.items.find(item => item.role === 'acceptBtn');
     const rejectBtn = consentComp.items.find(item => item.role === 'rejectBtn');
 
     const onChange = (newComp: ItemComponent) => {
+        if (consentComp.items.findIndex(item => item.role === newComp.role) === -1) {
+            consentComp.items.push(newComp);
+        }
         consentComp.items = consentComp.items.map(item => {
             if (item.role === newComp.role) {
                 return newComp;
@@ -100,6 +104,26 @@ const Consent: React.FC<ConsentProps> = (props) => {
                         onChange(updatedComponent);
                     }}
                     placeholder='Enter title for selected language...'
+                />
+            </div>
+
+            <div className='space-y-1.5'>
+                <Label
+                    htmlFor='consent-description'
+                >
+                    Dialog description
+                </Label>
+                <Input
+                    id='consent-description'
+                    value={localisedObjectToMap(descriptionComp?.content).get(selectedLanguage) || ''}
+                    onChange={(e) => {
+                        const updatedComponent = { key: 'description', role: 'description', ...descriptionComp } as ItemComponent;
+                        const updatedContent = localisedObjectToMap(updatedComponent.content);
+                        updatedContent.set(selectedLanguage, e.target.value);
+                        updatedComponent.content = generateLocStrings(updatedContent);
+                        onChange(updatedComponent);
+                    }}
+                    placeholder='E.g. instructions for the consent dialog...'
                 />
             </div>
 
