@@ -7,7 +7,7 @@ import { Survey } from 'survey-engine/data_types';
 import { EditorMode } from './components/types';
 import { Toaster } from 'sonner';
 import { SurveyContext } from './surveyContext';
-import SurveyDocument from './components/SurveyDocument';
+import SurveyProperties from './components/SurveyProperties';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';
@@ -84,7 +84,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     let mainContent: React.ReactNode = null;
     switch (mode) {
         case 'document':
-            mainContent = <SurveyDocument />;
+            mainContent = <SurveyProperties />;
             break;
         case 'itemEditor':
             mainContent = <ItemEditor
@@ -127,7 +127,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     notLatestVersion={props.notLatestVersion}
                 />
 
-                <div className='grow overflow-hidden flex flex-col'>
+                <div className='overflow-hidden flex flex-col grow'>
                     {mainContent}
                 </div >
                 <LoadSurveyFromDisk

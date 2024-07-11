@@ -78,7 +78,7 @@ const SurveyEditorMenu: React.FC<SurveyEditorMenuProps> = (props) => {
                                 value='document'
                                 onClick={() => props.onChangeMode('document')}
                             >
-                                Document <MenubarShortcut>⌘ + 1</MenubarShortcut>
+                                Survey Properties &nbsp; <MenubarShortcut>⌘ + 1</MenubarShortcut>
                             </MenubarRadioItem>
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
