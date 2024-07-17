@@ -98,7 +98,7 @@ export function SurveyBasicInfoForm() {
                                     <Input {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                    The survey description should be a brief summary of the survey's purpose.
+                                    The survey description should be a brief summary of the survey&apos;s purpose.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

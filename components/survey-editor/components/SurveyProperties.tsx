@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { SurveyContext } from '../surveyContext';
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from './general/sidebar-nav';
-import { SurveyDocumentForm } from './SurveyPropertiesForm';
 import { SurveyBasicInfoForm } from './forms/SurveyBasicInfoForm';
 import { SurveyAccessForm } from './forms/SurveyAccessForm';
 
@@ -49,7 +48,9 @@ const SurveyProperties: React.FC<SurveyPropertiesProps> = (props) => {
                                 <SidebarNav items={formItems} formIndex={formIndex} />
                             </aside>
                             <div className="flex-1 lg:max-w-2xl">
-                                <SurveyDocumentForm activeForm={formItems[formIndex].form} />
+                                <div className="space-y-6">
+                                    {formItems[formIndex].form}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -25,7 +25,7 @@ interface SurveyEditorProps {
 
 
 const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
-    const [mode, setMode] = React.useState<EditorMode>('itemEditor');
+    const [mode, setMode] = React.useState<EditorMode>(EditorMode.ItemEditor);
 
     const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
     const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
@@ -41,7 +41,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 switch (event.key) {
                     case '1':
                         event.preventDefault();
-                        setMode('document');
+                        setMode('properties');
                         break;
                     case '2':
                         event.preventDefault();
@@ -83,7 +83,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     let mainContent: React.ReactNode = null;
     switch (mode) {
-        case 'document':
+        case 'properties':
             mainContent = <SurveyProperties />;
             break;
         case 'itemEditor':
