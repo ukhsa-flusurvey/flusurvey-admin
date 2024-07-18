@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator"
 import { useContext, useEffect, useState } from "react"
 import { SurveyContext } from "../../surveyContext"
 import { LocalizedString } from "survey-engine/data_types"
-import { getLocalizedString, updateLocalizedString } from "@/utils/getLocalisedString"
+import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
 import React from "react"
 import LanguageSelector from "@/components/LanguageSelector"
 

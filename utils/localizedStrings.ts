@@ -9,19 +9,10 @@ export const getLocalizedString = (translations: LocalizedObject[] | undefined, 
     return translation.parts.map(p => (p as ExpressionArg).str).join('');
 }
 
-export const updateLocalizedString = (localizedString: LocalizedString[], langCode: string, value: string): LocalizedString[] => {
-    if (localizedString == undefined) {
-        return [{ code: langCode, parts: [{ str: value }] }];
-    }
+export const updateLocalizedString = (localizedString: LocalizedString[], langCode: string, value: string | string[]): LocalizedString[] => {
+    let lStringItem = Array.isArray(value) ? { code: langCode, parts: value.map(v => ({ str: v })) } : { code: langCode, parts: [{ str: value }] };
+    if (localizedString == undefined) return [lStringItem];
     const updated = [...localizedString];
     const existing = updated.find(ls => ls.code === langCode);
-    if (existing) {
-        existing.parts = [{ str: value }];
-    } else {
-        updated.push({
-            code: langCode,
-            parts: [{ str: value }]
-        });
-    }
-    return updated;
+    return existing ? updated.map(ls => ls.code === langCode ? lStringItem : ls) : [...updated, lStringItem];
 }
