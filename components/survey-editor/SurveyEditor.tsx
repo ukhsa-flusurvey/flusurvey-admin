@@ -41,19 +41,19 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 switch (event.key) {
                     case '1':
                         event.preventDefault();
-                        setMode('properties');
+                        setMode(EditorMode.Properties);
                         break;
                     case '2':
                         event.preventDefault();
-                        setMode('itemEditor');
+                        setMode(EditorMode.ItemEditor);
                         break;
                     case '3':
                         event.preventDefault();
-                        setMode('advanced');
+                        setMode(EditorMode.Advanced);
                         break;
                     case '4':
                         event.preventDefault();
-                        setMode('simulator');
+                        setMode(EditorMode.Simulator);
                         break;
                     case 's':
                         event.preventDefault();
