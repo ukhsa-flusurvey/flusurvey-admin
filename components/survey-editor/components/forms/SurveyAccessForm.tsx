@@ -24,26 +24,27 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { SurveyContext } from "../../surveyContext"
 import { useContext, useEffect } from "react"
+import { Survey } from "survey-engine/data_types"
 
 const formSchema = z.object({ "available_for": z.string(), "login_required": z.boolean().optional() })
+
+const initialValues = (survey: Survey | undefined) => ({
+    available_for: survey?.availableFor ?? "active_participants",
+    login_required: survey?.requireLoginBeforeSubmission ?? false,
+});
 
 
 export function SurveyAccessForm() {
     const { survey, setSurvey, selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
 
-    const initialValues = () => ({
-        available_for: survey?.availableFor ?? "active_participants",
-        login_required: survey?.requireLoginBeforeSubmission ?? false,
-    });
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialValues()
+        defaultValues: initialValues(survey)
     })
 
     useEffect(() => {
-        form.reset(initialValues());
-    }, [survey]);
+        form.reset(initialValues(survey));
+    }, [survey, form]);
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)

@@ -16,31 +16,31 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useContext, useEffect, useState } from "react"
 import { SurveyContext } from "../../surveyContext"
-import { LocalizedString } from "survey-engine/data_types"
+import { LocalizedString, Survey } from "survey-engine/data_types"
 import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
 import React from "react"
 import LanguageSelector from "@/components/LanguageSelector"
 
 const formSchema = z.object({ "name": z.string().max(255), "description": z.string(), "duration_notice": z.string() })
 
+const initialValues = (survey: Survey | undefined, selectedLanguage: string) => ({
+    name: getLocalizedString(survey?.props?.name, selectedLanguage) ?? "",
+    description: getLocalizedString(survey?.props?.description, selectedLanguage) ?? "",
+    duration_notice: getLocalizedString(survey?.props?.typicalDuration, selectedLanguage) ?? "",
+});
+
 export function SurveyBasicInfoForm() {
     const { survey, setSurvey, selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
     const currentSurveyProps = survey?.props;
-
-    const initialValues = () => ({
-        name: getLocalizedString(currentSurveyProps?.name, selectedLanguage) ?? "",
-        description: getLocalizedString(currentSurveyProps?.description, selectedLanguage) ?? "",
-        duration_notice: getLocalizedString(currentSurveyProps?.typicalDuration, selectedLanguage) ?? "",
-    });
-
-    useEffect(() => {
-        form.reset(initialValues());
-    }, [selectedLanguage]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         mode: 'onSubmit',
         resolver: zodResolver(formSchema),
     })
+
+    useEffect(() => {
+        form.reset(initialValues(survey, selectedLanguage));
+    }, [selectedLanguage, form, survey]);
 
 
     function onSubmit(values: z.infer<typeof formSchema>) {
