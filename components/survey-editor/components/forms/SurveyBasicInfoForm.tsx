@@ -31,7 +31,6 @@ const initialValues = (survey: Survey | undefined, selectedLanguage: string) => 
 
 export function SurveyBasicInfoForm() {
     const { survey, setSurvey, selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
-    const currentSurveyProps = survey?.props;
 
     const form = useForm<z.infer<typeof formSchema>>({
         mode: 'onSubmit',
