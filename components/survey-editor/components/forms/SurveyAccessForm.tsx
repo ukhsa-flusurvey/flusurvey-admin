@@ -35,7 +35,7 @@ const initialValues = (survey: Survey | undefined) => ({
 
 
 export function SurveyAccessForm() {
-    const { survey, setSurvey, selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
+    const { survey, setSurvey } = useContext(SurveyContext);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
