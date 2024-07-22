@@ -35,11 +35,13 @@ export function SurveyBasicInfoForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         mode: 'onSubmit',
         resolver: zodResolver(formSchema),
+        defaultValues: initialValues(survey, selectedLanguage)
     })
 
+    // Reset form when survey changes (opened another survey) or language is switched.
     useEffect(() => {
         form.reset(initialValues(survey, selectedLanguage));
-    }, [selectedLanguage, form, survey]);
+    }, [survey, selectedLanguage, form])
 
 
     function onSubmit(values: z.infer<typeof formSchema>) {
