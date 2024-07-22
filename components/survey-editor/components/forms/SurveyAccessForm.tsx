@@ -42,7 +42,7 @@ export function SurveyAccessForm() {
         defaultValues: initialValues(survey)
     })
 
-    // Reset form when survey changes(opened another survey)
+    // Reset form when survey changes (opened another survey)
     useEffect(() => {
         form.reset(initialValues(survey));
     }, [survey, form]);
