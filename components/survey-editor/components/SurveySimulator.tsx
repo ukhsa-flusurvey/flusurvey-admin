@@ -7,9 +7,11 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-import { Eraser, Pencil } from 'lucide-react';
+import { Eraser, Pencil, Plus, Trash2 } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import SurveyLanguageToggle from './general/SurveyLanguageToggle';
+import { SurveyContextTable } from './SurveyContextTable';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 interface SurveySimulatorProps {
@@ -49,151 +51,151 @@ const SurveyContextEditorDialog: React.FC<{
     isOpen: boolean;
 }> = (props) => {
     const [contextValues, setContextValues] = React.useState<ContextValues>(props.contextValues);
+    const [keyValuePairs, setKeyValuePairs] = React.useState<[string, string][]>([]);
 
-    const [newFlagPair, setNewFlagPair] = React.useState<{ key: string, value: string }>({ key: '', value: '' });
-
+    //  Pull keyValuePairs when contextValues changes / dialog opens
     useEffect(() => {
-        setContextValues(props.contextValues);
-    }, [props.contextValues]);
+        if (props.isOpen) {
+            setKeyValuePairs(Object.entries(contextValues.participantFlags));
+        }
+
+    }, [contextValues.participantFlags, props.isOpen]);
 
 
+    const errorDuplicate = new Set(keyValuePairs.map(([key, _]) => key)).size !== keyValuePairs.length;
+    const errorEmptyKey = keyValuePairs.some(([key, value]) => key.length === 0);
+    const error = errorDuplicate || errorEmptyKey;
 
-    return (<Dialog
-        open={props.isOpen}
-        onOpenChange={props.onClose}
-    >
-        <DialogContent>
+
+    return (<Dialog open={props.isOpen} onOpenChange={props.onClose}>
+        <DialogContent className='max-w-screen-sm'>
             <DialogHeader>
                 <DialogTitle>
-                    Edit survey context
+                    Survey Context Variables
                 </DialogTitle>
             </DialogHeader>
 
             <div className='space-y-4 w-full overflow-hidden p-1'>
-                <Label htmlFor='isLoggedin'
-                    className='flex items-center gap-2'
-                >
-                    <Switch id='isLoggedin' checked={contextValues.isLoggedIn} onCheckedChange={(checked) => {
-                        setContextValues({
-                            ...contextValues,
-                            isLoggedIn: checked
-                        });
-                    }} />
-                    Is logged in
-                </Label>
-
-                <div className=''>
-
-                    <h3 className='font-bold mb-2'>
-                        Participant flags
-                    </h3>
-                    <ul className='my-2 divide-y pe-1'>
-                        {contextValues.participantFlags && Object.keys(contextValues.participantFlags).length === 0 ? <p className='text-neutral-600 text-center text-sm'>No participant flags</p> : null}
-                        {contextValues.participantFlags && Object.keys(contextValues.participantFlags).map((key) => {
-                            return (
-                                <div key={key} className='flex items-center gap-2 py-1 max-w-full'>
-                                    <Label
-                                        className='text-base font-mono grow truncate w-1/2'
-                                        htmlFor={`flag-${key}`}>{key}</Label>
-                                    <Input
-                                        id={`flag-${key}`}
-                                        type='text'
-                                        className='h-9 w-1/2'
-                                        value={contextValues.participantFlags ? contextValues.participantFlags[key] : ''}
-                                        onChange={(e) => {
-                                            setContextValues({
-                                                ...contextValues,
-                                                participantFlags: {
-                                                    ...contextValues.participantFlags,
-                                                    [key]: e.target.value
-                                                }
-                                            });
-                                        }}
-                                    />
-                                    <Button
-                                        variant='outline'
-                                        size='sm'
-                                        onClick={() => {
-                                            const newFlags = { ...contextValues.participantFlags };
-                                            delete newFlags[key];
-                                            setContextValues({
-                                                ...contextValues,
-                                                participantFlags: newFlags
-                                            });
-                                        }}
-                                    >
-                                        <Eraser className='size-4 text-neutral-500' />
-                                    </Button>
-                                </div>
-                            )
-                        })
-                        }
-                    </ul>
-
-                    <Separator />
-
-                    <div className='flex items-center gap-2 mt-2'>
+                <div className='my-2'>
+                    <div key='isLoggedIn' className='flex items-center gap-2 max-w-full'>
                         <Input
-                            id='new-flag-key'
-                            className='h-9'
+                            className='font-mono text-sm '
                             type='text'
-                            placeholder='Flag key...'
-                            value={newFlagPair.key}
-                            onChange={(e) => {
-                                setNewFlagPair({
-                                    ...newFlagPair,
-                                    key: e.target.value
-                                });
-                            }}
+                            contentEditable={false}
+                            readOnly={true}
+                            value={"isLoggedIn"}
+                            disabled={true}
                         />
-                        <Input
-                            id='new-flag-value'
-                            className='h-9'
-                            type='text'
-                            placeholder='Flag value...'
-                            value={newFlagPair.value}
-                            onChange={(e) => {
-                                setNewFlagPair({
-                                    ...newFlagPair,
-                                    value: e.target.value
-                                });
-                            }}
-                        />
-                        <Button
-                            size={'sm'}
-                            variant={'outline'}
-                            disabled={newFlagPair.key.length === 0}
-                            onClick={() => {
+                        <Select onValueChange={
+                            (value) => {
                                 setContextValues({
                                     ...contextValues,
-                                    participantFlags: {
-                                        ...contextValues.participantFlags,
-                                        [newFlagPair.key]: newFlagPair.value
-                                    }
+                                    isLoggedIn: value === 'true'
                                 });
-                                setNewFlagPair({
-                                    key: '',
-                                    value: ''
-                                });
-                            }}
+                            }
+                        } value={contextValues.isLoggedIn?.toString()}>
+                            <SelectTrigger className='font-mono text-sm'>
+                                <SelectValue placeholder="Please select something." />
+                            </SelectTrigger>
+                            <SelectContent className='font-mono text-sm'>
+                                <SelectGroup>
+                                    <SelectItem value="true">true</SelectItem>
+                                    <SelectItem value="false">false</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            className='p-3'
+                            variant='outline'
+                            disabled={true}
                         >
-                            Add flag
+                            <Trash2 className='size-4' />
                         </Button>
                     </div>
+                    {
+                        keyValuePairs.map(([key, value], index) => (
+                            <div key={"key_" + index} className='flex items-center gap-2 mt-2 max-w-full'>
+                                <Input
+                                    className='font-mono text-sm'
+                                    type='text'
+                                    value={key}
+                                    minLength={1}
+                                    required
+                                    placeholder='Name'
+                                    onChange={(e) => {
+                                        setKeyValuePairs((prev) => {
+                                            const newPairs = [...prev];
+                                            newPairs[index][0] = e.target.value;
+                                            return newPairs;
+                                        });
+                                    }}
+                                />
+                                <Input
+                                    className='font-mono text-sm'
+                                    type='text'
+                                    value={String(value)}
+                                    placeholder='Value'
+                                    onChange={(e) => {
+                                        setKeyValuePairs((prev) => {
+                                            const newPairs = [...prev];
+                                            newPairs[index][1] = e.target.value;
+                                            return newPairs;
+                                        });
+                                    }}
+                                />
+                                <Button
+                                    variant='outline'
+                                    className='p-3'
+                                    onClick={() => {
+                                        setKeyValuePairs((prev) => {
+                                            prev.splice(index, 1);
+                                            return [...prev];
+                                        });
+                                    }}
+                                >
+                                    <Trash2 className='size-4' />
+                                </Button>
+                            </div>
+
+                        ))
+                    }
+                </div>
+
+                <Separator />
+
+                <div className='flex flex-row justify-end gap-2 max-w-full'>
+                    <Button
+                        className='p-3'
+                        variant='outline'
+                        disabled={keyValuePairs.some(([key, value]) => key.length === 0)}
+                        onClick={() => {
+                            setKeyValuePairs((prev) => {
+                                prev.push(['', '']);
+                                return [...prev];
+                            });
+                        }}
+                    >
+                        <Plus className='size-4' />
+                    </Button>
                 </div>
 
             </div>
             <DialogFooter>
+                <p className='text-sm text-red-700 text-center m-auto '>{(errorDuplicate ? "Keys must be unique. " : "") + (errorEmptyKey ? "Keys must not be empty. " : "")}</p>
                 <DialogClose asChild>
                     <Button variant='outline'>Cancel</Button>
                 </DialogClose>
-                <Button
+                <Button disabled={error}
                     onClick={() => {
-                        props.onContextChange(contextValues);
+                        setContextValues((prev) => {
+                            const newValues = { ...prev, participantFlags: Object.fromEntries(keyValuePairs) };
+                            props.onContextChange(newValues);
+                            return newValues;
+                        });
                         props.onClose();
                     }}
                 >
-                    Apply
+                    Save
                 </Button>
             </DialogFooter>
 
@@ -363,22 +365,13 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                 <Separator />
 
                 <div className='space-y-2'>
-                    <h3 className='font-semibold'>Survey context</h3>
-                    <pre className='text-xs max-w-full overflow-x-scroll'>
-                        {contextValues ? (JSON.stringify(contextValues, undefined, 2)) : <p className='text-neutral-600'>No context values</p>}
-                    </pre>
-                    <Button
-                        variant={'outline'}
-                        size={'sm'}
-                        onClick={() => {
-                            setIsContextEditorOpen(true);
-                        }}
-                    >
-                        <span>
-                            <Pencil className='size-4 me-2 text-neutral-500' />
-                        </span>
-                        Edit context
-                    </Button>
+                    <div className='flex flex-row justify-between'>
+                        <h3 className='font-semibold'>Survey context</h3>
+                        <Button variant="outline" className='size-6 p-0' onClick={() => { setIsContextEditorOpen(true); }}>
+                            <Pencil className="size-4" />
+                        </Button>
+                    </div>
+                    <SurveyContextTable contextValues={contextValues} />
                     <SurveyContextEditorDialog
                         contextValues={contextValues}
                         onContextChange={(context) => {
