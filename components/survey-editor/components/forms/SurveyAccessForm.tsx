@@ -47,8 +47,16 @@ export function SurveyAccessForm() {
         form.reset(initialValues(survey));
     }, [survey, form]);
 
+    // Save changes on "cleanup" (unmounting) of the component.
+    useEffect(() => {
+        return () => {
+            let hasChanges = JSON.stringify(form.getValues()) != JSON.stringify(initialValues(survey))
+            hasChanges && form.handleSubmit(onSubmit)();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form, survey])
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         if (survey !== undefined) {
             survey.availableFor = values.available_for;
             survey.requireLoginBeforeSubmission = values.login_required;
@@ -110,7 +118,7 @@ export function SurveyAccessForm() {
                                 </FormControl>
                             </FormItem>
                         )} />
-                    <div className="flex justify-end"><Button type="submit">Save</Button></div>
+                    {/* <div className="flex justify-end"><Button type="submit">Save</Button></div> */}
                 </form>
             </Form>
         </>

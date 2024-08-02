@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { SurveyContext } from '../surveyContext';
+import { useState } from 'react';
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from './general/sidebar-nav';
 import { SurveyBasicInfoForm } from './forms/SurveyBasicInfoForm';
@@ -9,8 +8,7 @@ interface SurveyPropertiesProps {
 }
 
 const SurveyProperties: React.FC<SurveyPropertiesProps> = (props) => {
-    const { survey, setSurvey } = useContext(SurveyContext);
-    const [formIndex, setFormIndex] = React.useState(0);
+    const [formIndex, setFormIndex] = useState(0);
 
     const formItems = [
         {
@@ -26,10 +24,6 @@ const SurveyProperties: React.FC<SurveyPropertiesProps> = (props) => {
             navOnClick: () => setFormIndex(1),
         },
     ];
-
-    if (!survey) {
-        return <p>No survey loaded</p>;
-    }
 
     return (
         <>

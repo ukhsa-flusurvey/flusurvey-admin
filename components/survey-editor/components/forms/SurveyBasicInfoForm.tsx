@@ -43,9 +43,16 @@ export function SurveyBasicInfoForm() {
         form.reset(initialValues(survey, selectedLanguage));
     }, [survey, selectedLanguage, form])
 
+    // Save changes on "cleanup" (unmounting) of the component.
+    useEffect(() => {
+        return () => {
+            let hasChanges = JSON.stringify(form.getValues()) != JSON.stringify(initialValues(survey, selectedLanguage))
+            hasChanges && form.handleSubmit(onSubmit)();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form, survey, selectedLanguage])
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         if (survey !== undefined) {
             if (survey.props == undefined) {
                 survey.props = {};
@@ -120,7 +127,7 @@ export function SurveyBasicInfoForm() {
                                 <FormMessage />
                             </FormItem>
                         )} />
-                    <div className="flex justify-end"><Button type="submit">Save</Button></div>
+                    {/* <div className="flex justify-end"><Button type="submit">Save</Button></div> */}
                 </form>
             </Form>
         </>
