@@ -88,8 +88,8 @@ const SurveyContextEditorDialog: React.FC<{
                         Participant flags
                     </h3>
                     <ul className='my-2 divide-y pe-1'>
-                        {contextValues.participantFlags && Object.keys(contextValues.participantFlags).length === 0 ? <p className='text-neutral-600 text-center text-sm'>No participant flags</p> : null}
-                        {contextValues.participantFlags && Object.keys(contextValues.participantFlags).map((key) => {
+                        {Object.keys(contextValues.participantFlags).length === 0 ? <p className='text-neutral-600 text-center text-sm'>No participant flags</p> : null}
+                        {Object.keys(contextValues.participantFlags).map((key) => {
                             return (
                                 <div key={key} className='flex items-center gap-2 py-1 max-w-full'>
                                     <Label
@@ -99,7 +99,7 @@ const SurveyContextEditorDialog: React.FC<{
                                         id={`flag-${key}`}
                                         type='text'
                                         className='h-9 w-1/2'
-                                        value={contextValues.participantFlags ? contextValues.participantFlags[key] : ''}
+                                        value={contextValues.participantFlags[key]}
                                         onChange={(e) => {
                                             setContextValues({
                                                 ...contextValues,
