@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -25,6 +24,7 @@ import { Separator } from "@/components/ui/separator"
 import { SurveyContext } from "../../surveyContext"
 import { useContext, useEffect } from "react"
 import { Survey } from "survey-engine/data_types"
+import { useDebounceCallback } from "usehooks-ts"
 
 const formSchema = z.object({ "available_for": z.string(), "login_required": z.boolean().optional() })
 
@@ -35,8 +35,8 @@ const initialValues = (survey: Survey | undefined) => ({
 
 
 export function SurveyAccessForm() {
+    const runDebounced = useDebounceCallback((f) => f(), 500);
     const { survey, setSurvey } = useContext(SurveyContext);
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: initialValues(survey)
@@ -47,16 +47,24 @@ export function SurveyAccessForm() {
         form.reset(initialValues(survey));
     }, [survey, form]);
 
-    // Save changes on "cleanup" (unmounting) of the component.
+    // Subscribe to changes in the form and save changes to survey debounced
     useEffect(() => {
+        let watcher = form.watch((values) => {
+            let hasChanges = JSON.stringify(values) != JSON.stringify(initialValues(survey))
+            if (hasChanges) {
+                runDebounced(() => {
+                    form.handleSubmit(onSubmit)();
+                });
+            }
+        });
         return () => {
-            let hasChanges = JSON.stringify(form.getValues()) != JSON.stringify(initialValues(survey))
-            hasChanges && form.handleSubmit(onSubmit)();
+            watcher.unsubscribe();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [form, survey])
 
     function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("onSubmit", values);
         if (survey !== undefined) {
             survey.availableFor = values.available_for;
             survey.requireLoginBeforeSubmission = values.login_required;
