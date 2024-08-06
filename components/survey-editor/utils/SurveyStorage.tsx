@@ -1,51 +1,43 @@
 import { Survey } from "survey-engine/data_types";
 
-export abstract class SurveyStorage {
-    public static debug = true;
-    public static storedSurveys: StoredSurvey[];
-    public static asObject = () => { return { storedSurveys: this.storedSurveys } };
+export class SurveyStorage {
+    public static debug = false;
+    storedSurveys: StoredSurvey[] = [];
+    public asObject = () => { return { storedSurveys: this.storedSurveys } };
 
-    public static readFromLocalStorage = () => {
-        this.debug && console.log('Reading from local storage');
-        let surveyStorageString = localStorage.getItem('SurveyStorage');
-        this.storedSurveys = [];
-        try {
-            if (surveyStorageString) {
-                const json = JSON.parse(surveyStorageString);
-                if (json.storedSurveys) {
-                    this.storedSurveys = json.storedSurveys.map((s: any) => new StoredSurvey(s.id, s.survey, new Date(s.date)));
+    constructor(json?: string) {
+        if (json) {
+            SurveyStorage.debug && console.log('Constructing SurveyStorage from string.');
+            this.storedSurveys = [];
+            try {
+                const parsed = JSON.parse(json);
+                if (parsed.storedSurveys) {
+                    this.storedSurveys = parsed.storedSurveys.map((s: any) => new StoredSurvey(s.id, s.survey, new Date(s.date)));
                 }
+            } catch (error) {
+                console.error('Error parsing SurveyStorage:', error);
             }
-        } catch (error) {
-            console.error('Error parsing SurveyStorage:', error);
         }
     }
 
-    public static saveToLocalStorage = () => {
-        this.debug && console.log('Saving to local storage');
-        let surveyStorageString = JSON.stringify(this.asObject());
-        localStorage.setItem('SurveyStorage', surveyStorageString);
-    }
-
-    public static updateSurvey = (updatedStoredSurvey: StoredSurvey) => {
-        this.debug && console.log('Updating survey in storage with id:', updatedStoredSurvey.id);
+    updateSurvey = (updatedStoredSurvey: StoredSurvey) => {
+        SurveyStorage.debug && console.log('Updating survey in storage with id:', updatedStoredSurvey.id);
         this.storedSurveys = this.storedSurveys.filter(s => s.id !== updatedStoredSurvey.id);
         this.storedSurveys.push(updatedStoredSurvey);
-
     }
 
-    public static getRecentlyEditedSurveys = (): StoredSurvey[] => {
+    public getRecentlyEditedSurveys = (): StoredSurvey[] => {
         let sortedSurveys = this.storedSurveys.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
         return sortedSurveys;
     }
 
-    public static getMostRecentlyEditedSurvey = (): StoredSurvey | undefined => {
+    public getMostRecentlyEditedSurvey = (): StoredSurvey | undefined => {
         let res = this.getRecentlyEditedSurveys();
         return res.length > 0 ? res[0] : undefined;
     }
 
-    public static removeSurvey = (storedSurvey: StoredSurvey) => {
-        this.debug && console.log('Removing survey in storage with id:', storedSurvey.id);
+    public removeSurvey = (storedSurvey: StoredSurvey) => {
+        SurveyStorage.debug && console.log('Removing survey in storage with id:', storedSurvey.id);
         this.storedSurveys = this.storedSurveys.filter(s => s.id !== storedSurvey.id);
     }
 }

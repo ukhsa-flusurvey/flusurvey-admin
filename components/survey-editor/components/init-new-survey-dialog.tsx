@@ -5,6 +5,8 @@ import { BsExclamationTriangle } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { StoredSurvey } from '../utils/SurveyStorage';
+import { getSurveyIdentifier } from '../utils/utils';
 
 
 interface InitNewSurveyDialogProps {
@@ -13,13 +15,13 @@ interface InitNewSurveyDialogProps {
 }
 
 const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
-    const { survey, setSurvey } = React.useContext(SurveyContext);
+    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyContext);
 
     const [surveyKey, setSurveyKey] = React.useState<string>('');
 
     const onCreateNewSurvey = () => {
         if (!surveyKey) return;
-        setSurvey({
+        let newSurvey = {
             availableFor: 'active_participants',
             surveyDefinition: {
                 key: surveyKey,
@@ -29,8 +31,8 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
                 },
             },
             versionId: '',
-
-        });
+        };
+        setStoredSurvey(new StoredSurvey(getSurveyIdentifier(newSurvey), newSurvey, new Date()));
         props.onClose();
     }
 
@@ -45,7 +47,7 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
                     </DialogTitle>
                 </DialogHeader>
                 <div>
-                    {survey && <div className='flex items-center gap-3 p-4 bg-yellow-100 rounded-lg mb-3'>
+                    {storedSurvey && <div className='flex items-center gap-3 p-4 bg-yellow-100 rounded-lg mb-3'>
                         <span className='text-yellow-800 text-xl'>
                             <BsExclamationTriangle />
                         </span>

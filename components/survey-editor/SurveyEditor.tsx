@@ -25,64 +25,50 @@ interface SurveyEditorProps {
     onExit?: () => void;
 }
 
-
 const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     const [mode, setMode] = React.useState<EditorMode>('itemEditor');
     const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
     const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
     const [openNewDialog, setOpenNewDialog] = React.useState<boolean>(false);
-    const [storedSurvey, setStoredSurvey] = React.useState<StoredSurvey | undefined>(props.initialSurvey ? new StoredSurvey(getSurveyIdentifier(props.initialSurvey), props.initialSurvey, new Date()) : undefined);
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
-
     const runDebounced = useDebounceCallback((f) => f(), 1000);
-    //const debouncedSetSurveyStorage = useDebounceCallback((s) => { updateSurveyInStorage(s) }, 1000);
-    const [recentlyEditedStoredSurvey, setRecentlyEditedStoredSurvey] = React.useState<StoredSurvey | undefined>(undefined);
-    const [storage, setStorage, removeStorage] = useLocalStorage('SurveyStorage', SurveyStorage.asObject());
 
-    //  Updates survey in local storage
-    function updateSurveyInStorage(s: StoredSurvey) {
-        SurveyStorage.readFromLocalStorage();
-        SurveyStorage.updateSurvey(new StoredSurvey(s.id, s.survey, new Date()));
-        SurveyStorage.saveToLocalStorage();
-    }
+    //  Main State
+    const [surveyStorage, setSurveyStorage, removeSurveyStorage] = useLocalStorage('SurveyStorage', new SurveyStorage(), { serializer: (storage) => JSON.stringify(storage.asObject()), deserializer: (s) => new SurveyStorage(s) });
 
-    //  Run every time storage changes (e.g. when another tab changes the storage)
+    //  Associated State
+    const [storedSurvey, setStoredSurvey] = React.useState<StoredSurvey | undefined>(props.initialSurvey ? new StoredSurvey(getSurveyIdentifier(props.initialSurvey), props.initialSurvey, new Date()) : undefined);
+
+    //  Derived state
+    let survey = storedSurvey?.survey;
+    let setSurvey = (s: Survey) => {
+        setStoredSurvey(new StoredSurvey(storedSurvey?.id ?? getSurveyIdentifier(s), s, new Date()));
+    };
+
+    //  Update associated state if survey storage changes. Usually external changes trigger this.
     useEffect(() => {
-        console.log('Storage changed');
-        if (storage) {
-            SurveyStorage.readFromLocalStorage();
-            let updatedStoredSurvey = SurveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
-            if (JSON.stringify(updatedStoredSurvey?.survey) !== JSON.stringify(storedSurvey?.survey)) {
-                setStoredSurvey(updatedStoredSurvey);
-            }
+        let updatedStoredSurvey = surveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
+        if (updatedStoredSurvey && JSON.stringify(updatedStoredSurvey?.survey) !== JSON.stringify(storedSurvey?.survey)) {
+            setStoredSurvey(updatedStoredSurvey);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [storage, storedSurvey?.id]);
+    }, [surveyStorage]);
 
-    //  Supposed to run only once, when page first loads / reloads
+    //  Run every time stored survey changes, but debounced
     useEffect(() => {
-        if (recentlyEditedStoredSurvey === undefined) {
-            SurveyStorage.readFromLocalStorage();
-            const mostRecentSurvey = SurveyStorage.getMostRecentlyEditedSurvey();
-            if (mostRecentSurvey) {
-                setRecentlyEditedStoredSurvey(mostRecentSurvey);
-            }
-        }
-    }, [recentlyEditedStoredSurvey]);
-
-    //  Run every time survey changes, but debounced
-    useEffect(() => {
-        console.log('debouncedSetSurveyStorage or storedSurvey changed');
         if (storedSurvey) {
             runDebounced(() => {
-                updateSurveyInStorage(storedSurvey);
+                surveyStorage.updateSurvey(new StoredSurvey(storedSurvey.id, storedSurvey.survey, new Date()));
+                setSurveyStorage(surveyStorage);
             });
         }
         return () => {
             runDebounced.cancel();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [storedSurvey]);
 
+    // Handle events for keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             // Check if Cmd (metaKey) or Ctrl is pressed along with 'S'
@@ -156,28 +142,17 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             onOpenSurvey={() => {
                 setOpenLoadDialog(true);
             }}
-            recentlyEditedStoredSurvey={recentlyEditedStoredSurvey}
+            recentlyEditedStoredSurvey={surveyStorage.getMostRecentlyEditedSurvey()}
             onOpenRecentlyEditedSurvey={() => {
                 console.log('Setting survey');
-                setStoredSurvey(recentlyEditedStoredSurvey);
+                setStoredSurvey(surveyStorage.getMostRecentlyEditedSurvey());
             }}
         />
         );
     }
 
-    let survey = storedSurvey?.survey;
-    let setSurvey = (s: Survey) => {
-        console.log('Setting survey');
-        if (storedSurvey) {
-            setStoredSurvey(new StoredSurvey(storedSurvey.id, s, new Date()));
-        } else {
-            //  If there is no stored survey, create a new one, the survey is probably being loaded from a file.
-            setStoredSurvey(new StoredSurvey(getSurveyIdentifier(s), s, new Date()));
-        }
-    };
-
     return (
-        <SurveyContext.Provider value={{ survey, setSurvey, selectedLanguage, setSelectedLanguage }}>
+        <SurveyContext.Provider value={{ storedSurvey: storedSurvey, setStoredSurvey: setStoredSurvey, survey: survey, setSurvey: setSurvey, selectedLanguage: selectedLanguage, setSelectedLanguage: setSelectedLanguage }}>
             <div className='bg-center bg-cover bg-[url(/images/sailing-ship.png)] h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
                 <SurveyEditorMenu
                     currentEditorMode={mode}
@@ -198,21 +173,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 <LoadSurveyFromDisk
                     isOpen={openLoadDialog}
                     onClose={() => setOpenLoadDialog(false)}
-                    storedSurveys={SurveyStorage.storedSurveys}
-                    onDeleteSurvey={(ss) => {
-                        SurveyStorage.removeSurvey(ss);
-                        SurveyStorage.saveToLocalStorage();
-                        if (ss.id === recentlyEditedStoredSurvey?.id) { //  If the deleted survey is the most recent one
-                            setRecentlyEditedStoredSurvey(undefined);
-                        }
-                        if (storedSurvey && ss.id === storedSurvey.id) { //  If the deleted survey is the one currently being edited
-                            setStoredSurvey(undefined);
-                        }
-                    }
-                    } onLoadStored={(ss: StoredSurvey) => {
-                        setStoredSurvey(ss);
-                    }
-                    } />
+                    surveyStorage={surveyStorage}
+                    setSurveyStorage={setSurveyStorage}
+                />
                 <SaveSurveyToDiskDialog
                     isOpen={openSaveDialog}
                     onClose={() => setOpenSaveDialog(false)}

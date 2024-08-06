@@ -7,18 +7,17 @@ import { Button } from '@/components/ui/button';
 import { SurveyContext } from '../surveyContext';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { StoredSurvey } from '../utils/SurveyStorage';
+import { StoredSurvey, SurveyStorage } from '../utils/SurveyStorage';
 import { Card } from '@/components/ui/card';
 import TimeAgo from 'timeago-react';
 import { cn } from '@/lib/utils';
-import { se } from 'date-fns/locale';
+import { getSurveyIdentifier } from '../utils/utils';
 
 interface LoadSurveyFromDiskProps {
     isOpen: boolean;
     onClose: () => void;
-    storedSurveys: StoredSurvey[];
-    onDeleteSurvey: (ss: StoredSurvey) => void;
-    onLoadStored: (ss: StoredSurvey) => void;
+    surveyStorage: SurveyStorage;
+    setSurveyStorage: (storage: SurveyStorage) => void;
 }
 
 
@@ -61,14 +60,15 @@ const LocaleEditor: React.FC<{
 const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     isOpen,
     onClose,
-    storedSurveys,
-    onDeleteSurvey,
-    onLoadStored
+    surveyStorage,
+    setSurveyStorage
 }) => {
-    const { survey, setSurvey } = React.useContext(SurveyContext);
+    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyContext);
     const [surveyFileContent, setSurveyFileContent] = React.useState<Survey | undefined>(undefined);
     const [storedSurveySelectionId, setStoredSurveySelectionId] = React.useState<string | undefined>(undefined);
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
+
+    const storedSurveys = surveyStorage.storedSurveys;
 
 
     React.useEffect(() => {
@@ -79,11 +79,11 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     const onLoadClick = () => {
         if (storedSurveySelectionId) {
             const storedSurvey = storedSurveys.find(ss => ss.id === storedSurveySelectionId);
-            storedSurvey && onLoadStored(storedSurvey);
+            storedSurvey && setStoredSurvey(storedSurvey);
         } else {
             console.log('load survey from file contents', surveyFileContent);
             if (!surveyFileContent) return;
-            setSurvey(surveyFileContent);
+            setStoredSurvey(new StoredSurvey(getSurveyIdentifier(surveyFileContent), surveyFileContent, new Date()));
         }
         toast.success('Survey loaded');
         onClose();
@@ -172,7 +172,14 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                             size='icon'
                                             onClick={() => {
                                                 if (confirm(`Are you sure you want to delete survey ${"\"" + ss.id + "\""} from memory?`)) {
-                                                    onDeleteSurvey(ss);
+                                                    let deletedSurvey = storedSurveys.find(s => s.id === ss.id);
+                                                    if (deletedSurvey) {
+                                                        surveyStorage.removeSurvey(deletedSurvey);
+                                                        setSurveyStorage(surveyStorage);
+                                                        if (storedSurvey?.id === ss.id) {
+                                                            setStoredSurvey(undefined);
+                                                        }
+                                                    }
                                                 }
                                             }}
                                         >
@@ -209,7 +216,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                     )}
 
                 </div>
-                {survey && <div className={"flex items-center gap-3 p-4 bg-yellow-100 rounded-lg"}>
+                {storedSurvey && <div className={"flex items-center gap-3 p-4 bg-yellow-100 rounded-lg"}>
                     <span className='text-yellow-800 text-xl'>
                         <BsExclamationTriangle />
                     </span>
@@ -231,7 +238,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                 </DialogFooter>
 
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 };
 
