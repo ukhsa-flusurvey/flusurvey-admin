@@ -3,6 +3,7 @@ import { Survey } from "survey-engine/data_types";
 export abstract class SurveyStorage {
     public static debug = true;
     public static storedSurveys: StoredSurvey[];
+    public static asObject = () => { return { storedSurveys: this.storedSurveys } };
 
     public static readFromLocalStorage = () => {
         this.debug && console.log('Reading from local storage');
@@ -22,7 +23,7 @@ export abstract class SurveyStorage {
 
     public static saveToLocalStorage = () => {
         this.debug && console.log('Saving to local storage');
-        let surveyStorageString = JSON.stringify({ storedSurveys: this.storedSurveys });
+        let surveyStorageString = JSON.stringify(this.asObject());
         localStorage.setItem('SurveyStorage', surveyStorageString);
     }
 

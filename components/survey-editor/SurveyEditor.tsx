@@ -13,7 +13,7 @@ import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';
 import WelcomeScreen from './components/welcome-screen';
 import InitNewSurveyDialog from './components/init-new-survey-dialog';
-import { useDebounceCallback } from 'usehooks-ts';
+import { useDebounceCallback, useLocalStorage } from 'usehooks-ts';
 import { StoredSurvey, SurveyStorage } from './utils/SurveyStorage';
 import { getSurveyIdentifier } from './utils/utils';
 
@@ -34,8 +34,10 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     const [storedSurvey, setStoredSurvey] = React.useState<StoredSurvey | undefined>(props.initialSurvey ? new StoredSurvey(getSurveyIdentifier(props.initialSurvey), props.initialSurvey, new Date()) : undefined);
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
-    const debouncedSetSurveyStorage = useDebounceCallback((s) => { updateSurveyInStorage(s) }, 1000);
+    const runDebounced = useDebounceCallback((f) => f(), 1000);
+    //const debouncedSetSurveyStorage = useDebounceCallback((s) => { updateSurveyInStorage(s) }, 1000);
     const [recentlyEditedStoredSurvey, setRecentlyEditedStoredSurvey] = React.useState<StoredSurvey | undefined>(undefined);
+    const [storage, setStorage, removeStorage] = useLocalStorage('SurveyStorage', SurveyStorage.asObject());
 
     //  Updates survey in local storage
     function updateSurveyInStorage(s: StoredSurvey) {
@@ -43,6 +45,19 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
         SurveyStorage.updateSurvey(new StoredSurvey(s.id, s.survey, new Date()));
         SurveyStorage.saveToLocalStorage();
     }
+
+    //  Run every time storage changes (e.g. when another tab changes the storage)
+    useEffect(() => {
+        console.log('Storage changed');
+        if (storage) {
+            SurveyStorage.readFromLocalStorage();
+            let updatedStoredSurvey = SurveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
+            if (JSON.stringify(updatedStoredSurvey?.survey) !== JSON.stringify(storedSurvey?.survey)) {
+                setStoredSurvey(updatedStoredSurvey);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [storage, storedSurvey?.id]);
 
     //  Supposed to run only once, when page first loads / reloads
     useEffect(() => {
@@ -57,11 +72,16 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     //  Run every time survey changes, but debounced
     useEffect(() => {
+        console.log('debouncedSetSurveyStorage or storedSurvey changed');
         if (storedSurvey) {
-            debouncedSetSurveyStorage(storedSurvey);
-            return debouncedSetSurveyStorage.cancel;
+            runDebounced(() => {
+                updateSurveyInStorage(storedSurvey);
+            });
         }
-    }, [debouncedSetSurveyStorage, storedSurvey]);
+        return () => {
+            runDebounced.cancel();
+        }
+    }, [storedSurvey]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -138,6 +158,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             }}
             recentlyEditedStoredSurvey={recentlyEditedStoredSurvey}
             onOpenRecentlyEditedSurvey={() => {
+                console.log('Setting survey');
                 setStoredSurvey(recentlyEditedStoredSurvey);
             }}
         />
@@ -146,6 +167,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     let survey = storedSurvey?.survey;
     let setSurvey = (s: Survey) => {
+        console.log('Setting survey');
         if (storedSurvey) {
             setStoredSurvey(new StoredSurvey(storedSurvey.id, s, new Date()));
         } else {
