@@ -60,7 +60,6 @@ export function SurveyBasicInfoForm() {
     }, [form, survey, selectedLanguage])
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("onSubmit", values);
         if (survey !== undefined) {
             if (survey.props == undefined) {
                 survey.props = {};

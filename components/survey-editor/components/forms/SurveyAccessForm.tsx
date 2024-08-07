@@ -64,7 +64,6 @@ export function SurveyAccessForm() {
     }, [form, survey])
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("onSubmit", values);
         if (survey !== undefined) {
             survey.availableFor = values.available_for;
             survey.requireLoginBeforeSubmission = values.login_required;
