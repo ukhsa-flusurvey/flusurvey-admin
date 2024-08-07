@@ -8,15 +8,17 @@ import NotificationBadge from './NotificationBadge';
 interface LanguageSelectorProps {
     onLanguageChange?: (lang: string) => void;
     showBadgeForLanguages?: string[];
+    initialLanguage?: string;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     onLanguageChange,
-    showBadgeForLanguages
+    showBadgeForLanguages,
+    initialLanguage = (process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en')
 }) => {
     const languages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : [process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en'];
 
-    const [selectedLanguage, setSelectedLanguage] = useState(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en')
+    const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage)
 
     useEffect(() => {
         if (onLanguageChange) {

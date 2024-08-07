@@ -75,30 +75,30 @@ const SurveyEditorMenu: React.FC<SurveyEditorMenuProps> = (props) => {
                         <MenubarRadioGroup value={props.currentEditorMode}>
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
-                                value='document'
-                                onClick={() => props.onChangeMode('document')}
+                                value={EditorMode.Properties}
+                                onClick={() => props.onChangeMode(EditorMode.Properties)}
                             >
-                                Document <MenubarShortcut>⌘ + 1</MenubarShortcut>
+                                Survey Properties &nbsp; <MenubarShortcut>⌘ + 1</MenubarShortcut>
                             </MenubarRadioItem>
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
-                                value='itemEditor'
-                                onClick={() => props.onChangeMode('itemEditor')}
+                                value={EditorMode.ItemEditor}
+                                onClick={() => props.onChangeMode(EditorMode.ItemEditor)}
                             >
                                 Item Editor <MenubarShortcut>⌘ + 2</MenubarShortcut>
                             </MenubarRadioItem>
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
-                                value='advanced'
-                                onClick={() => props.onChangeMode('advanced')}
+                                value={EditorMode.Advanced}
+                                onClick={() => props.onChangeMode(EditorMode.Advanced)}
                             >
                                 Advanced <MenubarShortcut>⌘ + 3</MenubarShortcut>
                             </MenubarRadioItem>
                             <MenubarSeparator />
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
-                                value='simulator'
-                                onClick={() => props.onChangeMode('simulator')}
+                                value={EditorMode.Simulator}
+                                onClick={() => props.onChangeMode(EditorMode.Simulator)}
                             >
                                 Simulator <MenubarShortcut>⌘ + 4</MenubarShortcut>
                             </MenubarRadioItem>

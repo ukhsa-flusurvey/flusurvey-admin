@@ -7,7 +7,7 @@ import { Survey } from 'survey-engine/data_types';
 import { EditorMode } from './components/types';
 import { Toaster } from 'sonner';
 import { SurveyContext } from './surveyContext';
-import SurveyDocument from './components/SurveyDocument';
+import SurveyProperties from './components/SurveyProperties';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';
@@ -25,7 +25,7 @@ interface SurveyEditorProps {
 
 
 const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
-    const [mode, setMode] = React.useState<EditorMode>('itemEditor');
+    const [mode, setMode] = React.useState<EditorMode>(EditorMode.ItemEditor);
 
     const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
     const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
@@ -41,19 +41,19 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 switch (event.key) {
                     case '1':
                         event.preventDefault();
-                        setMode('document');
+                        setMode(EditorMode.Properties);
                         break;
                     case '2':
                         event.preventDefault();
-                        setMode('itemEditor');
+                        setMode(EditorMode.ItemEditor);
                         break;
                     case '3':
                         event.preventDefault();
-                        setMode('advanced');
+                        setMode(EditorMode.Advanced);
                         break;
                     case '4':
                         event.preventDefault();
-                        setMode('simulator');
+                        setMode(EditorMode.Simulator);
                         break;
                     case 's':
                         event.preventDefault();
@@ -83,8 +83,8 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     let mainContent: React.ReactNode = null;
     switch (mode) {
-        case 'document':
-            mainContent = <SurveyDocument />;
+        case 'properties':
+            mainContent = <SurveyProperties />;
             break;
         case 'itemEditor':
             mainContent = <ItemEditor
@@ -127,7 +127,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     notLatestVersion={props.notLatestVersion}
                 />
 
-                <div className='grow overflow-hidden flex flex-col'>
+                <div className='overflow-hidden flex flex-col grow'>
                     {mainContent}
                 </div >
                 <LoadSurveyFromDisk
