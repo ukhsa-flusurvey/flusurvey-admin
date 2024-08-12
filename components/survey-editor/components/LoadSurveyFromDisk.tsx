@@ -157,7 +157,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                         <div className='flex flex-col gap-2'>
                             {
                                 storedSurveys ? storedSurveys.map((ss, i) => (
-                                    <Card key={i} className={cn('flex items-center justify-between gap-4', storedSurveySelectionId == ss.id ? "bg-slate-200" : "")}>
+                                    <Card key={i} className={cn('flex items-center justify-between', storedSurveySelectionId == ss.id ? "bg-slate-200" : "")}>
                                         <Button
                                             variant='ghost'
                                             className='grow pre'
