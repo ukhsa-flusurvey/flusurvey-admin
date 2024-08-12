@@ -145,7 +145,6 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             }}
             recentlyEditedStoredSurvey={surveyStorage.getMostRecentlyEditedSurvey()}
             onOpenRecentlyEditedSurvey={() => {
-                console.log('Setting survey');
                 setStoredSurvey(surveyStorage.getMostRecentlyEditedSurvey());
             }}
         />

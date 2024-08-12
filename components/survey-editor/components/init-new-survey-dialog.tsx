@@ -1,6 +1,6 @@
 import React from 'react';
 import { SurveyContext } from '../surveyContext';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { BsExclamationTriangle } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -42,6 +42,7 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
         >
             <DialogContent>
                 <DialogHeader>
+                    <DialogDescription />
                     <DialogTitle>
                         Create new survey
                     </DialogTitle>
