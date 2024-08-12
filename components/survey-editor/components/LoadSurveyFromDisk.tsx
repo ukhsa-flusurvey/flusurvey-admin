@@ -6,7 +6,7 @@ import { findAllLocales, removeLocales, renameLocales } from '../utils/localeUti
 import { Button } from '@/components/ui/button';
 import { SurveyContext } from '../surveyContext';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { StoredSurvey, SurveyStorage } from '../utils/SurveyStorage';
 import { Card } from '@/components/ui/card';
 import * as timeago from 'timeago.js';
@@ -99,9 +99,8 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}
         >
             <DialogContent>
-
-
                 <DialogHeader>
+                    <DialogDescription />
                     <DialogTitle>
                         Pick survey file to open
                     </DialogTitle>
