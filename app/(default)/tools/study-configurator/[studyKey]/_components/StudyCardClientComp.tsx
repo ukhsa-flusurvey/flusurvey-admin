@@ -4,7 +4,7 @@ import React from 'react';
 import { StudyCardWithTags } from '../settings/_components/DisplayTexts';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Study } from '@/utils/server/types/studyInfos';
-import { getLocalizedString } from '@/utils/getLocalisedString';
+import { getLocalizedString } from '@/utils/localizedStrings';
 
 interface StudyCardClientCompProps {
     study: Study;

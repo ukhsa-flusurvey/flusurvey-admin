@@ -1,2 +1,1 @@
-
-export type EditorMode = 'document' | 'itemEditor' | 'advanced' | 'simulator';
+export enum EditorMode { Properties = 'properties', ItemEditor = 'itemEditor', Advanced = 'advanced', Simulator = 'simulator' }
