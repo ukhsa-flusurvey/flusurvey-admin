@@ -7,7 +7,7 @@ type SurveyContextTableProps = { contextValues: ContextValues };
 export const SurveyContextTable: React.FC<SurveyContextTableProps> = ({ contextValues }) => {
 
     const { isLoggedIn, participantFlags } = contextValues;
-    const contextTableEntries: Map<any, any> = { isLoggedIn, ...participantFlags };
+    const contextTableEntries = { isLoggedIn, ...participantFlags };
 
     return (
 
