@@ -117,3 +117,24 @@ export const getStudyMessageTemplate = async (messageType: string, studyKey: str
     }
     return resp.body;
 }
+
+export const getSmsTemplate = async (
+    messageType: string,
+) => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/messaging/sms-templates/${messageType}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch message template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}

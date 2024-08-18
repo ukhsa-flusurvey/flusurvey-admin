@@ -20,6 +20,16 @@ export interface EmailTemplate {
     }[];
 }
 
+export interface SMSTemplate {
+    messageType: string;
+    defaultLanguage: string;
+    from: string;
+    translations: {
+        lang: string;
+        templateDef: string;
+    }[];
+}
+
 export interface MessageSchedule {
     id: string;
     template: EmailTemplate;
