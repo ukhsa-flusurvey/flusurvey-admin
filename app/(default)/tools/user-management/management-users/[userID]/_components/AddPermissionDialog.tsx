@@ -58,6 +58,13 @@ export const permissionInfos: PermissionInfos = {
                         hideLimiter: true,
                     }
                 }
+            },
+            "sms-templates": {
+                actions: {
+                    "*": {
+                        hideLimiter: true,
+                    }
+                }
             }
         }
     },

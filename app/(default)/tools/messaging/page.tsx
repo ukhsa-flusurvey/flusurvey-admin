@@ -1,6 +1,6 @@
 import LinkCard from "@/components/LinkCard";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BellRing, CalendarClock, Info, Megaphone } from "lucide-react";
+import { BellRing, CalendarClock, Info, Megaphone, Smartphone } from "lucide-react";
 
 
 export default async function Page() {
@@ -61,6 +61,29 @@ export default async function Page() {
                             title="Manage schedules"
                             description="Go to schedule overview"
                             icon={<CalendarClock className="size-8" />}
+                        />
+                    </div>
+                </Card>
+            </div>
+
+            <div>
+                <Card
+                    variant={"opaque"}
+                >
+                    <CardHeader>
+                        <CardTitle>
+                            SMS Templates
+                        </CardTitle>
+                        <CardDescription>
+                            If your organization uses SMS, you can configure SMS templates to send messages to your users.
+                        </CardDescription>
+                    </CardHeader>
+                    <div className="px-6 pb-6 flex flex-col gap-3">
+                        <LinkCard
+                            href="/tools/messaging/sms-templates"
+                            title="SMS Templates"
+                            description="Manage SMS templates of this instance."
+                            icon={<Smartphone className="size-8" />}
                         />
                     </div>
                 </Card>
