@@ -18,19 +18,17 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import TextInputContentConfig from './text-input-content-config';
 import NumberInputContentConfig from './number-input-content-config';
 import DateInputContentConfig from './date-input-content-config';
+import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
+    isSingleChoice?: boolean;
 }
 
-const getOptionType = (option: ItemComponent): string => {
-    if (option.role === 'option') {
-        if ((option as ItemGroupComponent).items !== undefined) {
-            return 'formattedOption';
-        }
-    }
-    return option.role;
+const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
+    let optionType = option.role as keyof typeof ChoiceResponseOptionType;
+    return optionType as ChoiceResponseOptionType;
 }
 
 export const TabWrapper = (props: { children: React.ReactNode }) => {
@@ -85,9 +83,11 @@ export const ContentItem = (props: {
 
     const optionType = getOptionType(props.component);
 
+    console.log('optionType:', optionType);
+
     const renderContent = () => {
         switch (optionType) {
-            case 'option':
+            case ChoiceResponseOptionType.SimpleText:
                 const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
@@ -116,7 +116,7 @@ export const ContentItem = (props: {
                         />
                     </div>
                 </OptionContentTabCollapsible>;
-            case 'formattedOption':
+            case ChoiceResponseOptionType.FormattedText:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
                     type='FORMATTED OPTION'
@@ -129,7 +129,7 @@ export const ContentItem = (props: {
                         useAdvancedMode={true}
                     />
                 </OptionContentTabCollapsible>;
-            case 'input':
+            case ChoiceResponseOptionType.TextInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
                     type='WITH TEXT INPUT'
@@ -140,16 +140,7 @@ export const ContentItem = (props: {
                         onChange={props.onUpdateComponent}
                     />
                 </OptionContentTabCollapsible>;
-
-            case 'text':
-                return <div>
-                    <TextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        hideToggle={true}
-                    />
-                </div>;
-            case 'numberInput':
+            case ChoiceResponseOptionType.NumberInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
                     type='WITH NUMBER INPUT'
@@ -160,11 +151,7 @@ export const ContentItem = (props: {
                         onChange={props.onUpdateComponent}
                     />
                 </OptionContentTabCollapsible>;
-            case 'cloze':
-                return <div>Option with cloze</div>;
-            case 'timeInput':
-                return <div>Option with time input</div>;
-            case 'dateInput':
+            case ChoiceResponseOptionType.DateInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
                     type='WITH DATE INPUT'
@@ -175,7 +162,25 @@ export const ContentItem = (props: {
                         onChange={props.onUpdateComponent}
                     />
                 </OptionContentTabCollapsible>;
+            case ChoiceResponseOptionType.Cloze:
+                return <div>Not implemented: Option with cloze</div>;
+            case ChoiceResponseOptionType.TimeInput:
+                return <div>Not implemented: Option with time input</div>;
+            case ChoiceResponseOptionType.DisplayText:
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='DISPLAY TEXT'
+                    defaultOpen={props.index > -1}
+                >
+                    <TextViewContentEditor
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                        hideToggle={true}
+                        useAdvancedMode={true}
+                    />
+                </OptionContentTabCollapsible>;
             default:
+                console.warn('Unknown / unimplemented choice option type:', optionType);
                 return <div>Unknown option type</div>;
         }
     }
@@ -274,6 +279,10 @@ export const ContentItem = (props: {
 
 const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
+    console.log('props.surveyItem:', props.surveyItem);
+    console.log('props.isSingleChoice:', props.isSingleChoice);
+    // TODO: remove magic strings
+    const relevantResponseGroupRoleString = props.isSingleChoice ? 'singleChoiceGroup' : 'multipleChoiceGroup';
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {
@@ -284,89 +293,29 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const mcgGroupIndex = rg.items.findIndex(comp => comp.role === 'multipleChoiceGroup');
-    if (mcgGroupIndex === undefined || mcgGroupIndex === -1) {
-        return <p>Multiple choice group not found</p>;
+    const choiceGroupIndex = rg.items.findIndex(comp => comp.role === relevantResponseGroupRoleString);
+    if (choiceGroupIndex === undefined || choiceGroupIndex === -1) {
+        return <p>Multiple / Single choice group not found</p>;
     }
-    const mcgGroup = rg.items[mcgGroupIndex] as ItemGroupComponent;
-    if (!mcgGroup || !mcgGroup.items) {
-        return <p>Multiple choice group not found</p>;
+    const choiceGroup = rg.items[choiceGroupIndex] as ItemGroupComponent;
+    if (!choiceGroup || !choiceGroup.items) {
+        return <p>Multiple / Single choice group not found</p>;
     }
 
 
-    const responseItems: ItemComponent[] = mcgGroup.items || [];
+    const responseItems: ItemComponent[] = choiceGroup.items || [];
 
-    const onAddItem = (key: string) => {
+    const onAddItem = (keyOfSelectedOption: string) => {
         const randomKey = Math.random().toString(36).substring(9);
-        let newOption: ItemComponent | undefined = undefined;
+        console.log('keyOfSelectedOption:', keyOfSelectedOption);
+        let optionType = keyOfSelectedOption as keyof typeof ChoiceResponseOptionType;
 
-        switch (key) {
-            case 'option-simple':
-                newOption = {
-                    key: randomKey,
-                    role: 'option',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
-            case 'option-formatted':
-                newOption = {
-                    key: randomKey,
-                    role: 'option',
-                    items: []
-                }
-                break;
-            case 'option-text':
-                newOption = {
-                    key: randomKey,
-                    role: 'input',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
-            case 'option-number':
-                newOption = {
-                    key: randomKey,
-                    role: 'numberInput',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
-            case 'option-cloze':
-                newOption = {
-                    key: randomKey,
-                    role: 'cloze',
-                    items: [{
-                        key: '1',
-                        role: 'text',
-                        content: generateLocStrings(new Map<string, string>())
-                    }],
-                }
-                break;
-            case 'option-time':
-                newOption = {
-                    key: randomKey,
-                    role: 'timeInput',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
-            case 'option-date':
-                newOption = {
-                    key: randomKey,
-                    role: 'dateInput',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
-            case 'section-header':
-                newOption = {
-                    key: randomKey,
-                    role: 'text',
-                    content: generateLocStrings(new Map<string, string>())
-                }
-                break;
+        // Create empty option of given type.
+        let newOption = {
+            key: randomKey,
+            role: optionType,
         }
 
-        if (!newOption) {
-            console.warn('Unknown component type:', key);
-            return;
-        }
         const newItems = [...responseItems, newOption];
         updateSurveyItemWithNewOptions(newItems);
     };
@@ -374,16 +323,16 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const draggedItem = responseItems.find(comp => comp.key === draggedId);
 
     const updateSurveyItemWithNewOptions = (options: ItemComponent[]) => {
-        const newMcgGroup = {
-            ...mcgGroup,
+        const newChoiceGroup = {
+            ...choiceGroup,
             items: options,
         };
 
         const newRg = {
             ...rg,
             items: rg.items.map(comp => {
-                if (comp.role === 'multipleChoiceGroup') {
-                    return newMcgGroup;
+                if (comp.role === relevantResponseGroupRoleString) {
+                    return newChoiceGroup;
                 }
                 return comp;
             }),
@@ -460,14 +409,14 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                         <div className='flex justify-center w-full'>
                             <AddDropdown
                                 options={[
-                                    { key: 'option-simple', label: 'Option with simple label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-formatted', label: 'Option with formatted label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-text', label: 'Option with text input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-number', label: 'Option with number input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-cloze', label: 'Option with cloze', icon: <SquareStack className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-time', label: 'Option with time input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'option-date', label: 'Option with date input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                    { key: 'section-header', label: 'Section header', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.SimpleText, label: 'Option with simple label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.FormattedText, label: 'Option with formatted label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.TextInput, label: 'Option with text input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.NumberInput, label: 'Option with number input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.Cloze, label: 'Option with cloze', icon: <SquareStack className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.TimeInput, label: 'Option with time input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.DateInput, label: 'Option with date input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.DisplayText, label: 'Display text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
                                 ]}
                                 onAddItem={onAddItem}
                             />

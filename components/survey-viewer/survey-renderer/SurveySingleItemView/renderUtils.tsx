@@ -5,42 +5,42 @@ import { getClassName, getLocaleStringDateByCode, getLocaleStringTextByCode, get
 
 
 export const renderFormattedContent = (component: ItemComponent, languageCode: string, defaultClassNamePerPart: string | undefined, dateLocales: Array<{ code: string, locale: any, format: string }>) => {
-  if (isItemGroupComponent(component)) {
-    return <React.Fragment>
-      {
-        component.items.map((item, index) => {
-          let itemContent: string | undefined;
-          switch (item.role) {
-            case 'dateDisplay':
-              let dateFormat = getStyleValueByKey(item.style, 'dateFormat');
-              if (!dateFormat) {
-                dateFormat = 'dd.MM.yyyy';
-              }
-              itemContent = getLocaleStringDateByCode(item.content, languageCode, dateFormat, dateLocales);
-              break;
-            default:
-              itemContent = getLocaleStringTextByCode(item.content, languageCode)
-              break;
-          }
-          return <span
-            key={item.key + index.toFixed()}
-            className={
-              clsx(
-                defaultClassNamePerPart,
-                getClassName(item.style)
-              )
+    if (isItemGroupComponent(component)) {
+        return <React.Fragment>
+            {
+                component.items.map((item, index) => {
+                    let itemContent: string | undefined;
+                    switch (item.role) {
+                        case 'dateDisplay':
+                            let dateFormat = getStyleValueByKey(item.style, 'dateFormat');
+                            if (!dateFormat) {
+                                dateFormat = 'dd.MM.yyyy';
+                            }
+                            itemContent = getLocaleStringDateByCode(item.content, languageCode, dateFormat, dateLocales);
+                            break;
+                        default:
+                            itemContent = getLocaleStringTextByCode(item.content, languageCode)
+                            break;
+                    }
+                    return <span
+                        key={item.key + index.toFixed()}
+                        className={
+                            clsx(
+                                defaultClassNamePerPart,
+                                getClassName(item.style)
+                            )
+                        }
+                    >
+                        {itemContent}
+                    </span>
+                })
             }
-          >
-            {itemContent}
-          </span>
-        })
-      }
-    </React.Fragment>
-  } else {
-    return <span
-      key={component.key}
-      className={defaultClassNamePerPart}>
-      {getLocaleStringTextByCode(component.content, languageCode)}
-    </span>
-  }
+        </React.Fragment>
+    } else {
+        return <span
+            key={component.key}
+            className={defaultClassNamePerPart}>
+            {getLocaleStringTextByCode(component.content, languageCode)}
+        </span>
+    }
 }

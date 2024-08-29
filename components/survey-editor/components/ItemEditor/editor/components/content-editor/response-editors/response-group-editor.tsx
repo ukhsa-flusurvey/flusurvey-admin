@@ -3,7 +3,6 @@ import React from 'react';
 import { SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from '../editor-wrapper';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
-import SingleChoice from './single-choice';
 import MultipleChoice from './multiple-choice';
 import Matrix from './matrix';
 import ValidatedRandomQuestion from './validated-random-question';
@@ -15,6 +14,7 @@ import DropdownEditor from './dropdown-editor';
 import Consent from './consent';
 import Rsca from './rsca';
 import ContactForm from './contact-form';
+import { ClozeEditor } from './cloze-editor';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -29,7 +29,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
 
     switch (typeInfos.key) {
         case 'singleChoice':
-            content = <SingleChoice surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            content = <MultipleChoice surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} isSingleChoice={true} />;
             break;
         case 'multipleChoice':
             content = <MultipleChoice surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
@@ -61,6 +61,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'clozeQuestion':
+            content = <ClozeEditor />;
             break;
         case 'consent':
             content = <Consent surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

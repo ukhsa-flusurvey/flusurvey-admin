@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ItemComponent, ResponseItem, isItemGroupComponent, ItemGroupComponent } from 'survey-engine/data_types';
-import SingleChoiceGroup from './InputTypes/SingleChoiceGroup';
 import MultipleChoiceGroup from './InputTypes/MultipleChoiceGroup';
 import DropDownGroup from './InputTypes/DropDownGroup';
 import DateInput from './DateInput/DateInput';
@@ -133,7 +132,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         embedded={false}
                     />;
                 case 'singleChoiceGroup':
-                    return <SingleChoiceGroup
+                    return <MultipleChoiceGroup
                         key={respComp.key}
                         parentKey={currentKeyPath}
                         languageCode={props.languageCode}
@@ -142,6 +141,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
                         showOptionKey={props.showOptionKey}
                         dateLocales={props.dateLocales}
+                        isSingleChoice={true}
                     />
                 case 'multipleChoiceGroup':
                     return <MultipleChoiceGroup

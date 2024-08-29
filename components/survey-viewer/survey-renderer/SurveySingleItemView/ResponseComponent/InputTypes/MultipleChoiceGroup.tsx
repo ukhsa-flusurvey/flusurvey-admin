@@ -10,16 +10,21 @@ import ClozeQuestion from './ClozeQuestion';
 import Time from './Time';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
+import DateInput from '../DateInput/DateInput';
+import { set } from 'date-fns';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 
 interface MultipleChoiceGroupProps extends CommonResponseComponentProps {
     showOptionKey?: boolean;
+    isSingleChoice?: boolean;
 }
 
 const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-
+    const isSingleChoice = props.isSingleChoice ?? false;
     const [subResponseCache, setSubResponseCache] = useState<Array<ResponseItem>>(
         (props.prefill && props.prefill.items) ? [...props.prefill.items] : []
     );
@@ -37,56 +42,54 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
 
     const setResponseForKey = useCallback((key: string, checked: boolean, value?: string, dtype?: string, items?: ResponseItem[]) => {
         setTouched(true);
-        if (checked) {
+        if (isSingleChoice) {
             const newRI: ResponseItem = {
                 key: key,
+                value: value,
+                dtype: dtype,
+                items: items,
             }
-            if (value) {
-                newRI.value = value;
-            }
-            if (dtype) {
-                newRI.dtype = dtype;
-            }
-            if (items) {
-                newRI.items = items;
-            }
-            setResponse(prev => {
-                if (!prev || !prev.items) {
-                    return {
-                        key: props.compDef.key ? props.compDef.key : 'no key found',
-                        items: [newRI]
-                    }
-                }
-                const ind = prev.items.findIndex(pr => pr.key === key);
-                if (ind < 0) {
-                    prev.items.push(newRI);
-                }
-                else {
-                    prev.items[ind] = newRI;
-                }
-                return {
-                    ...prev,
-                    items: [...prev.items]
-                }
+            setResponse({
+                key: props.compDef.key ? props.compDef.key : 'no key found',
+                items: [newRI]
             });
         } else {
-            setResponse(prev => {
-                if (!prev) {
-                    return undefined;
+            if (checked) {
+                const newRI: ResponseItem = {
+                    key: key,
+                    value: value,
+                    dtype: dtype,
+                    items: items,
                 }
-                const newItems = prev.items?.filter(i => i.key !== key);
-                if (!newItems || newItems.length < 1) {
-                    return undefined;
-                }
-                return {
-                    ...prev,
-                    items: newItems,
-                }
-            });
+                setResponse(prev => {
+                    if (prev && prev.items) {
+                        let newItems = prev.items.map((item) => item.key === key ? newRI : item);
+                        if (!newItems.some(i => i.key === key)) {
+                            newItems.push(newRI);
+                        }
+                        return {
+                            ...prev,
+                            items: [...newItems]
+                        }
+                    } else {
+                        return {
+                            key: props.compDef.key ? props.compDef.key : 'no key found',
+                            items: [newRI]
+                        }
+                    }
+                });
+            } else {
+                setResponse(prev => {
+                    if (prev && prev.items) {
+                        let newItems = prev.items.filter(i => i.key !== key);
+                        return newItems.length > 0 ? { ...prev, items: newItems } : undefined;
+                    } else {
+                        return undefined;
+                    }
+                });
+            }
         }
-    }, [
-        props.compDef.key,
-    ])
+    }, [isSingleChoice, props.compDef.key])
 
     const handleSelectionChange = useCallback((key: string, checked: boolean) => {
         const subResp = subResponseCache.find(sr => sr.key === key);
@@ -149,6 +152,13 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return false;
     }
 
+    const getSelectedKey = (): string | undefined => {
+        if (!response || !response.items || response.items.length < 1) {
+            return '';
+        }
+        return response.items[0].key;
+    }
+
     const renderResponseOption = (option: ItemComponent, isLast: boolean): React.ReactNode => {
         if (option.displayCondition === false) {
             return null;
@@ -158,114 +168,130 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         const prefill = subResponseCache.find(r => r.key === option.key);
 
         let arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
-        if (isItemGroupComponent(option)) {
-            switch (option.role) {
-                case 'option':
-                    labelComponent = <div
-                        className={clsx("grow")}
-                    >
-                        {renderFormattedContent(option, props.languageCode, undefined, props.dateLocales)}
-                    </div>
-                    break;
-                case 'cloze':
-                    labelComponent = <ClozeQuestion
-                        parentKey={optionKey}
+        switch (option.role) {
+            case ChoiceResponseOptionType.DisplayText:
+                return <TextViewComponent
+                    key={option.key}
+                    compDef={option}
+                    languageCode={props.languageCode}
+                    embedded={true}
+                />;
+            case ChoiceResponseOptionType.SimpleText:
+                labelComponent = <span className={clsx("w-full")}>
+                    {getLocaleStringTextByCode(option.content, props.languageCode)}
+                </span>;
+                break;
+            case ChoiceResponseOptionType.FormattedText:
+                labelComponent = <div className={clsx("w-full")}>
+                    {renderFormattedContent(option, props.languageCode, undefined, props.dateLocales)}
+                </div>
+                break;
+            case ChoiceResponseOptionType.Cloze:
+                labelComponent = <ClozeQuestion
+                    parentKey={optionKey}
+                    key={option.key}
+                    compDef={option}
+                    prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
+                    languageCode={props.languageCode}
+                    responseChanged={(response) => {
+                        const checkStatus = (response !== undefined && response.items !== undefined);
+                        setResponseForKey(option.key ? option.key : 'unknown', checkStatus, response?.value, undefined, response?.items);
+                        updateSubResponseCache(option.key, response);
+                    }}
+                    disabled={isDisabled(option)}
+                    dateLocales={props.dateLocales}
+                />;
+                break;
+            case ChoiceResponseOptionType.TextInput:
+                labelComponent =
+                    <TextInput
+                        parentKey={props.parentKey}
+                        key={option.key}
+                        compDef={option}
+                        embedded={true}
+                        prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
+                        languageCode={props.languageCode}
+                        responseChanged={(response) => {
+                            const value = response?.value;
+                            const checkStatus = (value !== undefined && value.length > 0);
+                            setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value);
+                            updateSubResponseCache(option.key, response);
+                        }}
+                        updateDelay={5}
+                        disabled={isDisabled(option)}
+                        dateLocales={props.dateLocales}
+                    />;
+                break;
+            case ChoiceResponseOptionType.TimeInput:
+                labelComponent =
+                    <Time
+                        parentKey={props.parentKey}
                         key={option.key}
                         compDef={option}
                         prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
                         languageCode={props.languageCode}
                         responseChanged={(response) => {
-                            const checkStatus = (response !== undefined && response.items !== undefined);
-                            setResponseForKey(option.key ? option.key : 'unknown', checkStatus, response?.value, undefined, response?.items);
+                            const value = response?.value;
+                            const checkStatus = (value !== undefined && value.length > 0);
+                            setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value, response?.dtype);
                             updateSubResponseCache(option.key, response);
                         }}
                         disabled={isDisabled(option)}
                         dateLocales={props.dateLocales}
                     />;
-                    break;
-            }
-        } else {
-            switch (option.role) {
-                case 'text':
-                    return <TextViewComponent
+                break;
+            case ChoiceResponseOptionType.DateInput:
+            case 'dateInput':
+                labelComponent = <DateInput
+                    parentKey={optionKey}
+                    key={option.key}
+                    compDef={option}
+                    embedded={true}
+                    prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
+                    languageCode={props.languageCode}
+                    responseChanged={(response) => {
+                        const value = response?.value;
+                        const checkStatus = (value !== undefined && value.length > 0);
+                        setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value, response?.dtype)
+                    }}
+                    openCalendar={touched && getSelectedKey() === option.key}
+                    disabled={isDisabled(option)}
+                    dateLocales={props.dateLocales}
+                />;
+                break;
+            case ChoiceResponseOptionType.NumberInput:
+                labelComponent =
+                    <NumberInput
+                        parentKey={props.parentKey}
                         key={option.key}
                         compDef={option}
-                        languageCode={props.languageCode}
                         embedded={true}
+                        prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
+                        languageCode={props.languageCode}
+                        responseChanged={(response) => {
+                            const value = response?.value;
+                            const checkStatus = (value !== undefined && value.length > 0);
+                            setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value, response?.dtype);
+                            updateSubResponseCache(option.key, response);
+                        }}
+                        disabled={isDisabled(option)}
+                        dateLocales={props.dateLocales}
                     />;
-                case 'option':
-                    labelComponent = <span
-                        className={clsx("w-full",
-                        )}
-                    >
-                        {getLocaleStringTextByCode(option.content, props.languageCode)}
-                    </span>;
-                    break;
-                case 'input':
-                    labelComponent =
-                        <TextInput
-                            parentKey={props.parentKey}
-                            key={option.key}
-                            compDef={option}
-                            embedded={true}
-                            prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
-                            languageCode={props.languageCode}
-                            responseChanged={(response) => {
-                                const value = response?.value;
-                                const checkStatus = (value !== undefined && value.length > 0);
-                                setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value);
-                                updateSubResponseCache(option.key, response);
-                            }}
-                            updateDelay={5}
-                            disabled={isDisabled(option)}
-                            dateLocales={props.dateLocales}
-                        />;
-                    break;
-                case 'timeInput':
-                    labelComponent =
-                        <Time
-                            parentKey={props.parentKey}
-                            key={option.key}
-                            compDef={option}
-                            prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
-                            languageCode={props.languageCode}
-                            responseChanged={(response) => {
-                                const value = response?.value;
-                                const checkStatus = (value !== undefined && value.length > 0);
-                                setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value, response?.dtype);
-                                updateSubResponseCache(option.key, response);
-                            }}
-                            disabled={isDisabled(option)}
-                            dateLocales={props.dateLocales}
-                        />;
-                    break;
-                case 'numberInput':
-                    labelComponent =
-                        <NumberInput
-                            parentKey={props.parentKey}
-                            key={option.key}
-                            compDef={option}
-                            embedded={true}
-                            prefill={(prefill && prefill.key === option.key) ? prefill : undefined}
-                            languageCode={props.languageCode}
-                            responseChanged={(response) => {
-                                const value = response?.value;
-                                const checkStatus = (value !== undefined && value.length > 0);
-                                setResponseForKey(option.key ? option.key : 'unknown', checkStatus, value, response?.dtype);
-                                updateSubResponseCache(option.key, response);
-                            }}
-                            disabled={isDisabled(option)}
-                            dateLocales={props.dateLocales}
-                        />;
-                    break;
-                default:
-                    labelComponent = <p key={option.key}>role inside multiple choice group not implemented yet: {option.role}</p>
-                    break;
-            }
+                break;
+            default:
+                labelComponent = <p key={option.key}>role inside multiple choice group not implemented yet: {option.role}</p>
+                break;
+
         }
 
+        if (!option.key) {
+            return <p>ERROR: choice option key missing</p>
+        }
+
+        const keySuffix = 'option';
+
         return (<Label
-            htmlFor={optionKey + '_checkbox'}
+            htmlFor={optionKey + keySuffix}
             className={clsx(
                 "flex items-center font-normal gap-2 sm:gap-3 text-base",
                 'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-1.5',
@@ -280,18 +306,26 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
             {props.showOptionKey ?
                 <span className="text-primary me-2 text-xs">{option.key}</span>
                 : null}
-            <Checkbox
+            {isSingleChoice ? <span className='flex items-center justify-center'>
+                <RadioGroupItem
+                    value={option.key}
+                    id={optionKey + keySuffix}
+                    //aria-label={ariaLabel}
+                    className='bg-background size-5'
+                    disabled={isDisabled(option)}
+                />
+            </span> : <Checkbox
                 className='bg-background size-5'
                 aria-label={arialLabel}
                 name={props.parentKey}
-                id={optionKey + '_checkbox'}
+                id={optionKey + keySuffix}
                 value={option.key}
                 checked={isChecked(option.key ? option.key : 'no key found')}
                 disabled={isDisabled(option)}
                 onCheckedChange={(checked) => {
                     handleSelectionChange(option.key ? option.key : 'no key found', checked === true)
                 }}
-            />
+            />}
             {labelComponent}
         </Label>)
 
@@ -301,19 +335,38 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return <p>ERROR: multiple choice options missing</p>
     }
 
-    return (
-        <div
-            id={props.parentKey}
-            aria-label="multiple choice options"
-            className='flex flex-col'
-        >
-            {
-                (props.compDef as ItemGroupComponent).items.map((option, index) =>
-                    renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
-                )
-            }
-        </div>
-    );
+    if (isSingleChoice) {
+        console.log('render single choice group')
+        return (
+            <RadioGroup
+                id={props.parentKey}
+                aria-label="single choice options"
+                className=' flex flex-col gap-0'
+                value={getSelectedKey()}
+                onValueChange={(value) => { handleSelectionChange(value, true) }}
+            >
+                {
+                    (props.compDef as ItemGroupComponent).items.map(
+                        (option, index) => renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                    )
+                }
+            </RadioGroup>
+        );
+    } else {
+        return (
+            <div
+                id={props.parentKey}
+                aria-label="multiple choice options"
+                className='flex flex-col'
+            >
+                {
+                    (props.compDef as ItemGroupComponent).items.map((option, index) =>
+                        renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                    )
+                }
+            </div>
+        );
+    }
 };
 
 export default MultipleChoiceGroup;

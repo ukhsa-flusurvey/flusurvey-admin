@@ -16,9 +16,9 @@ interface TextViewContentEditorProps {
     useAdvancedMode?: boolean;
 }
 
-const determineAdvancedMode = (component: ItemComponent) => {
+/* const determineAdvancedMode = (component: ItemComponent) => {
     return (component as ItemGroupComponent).items !== undefined && (component as ItemGroupComponent).content === undefined;
-}
+} */
 
 const SimpleModeEditor: React.FC<{
     component: ItemComponent;
@@ -107,8 +107,7 @@ const AdvancedMode: React.FC<{
 
 
 const TextViewContentEditor: React.FC<TextViewContentEditorProps> = (props) => {
-    const isAdvancedMode = determineAdvancedMode(props.component);
-
+    const isAdvancedMode = props.useAdvancedMode;
 
     const onToggleAdvanceMode = (checked: boolean) => {
         if (!confirm('Are you sure you want to switch the editor mode? You will loose the current content.')) {
