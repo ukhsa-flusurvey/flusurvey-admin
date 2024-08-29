@@ -83,18 +83,18 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
 
     let mainContent: React.ReactNode = null;
     switch (mode) {
-        case 'properties':
+        case EditorMode.Properties:
             mainContent = <SurveyProperties />;
             break;
-        case 'itemEditor':
+        case EditorMode.ItemEditor:
             mainContent = <ItemEditor
                 className='grow'
             />;
             break;
-        case 'advanced':
+        case EditorMode.Advanced:
             mainContent = <div>Advanced</div>;
             break;
-        case 'simulator':
+        case EditorMode.Simulator:
             mainContent = <SurveySimulator />
             break;
     }
