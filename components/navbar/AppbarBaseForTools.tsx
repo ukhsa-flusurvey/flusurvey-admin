@@ -11,6 +11,7 @@ interface AppbarBaseForToolsProps {
     toolIcon?: React.ReactNode;
     children?: React.ReactNode;
     isBordered?: boolean;
+    ignoreAuth?: boolean;
 }
 
 const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
@@ -21,9 +22,9 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
             <nav className={clsx(
                 'z-40',
                 {
-                    'border-b border-b-default': props.isBordered,
-                    'py-unit-sm': props.children === undefined,
-                    'pt-unit-sm': props.children !== undefined
+                    'border-b border-b-neutral-300': props.isBordered,
+                    'py-2': props.children === undefined,
+                    'pt-3': props.children !== undefined
                 }
             )}>
                 <div className="flex items-center px-6 flex-wrap">
@@ -42,7 +43,7 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
                     </div>
 
                     <div className="flex gap-2 items-center">
-                        <NavbarAuth />
+                        {!props.ignoreAuth && <NavbarAuth />}
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button

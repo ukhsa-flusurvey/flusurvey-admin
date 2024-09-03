@@ -1,7 +1,7 @@
 'use client';
 
 import LanguageSelector from "@/components/LanguageSelector";
-import { getLocalizedString } from "@/utils/getLocalisedString";
+import { getLocalizedString } from "@/utils/localizedStrings";
 import { StudyProps } from "@/utils/server/types/studyInfos";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label"

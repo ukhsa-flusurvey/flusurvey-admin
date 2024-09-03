@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { Sidebar, SidebarLinkItem } from "@/components/Sidebar";
-import { BsEnvelopeExclamation, BsEnvelopePlus, BsExclamationCircle, BsHouse, BsInputCursor, BsPersonCheck, BsPersonPlus, BsShieldCheck, BsShieldExclamation, BsTrash3 } from "react-icons/bs";
+import { BsEnvelopeExclamation, BsEnvelopePlus, BsExclamationCircle, BsHouse, BsInputCursor, BsPersonCheck, BsPersonPlus, BsPhone, BsShieldCheck, BsShieldExclamation, BsTrash3 } from "react-icons/bs";
 import { Recycle } from 'lucide-react';
 
 
@@ -40,6 +40,11 @@ const sideBarLinkItems = [
         href: '/tools/messaging/email-templates/system-templates/account-id-changed',
         tooltip: 'Account ID changed',
         icon: <BsEnvelopeExclamation />
+    },
+    {
+        href: '/tools/messaging/email-templates/system-templates/phone-number-changed',
+        tooltip: 'Phone number changed',
+        icon: <BsPhone />
     },
     {
         href: '/tools/messaging/email-templates/system-templates/account-inactivity',

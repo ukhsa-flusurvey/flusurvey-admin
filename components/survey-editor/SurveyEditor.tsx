@@ -1,101 +1,150 @@
 'use client';
 
-import React from 'react';
-import { standaloneModes, integratedModes } from './utils';
-import SurveyEditorSidebar from './SurveyEditorSidebar';
-import PublishMode from './views/PublishMode';
-import PreviewMode from './views/PreviewMode';
-import SurveyItemsMode from './views/SurveyItemsMode';
-import SurveyPropsMode from './views/SurveyPropsMode';
-import FileMode from './views/FileMode';
-import { SurveyEditor as EditorInstance } from 'case-editor-tools/surveys/survey-editor/survey-editor';
+import React, { useEffect } from 'react';
+import SurveyEditorMenu from './components/SurveyEditorMenu';
+import ItemEditor from './components/ItemEditor/ItemEditor';
 import { Survey } from 'survey-engine/data_types';
-import { useRouter } from 'next/navigation';
-
+import { EditorMode } from './components/types';
+import { Toaster } from 'sonner';
+import { SurveyContext } from './surveyContext';
+import SurveyProperties from './components/SurveyProperties';
+import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
+import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
+import SurveySimulator from './components/SurveySimulator';
+import WelcomeScreen from './components/welcome-screen';
+import InitNewSurveyDialog from './components/init-new-survey-dialog';
 
 interface SurveyEditorProps {
     initialSurvey?: Survey;
+    notLatestVersion?: boolean;
+    embedded?: boolean;
+    onUploadNewVersion?: (survey?: Survey) => void;
+    onExit?: () => void;
 }
 
 
+
 const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
-    const router = useRouter();
-    const editorModes = props.initialSurvey ? integratedModes : standaloneModes;
-    const [mode, setMode] = React.useState(editorModes[0]);
+    const [mode, setMode] = React.useState<EditorMode>(EditorMode.ItemEditor);
 
-    const [editorInstance, setEditorInstance] = React.useState<EditorInstance | undefined>(props.initialSurvey ? new EditorInstance(props.initialSurvey) : undefined);
+    const [openSaveDialog, setOpenSaveDialog] = React.useState<boolean>(false);
+    const [openLoadDialog, setOpenLoadDialog] = React.useState<boolean>(false);
+    const [openNewDialog, setOpenNewDialog] = React.useState<boolean>(false);
+    const [survey, setSurvey] = React.useState<Survey | undefined>(props.initialSurvey);
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>(process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en');
 
 
-    const onExit = () => {
-        if (confirm('Unsaved, unexported or unpublished content will be lost. Are you sure you want to exit the survey editor?')) {
-            router.back();
-        }
-    }
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Check if Cmd (metaKey) or Ctrl is pressed along with 'S'
+            if ((event.metaKey || event.ctrlKey)) {
+                switch (event.key) {
+                    case '1':
+                        event.preventDefault();
+                        setMode(EditorMode.Properties);
+                        break;
+                    case '2':
+                        event.preventDefault();
+                        setMode(EditorMode.ItemEditor);
+                        break;
+                    case '3':
+                        event.preventDefault();
+                        setMode(EditorMode.Advanced);
+                        break;
+                    case '4':
+                        event.preventDefault();
+                        setMode(EditorMode.Simulator);
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        if (!survey) {
+                            break;
+                        }
+                        setOpenSaveDialog(true);
+                        break;
+                    case 'o':
+                        event.preventDefault();
+                        setOpenLoadDialog(true);
+                        break;
+                }
+
+            }
+        };
+
+        // Attach the event listener
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Cleanup the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [survey]);
+
 
     let mainContent: React.ReactNode = null;
     switch (mode) {
-        case 'file':
-            mainContent = <FileMode
-                editorInstance={editorInstance}
-                onLoadNewSurvey={(survey) => {
-                    setEditorInstance(new EditorInstance(survey));
-                    setMode('props');
-                }}
+        case EditorMode.Properties:
+            mainContent = <SurveyProperties />;
+            break;
+        case EditorMode.ItemEditor:
+            mainContent = <ItemEditor
+                className='grow'
             />;
             break;
-        case 'props':
-            if (!editorInstance) {
-                break;
-            }
-            mainContent = <SurveyPropsMode
-                editorInstance={editorInstance}
-            />;
+        case EditorMode.Advanced:
+            mainContent = <div>Advanced</div>;
             break;
-        case 'items':
-            if (!editorInstance) {
-                break;
-            }
-            mainContent = <SurveyItemsMode
-                editorInstance={editorInstance}
-            />;
-            break;
-        case 'preview':
-            if (!editorInstance) {
-                break;
-            }
-            mainContent = <PreviewMode
-                editorInstance={editorInstance}
-            />;
-            break;
-        case 'publish':
-            if (!editorInstance) {
-                break;
-            }
-            mainContent = <PublishMode />;
-            break;
-        default:
+        case EditorMode.Simulator:
+            mainContent = <SurveySimulator />
             break;
     }
 
+    if (!survey) {
+        mainContent = (<WelcomeScreen
+            onCreateSurvey={() => {
+                setOpenNewDialog(true);
+            }}
+            onOpenSurvey={() => {
+                setOpenLoadDialog(true);
+            }}
+        />
+        );
+    }
+
     return (
-        <div className='bg-center bg-cover bg-[url(/images/spaceship.png)]'>
-            <div className='bg-white/60 h-screen relative'>
-                <SurveyEditorSidebar
-                    currentMode={mode}
-                    onModeChange={setMode}
-                    onExit={onExit}
-                    editorModes={editorModes.map(m => {
-                        return {
-                            mode: m,
-                            isDisabled: m !== 'file' && !editorInstance,
-                        }
-                    })}
+        <SurveyContext.Provider value={{ survey, setSurvey, selectedLanguage, setSelectedLanguage }}>
+            <div className='bg-center bg-cover bg-[url(/images/sailing-ship.png)] h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
+                <SurveyEditorMenu
+                    currentEditorMode={mode}
+                    onChangeMode={setMode}
+                    noSurveyOpen={!survey}
+                    embedded={props.embedded}
+                    onSave={() => setOpenSaveDialog(true)}
+                    onOpen={() => setOpenLoadDialog(true)}
+                    onNew={() => setOpenNewDialog(true)}
+                    onExit={() => { props.onExit && props.onExit() }}
+                    onUploadNewVersion={() => { props.onUploadNewVersion && props.onUploadNewVersion(survey) }}
+                    notLatestVersion={props.notLatestVersion}
                 />
-                <div className='pl-14'>
+
+                <div className='overflow-hidden flex flex-col grow'>
                     {mainContent}
-                </div>
-            </div>
-        </div>
+                </div >
+                <LoadSurveyFromDisk
+                    isOpen={openLoadDialog}
+                    onClose={() => setOpenLoadDialog(false)}
+                />
+                <SaveSurveyToDiskDialog
+                    isOpen={openSaveDialog}
+                    onClose={() => setOpenSaveDialog(false)}
+                />
+                <InitNewSurveyDialog
+                    isOpen={openNewDialog}
+                    onClose={() => setOpenNewDialog(false)}
+                />
+                <Toaster />
+            </div >
+        </SurveyContext.Provider>
     );
 };
 

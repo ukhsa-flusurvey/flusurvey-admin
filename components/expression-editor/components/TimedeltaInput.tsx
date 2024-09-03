@@ -10,9 +10,14 @@ interface TimedeltaInputProps {
     depth?: number;
     currentValue?: number;
     onValueChange: (value: number | undefined) => void;
+    onClearSlot: () => void;
 }
 
 const units = ['seconds', 'minutes', 'hours', 'days', 'weeks'];
+
+function toFixedIfNecessary(value: string, dp: number) {
+    return +parseFloat(value).toFixed(dp);
+}
 
 const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
 
@@ -22,7 +27,7 @@ const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
     if (currentValue !== undefined && currentValue !== 0) {
         switch (currentUnit) {
             case 'seconds':
-                currentValue = props.currentValue;
+                // currentValue = props.currentValue;
                 break;
             case 'minutes':
                 currentValue = currentValue / 60;
@@ -37,6 +42,7 @@ const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
                 currentValue = currentValue / 60 / 60 / 24 / 7;
                 break;
         }
+        currentValue = toFixedIfNecessary(currentValue.toString(), 3);
     }
 
     const onValueChange = (value: number | undefined) => {
@@ -46,16 +52,16 @@ const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
                 valueInSeconds = value;
                 break;
             case 'minutes':
-                valueInSeconds = value && value * 60;
+                valueInSeconds = value && Math.round(value * 60);
                 break;
             case 'hours':
-                valueInSeconds = value && value * 60 * 60;
+                valueInSeconds = value && Math.round(value * 60 * 60);
                 break;
             case 'days':
-                valueInSeconds = value && value * 60 * 60 * 24;
+                valueInSeconds = value && Math.round(value * 60 * 60 * 24);
                 break;
             case 'weeks':
-                valueInSeconds = value && value * 60 * 60 * 24 * 7;
+                valueInSeconds = value && Math.round(value * 60 * 60 * 24 * 7);
                 break;
         }
         props.onValueChange(valueInSeconds);
@@ -73,14 +79,17 @@ const TimedeltaInput: React.FC<TimedeltaInputProps> = (props) => {
                 label: props.slotTypeDef.label
             }}
             depth={props.depth}
-            isInvalid={props.currentValue === undefined || props.currentValue === 0}
+            isInvalid={props.currentValue === undefined}
+            onClearSlot={props.onClearSlot}
         >
             <div className='px-2 py-2 grid grid-cols-1 md:grid-cols-2 gap-2'>
                 <Input
                     type='number'
                     placeholder='Enter a value...'
-                    value={currentValue || ''}
-                    onChange={(e) => onValueChange(Number(e.target.value))}
+                    value={currentValue !== undefined ? currentValue : ''}
+                    onChange={(e) => {
+                        onValueChange(Number(e.target.value))
+                    }}
                 />
                 <Select
                     value={currentUnit}

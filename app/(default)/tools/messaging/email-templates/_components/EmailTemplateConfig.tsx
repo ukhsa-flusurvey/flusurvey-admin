@@ -16,11 +16,13 @@ interface EmailTemplateConfigProps {
 const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) => {
     if (!props.messageType) {
         return (
-            <ErrorAlert
-                title="Error while loading template:"
-                error="No valid messageType provided"
-                hint="Check if your URL is correct and try again. If the problem persists, contact support."
-            />
+            <div>
+                <ErrorAlert
+                    title="Error while loading template:"
+                    error="No valid messageType provided"
+                    hint="Check if your URL is correct and try again. If the problem persists, contact support."
+                />
+            </div>
         );
     }
 
@@ -34,11 +36,13 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
     const error = resp.error;
     if (error) {
         return (
-            <ErrorAlert
-                title={`Error while loading template '${props.messageType}':`}
-                error={error}
-                hint="If this is an unexpected, check you connection and try again. Try to refresh the page or log out and log in again. If the problem persists, contact support."
-            />
+            <div>
+                <ErrorAlert
+                    title={`Error while loading template '${props.messageType}':`}
+                    error={error}
+                    hint="If this is an unexpected, check you connection and try again. Try to refresh the page or log out and log in again. If the problem persists, contact support."
+                />
+            </div>
         );
     }
 
@@ -63,13 +67,15 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
 // skeleton comp for loading
 export const EmailTemplateConfigSkeleton: React.FC = () => {
     return (
-        <div className='animate-pulse p-6 rounded-md bg-white'>
-            <p className='text-center'>
-                Loading message template...
-            </p>
-            <p className='text-center flex justify-center mt-3'>
-                <Cog className='size-8 animate-spin' />
-            </p>
+        <div>
+            <div className='animate-pulse p-6 rounded-md bg-white'>
+                <p className='text-center'>
+                    Loading message template...
+                </p>
+                <p className='text-center flex justify-center mt-3'>
+                    <Cog className='size-8 animate-spin' />
+                </p>
+            </div>
         </div>
     );
 }

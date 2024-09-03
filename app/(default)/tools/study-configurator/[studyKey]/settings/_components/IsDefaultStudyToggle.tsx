@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import React from 'react';
 import { toast } from 'sonner';
 
+
 interface IsDefaultStudyToggleProps {
     studyKey: string;
     isDefaultStudy: boolean;
@@ -20,7 +21,6 @@ const IsDefaultStudyToggle: React.FC<IsDefaultStudyToggleProps> = (props) => {
                 id='isDefaultStudy'
                 name='isDefaultStudy'
                 checked={props.isDefaultStudy}
-
                 onCheckedChange={(checked) => {
                     startTransition(async () => {
                         try {

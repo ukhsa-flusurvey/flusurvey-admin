@@ -1,12 +1,13 @@
 'use client';
 
 import Filepicker from '@/components/inputs/Filepicker';
-import { Button, Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
+
 import React, { useState, useTransition } from 'react';
 import { BsBracesAsterisk, BsPlay, BsPlayBtn } from 'react-icons/bs';
 import { Expression, isExpression } from 'survey-engine/data_types';
-import { Progress } from "@nextui-org/react";
 import { runCustomRules } from '../../../../../../actions/study/runCustomRules';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import LoadingButton from '@/components/LoadingButton';
 
 
 interface StudyActionsCardProps {
@@ -52,19 +53,18 @@ const StudyActionsCard: React.FC<StudyActionsCardProps> = (props) => {
 
     return (
         <Card
-            className='bg-white/50'
-            isBlurred
+            variant={'opaque'}
         >
-            <CardHeader className="bg-content2">
+            <CardHeader className="">
                 <h3 className='text-xl font-bold flex items-center'>
-                    <BsBracesAsterisk className='mr-unit-sm text-default-400' />
+                    <BsBracesAsterisk className='mr-2 text-neutral-500' />
                     Study actions
                 </h3>
             </CardHeader>
-            <Divider />
-            <CardBody className='max-h-[400px] overflow-y-scroll'>
-                <div className='flex flex-col gap-unit-sm'>
-                    <div className='space-y-unit-sm'>
+
+            <CardContent className='max-h-[400px] overflow-y-scroll'>
+                <div className='flex flex-col gap-4'>
+                    <div className='space-y-3'>
                         <Filepicker
                             id='upload-one-time-study-rules'
                             label='Run custom rules'
@@ -98,37 +98,31 @@ const StudyActionsCard: React.FC<StudyActionsCardProps> = (props) => {
                                 }
                             }}
                         />
-                        <Button
-                            variant="flat"
+                        <LoadingButton
+
                             color='secondary'
                             size='lg'
                             isLoading={isPending}
-                            isDisabled={newStudyRules === undefined}
-                            startContent={<BsPlay className='text-large' />}
+                            disabled={newStudyRules === undefined}
+
                             onClick={() => {
                                 submit();
                             }}
                         >
                             Run
-                        </Button>
+                        </LoadingButton>
                     </div>
 
                     {errorMsg && <p className='text-danger'>{errorMsg}</p>}
                     {successMsg && <p className='text-success'>{successMsg}</p>}
-                    {isPending && <div className='space-y-unit-sm mt-unit-sm'>
+                    {isPending && <div className='space-y-2 mt-2'>
                         <p className='text-sm'>
                             Processing rules for participants... this may take a while.
                         </p>
-                        <Progress
-                            size="sm"
-                            isIndeterminate
-                            aria-label="Loading..."
-                            className="max-w-md"
-                        />
+
                     </div>}
                 </div>
-            </CardBody>
-            <Divider />
+            </CardContent>
 
         </Card>
     );

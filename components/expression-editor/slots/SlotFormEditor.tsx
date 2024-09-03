@@ -5,6 +5,7 @@ import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromConte
 import SimpleTextInput from '../components/SimpleTextInput';
 import DatePicker from '../components/DatePicker';
 import TimedeltaInput from '../components/TimedeltaInput';
+import SimpleNumberInput from '../components/simple-number-input';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -15,10 +16,11 @@ interface SlotFormEditorProps {
     slotIndex: number;
     currentArgs?: Array<ExpressionArg | undefined>;
     onArgsChange: (newArgs: Array<ExpressionArg | undefined>) => void;
+    onClearSlot: () => void;
 }
 
 const isSingleValueSlot = (type: string) => {
-    return ['str', 'list-selector', 'date', 'time-delta'].includes(type);
+    return ['str', 'num', 'list-selector', 'date', 'time-delta'].includes(type);
 }
 
 const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
@@ -60,6 +62,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
                         props.onArgsChange(currentData)
                     }}
+                    onClearSlot={props.onClearSlot}
                 />)
             case 'str':
                 return <SimpleTextInput
@@ -78,6 +81,26 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
                         props.onArgsChange(currentData)
                     }}
+                    onClearSlot={props.onClearSlot}
+                />
+            case 'num':
+                return <SimpleNumberInput
+                    slotDef={props.slotDef}
+                    slotTypeDef={currentFormDef}
+                    depth={props.depth}
+                    currentValue={currentArgValue?.num}
+                    onValueChange={(value) => {
+                        const currentData = props.currentArgs || [];
+                        if (currentData.length < props.slotIndex) {
+                            currentData.fill(undefined, currentData.length, props.slotIndex)
+                        }
+                        currentData[props.slotIndex] = {
+                            num: value,
+                            dtype: 'num'
+                        }
+                        props.onArgsChange(currentData)
+                    }}
+                    onClearSlot={props.onClearSlot}
                 />
             case 'date':
                 return <DatePicker
@@ -96,6 +119,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
                         props.onArgsChange(currentData)
                     }}
+                    onClearSlot={props.onClearSlot}
                 />
             case 'time-delta':
                 return <TimedeltaInput
@@ -114,6 +138,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
                         props.onArgsChange(currentData)
                     }}
+                    onClearSlot={props.onClearSlot}
                 />
             default:
                 return <p>Slot type not supported: {props.currentSlotType} of type {currentFormDef.type}</p>
@@ -162,6 +187,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
 
                         props.onArgsChange(currentData)
                     }}
+                    onClearSlot={props.onClearSlot}
                 />)
             default:
                 return (<p>

@@ -32,14 +32,17 @@ export default function Page({
                 ]
             }
         >
-            <div className="flex">
-                <Suspense fallback={<EmailTemplateConfigSkeleton />}>
-                    <EmailTemplateConfig
-                        messageType={messageType}
-                        isSystemTemplate={false}
-                        isGlobalTemplate={true}
-                    />
-                </Suspense>
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <Suspense fallback={<EmailTemplateConfigSkeleton />}>
+                        <EmailTemplateConfig
+                            messageType={messageType}
+                            isSystemTemplate={false}
+                            isGlobalTemplate={true}
+                        />
+                    </Suspense>
+                </div>
             </div>
         </SimpleBreadcrumbsPageLayout>
     );

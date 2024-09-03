@@ -6,7 +6,10 @@ import SurveySingleItemView from '../../SurveySingleItemView/SurveySingleItemVie
 import { checkSurveyItemsValidity, checkSurveyItemValidity } from 'survey-engine/validation-checkers';
 import { getItemComponentByRole, getLocaleStringTextByCode } from '../../SurveySingleItemView/utils';
 import { CustomSurveyResponseComponent } from '../../SurveySingleItemView/ResponseComponent/ResponseComponent';
-import { Button } from '@nextui-org/button';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Loader } from 'lucide-react';
+
 
 
 interface SurveyPageLocalisedTexts {
@@ -34,6 +37,7 @@ interface SurveyPageViewProps {
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
     dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    hideButtons?: boolean;
 }
 
 const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
@@ -116,14 +120,18 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
     const surveyEnd = () => {
         const titleComp = getItemComponentByRole(props.surveyEndItem?.components?.items, 'title');
         return <div
-            className="bg-gray-100 rounded px-4 sm:px-6 py-4 sm:py-6"
+            className={cn(
+                "bg-[--survey-card-bg]",
+                'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                "rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius]"
+            )}
         >
-            {titleComp ? <h5 className="text-primary-600 text-xl font-bold mb-4">{getLocaleStringTextByCode(titleComp.content, props.selectedLanguage)}</h5> : null}
-            <div className='flex gap-4'>
+            {titleComp ? <h5 className="text-primary text-xl font-bold mb-4">{getLocaleStringTextByCode(titleComp.content, props.selectedLanguage)}</h5> : null}
+            <div className='flex gap-2 sm:gap-4'>
                 {props.showBackButton ?
                     <Button
                         color='primary'
-                        variant='bordered'
+                        variant='outline'
                         type="button"
                         id="back"
                         className='text-lg font-semibold'
@@ -139,13 +147,14 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     id="submit"
                     color='primary'
                     className='text-lg font-semibold'
-                    onPress={(event) => {
+                    onClick={(event) => {
                         handleClickWithValidation(props.onSubmit)
                     }
                     }
                     disabled={props.loading}
                     autoFocus={false}
                 >
+                    {props.loading && <Loader className='size-5 me-2 animate-spin' />}
                     {props.localisedTexts.submitBtn}
                 </Button>
             </div>
@@ -161,9 +170,9 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     type="button"
                     id="back"
                     color='primary'
-                    variant='bordered'
+                    variant={'outline'}
                     className='text-lg font-semibold'
-                    onPress={(event) => {
+                    onClick={(event) => {
                         props.onPreviousPage()
                     }}
                     disabled={props.loading}
@@ -178,7 +187,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                 name="next"
                 color='primary'
                 className='text-lg font-semibold'
-                onPress={(event) => {
+                onClick={(event) => {
                     handleClickWithValidation(props.onNextPage)
                 }}
                 disabled={props.loading}
@@ -188,6 +197,13 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
             </Button>
         </div>
     );
+
+    const buttonGroup = () => {
+        if (props.hideButtons) {
+            return null;
+        }
+        return props.isLastPage ? surveyEnd() : surveyNavigation()
+    }
 
     return (
         <div className='flex flex-col gap-4'>
@@ -199,7 +215,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     </div>
                 )
             }
-            {props.isLastPage ? surveyEnd() : surveyNavigation()}
+            {buttonGroup()}
         </div>
     );
 };

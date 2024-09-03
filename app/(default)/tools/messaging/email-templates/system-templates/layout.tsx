@@ -14,9 +14,9 @@ export default function Layout({
 }) {
 
     return (
-        <div className="flex max-w-full">
+        <div className="flex max-w-full h-full">
             {
-                <div className='sticky top-0 h-screen shrink'>
+                <div className='sticky top-0 h-screen shrink z-50'>
                     <SystemMessagesSidebar />
                 </div>
             }

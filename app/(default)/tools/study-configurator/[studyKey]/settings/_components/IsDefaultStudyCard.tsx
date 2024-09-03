@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import React from 'react';
 import IsDefaultStudyToggle from './IsDefaultStudyToggle';
 import { Skeleton } from '@/components/ui/skeleton';

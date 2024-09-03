@@ -1,5 +1,5 @@
+import EmbeddedMarkdownRenderer from '@/components/embedded-markdown-renderer';
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 
 
 interface MarkdownRendererProps {
@@ -9,18 +9,11 @@ interface MarkdownRendererProps {
 
 const SimpleMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
     return (
-        <ReactMarkdown
+        <EmbeddedMarkdownRenderer
             className={props.className}
-            components={{
-                a: ({ node, ...props }) => {
-                    return <a
-                        className='text-primary-500 hover:underline'
-                        href={props.href as string} {...props} />
-                }
-            }}
         >
             {props.children}
-        </ReactMarkdown>
+        </EmbeddedMarkdownRenderer>
     );
 };
 

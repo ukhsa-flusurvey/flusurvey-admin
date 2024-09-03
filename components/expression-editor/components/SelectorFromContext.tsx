@@ -10,6 +10,7 @@ interface SelectorFromContextProps {
     depth?: number;
     currentValue?: string;
     onSelect: (value: string) => void;
+    onClearSlot: () => void;
 }
 
 const SelectorFromContext: React.FC<SelectorFromContextProps> = (props) => {
@@ -35,6 +36,7 @@ const SelectorFromContext: React.FC<SelectorFromContextProps> = (props) => {
             }}
             depth={props.depth}
             isInvalid={props.currentValue === undefined || props.currentValue === ''}
+            onClearSlot={props.onClearSlot}
         >
 
             <div className='px-2 py-2'>

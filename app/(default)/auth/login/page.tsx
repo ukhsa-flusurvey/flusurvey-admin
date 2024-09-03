@@ -1,27 +1,26 @@
 import CaseAdminHeader from "@/components/CaseAdminHeader";
 import Login from "@/app/(default)/auth/login/_components/Login";
-import { Card, CardBody } from "@nextui-org/card";
 import { Suspense } from "react";
+import { Card } from "@/components/ui/card";
 
 export default async function Page() {
 
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
     return (
 
-        <div className="w-full h-screen flex items-center justify-center bg-cover bg-center bg-[url(/images/chart-illustration.png)] p-unit-2">
+        <div className="w-full h-screen flex items-center justify-center bg-cover bg-center bg-[url(/images/chart-illustration.png)] p-2">
             <Card
-                isBlurred
-                className="bg-content2/80 w-full h-full sm:h-auto sm:w-[610px]"
-                shadow="sm"
+                variant={'opaque'}
+                className="w-full h-full sm:h-auto sm:w-[610px]"
             >
-                <CardBody className="p-unit-md sm:p-unit-xl flex flex-col gap-unit-xl justify-center">
+                <div className="p-4 sm:p-6 flex flex-col gap-6 justify-center">
                     <CaseAdminHeader
                         appName={appName}
                     />
                     <Suspense fallback={<div>Loading...</div>}>
                         <Login />
                     </Suspense>
-                </CardBody>
+                </div>
             </Card>
         </div>
     )

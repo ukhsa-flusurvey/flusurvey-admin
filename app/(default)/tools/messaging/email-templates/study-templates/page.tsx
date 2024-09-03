@@ -25,9 +25,14 @@ export default function Page() {
                 ]
             }
         >
-            <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
-                <StudyEmailTemplates />
-            </Suspense>
+            <div
+                className="h-full w-full pb-6 flex flex-col gap-4" >
+                <div className="grow flex overflow-hidden">
+                    <Suspense fallback={<StudyEmailTemplatesSkeleton />}>
+                        <StudyEmailTemplates />
+                    </Suspense>
+                </div>
+            </div>
         </SimpleBreadcrumbsPageLayout>
     );
 }
