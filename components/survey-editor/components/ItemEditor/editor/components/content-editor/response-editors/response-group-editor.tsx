@@ -43,6 +43,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <TextInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'multilineTextInput':
+            content = <TextInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'numericInput':
             content = <NumberInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

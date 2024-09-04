@@ -138,6 +138,7 @@ export const ContentItem = (props: {
                     <TextInputContentConfig
                         component={props.component}
                         onChange={props.onUpdateComponent}
+                        allowMultipleLines={false}
                     />
                 </OptionContentTabCollapsible>;
             case ChoiceResponseOptionType.NumberInput:

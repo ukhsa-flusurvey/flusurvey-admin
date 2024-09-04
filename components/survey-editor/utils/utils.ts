@@ -73,7 +73,7 @@ export const determineItemType = (item: SurveySingleItem): string => {
         case 'input':
             return 'textInput';
         case 'multilineTextInput':
-            return 'multilineTextInput';
+            return 'textInput';
         case 'numberInput':
             return 'numericInput';
         case 'dropDownGroup':
@@ -177,18 +177,10 @@ export const SurveyItemTypeRegistry = [
     {
         key: 'textInput',
         label: 'Text input',
-        description: 'Allows the participant to enter a text.',
+        description: 'Allows the participant to enter text.',
         className: 'text-sky-700',
         icon: TextCursorInput,
     },
-    {
-        key: 'multilineTextInput',
-        label: 'Multiline text input',
-        description: 'Allows the participant to enter a text with multiple lines.',
-        className: 'text-sky-700',
-        icon: PenLine,
-    },
-
     {
         key: 'numericInput',
         label: 'Numeric input',

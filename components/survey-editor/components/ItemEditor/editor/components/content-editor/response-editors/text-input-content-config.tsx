@@ -12,6 +12,7 @@ import { ItemComponent } from 'survey-engine/data_types';
 interface TextInputContentConfigProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
+    allowMultipleLines?: boolean;
 }
 
 const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) => {
@@ -21,6 +22,9 @@ const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) =>
     const currentPlaceholder = localisedObjectToMap(props.component.description).get(selectedLanguage) || '';
     const inputMaxWidth = getInputMaxWidth(props.component.style);
     const maxLengthValue = getStyleValueByKey(props.component.style, 'maxLength');
+    const rowsValue = getStyleValueByKey(props.component.style, 'rows');
+    const isMultiline = rowsValue && parseInt(rowsValue) != 1;
+
     return (
         <div className='space-y-4'
             data-no-dnd={true}
@@ -91,7 +95,40 @@ const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) =>
                 />
             </div>
 
-            <div className='space-y-1.5'>
+            {props.allowMultipleLines && <div className='space-y-1.5'>
+                <Label
+                    htmlFor={props.component.key + 'rows'}
+                >
+                    Text rows (visible lines)
+                </Label>
+                <Input
+                    id={props.component.key + 'rows'}
+                    value={rowsValue || '1'}
+                    type='number'
+                    min={1}
+                    max={25}
+                    step={1}
+                    onChange={(e) => {
+                        const updatedComponent = { ...props.component };
+                        const updatedStyle = [...updatedComponent.style || []];
+                        const index = updatedStyle.findIndex(s => s.key === 'rows');
+                        if (index > -1) {
+                            updatedStyle[index] = { key: 'rows', value: e.target.value };
+                        } else {
+                            updatedStyle.push({ key: 'rows', value: e.target.value });
+                        }
+                        updatedComponent.style = updatedStyle;
+                        if (e.target.value == '1') {
+                            updatedComponent.role = 'input';
+                        } else {
+                            updatedComponent.role = 'multilineTextInput';
+                        }
+                        props.onChange(updatedComponent);
+                    }}
+                />
+            </div>}
+
+            {!isMultiline && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'inputMaxWidth'}
                 >
@@ -156,7 +193,7 @@ const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) =>
                         placeholder='Define the max length...'
                     />
                 </div>
-            </div>
+            </div>}
         </div>
     );
 };
