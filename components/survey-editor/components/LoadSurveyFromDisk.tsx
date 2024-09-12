@@ -9,9 +9,9 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { StoredSurvey, SurveyStorage } from '../utils/SurveyStorage';
 import { Card } from '@/components/ui/card';
-import * as timeago from 'timeago.js';
 import { cn } from '@/lib/utils';
 import { getSurveyIdentifier } from '../utils/utils';
+import { formatDistance } from 'date-fns';
 
 interface LoadSurveyFromDiskProps {
     isOpen: boolean;
@@ -164,7 +164,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                                 storedSurveySelectionId == ss.id ? setStoredSurveySelectionId(undefined) : setStoredSurveySelectionId(ss.id);
                                             }}
                                         >
-                                            <>{ss.id}&nbsp;{"("}{timeago.format(ss.lastUpdated)}{")"}</>
+                                            <>{ss.id}&nbsp;{"("}{formatDistance(ss.lastUpdated, new Date())}{" ago)"}</>
                                         </Button>
                                         <Button
                                             variant='ghost'
