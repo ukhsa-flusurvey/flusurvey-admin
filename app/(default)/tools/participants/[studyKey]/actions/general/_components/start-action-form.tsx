@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { runStudyActionForAllParticipants, runStudyActionForParticipant } from '@/actions/study/runStudyActions';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface StartActionFormProps {
     studyKey: string;
@@ -20,6 +21,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
     const [currentRules, setCurrentRules] = React.useState<Expression[] | undefined>(undefined);
     const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('all');
     const [participantID, setParticipantID] = React.useState<string | undefined>(undefined);
+    const router = useRouter();
 
     const onStartActionForParticipant = () => {
         startTransition(async () => {
@@ -52,7 +54,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                     return;
                 }
                 toast.success('Action started successfully');
-                console.log(resp);
+                router.push(`/tools/participants/${props.studyKey}/actions/general/${resp.task.id}`);
             } catch (error) {
                 toast.error('Failed to start action');
             }
