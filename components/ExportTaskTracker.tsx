@@ -125,7 +125,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = (props) => {
                         <span>
                             <FileCheck2 className='size-6 text-green-600' />
                         </span>
-                        The requested file was successfully generated and should download automatically shortly. If it does not, click the button below.
+                        The result file was successfully generated and should download automatically shortly. If it does not, click the button below.
                     </p>
                     <LoadingButton
                         onClick={onDownloadResult}
