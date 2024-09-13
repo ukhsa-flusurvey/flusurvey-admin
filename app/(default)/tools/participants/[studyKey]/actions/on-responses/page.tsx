@@ -1,8 +1,14 @@
-export default function Page() {
+import StartStudyActionOnPreviousResponses from "./_components/start-study-action-on-previous-responses";
+
+export default function Page(props: {
+    params: {
+        studyKey: string;
+    }
+}) {
 
     return (
-        <div>
-            <h1>TODO page for: app/(default)/tools/participants/[studyKey]/actions/on-responses/page.tsx</h1>
-        </div>
+        <StartStudyActionOnPreviousResponses
+            studyKey={props.params.studyKey}
+        />
     );
 }

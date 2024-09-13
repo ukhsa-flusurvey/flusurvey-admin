@@ -1,35 +1,43 @@
 'use client';
+
+import LoadingButton from '@/components/LoadingButton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, Play } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-import ActionExpressionPicker from '../../_components/action-expression-picker';
+import { toast } from 'sonner';
 import { Expression } from 'survey-engine/data_types';
-import LoadingButton from '@/components/LoadingButton';
+import ActionExpressionPicker from '../../_components/action-expression-picker';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
-import { runStudyActionForAllParticipants, runStudyActionForParticipant } from '@/actions/study/runStudyActions';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { runStudyActionOnPreviousResponses, runStudyActionOnPreviousResponsesForAllParticipants } from '@/actions/study/runStudyActions';
+import { Textarea } from '@/components/ui/textarea';
 
-interface StartActionFormProps {
+interface StartStudyActionOnPreviousResponsesProps {
     studyKey: string;
 }
 
-const StartActionForm: React.FC<StartActionFormProps> = (props) => {
+const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousResponsesProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [currentRules, setCurrentRules] = React.useState<Expression[] | undefined>(undefined);
     const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('all');
     const [participantID, setParticipantID] = React.useState<string | undefined>(undefined);
     const router = useRouter();
+    const [surveyKeys, setSurveyKeys] = React.useState<string[] | undefined>(undefined);
+    const [fromDate, setFromDate] = React.useState<Date | undefined>(undefined);
+    const [toDate, setToDate] = React.useState<Date | undefined>(undefined);
 
-    const startActionForParticipant = () => {
+    const startActionForParticipantOnOldResps = () => {
         startTransition(async () => {
             try {
-                const resp = await runStudyActionForParticipant(
+                const resp = await runStudyActionOnPreviousResponses(
                     props.studyKey,
                     currentRules || [],
-                    participantID || ''
+                    participantID || '',
+                    surveyKeys,
+                    fromDate,
+                    toDate
                 );
                 if (resp.error) {
                     toast.error(resp.error);
@@ -42,19 +50,22 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
         });
     }
 
-    const startActionForAllParticipants = () => {
+    const startActionForAllParticipantsPreviousResponses = () => {
         startTransition(async () => {
             try {
-                const resp = await runStudyActionForAllParticipants(
+                const resp = await runStudyActionOnPreviousResponsesForAllParticipants(
                     props.studyKey,
                     currentRules || [],
+                    surveyKeys,
+                    fromDate,
+                    toDate
                 );
                 if (resp.error) {
                     toast.error(resp.error);
                     return;
                 }
                 toast.success('Action started successfully');
-                router.push(`/tools/participants/${props.studyKey}/actions/general/${resp.task.id}`);
+                router.push(`/tools/participants/${props.studyKey}/actions/on-responses/${resp.task.id}`);
             } catch (error) {
                 toast.error('Failed to start action');
             }
@@ -67,8 +78,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
             <Alert className="">
                 <Info className="size-4" />
                 <AlertDescription>
-                    This action will be applied to the current state of the participant(s). Unless you select a specific participant, it will be applied to all participants in the study except for temporary and deleted users.
-
+                    This action will be applied as a participant would submit the previous responses, so rules can implement custom submission handler events. Unless you select a specific participant, it will be applied to all participants in the study except for temporary and deleted users.
                 </AlertDescription>
             </Alert>
 
@@ -128,6 +138,74 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                 </div>
             }
 
+            <div className='space-y-1.5 py-2'>
+                <Label className="block text-sm font-medium text-gray-700 mb-2"
+                    htmlFor='survey-keys'
+                >
+                    Survey keys (optional)
+                </Label>
+
+                <Textarea
+                    id='survey-keys'
+                    name='survey-keys'
+                    placeholder="Enter survey keys..."
+                    value={surveyKeys?.join(',')}
+                    onChange={(e) => {
+                        const newSurveyKeys = e.target.value.split(',').map(sk => sk.trim());
+                        setSurveyKeys(newSurveyKeys);
+                    }}
+                />
+                <p className="text-xs text-muted-foreground">
+                    Enter the survey keys to apply the action to. One per line.
+                </p>
+            </div>
+
+            <div className='space-y-1.5 py-2'>
+                <Label className="block text-sm font-medium text-gray-700 mb-2"
+                    htmlFor='from-date'
+                >
+                    From date (optional)
+                </Label>
+
+                <Input
+                    type="date"
+                    id='from-date'
+                    name='from-date'
+                    placeholder="Enter from date..."
+                    value={fromDate ? fromDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => {
+                        const newFromDate = new Date(e.target.value);
+                        setFromDate(newFromDate);
+                    }}
+                />
+                <p className="text-xs text-muted-foreground">
+                    Enter the from date to apply the action to.
+                </p>
+            </div>
+
+            <div className='space-y-1.5 py-2'>
+                <Label className="block text-sm font-medium text-gray-700 mb-2"
+                    htmlFor='to-date'
+                >
+                    To date (optional)
+                </Label>
+
+                <Input
+                    type="date"
+                    id='to-date'
+                    name='to-date'
+                    placeholder="Enter to date..."
+                    value={toDate ? toDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => {
+                        const newToDate = new Date(e.target.value);
+                        setToDate(newToDate);
+                    }}
+                />
+                <p className="text-xs text-muted-foreground">
+                    Enter the to date to apply the action to.
+                </p>
+            </div>
+
             <LoadingButton
                 isLoading={isPending}
                 variant={'default'}
@@ -136,10 +214,10 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                 onClick={() => {
                     switch (participantScope) {
                         case 'all':
-                            startActionForAllParticipants();
+                            startActionForAllParticipantsPreviousResponses();
                             break;
                         case 'single':
-                            startActionForParticipant();
+                            startActionForParticipantOnOldResps();
                             break;
                     }
                 }}
@@ -154,4 +232,4 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
     );
 };
 
-export default StartActionForm;
+export default StartStudyActionOnPreviousResponses;

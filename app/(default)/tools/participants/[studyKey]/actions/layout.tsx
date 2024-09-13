@@ -12,14 +12,16 @@ export default function Layout({
 }) {
 
     return (
-        <Card
-            className="my-6 flex "
-            variant={"opaque"}
-        >
-            <ActionsSidebar
-                studyKey={params.studyKey}
-            />
-            {children}
-        </Card>
+        <div className="overflow-y-scroll h-full">
+            <Card
+                className="my-6 flex h-fit"
+                variant={"opaque"}
+            >
+                <ActionsSidebar
+                    studyKey={params.studyKey}
+                />
+                {children}
+            </Card>
+        </div>
     );
 }

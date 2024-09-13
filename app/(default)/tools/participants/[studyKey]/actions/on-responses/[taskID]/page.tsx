@@ -40,7 +40,7 @@ export default function Page(
                         <CardContent>
                             <TaskTracker
                                 taskID={taskID}
-                                taskURLPrefix={`/v1/studies/${studyKey}/data-exporter/previous-responses`}
+                                taskURLPrefix={`/v1/studies/${studyKey}/run-actions/previous-responses`}
                             />
                         </CardContent>
                     </Card >
