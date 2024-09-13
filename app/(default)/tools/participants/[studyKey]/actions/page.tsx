@@ -1,6 +1,4 @@
-import Breadcrumbs from '@/components/Breadcrumbs';
 import React from 'react';
-import StudyActionsCard from './StudyActionsCard';
 import { ArrowLeft } from 'lucide-react';
 
 interface PageProps {

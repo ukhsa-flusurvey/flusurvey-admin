@@ -1,8 +1,17 @@
-export default function Page() {
+import StartActionForm from "./_components/start-action-form";
+
+export default function Page(props: {
+    params: {
+        studyKey: string;
+    }
+}) {
+
 
     return (
         <div>
-            <h1>TODO page for: app/(default)/tools/participants/[studyKey]/actions/general/page.tsx</h1>
+            <StartActionForm
+                studyKey={props.params.studyKey}
+            />
         </div>
     );
 }
