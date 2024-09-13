@@ -1,6 +1,7 @@
 import Breadcrumbs from '@/components/Breadcrumbs';
 import React from 'react';
 import StudyActionsCard from './StudyActionsCard';
+import { ArrowLeft } from 'lucide-react';
 
 interface PageProps {
     params: {
@@ -12,28 +13,12 @@ export const dynamic = 'force-dynamic';
 
 const Page: React.FC<PageProps> = async (props) => {
     return (
-        <div className="px-6 bg-white/60 h-full">
-            <div className="py-2">
-                <Breadcrumbs
-                    homeLink="/tools/study-configurator"
-                    links={
-                        [
-                            {
-                                title: props.params.studyKey,
-                                href: `/tools/study-configurator/${props.params.studyKey}`,
-                            },
-                            {
-                                title: `Actions`,
-                            }
-                        ]
-                    }
-                />
-                <main className="py-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <StudyActionsCard studyKey={props.params.studyKey} />
-                    </div>
-                </main>
-            </div>
+        <div className="flex items-center justify-center h-full grow py-6 text-muted-foreground">
+            <span>
+                <ArrowLeft className="size-5 me-1" />
+
+            </span>
+            Select an action type on the left to get started.
         </div>
     );
 };
