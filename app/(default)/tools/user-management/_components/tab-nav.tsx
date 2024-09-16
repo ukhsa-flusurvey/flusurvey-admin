@@ -39,6 +39,11 @@ const TabNav: React.FC<TabNavProps> = (props) => {
             >
                 <ul className='flex gap-1'>
                     <TabNavLink
+                        href={'/tools/user-management/participant-users'}
+                        label={'Participant Users'}
+                        isActive={props.activeTab === 'participant-users'}
+                    />
+                    <TabNavLink
                         href='/tools/user-management/management-users'
                         label={'Management Users'}
                         isActive={props.activeTab === 'management-users'}
