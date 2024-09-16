@@ -1,4 +1,5 @@
 import TabNav from "../_components/tab-nav";
+import DeleteUsersFormAndFeedback from "./_components/delete-users-form-and-feedback";
 
 export default function Page() {
 
@@ -8,7 +9,7 @@ export default function Page() {
                 activeTab={'participant-users'}
             />
             <div className="flex w-full">
-                <h1>TODO page for: app/(default)/tools/user-management/participant-users/page.tsx</h1>
+                <DeleteUsersFormAndFeedback />
             </div>
         </div>
     );
