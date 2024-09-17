@@ -2,6 +2,7 @@ import { Survey } from "survey-engine/data_types";
 
 export class SurveyStorage {
     public static debug = false;
+    public static maxStoredSurveys = 8;
     storedSurveys: StoredSurvey[] = [];
     public asObject = () => { return { storedSurveys: this.storedSurveys } };
 
@@ -20,10 +21,19 @@ export class SurveyStorage {
         }
     }
 
+    applyLimit = () => {
+        if (this.storedSurveys.length > SurveyStorage.maxStoredSurveys) {
+            this.storedSurveys.sort((a, b) => a.lastUpdated.getTime() - b.lastUpdated.getTime());
+            this.storedSurveys.reverse();
+            this.storedSurveys = this.storedSurveys.slice(0, SurveyStorage.maxStoredSurveys);
+        }
+    }
+
     updateSurvey = (updatedStoredSurvey: StoredSurvey) => {
         SurveyStorage.debug && console.log('Updating survey in storage with id:', updatedStoredSurvey.id);
         this.storedSurveys = this.storedSurveys.filter(s => s.id !== updatedStoredSurvey.id);
         this.storedSurveys.push(updatedStoredSurvey);
+        this.applyLimit();
     }
 
     public getRecentlyEditedSurveys = (): StoredSurvey[] => {
