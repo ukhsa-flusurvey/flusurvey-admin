@@ -99,7 +99,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}
         >
             <DialogContent
-                className='overflow-y-scroll max-h-svh lg:max-w-2xl'
+                className='overflow-auto max-h-svh lg:max-w-2xl'
             >
                 <DialogHeader>
                     <DialogDescription />
