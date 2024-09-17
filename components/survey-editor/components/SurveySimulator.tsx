@@ -45,7 +45,6 @@ const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement>, config: Si
     }
 };
 
-
 const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     const { survey, selectedLanguage } = useContext(SurveyContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
