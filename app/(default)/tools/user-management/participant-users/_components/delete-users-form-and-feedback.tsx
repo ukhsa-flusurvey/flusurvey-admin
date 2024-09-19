@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import React, { use, useEffect } from 'react';
 
 interface DeleteUsersFormAndFeedbackProps {
 }
@@ -15,7 +15,8 @@ interface DeleteUsersFormAndFeedbackProps {
 interface DeletionTask {
     email: string;
     error?: string;
-    ready: boolean;
+    inProgress: boolean;
+    ready?: boolean;
 }
 
 const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (props) => {
@@ -24,6 +25,50 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
 
     const [deletionTasks, setDeletionTasks] = React.useState<DeletionTask[]>([]);
 
+
+
+    useEffect(() => {
+        const jobToStart = deletionTasks.findIndex(task => !task.inProgress && !task.ready);
+        if (jobToStart < 0) {
+            return;
+        }
+
+        const onDeletion = async (task: DeletionTask, index: number) => {
+            if (task.inProgress || task.ready) {
+                return;
+            }
+            setDeletionTasks(prev => {
+                const newTasks = [...prev];
+                newTasks[index].inProgress = true;
+                return newTasks;
+            });
+            try {
+                const resp = await requestDeletionForParticipantUser(task.email);
+                task.ready = true;
+                task.inProgress = false;
+                if (resp.error) {
+                    task.error = resp.error;
+                }
+                const newTasks = [...deletionTasks];
+                newTasks[index] = task;
+                setDeletionTasks(newTasks);
+            } catch (error) {
+                console.error(error);
+                task.ready = true;
+                task.inProgress = false;
+                task.error = 'Failed to delete user';
+                const newTasks = [...deletionTasks];
+                newTasks[index] = task;
+                setDeletionTasks(newTasks);
+            }
+        }
+
+        onDeletion(deletionTasks[jobToStart], jobToStart);
+
+
+    }, [deletionTasks])
+
+    const hasAnyTaskInProgress = deletionTasks.some(task => task.inProgress);
 
     return (
         <div
@@ -46,6 +91,7 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
                             name='input-value'
                             placeholder='Enter email addresses of users to delete, one per line.'
                             value={inputValue}
+                            disabled={hasAnyTaskInProgress || isPending}
                             onChange={(e) => {
                                 setInputValue(e.target.value);
                             }}
@@ -58,7 +104,7 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
 
                     <LoadingButton
                         variant={'default'}
-                        isLoading={isPending}
+                        isLoading={isPending || hasAnyTaskInProgress}
                         disabled={!inputValue}
                         onClick={() => {
                             if (!confirm('Are you sure you want to delete these users? This action cannot be undone.')) {
@@ -69,33 +115,12 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
                             const tasks: DeletionTask[] = uniqueEmails.map(email => {
                                 return {
                                     email: email.trim().toLowerCase(),
-                                    ready: true,
+                                    inProgress: false,
                                     error: undefined
                                 }
                             });
                             setDeletionTasks(tasks);
                             setInputValue('');
-                            startTransition(async () => {
-                                tasks.forEach(async (task, index) => {
-                                    try {
-                                        const resp = await requestDeletionForParticipantUser(task.email);
-                                        task.ready = true;
-                                        if (resp.error) {
-                                            task.error = resp.error;
-                                        }
-                                        const newTasks = [...deletionTasks];
-                                        newTasks[index] = task;
-                                        setDeletionTasks(newTasks);
-                                    } catch (error) {
-                                        console.error(error);
-                                        task.ready = true;
-                                        task.error = 'Failed to delete user';
-                                        const newTasks = [...deletionTasks];
-                                        newTasks[index] = task;
-                                        setDeletionTasks(newTasks);
-                                    }
-                                });
-                            });
                         }}
                     >
                         Delete Users
@@ -127,10 +152,12 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
                                     'border-red-600': showError,
                                 }
                             )}>
-                            {!task.ready && <Loader2 className='animate-spin text-primary me-2' />}
-                            <p className='font-semibold text-sm'>
-                                {task.email}
-                            </p>
+                            <div className='flex items-center gap-2'>
+                                {!task.ready && <Loader2 className='animate-spin text-primary me-2' />}
+                                <p className='font-semibold text-sm'>
+                                    {task.email}
+                                </p>
+                            </div>
 
                             {showError && <p className='text-red-600 text-xs'>
                                 {task.error}
