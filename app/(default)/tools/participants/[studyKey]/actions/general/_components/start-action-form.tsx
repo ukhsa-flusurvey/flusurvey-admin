@@ -19,7 +19,7 @@ interface StartActionFormProps {
 const StartActionForm: React.FC<StartActionFormProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [currentRules, setCurrentRules] = React.useState<Expression[] | undefined>(undefined);
-    const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('all');
+    const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('single');
     const [participantID, setParticipantID] = React.useState<string | undefined>(undefined);
     const router = useRouter();
 
@@ -88,17 +88,17 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                     onValueChange={(value: 'all' | 'single') => setParticipantScope(value)}
                     className="flex space-x-4"
                 >
-                    <Label htmlFor="all-participants" className="flex items-center space-x-2">
-                        <RadioGroupItem value="all" id="all-participants" />
-                        <span>
-                            All Participants
-                        </span>
-                    </Label>
-
                     <Label htmlFor="single-participant" className="flex items-center space-x-2">
                         <RadioGroupItem value="single" id="single-participant" />
                         <span>
                             Single Participant
+                        </span>
+                    </Label>
+
+                    <Label htmlFor="all-participants" className="flex items-center space-x-2">
+                        <RadioGroupItem value="all" id="all-participants" />
+                        <span>
+                            All Participants
                         </span>
                     </Label>
                 </RadioGroup>
@@ -117,7 +117,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                         id='participant-id'
                         name='participant-id'
                         placeholder="Enter participant ID..."
-                        value={participantID}
+                        value={participantID || ''}
                         onChange={(e) => {
                             setParticipantID(e.target.value);
                         }}

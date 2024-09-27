@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { runStudyActionOnPreviousResponses, runStudyActionOnPreviousResponsesForAllParticipants } from '@/actions/study/runStudyActions';
 import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 
 interface StartStudyActionOnPreviousResponsesProps {
     studyKey: string;
@@ -21,9 +22,10 @@ interface StartStudyActionOnPreviousResponsesProps {
 const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousResponsesProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
     const [currentRules, setCurrentRules] = React.useState<Expression[] | undefined>(undefined);
-    const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('all');
+    const [participantScope, setParticipantScope] = React.useState<'all' | 'single'>('single');
     const [participantID, setParticipantID] = React.useState<string | undefined>(undefined);
     const router = useRouter();
+    const [runOnAllSurveys, setRunOnAllSurveys] = React.useState<boolean>(false);
     const [surveyKeys, setSurveyKeys] = React.useState<string[] | undefined>(undefined);
     const [fromDate, setFromDate] = React.useState<Date | undefined>(undefined);
     const [toDate, setToDate] = React.useState<Date | undefined>(undefined);
@@ -72,6 +74,20 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
         });
     }
 
+    const isValidForm = () => {
+        if (!currentRules || currentRules.length === 0) {
+            return false;
+        }
+        if (!runOnAllSurveys && (!surveyKeys || surveyKeys.length === 0)) {
+            return false;
+        }
+
+        if (participantScope === 'single' && !participantID) {
+            return false;
+        }
+        return true;
+    }
+    console.log(surveyKeys)
     return (
         <div className='p-4 space-y-4'>
             <h2 className='text-lg font-semibold mb-4'>Start action</h2>
@@ -98,17 +114,16 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                     onValueChange={(value: 'all' | 'single') => setParticipantScope(value)}
                     className="flex space-x-4"
                 >
-                    <Label htmlFor="all-participants" className="flex items-center space-x-2">
-                        <RadioGroupItem value="all" id="all-participants" />
-                        <span>
-                            All Participants
-                        </span>
-                    </Label>
-
                     <Label htmlFor="single-participant" className="flex items-center space-x-2">
                         <RadioGroupItem value="single" id="single-participant" />
                         <span>
                             Single Participant
+                        </span>
+                    </Label>
+                    <Label htmlFor="all-participants" className="flex items-center space-x-2">
+                        <RadioGroupItem value="all" id="all-participants" />
+                        <span>
+                            All Participants
                         </span>
                     </Label>
                 </RadioGroup>
@@ -127,7 +142,7 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                         id='participant-id'
                         name='participant-id'
                         placeholder="Enter participant ID..."
-                        value={participantID}
+                        value={participantID || ''}
                         onChange={(e) => {
                             setParticipantID(e.target.value);
                         }}
@@ -139,19 +154,47 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
             }
 
             <div className='space-y-1.5 py-2'>
+                <Label>
+                    Survey scope
+                </Label>
+                <Label
+                    className='flex items-center space-x-2 cursor-pointer'
+                    htmlFor='run-on-all-surveys'
+                >
+                    <span>
+                        Apply on specific surveys
+                    </span>
+                    <Switch
+                        id='run-on-all-surveys'
+                        checked={runOnAllSurveys}
+                        onCheckedChange={(checked) => {
+                            setRunOnAllSurveys(checked);
+                            if (!checked) {
+                                setSurveyKeys(undefined);
+                            }
+                        }}
+                    />
+                    <span>
+                        Apply on all surveys
+                    </span>
+                </Label>
+            </div>
+
+            <div className='space-y-1.5 py-2'>
                 <Label className="block text-sm font-medium text-gray-700 mb-2"
                     htmlFor='survey-keys'
                 >
-                    Survey keys (optional)
+                    Survey keys
                 </Label>
 
                 <Textarea
                     id='survey-keys'
                     name='survey-keys'
+                    disabled={runOnAllSurveys}
                     placeholder="Enter survey keys..."
                     value={surveyKeys?.join(',')}
                     onChange={(e) => {
-                        const newSurveyKeys = e.target.value.split(',').map(sk => sk.trim());
+                        const newSurveyKeys = e.target.value.split(',').map(sk => sk.trim()).filter(sk => sk.length > 0);
                         setSurveyKeys(newSurveyKeys);
                     }}
                 />
@@ -187,7 +230,7 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                 <Label className="block text-sm font-medium text-gray-700 mb-2"
                     htmlFor='to-date'
                 >
-                    To date (optional)
+                    Until date (optional)
                 </Label>
 
                 <Input
@@ -209,7 +252,7 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
             <LoadingButton
                 isLoading={isPending}
                 variant={'default'}
-                disabled={!currentRules || currentRules.length === 0 || (participantScope === 'single' && !participantID)}
+                disabled={!isValidForm()}
 
                 onClick={() => {
                     switch (participantScope) {
