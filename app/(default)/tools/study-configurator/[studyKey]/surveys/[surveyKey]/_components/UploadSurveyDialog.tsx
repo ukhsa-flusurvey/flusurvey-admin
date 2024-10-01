@@ -108,6 +108,11 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
                                             setErrorMsg('Survey key in the uploaded file does not match the current survey key. Should be "' + surveyKey + '".');
                                             return;
                                         }
+                                        const newSurvey = data as Survey;
+                                        newSurvey.id = undefined;
+                                        newSurvey.published = undefined;
+                                        newSurvey.unpublished = undefined;
+                                        newSurvey.versionId = ''
                                         setNewSurvey(data as Survey);
                                     } else {
                                         setNewSurvey(undefined);
