@@ -14,6 +14,10 @@ export const createNewSurvey = async (studyKey: string, survey: Survey) => {
 
     let url = `/v1/studies/${studyKey}/surveys`;
 
+    survey.id = undefined;
+    survey.published = undefined;
+    survey.unpublished = undefined;
+    survey.versionId = ''
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
         {
@@ -35,6 +39,10 @@ export const uploadSurvey = async (studyKey: string, surveyKey: string, survey: 
     }
 
     let url = `/v1/studies/${studyKey}/surveys/${surveyKey}`;
+    survey.id = undefined;
+    survey.unpublished = undefined;
+    survey.published = undefined;
+    survey.versionId = ''
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
