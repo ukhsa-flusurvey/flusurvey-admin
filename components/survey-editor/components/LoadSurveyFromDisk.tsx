@@ -6,11 +6,18 @@ import { findAllLocales, removeLocales, renameLocales } from '../utils/localeUti
 import { Button } from '@/components/ui/button';
 import { SurveyContext } from '../surveyContext';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { StoredSurvey, SurveyStorage } from '../utils/SurveyStorage';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { getSurveyIdentifier } from '../utils/utils';
+import { formatDistance } from 'date-fns';
 
 interface LoadSurveyFromDiskProps {
     isOpen: boolean;
     onClose: () => void;
+    surveyStorage: SurveyStorage;
+    setSurveyStorage: (storage: SurveyStorage) => void;
 }
 
 
@@ -53,19 +60,31 @@ const LocaleEditor: React.FC<{
 const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     isOpen,
     onClose,
+    surveyStorage,
+    setSurveyStorage
 }) => {
-    const { survey, setSurvey } = React.useContext(SurveyContext);
+    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyContext);
     const [surveyFileContent, setSurveyFileContent] = React.useState<Survey | undefined>(undefined);
+    const [storedSurveySelectionId, setStoredSurveySelectionId] = React.useState<string | undefined>(undefined);
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
+
+    const storedSurveys = surveyStorage.storedSurveys;
 
 
     React.useEffect(() => {
         setSurveyFileContent(undefined);
+        setStoredSurveySelectionId(undefined);
     }, [isOpen]);
 
-    const onLoad = () => {
-        if (!surveyFileContent) return;
-        setSurvey(surveyFileContent);
+    const onLoadClick = () => {
+        if (storedSurveySelectionId) {
+            const storedSurvey = storedSurveys.find(ss => ss.id === storedSurveySelectionId);
+            storedSurvey && setStoredSurvey(storedSurvey);
+        } else {
+            console.log('load survey from file contents', surveyFileContent);
+            if (!surveyFileContent) return;
+            setStoredSurvey(new StoredSurvey(getSurveyIdentifier(surveyFileContent), surveyFileContent, new Date()));
+        }
         toast.success('Survey loaded');
         onClose();
     }
@@ -79,27 +98,20 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     return (
         <Dialog open={isOpen} onOpenChange={onClose}
         >
-            <DialogContent>
-
-
+            <DialogContent
+                className='overflow-auto max-h-svh lg:max-w-2xl'
+            >
                 <DialogHeader>
+                    <DialogDescription />
                     <DialogTitle>
-                        Load from disk
+                        Pick survey file to open
                     </DialogTitle>
                 </DialogHeader>
                 <div>
                     <div className='py-3'>
-                        <div className='flex items-center gap-3 p-4 bg-yellow-100 rounded-lg mb-3'>
-                            <span className='text-yellow-800 text-xl'>
-                                <BsExclamationTriangle />
-                            </span>
-                            <p className='text-yellow-800'>
-                                This will overwrite the current survey. Are you sure you want to continue?
-                            </p>
-                        </div>
+                        <p className='pb-2'>From local computer:</p>
 
                         <Filepicker
-                            label='Select a survey file'
                             id='survey upload'
                             accept={{
                                 'application/json': ['.json'],
@@ -141,12 +153,50 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                             <p className='text-red-700 mt-3'>{errorMsg}</p>
                         )}
                     </div>
+                    {storedSurveys && storedSurveys.length > 0 && <div className='py-3'>
+                        <p className='mb-2'>From recently opened surveys:</p>
+                        <div className='flex flex-col gap-2'>
+                            {
+                                storedSurveys ? storedSurveys.map((ss, i) => (
+                                    <Card key={i} className={cn('flex items-center justify-between', storedSurveySelectionId == ss.id ? "bg-slate-200" : "")}>
+                                        <Button
+                                            variant='ghost'
+                                            className='grow pre'
+                                            onClick={() => {
+                                                storedSurveySelectionId == ss.id ? setStoredSurveySelectionId(undefined) : setStoredSurveySelectionId(ss.id);
+                                            }}
+                                        >
+                                            <>{ss.id}&nbsp;{"("}{formatDistance(ss.lastUpdated, new Date())}{" ago)"}</>
+                                        </Button>
+                                        <Button
+                                            variant='ghost'
+                                            size='icon'
+                                            onClick={() => {
+                                                if (confirm(`Are you sure you want to delete survey ${"\"" + ss.id + "\""} from memory?`)) {
+                                                    let deletedSurvey = storedSurveys.find(s => s.id === ss.id);
+                                                    if (deletedSurvey) {
+                                                        surveyStorage.removeSurvey(deletedSurvey);
+                                                        setSurveyStorage(surveyStorage);
+                                                        if (storedSurvey?.id === ss.id) {
+                                                            setStoredSurvey(undefined);
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            <BsXLg />
+                                        </Button>
+                                    </Card>
+                                )) : null
+                            }
+                        </div>
+                    </div>}
                     {localesFromSurvey.length > 0 && (
                         <div>
                             <h3 className='text-sm font-bold mb-2'>Locales used:</h3>
                             <ul>
                                 {localesFromSurvey.map((loc, i) => (
-                                    <li key={i} className=' bg-neutral-50 border rounded-lg px-3 py-3 mr-3 mb-3'>
+                                    <li key={i} className=' bg-neutral-50 border rounded-lg px-3 py-3 mb-3'>
                                         <LocaleEditor
                                             locale={loc}
                                             onRename={(oldLocale, newLocale) => {
@@ -167,21 +217,29 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                     )}
 
                 </div>
-
+                {storedSurvey && <div className={"flex items-center gap-3 p-4 bg-yellow-100 rounded-lg"}>
+                    <span className='text-yellow-800 text-xl'>
+                        <BsExclamationTriangle />
+                    </span>
+                    <p className="text-yellow-800">
+                        This will overwrite the current survey. Are you sure you want to continue?
+                    </p>
+                </div>}
                 <DialogFooter>
+
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
 
-                    <Button color="primary" onClick={onLoad}
-                        disabled={!surveyFileContent}
+                    <Button color="primary" onClick={onLoadClick}
+                        disabled={!(surveyFileContent || storedSurveySelectionId)}
                     >
-                        Import
+                        Open
                     </Button>
                 </DialogFooter>
 
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 };
 

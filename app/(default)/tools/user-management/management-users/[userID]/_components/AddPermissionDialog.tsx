@@ -106,6 +106,15 @@ export const permissionInfos: PermissionInfos = {
                 }
             }
         }
+    },
+    "users": {
+        resources: {
+            "*": {
+                actions: {
+                    "delete-users": { hideLimiter: true },
+                }
+            }
+        }
     }
 }
 
@@ -126,7 +135,7 @@ export const getHint = (resourceType: string, resourceId: string, action: string
 
 export const permissionSchema = z.object({
     subjectId: z.string().min(1),
-    resourceType: z.enum(["study", "messaging"]),
+    resourceType: z.enum(["study", "messaging", "users"]),
     resourceId: z.string().min(1).trim(),
     action: z.string().min(1),
     limiter: z.string().refine((value) => {
@@ -391,6 +400,11 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                                                         Object.keys(permissionInfos.messaging.resources)
                                                     )
                                                     setSelectedResourcePermissionInfo(undefined)
+                                                } else if (value === 'users') {
+                                                    setResourceIdList(
+                                                        Object.keys(permissionInfos.users.resources)
+                                                    )
+                                                    setSelectedResourcePermissionInfo(permissionInfos.users.resources["*"])
                                                 }
                                                 form.resetField('resourceId')
                                                 form.resetField('limiter')
@@ -403,6 +417,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                                             <SelectContent>
                                                 <SelectItem value="study">Study</SelectItem>
                                                 <SelectItem value="messaging">Messaging</SelectItem>
+                                                <SelectItem value="users">Participant Users</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </FormControl>

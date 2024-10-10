@@ -7,7 +7,7 @@ import {
     TextCursorInput, UnfoldHorizontal, BotOff,
     Contact
 } from "lucide-react";
-import { ItemGroupComponent, SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from "survey-engine/data_types";
+import { ItemGroupComponent, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from "survey-engine/data_types";
 
 export const isValidSurveyItemGroup = (item: SurveyItem): item is SurveyGroupItem => {
     return isSurveyGroupItem(item) || (item as SurveyGroupItem).items !== undefined;
@@ -328,3 +328,5 @@ export const getSurveyItemsAsFlatList = (item: SurveyItem): Array<{ key: string;
     });
     return result;
 }
+
+export const getSurveyIdentifier = (survey: Survey): string => (survey.surveyDefinition.key ?? "noKey") + ' | ' + Math.random().toString(36).substring(2, 9);

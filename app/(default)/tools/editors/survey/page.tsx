@@ -1,7 +1,7 @@
-import SurveyEditor from "@/components/survey-editor/SurveyEditor";
+import EditorWrapper from "./_components/editor-wrapper";
 
 export default async function Page() {
     return (
-        <SurveyEditor />
+        <EditorWrapper />
     )
 }
