@@ -6,6 +6,7 @@ export const PUBLIC_ROUTES = [
     // These routes and its children will be public
     { path: '/api/auth', exact: false },
     { path: '/tools/editors', exact: false },
+    { path: '/docs', exact: false },
 ]
 
 export const ADMIN_ROUTES = [
