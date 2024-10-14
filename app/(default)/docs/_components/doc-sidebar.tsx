@@ -1,5 +1,7 @@
 import React from 'react';
 import SearchDocs from './search-docs';
+import NavGroup from './navgroup';
+
 
 const DocSidebar: React.FC = () => {
     return (
@@ -12,11 +14,42 @@ const DocSidebar: React.FC = () => {
             </div>
 
             <nav>
-                <ul>
-                    <li className='px-3'>
-                        todo
-                    </li>
-                </ul>
+
+                <NavGroup
+                    title='Basics'
+                    level={0}
+                    items={[
+                        { title: 'Introduction', href: '/docs/intro' },
+                        { title: 'Getting started', href: '/docs/getting-started' },
+                        {
+                            title: 'Survey editor',
+                            items: [
+                                { title: 'Test item', href: '/docs/test-item' },
+                                { title: 'Test item 2', href: '/docs/test-item-2' },
+                                {
+                                    title: 'Expressions', items: [
+                                        { title: 'Test item 3.1', href: '/docs/test-item-3-1' },
+                                        { title: 'Test item 3.2', href: '/docs/test-item-3-2' },
+                                        { title: 'Test item 3.3', href: '/docs/test-item-3-3' },
+                                    ]
+                                },
+                            ]
+                        },
+                        {
+                            title: 'Study configurator',
+                            items: [
+                                { title: 'Test item', href: '/docs/test-item' },
+                                { title: 'Test item 2', href: '/docs/test-item-2' },
+                                {
+                                    title: 'Expressions', items: [
+                                        { title: 'Test item 3.1', href: '/docs/test-item-3-1' },
+                                        { title: 'Test item 3.2', href: '/docs/test-item-3-2' },
+                                        { title: 'Test item 3.3', href: '/docs/test-item-3-3' },
+                                    ]
+                                },
+                            ]
+                        }
+                    ]} />
             </nav>
 
 

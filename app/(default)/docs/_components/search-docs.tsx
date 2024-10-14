@@ -2,18 +2,24 @@
 
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
+import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useDebounceCallback } from 'usehooks-ts';
+import { useDebounceCallback, useDebounceValue } from 'usehooks-ts';
 
 const searchDocs = async (query: string) => {
-    console.log('search docs', query)
+
+    // simulate search - sleep
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    return ['test']
 }
 
 const SearchDocs: React.FC = () => {
     const [open, setOpen] = React.useState(false)
-    const [search, setSearch] = React.useState('')
+    const [search, setSearch] = useDebounceValue('', 500)
     const router = useRouter()
+    const [isPending, startTransition] = React.useTransition()
+
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -27,23 +33,32 @@ const SearchDocs: React.FC = () => {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
+    React.useEffect(() => {
+        console.log('search', search)
+        const getSearch = async () => {
+            startTransition(async () => {
+                const results = await searchDocs(search)
+                console.log('results', results)
+            })
 
-    const debouncedSearch = useDebounceCallback(searchDocs, 500)
+        }
+        getSearch()
+    }, [search])
 
-    const onSearchChange = (newSearch: string) => {
-        setSearch(newSearch)
-        debouncedSearch(newSearch)
-    }
+
+
+
+
 
 
     return (
         <>
             <Button
-                className='w-full justify-between'
+                className='w-full justify-between h-fit px-3 py-1.5 rounded-lg '
                 variant='outline'
                 onClick={() => setOpen(true)}
             >
-                <span className='mr-4 text-muted-foreground text-xs'>
+                <span className='mr-4 text-muted-foreground/80 text-xs'>
                     Search docs... {" "}
                 </span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
@@ -51,14 +66,30 @@ const SearchDocs: React.FC = () => {
                 </kbd>
             </Button>
             <CommandDialog open={open} onOpenChange={setOpen}>
-                <CommandInput
-                    value={search}
-                    onValueChange={onSearchChange}
-                    placeholder="Type a command or search..." />
-                <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
+                <div className='relative'>
+                    <CommandInput
+                        defaultValue={search}
+                        onValueChange={setSearch}
+                        placeholder="Search docs..."
+                    />
+                    {isPending &&
+                        <Loader2Icon className='animate-spin size-4 text-muted-foreground/70 absolute top-4 right-10 z-10' />
+                    }
+
+                </div>
+
+                <CommandList className=''>
+                    <CommandEmpty>
+                        {isPending && <span
+                            className='flex items-center gap-2 justify-center'
+                        ><Loader2Icon className='animate-spin size-4 text-muted-foreground/70' />
+                            <span className=''>Searching...</span>
+                        </span>}
+                        {!isPending && 'No results found.'}
+                    </CommandEmpty>
+
                     <CommandGroup heading="Suggestions">
-                        <CommandItem onSelect={() => onSearchChange('calendar')}>
+                        <CommandItem onSelect={() => setSearch('calendar')}>
                             <span>Calendar</span>
                         </CommandItem>
 
