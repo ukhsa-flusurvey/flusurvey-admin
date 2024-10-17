@@ -1,9 +1,100 @@
 import React from 'react';
 import SearchDocs from './search-docs';
-import NavGroup from './navgroup';
+import NavGroup, { NavGroupDef, NavItemDef } from './navgroup';
+import { docs } from '.velite'
+
+
+const rootURL = '/docs/';
+
+
+type CategoriesWithSubcategories = {
+    [key: string]: {
+        title: string;
+        items?: {
+            [key: string]: {
+                title: string;
+            }
+        }
+    };
+}
+
+const categoriesWithSubcategories: CategoriesWithSubcategories = {
+    'survey-editor': {
+        title: 'Survey editor',
+        items: {
+            'basics': {
+                title: 'Basics',
+            },
+            'guides': {
+                title: 'Guides',
+            }
+        }
+    },
+    'study-configurator': {
+        title: 'Study configurator',
+    }
+}
+
+
+
+const generateNavGroupForKey = (key: string): NavGroupDef => {
+    const items = docs.filter(doc => doc.category === key && doc.subcategory === '').map(doc => {
+        return {
+            title: doc.title,
+            href: rootURL + doc.slugAsParams,
+        }
+    });
+    const subCategories = Object.keys(categoriesWithSubcategories[key]?.items || {});
+
+    const subGroups = subCategories.map(subCategory => {
+        const subCatItems = categoriesWithSubcategories[key].items || {};
+        const subCatDef = subCatItems[subCategory];
+
+        return {
+            title: subCatDef.title,
+            items: docs.filter(doc => doc.category === key && doc.subcategory === subCategory).map(doc => {
+                return {
+                    title: doc.title,
+                    href: rootURL + doc.slugAsParams,
+                }
+            })
+        }
+    });
+
+    return {
+        title: categoriesWithSubcategories[key as keyof typeof categoriesWithSubcategories].title,
+        items: [
+            ...items,
+            ...subGroups,
+        ]
+    }
+}
+
+const parseForNav = (docs: Array<any>): Array<NavGroupDef | NavItemDef> => {
+    const navItems: Array<NavGroupDef | NavItemDef> = [];
+
+    const rootLevel = docs.filter(doc => doc.category === '').map(doc => {
+        return {
+            title: doc.title,
+            href: rootURL + doc.slugAsParams,
+        }
+    });
+
+    navItems.push(...rootLevel);
+
+    const categories = Object.keys(categoriesWithSubcategories);
+    categories.forEach(category => {
+        navItems.push(generateNavGroupForKey(category));
+    })
+
+    return navItems;
+}
 
 
 const DocSidebar: React.FC = () => {
+    const groupedDocs = parseForNav(docs);
+
+    console.log(groupedDocs)
     return (
         <aside className="overflow-auto">
             <div className='sticky top-0 bg-secondary backdrop-blur-md py-2 px-3 border-b border-border'>
@@ -16,40 +107,10 @@ const DocSidebar: React.FC = () => {
             <nav>
 
                 <NavGroup
-                    title='Basics'
+                    title='docs'
                     level={0}
-                    items={[
-                        { title: 'Introduction', href: '/docs/intro' },
-                        { title: 'Getting started', href: '/docs/getting-started' },
-                        {
-                            title: 'Survey editor',
-                            items: [
-                                { title: 'Test item', href: '/docs/test-item' },
-                                { title: 'Test item 2', href: '/docs/test-item-2' },
-                                {
-                                    title: 'Expressions', items: [
-                                        { title: 'Test item 3.1', href: '/docs/test-item-3-1' },
-                                        { title: 'Test item 3.2', href: '/docs/test-item-3-2' },
-                                        { title: 'Test item 3.3', href: '/docs/test-item-3-3' },
-                                    ]
-                                },
-                            ]
-                        },
-                        {
-                            title: 'Study configurator',
-                            items: [
-                                { title: 'Test item', href: '/docs/test-item' },
-                                { title: 'Test item 2', href: '/docs/test-item-2' },
-                                {
-                                    title: 'Expressions', items: [
-                                        { title: 'Test item 3.1', href: '/docs/test-item-3-1' },
-                                        { title: 'Test item 3.2', href: '/docs/test-item-3-2' },
-                                        { title: 'Test item 3.3', href: '/docs/test-item-3-3' },
-                                    ]
-                                },
-                            ]
-                        }
-                    ]} />
+                    items={groupedDocs}
+                />
             </nav>
 
 

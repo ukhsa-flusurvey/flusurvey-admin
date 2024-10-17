@@ -3,10 +3,18 @@ import { stat } from 'fs/promises'
 import { defineSchema } from 'velite'
 import rehypeSlug from 'rehype-slug';
 
-const computedFields = <T extends { slug: string }>(data: T) => ({
-    ...data,
-    slugAsParams: data.slug.split("/").slice(2).join("/"),
-});
+const computedFields = <T extends { slug: string }>(data: T) => {
+    const pathParts = data.slug.split('/').splice(1);
+    const category = pathParts.length > 1 ? pathParts[0] : '';
+    const subcategory = pathParts.length > 2 ? pathParts[1] : '';
+    return {
+        ...data,
+        slugAsParams: data.slug.split("/").slice(1).join("/"),
+        category: category,
+        subcategory: subcategory,
+    }
+};
+
 
 const timestamp = defineSchema(() =>
     s
@@ -30,6 +38,8 @@ const docs = defineCollection({
             slug: s.path(),
             date: timestamp(),
             content: s.mdx(),
+            plainContent: s.markdown(),
+            toc: s.toc(),
         }).transform(computedFields),
 });
 

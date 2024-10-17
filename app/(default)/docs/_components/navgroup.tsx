@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 
-interface NavItemDef {
+export interface NavItemDef {
     title: string;
     href: string;
 }
 
-interface NavGroupDef {
+export interface NavGroupDef {
     title: string;
     items: Array<
         NavGroupDef | NavItemDef
@@ -98,30 +98,41 @@ const NavGroup = (props: NavGroupProps) => {
             </CollapsibleTrigger>}
 
             <CollapsibleContent>
-                <ul className={cn(
-                    'space-y-1 pl-4  mb-2',
-                    {
-                        'border-l border-border': props.level > 0,
-                    }
-                )}>
-                    {props.items.map((item) => {
-                        if (isNavGroupDef(item)) {
-                            const group = item as NavGroupDef;
-                            return <li className={cn(
-                                {
-                                    'pt-2': props.level === 0,
-                                    // 'border-t border-border': props.rootLevel
-                                }
-                            )}>
-                                <NavGroup title={group.title} items={group.items} level={props.level + 1} />
-                            </li>
-                        }
-                        const linkItem = item as NavItemDef;
-                        return <li className=''>
-                            <NavItem title={linkItem.title} href={linkItem.href} />
-                        </li>
+                <div
+                    className={cn({
+                        'mb-8': props.level === 1
                     })}
-                </ul>
+                >
+                    <ul className={cn(
+                        'space-y-1 pl-4',
+                        {
+                            'border-l border-border': props.level > 0,
+                        }
+                    )}>
+                        {props.items.map((item, index) => {
+                            if (isNavGroupDef(item)) {
+                                const group = item as NavGroupDef;
+                                return <li
+                                    key={index.toFixed()}
+                                    className={cn(
+
+                                        {
+                                            'mt-0 pt-0': props.level === 0,
+                                            // 'border-t border-border': props.rootLevel
+                                        }
+                                    )}>
+                                    <NavGroup title={group.title} items={group.items} level={props.level + 1} />
+                                </li>
+                            }
+                            const linkItem = item as NavItemDef;
+                            return <li
+                                key={index.toFixed()}
+                                className=''>
+                                <NavItem title={linkItem.title} href={linkItem.href} />
+                            </li>
+                        })}
+                    </ul>
+                </div>
             </CollapsibleContent>
         </Collapsible >
     )
