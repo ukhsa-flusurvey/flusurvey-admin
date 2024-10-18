@@ -31,6 +31,7 @@ const fixedCols = [
     "version",
     "opened",
     "submitted",
+    "arrived",
     "language",
     "engineVersion",
     "session",
