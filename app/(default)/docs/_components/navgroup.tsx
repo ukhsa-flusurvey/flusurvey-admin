@@ -3,11 +3,12 @@
 import React from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight, Folder } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub } from '@/components/ui/sidebar';
 
 export interface NavItemDef {
     title: string;
@@ -19,6 +20,7 @@ export interface NavGroupDef {
     items: Array<
         NavGroupDef | NavItemDef
     >
+    defaultOpen?: boolean;
 }
 
 function isNavGroupDef(item: NavGroupDef | NavItemDef): item is NavGroupDef {
@@ -30,28 +32,24 @@ interface NavItemProps {
     href: string;
 }
 
-const NavItem = (props: NavItemProps) => {
+export const NavItem = (props: NavItemProps) => {
     const pathname = usePathname();
 
     const isActive = pathname === props.href;
 
     return (
-        <Button
-            variant={'ghost'}
-            className={cn('font-normal px-4 -mx-4 py-1 h-fit hover:bg-primary/10 w-full justify-start rounded-l-none',
-                {
-                    'text-primary border-l-2 border-primary ': isActive
-                }
-            )}
-            asChild
+        <SidebarMenuButton asChild
+            isActive={isActive}
+            className="h-fit data-[active=true]:underline data-[active=true]:font-normal"
         >
+
             <Link
                 href={props.href}
                 prefetch={false}
             >
                 {props.title}
             </Link>
-        </Button>
+        </SidebarMenuButton>
     )
 }
 
@@ -60,82 +58,73 @@ interface NavGroupProps {
     items: Array<
         NavGroupDef | NavItemDef
     >
-    level: number;
 }
 
 
 const NavGroup = (props: NavGroupProps) => {
-    const [isOpen, setIsOpen] = React.useState(true);
 
     return (
-        <Collapsible
-            open={isOpen}
-            onOpenChange={setIsOpen}
-            className={cn(
-                {
-                    'pt-4': props.level === 0,
-                }
-            )}
-        >
-            {props.level === 1 && <div className='-ml-4'>
-                <Separator />
-            </div>}
-            {props.level > 0 && <CollapsibleTrigger asChild>
-                <Button
-                    variant={'ghost'}
-                    className='w-full justify-between items-center font-semibold pl-0'
-                >
-                    {props.title}
-                    <span>
-                        <ChevronDown className={cn(
-                            'size-4 transition-transform text-muted-foreground',
-                            {
-                                'rotate-90': !isOpen
-                            }
-                        )} />
-                    </span>
-                </Button>
-            </CollapsibleTrigger>}
+        <Collapsible defaultOpen className="group/collapsible">
+            <SidebarGroup>
+                <SidebarGroupLabel asChild>
+                    <CollapsibleTrigger>
+                        {props.title}
+                        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                    </CollapsibleTrigger>
+                </SidebarGroupLabel>
+                <CollapsibleContent>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {props.items.map((item, index) => (
+                                <Tree key={index} item={item} />
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
 
-            <CollapsibleContent>
-                <div
-                    className={cn({
-                        'mb-8': props.level === 1
-                    })}
-                >
-                    <ul className={cn(
-                        'space-y-1 pl-4',
-                        {
-                            'border-l border-border': props.level > 0,
-                        }
-                    )}>
-                        {props.items.map((item, index) => {
-                            if (isNavGroupDef(item)) {
-                                const group = item as NavGroupDef;
-                                return <li
-                                    key={index.toFixed()}
-                                    className={cn(
-
-                                        {
-                                            'mt-0 pt-0': props.level === 0,
-                                            // 'border-t border-border': props.rootLevel
-                                        }
-                                    )}>
-                                    <NavGroup title={group.title} items={group.items} level={props.level + 1} />
-                                </li>
-                            }
-                            const linkItem = item as NavItemDef;
-                            return <li
-                                key={index.toFixed()}
-                                className=''>
-                                <NavItem title={linkItem.title} href={linkItem.href} />
-                            </li>
-                        })}
-                    </ul>
-                </div>
-            </CollapsibleContent>
-        </Collapsible >
+                </CollapsibleContent>
+            </SidebarGroup>
+        </Collapsible>
     )
 }
 
 export default NavGroup;
+
+
+function Tree({ item }: { item: NavItemDef | NavGroupDef }) {
+    const items = isNavGroupDef(item) ? item.items : [];
+
+    if (!isNavGroupDef(item)) {
+        const linkItem = item as NavItemDef;
+        return (
+            <NavItem
+                title={linkItem.title}
+                href={linkItem.href}
+            />
+        )
+    }
+
+    return (
+        <SidebarMenuItem>
+            <Collapsible
+                className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
+                defaultOpen={item.defaultOpen}
+            >
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                        <ChevronRight className="transition-transform" />
+                        <span className='font-semibold'>
+                            {item.title}
+                        </span>
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                    <SidebarMenuSub>
+                        {items.map((subItem, index) => (
+                            <Tree key={index} item={subItem} />
+                        ))}
+                    </SidebarMenuSub>
+                </CollapsibleContent>
+            </Collapsible>
+        </SidebarMenuItem>
+    )
+}
