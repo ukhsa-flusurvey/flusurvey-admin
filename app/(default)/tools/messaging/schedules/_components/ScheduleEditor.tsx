@@ -4,10 +4,8 @@ import { MessageSchedule } from '@/utils/server/types/messaging';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { deleteMessageSchedule, saveMessageSchedule } from '../../../../../../actions/messaging/schedules';
-import { BsExclamationCircle, BsExclamationTriangle, BsFileEarmarkCode, BsFiletypeHtml } from 'react-icons/bs';
-import clsx from 'clsx';
 import NotImplemented from '@/components/NotImplemented';
-import { addMonths, addWeeks, format, set } from 'date-fns';
+import { addHours, addMonths, addWeeks, format, set } from 'date-fns';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BackButton from '@/components/BackButton';
@@ -49,15 +47,6 @@ const initialSchedule: MessageSchedule = {
 
         ]
     }
-}
-
-const checkMissingTranslations = (schedule: MessageSchedule): string[] => {
-    const expectedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',') : ['en'];
-    const missingLanguages = expectedLanguages.filter(lang => {
-        const t = schedule.template.translations.find(t => t.lang === lang)
-        return !t || !t.subject || !t.templateDef;
-    });
-    return missingLanguages;
 }
 
 const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
@@ -374,7 +363,11 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                                                         setSchedule((s) => {
                                                             const newSchedule = { ...s };
                                                             if (value) {
-                                                                newSchedule.until = Math.floor(addWeeks(new Date(), 1).getTime() / 1000);
+                                                                newSchedule.until = Math.floor(
+                                                                    addHours(
+                                                                        addWeeks(new Date(), 1), 12
+                                                                    ).getTime() / 1000
+                                                                );
                                                             } else {
                                                                 newSchedule.until = undefined;
                                                             }
