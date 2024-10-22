@@ -99,7 +99,6 @@ const parseForNav = (docs: Array<any>): { items: Array<NavItemDef>, navGroups: A
 const DocSidebar: React.FC = () => {
     const groupedDocs = parseForNav(docs);
 
-    console.log(groupedDocs)
     return (
         <Sidebar
             variant='inset'
@@ -128,15 +127,17 @@ const DocSidebar: React.FC = () => {
                 </SidebarGroup>
 
                 {
-                    groupedDocs.navGroups.map(group => {
-                        return <>
+                    groupedDocs.navGroups.map((group, index) => {
+                        return <div
+                            key={index}
+                        >
                             <SidebarSeparator />
                             <NavGroup
                                 key={group.title}
                                 title={group.title}
                                 items={group.items}
                             />
-                        </>
+                        </div>
                     })
                 }
             </SidebarContent>
