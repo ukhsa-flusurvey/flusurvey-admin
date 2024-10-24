@@ -49,7 +49,7 @@ export default function Page({ params }: DocPageProps) {
 
     return (
         <main className="max-w-full">
-            <div className="flex items-start gap-4 border-b border-border mb-4 bg-slate-50 p-4 fixed top-0 w-full">
+            <div className="flex items-start gap-4 border-b border-border mb-4 bg-sidebar p-4 fixed top-0 w-full">
                 <SidebarTrigger />
                 <h1>
                     <span className="block text-muted-foreground text-xs">
