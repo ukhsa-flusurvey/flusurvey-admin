@@ -36,6 +36,28 @@ const categoriesWithSubcategories: CategoriesWithSubcategories = {
     }
 }
 
+export const getCategoryPathBySlug = (slug: string): string[] => {
+    const parts = slug.split('/');
+    if (parts.length < 2) {
+        return [];
+    }
+
+    const category = parts[0];
+    const subcategory = parts.length > 2 ? parts[1] : '';
+
+    const path: string[] = [];
+    const categoryTitle = categoriesWithSubcategories[category]?.title;
+    if (categoryTitle) {
+        path.push(categoryTitle);
+    }
+    const subcategoryTitle = categoriesWithSubcategories[category]?.items?.[subcategory]?.title;
+    if (subcategoryTitle) {
+        path.push(subcategoryTitle);
+    }
+
+    return path;
+}
+
 
 
 const generateNavGroupForKey = (key: string): NavGroupDef => {
