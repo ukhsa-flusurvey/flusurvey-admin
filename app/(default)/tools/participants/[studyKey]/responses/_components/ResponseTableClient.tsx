@@ -85,6 +85,7 @@ const escapeCsvValue = (val: string | undefined) => {
 
 const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     const [isMounted, setIsMounted] = React.useState(false);
+    const [drowndownOpen, setDrowndownOpen] = React.useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
     const [responses, setResponses] = React.useState(props.responses || []);
@@ -274,12 +275,16 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
 
 
 
-                        <DropdownMenu>
+                        <DropdownMenu
+                            modal={false}
+                            open={drowndownOpen}
+                            onOpenChange={setDrowndownOpen}
+                        >
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost"
                                     size='icon'
                                     className='size-4 px-0 flex items-center justify-center'
-
+                                    onClick={() => setDrowndownOpen(true)}
                                 >
                                     <MoreVertical className="size-3" />
                                 </Button>
