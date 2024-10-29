@@ -2,9 +2,10 @@ import CogLoader from "@/components/CogLoader";
 import ErrorAlert from "@/components/ErrorAlert";
 import { LinkMenu } from "@/components/LinkMenu";
 import StudyCard from "@/components/StudyCard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStudies } from "@/lib/data/studyAPI";
 import { Study } from "@/utils/server/types/studyInfos";
+import { redirect } from "next/navigation";
 import { BsJournalMedical } from "react-icons/bs";
 
 interface StudyListProps {
@@ -21,11 +22,8 @@ const StudyListCardWrapper: React.FC<{
         >
             <CardHeader>
                 <CardTitle>
-                    Studies
+                    Select a study
                 </CardTitle>
-                <CardDescription>
-                    Available studies
-                </CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -54,6 +52,8 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
             <p className="font-bold ">No studies</p>
             <p className="text-neutral-500 text-sm">Get started by adding a new study</p>
         </div>
+    } else if (studies.length === 1) {
+        redirect(`/tools/participants/${studies[0].key}`);
     } else {
         content = (
             <LinkMenu>
