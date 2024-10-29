@@ -1,11 +1,11 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sidebar, SidebarGroup, SidebarContent, SidebarGroupLabel, SidebarGroupContent, SidebarHeader, SidebarFooter, SidebarSeparator, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { User } from 'next-auth';
-import { ChevronsUpDown, ClipboardListIcon, FileIcon, HomeIcon, Layers2Icon, LogOut, SquareArrowRightIcon, TableIcon, UserRound, UsersRoundIcon } from 'lucide-react';
+import { ChevronsUpDown, ClipboardListIcon, FileIcon, HomeIcon, Layers2Icon, SquareArrowRightIcon, TableIcon, UserRound, UsersRoundIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
