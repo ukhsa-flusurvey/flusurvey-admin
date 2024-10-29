@@ -1,4 +1,4 @@
-import { Layers2Icon, TableIcon, UsersRoundIcon } from "lucide-react";
+import { FileIcon, Layers2Icon, SquareArrowRightIcon, TableIcon, UsersRoundIcon } from "lucide-react";
 
 export const ParticipantsPageLinkContent = () => {
     return (
@@ -23,6 +23,24 @@ export const ReportsPageLinkContent = () => {
         <div className="flex items-center gap-2">
             <Layers2Icon className='size-4' />
             Reports
+        </div>
+    );
+}
+
+export const FilesPageLinkContent = () => {
+    return (
+        <div className="flex items-center gap-2">
+            <FileIcon className='size-4' />
+            Files
+        </div>
+    );
+}
+
+export const ActionsPageLinkContent = () => {
+    return (
+        <div className="flex items-center gap-2">
+            <SquareArrowRightIcon className='size-4' />
+            Actions
         </div>
     );
 }
