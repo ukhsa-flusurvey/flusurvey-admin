@@ -3,6 +3,8 @@ import BackButton from "@/components/BackButton";
 import ExporterTabs from "./_components/ExporterTabs";
 import { getSurveyInfos } from "@/lib/data/studyAPI";
 import { toast } from "sonner";
+import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
+import { ResponsesPageLinkContent } from "../../../_components/breacrumbs-contents";
 
 export default async function Page(
     {
@@ -28,22 +30,39 @@ export default async function Page(
 
     return (
         <div
-            className="h-full w-full py-6 flex flex-col" >
-            <div className="">
-                <BackButton
-                    label="Back to response explorer"
-                    href={`/tools/participants/${studyKey}/responses`}
-                />
-            </div>
-
-            <div className="grow flex overflow-hidden">
-                <div className="w-full h-full flex flex-col overflow-y-scroll">
-                    <ExporterTabs
-                        studyKey={studyKey}
-                        availableSurveyKeys={surveyKeys}
+            className="w-full flex flex-col overflow-y-auto" >
+            <SidebarToggleWithBreadcrumbs
+                breadcrumbs={[
+                    {
+                        href: "/tools/participants",
+                        content: studyKey
+                    },
+                    {
+                        href: `/tools/participants/${studyKey}/responses`,
+                        content: <ResponsesPageLinkContent />
+                    },
+                    {
+                        content: 'Exporter'
+                    }
+                ]}
+            />
+            <main className="px-4 grow flex flex-col pb-1">
+                <div className="">
+                    <BackButton
+                        label="Back to response explorer"
+                        href={`/tools/participants/${studyKey}/responses`}
                     />
                 </div>
-            </div>
+
+                <div className="grow">
+                    <div className="">
+                        <ExporterTabs
+                            studyKey={studyKey}
+                            availableSurveyKeys={surveyKeys}
+                        />
+                    </div>
+                </div>
+            </main>
 
         </div >
     );

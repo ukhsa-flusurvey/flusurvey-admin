@@ -7,6 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
 import ResponseFilter, { ResponseFilterSkeleton } from "./_components/ResponseFilter";
 import ResponseTable, { ResponseTableSkeleton } from "./_components/ResponseTable";
+import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
+import { ResponsesPageLinkContent } from "../../_components/breacrumbs-contents";
 
 
 export const dynamic = 'force-dynamic';
@@ -34,12 +36,22 @@ export default async function Page(props: PageProps) {
     const responseTableKey = props.params.studyKey + JSON.stringify(props.searchParams);
 
     return (
-        <div
-            className="h-full w-full py-6 flex flex-col gap-4" >
-            <div className="grow flex overflow-hidden">
+        <div className="flex flex-col h-screen">
+            <SidebarToggleWithBreadcrumbs
+                breadcrumbs={[
+                    {
+                        href: "/tools/participants",
+                        content: props.params.studyKey
+                    },
+                    {
+                        content: <ResponsesPageLinkContent />
+                    }
+                ]}
+            />
+            <main className="px-4 flex flex-col grow p-1 overflow-hidden">
                 <Card
                     variant={'opaque'}
-                    className="w-full h-full flex flex-col overflow-hidden"
+                    className="grow flex flex-col overflow-hidden"
                 >
                     <CardHeader
                         className="p-4 gap-1 bg-neutral-50"
@@ -69,9 +81,7 @@ export default async function Page(props: PageProps) {
                             />
                         </Suspense>
                     </CardHeader>
-                    <Separator
-                        className="bg-neutral-300"
-                    />
+                    <Separator />
                     <div className="grow flex overflow-hidden">
                         <Suspense
                             key={responseTableKey}
@@ -84,7 +94,7 @@ export default async function Page(props: PageProps) {
                     </div>
                 </Card>
 
-            </div>
+            </main>
         </div>
 
     )

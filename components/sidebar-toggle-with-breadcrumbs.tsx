@@ -42,9 +42,9 @@ const SidebarToggleWithBreadcrumbs: React.FC<SidebarToggleWithBreadcrumbsProps> 
                     </BreadcrumbItem>
 
                     {props.breadcrumbs?.map((breadcrumb, index) => (
-                        <>
+                        <React.Fragment key={index}>
                             <BreadcrumbSeparator />
-                            <BreadcrumbItem key={index}>
+                            <BreadcrumbItem>
                                 {!breadcrumb.href ? <BreadcrumbPage>
                                     {breadcrumb.content}
                                 </BreadcrumbPage> :
@@ -54,7 +54,7 @@ const SidebarToggleWithBreadcrumbs: React.FC<SidebarToggleWithBreadcrumbsProps> 
                                         </Link>
                                     </BreadcrumbLink>}
                             </BreadcrumbItem>
-                        </>
+                        </React.Fragment>
                     ))}
                 </BreadcrumbList>
             </Breadcrumb>
