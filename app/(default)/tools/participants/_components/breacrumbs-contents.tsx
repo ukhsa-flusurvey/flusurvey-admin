@@ -1,4 +1,4 @@
-import { TableIcon, UsersRoundIcon } from "lucide-react";
+import { Layers2Icon, TableIcon, UsersRoundIcon } from "lucide-react";
 
 export const ParticipantsPageLinkContent = () => {
     return (
@@ -14,6 +14,15 @@ export const ResponsesPageLinkContent = () => {
         <div className="flex items-center gap-2">
             <TableIcon className='size-4' />
             Responses
+        </div>
+    );
+}
+
+export const ReportsPageLinkContent = () => {
+    return (
+        <div className="flex items-center gap-2">
+            <Layers2Icon className='size-4' />
+            Reports
         </div>
     );
 }
