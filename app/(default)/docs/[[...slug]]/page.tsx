@@ -2,7 +2,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { docs } from ".velite"
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCategoryPathBySlug } from "../_components/doc-sidebar";
+import { getCategoryPathBySlug } from "../_components/utils";
 import Toc from "../_components/toc";
 import { MDXContent } from "../_components/mdx-components";
 

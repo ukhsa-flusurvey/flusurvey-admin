@@ -2,23 +2,29 @@
 
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
-import { Loader2Icon } from 'lucide-react';
+import { Loader2Icon, SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useDebounceCallback, useDebounceValue } from 'usehooks-ts';
+import { useDebounceValue } from 'usehooks-ts';
+import { getCategoryPathBySlug, parseForNav } from './utils';
+import { docs } from '@/.velite';
+import Link from 'next/link';
+import { NavGroupDef, NavItemDef } from './navgroup';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
-const searchDocs = async (query: string) => {
-
-    // simulate search - sleep
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    return ['test']
-}
 
 const SearchDocs: React.FC = () => {
     const [open, setOpen] = React.useState(false)
     const [search, setSearch] = useDebounceValue('', 500)
     const router = useRouter()
     const [isPending, startTransition] = React.useTransition()
+    const [searchResults, setSearchResults] = React.useState<Array<{
+        slug: string,
+        title: string,
+        category: string,
+        subcategory: string,
+    }>>([])
 
 
     React.useEffect(() => {
@@ -37,18 +43,21 @@ const SearchDocs: React.FC = () => {
         console.log('search', search)
         const getSearch = async () => {
             startTransition(async () => {
-                const results = await searchDocs(search)
-                console.log('results', results)
+                try {
+                    const resp = await fetch('/api/docs/search?q=' + search, {
+                        next: { revalidate: 0 }
+                    })
+                    const data = await resp.json()
+                    setSearchResults(data.results.map((result: any) => result.item))
+
+                } catch (e) {
+                    console.error(e)
+                }
             })
 
         }
         getSearch()
     }, [search])
-
-
-
-
-
 
 
     return (
@@ -65,46 +74,58 @@ const SearchDocs: React.FC = () => {
                     <span className="text-xs">⌘</span>K
                 </kbd>
             </Button>
-            <CommandDialog open={open} onOpenChange={setOpen}>
-                <div className='relative'>
-                    <CommandInput
-                        defaultValue={search}
-                        onValueChange={setSearch}
-                        placeholder="Search docs..."
-                    />
-                    {isPending &&
-                        <Loader2Icon className='animate-spin size-4 text-muted-foreground/70 absolute top-4 right-10 z-10' />
-                    }
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="overflow-hidden p-0 shadow-lg gap-0 space-y-0">
 
-                </div>
+                    <div className="relative flex items-center border-b px-3" cmdk-input-wrapper="">
+                        <SearchIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
 
-                <CommandList className=''>
-                    <CommandEmpty>
-                        {isPending && <span
-                            className='flex items-center gap-2 justify-center'
-                        ><Loader2Icon className='animate-spin size-4 text-muted-foreground/70' />
+                        <input
+                            className='flex h-11 w-full rounded-md bg-transparent py-3 text-sm ring-none outline-none placeholder:text-slate-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-slate-400'
+                            defaultValue={search}
+                            onChange={e => setSearch(e.target.value)}
+                            placeholder="Search docs..."
+                        />
+                        {isPending &&
+                            <Loader2Icon className='animate-spin size-4 text-muted-foreground/70 absolute top-4 right-10 z-10' />
+                        }
+                    </div>
+
+                    <ul className='min-h-16 p-1 space-y-1 divide-y max-h-64 overflow-y-auto'>
+                        {isPending && <div className='flex items-center gap-2 justify-center py-6'>
+                            <Loader2Icon className='animate-spin size-4 text-muted-foreground/70' />
                             <span className=''>Searching...</span>
-                        </span>}
-                        {!isPending && 'No results found.'}
-                    </CommandEmpty>
+                        </div>}
 
-                    <CommandGroup heading="Suggestions">
-                        <CommandItem onSelect={() => setSearch('calendar')}>
-                            <span>Calendar</span>
-                        </CommandItem>
+                        {
+                            (!isPending && searchResults.length === 0) && <div className='flex items-center gap-2 justify-center py-6'>
+                                No results found.
+                            </div>
+                        }
 
-                    </CommandGroup>
-                    <CommandSeparator />
-                    <CommandGroup heading="Settings">
-                        <CommandItem onSelect={() => router.push('/')}>
+                        {searchResults.map((result, index) => (
+                            <li key={index}>
+                                <Button
+                                    className='w-full justify-start h-auto text-start'
+                                    onClick={() => {
+                                        router.push('/docs/' + result.slug)
+                                        setOpen(false)
+                                    }}
+                                    variant={'ghost'}
+                                >
+                                    <div>
+                                        <div className='text-xs text-muted-foreground'>{getCategoryPathBySlug(result.slug).join(' / ')}</div>
+                                        <div>{result.title}</div>
+                                    </div>
+                                </Button>
 
-                            <span>Profile</span>
+                            </li>
+                        ))}
+                    </ul>
 
-                        </CommandItem>
 
-                    </CommandGroup>
-                </CommandList>
-            </CommandDialog>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };

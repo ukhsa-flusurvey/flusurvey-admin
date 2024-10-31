@@ -7,6 +7,7 @@ export const PUBLIC_ROUTES = [
     { path: '/api/auth', exact: false },
     { path: '/tools/editors', exact: false },
     { path: '/docs', exact: false },
+    { path: '/api/docs/search', exact: true },
 ]
 
 export const ADMIN_ROUTES = [
