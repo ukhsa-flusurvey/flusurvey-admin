@@ -97,7 +97,7 @@ export const startResponseExport = async (
         url,
         session.CASEaccessToken,
         {
-            method: 'GET',
+            method: 'POST',
             revalidate: 0,
         }
     );
