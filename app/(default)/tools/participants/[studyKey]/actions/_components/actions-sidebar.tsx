@@ -27,27 +27,25 @@ const ActionsSidebar: React.FC<ActionsSidebarProps> = (props) => {
 
 
     return (
-        <aside className="w-64 border-r border-border">
-            <ScrollArea className="h-full">
-                <div className="p-4">
-                    <h2 className="text-lg font-semibold mb-4">Action Types</h2>
-                    <div className="space-y-2">
+        <aside className="w-fit border-r border-border">
+            <div className="p-4 w-[225px]">
+                <h2 className="text-lg font-semibold mb-4">Action Types</h2>
+                <div className="space-y-2">
 
-                        {actionTypes.map((action) => (
-                            <Button
-                                asChild
-                                key={action.href}
-                                variant={pathname.startsWith(action.href) ? 'default' : 'ghost'}
-                                className="w-full justify-start"
-                            >
-                                <Link href={action.href}>
-                                    {action.label}
-                                </Link>
-                            </Button>
-                        ))}
-                    </div>
+                    {actionTypes.map((action) => (
+                        <Button
+                            asChild
+                            key={action.href}
+                            variant={pathname.startsWith(action.href) ? 'default' : 'ghost'}
+                            className="w-full justify-start"
+                        >
+                            <Link href={action.href}>
+                                {action.label}
+                            </Link>
+                        </Button>
+                    ))}
                 </div>
-            </ScrollArea>
+            </div>
         </aside>
     );
 };

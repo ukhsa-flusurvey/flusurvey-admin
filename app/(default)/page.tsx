@@ -7,9 +7,11 @@ import ParticipantsIcon from "@/components/tool-icons/ParticipantsIcon";
 import UserManagementIcon from "@/components/tool-icons/UserManagementIcon";
 import MessagingIcon from "@/components/tool-icons/MessagingIcon";
 import EditorsIcon from "@/components/tool-icons/EditorsIcons";
+import DocumentationIcon from "@/components/tool-icons/DocumentationIcon";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
 
 export const revalidate = 3600;
 
@@ -131,6 +133,12 @@ export default async function Page() {
                             description='Access standalone editors for surveys, rules and messages. (Load from and save on your local drive)'
                             href='/tools/editors'
                             icon={<EditorsIcon size="lg" />}
+                        />
+                        <ToolCard
+                            title='Documentation'
+                            description='Learn how to use the tools'
+                            href='/docs'
+                            icon={<DocumentationIcon size="lg" />}
                         />
                     </div>
                 </Container>
