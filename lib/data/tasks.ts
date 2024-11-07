@@ -42,7 +42,7 @@ export const startFileExportTask = async (
         urlWithQuery,
         session.CASEaccessToken,
         {
-            method: 'GET',
+            method: 'POST',
             revalidate: 0,
         }
     );
