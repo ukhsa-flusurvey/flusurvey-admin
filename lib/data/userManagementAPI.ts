@@ -3,9 +3,10 @@
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 
-interface Permission {
+export interface ManagementUserPermission {
     id: string;
     subjectId: string;
+    subjectType: string;
     resourceType: string;
     resourceKey: string;
     action: string;
@@ -14,7 +15,7 @@ interface Permission {
 
 export const getPermissionsForCurrentUser = async (): Promise<{ error?: string } & {
     isAdmin: boolean;
-    permissions: Array<Permission>;
+    permissions: Array<ManagementUserPermission>;
 }> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {

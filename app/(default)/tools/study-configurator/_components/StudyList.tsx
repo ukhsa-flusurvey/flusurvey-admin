@@ -5,6 +5,7 @@ import { LinkMenu } from "@/components/LinkMenu";
 import StudyCard from "@/components/StudyCard";
 import { getStudies } from "@/lib/data/studyAPI";
 import { getPermissionsForCurrentUser } from "@/lib/data/userManagementAPI";
+import { filterStudiesWithPermissions } from "@/lib/permission-utils";
 import { Study } from "@/utils/server/types/studyInfos";
 import { BsJournalMedical } from "react-icons/bs";
 
@@ -48,18 +49,8 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
     }) || currentUserPermissions.isAdmin;
 
 
-    let studies: Array<Study> | undefined = resp.studies;
+    const studies: Array<Study> | undefined = filterStudiesWithPermissions(currentUserPermissions, resp.studies);
     const error = resp.error;
-    if (!error && studies !== undefined) {
-        studies = studies.filter((study) => {
-            return currentUserPermissions.permissions.some((permission) => {
-                if (permission.resourceType !== 'study') {
-                    return false;
-                }
-                return permission.resourceKey === study.key || permission.resourceKey === '*';
-            })
-        });
-    }
 
     let content = null;
     if (error) {
@@ -70,7 +61,7 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
     } else if (!studies || studies.length === 0) {
         content = <div className="flex py-6 flex-col justify-center items-center text-center">
             <BsJournalMedical className="text-3xl text-neutral-300 mb-3" />
-            <p className="font-bold ">{"You don't have access to any studies studies"}</p>
+            <p className="font-bold ">{"You don't have access to any studies"}</p>
             <p className="text-neutral-500 text-sm">Get started by adding a new study, or ask your administrator to add you to a study</p>
         </div>
     } else {
