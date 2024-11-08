@@ -1,11 +1,10 @@
-'use client';
-
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyInfoDownloader from './SurveyInfoDownloader';
 import ResponseDownloader from './ResponseDownloader';
 import ConfidentialResponseDownloader from './ConfidentialResponseDownloader';
+import DailyExportsLoader, { DailyExportsLoaderSkeleton } from './daily-exports-loader';
 
 interface ExporterTabsProps {
     studyKey: string;
@@ -28,7 +27,7 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                 </CardHeader>
                 <CardContent>
                     <p className='font-bold'>What do you want to export:</p>
-                    <Tabs defaultValue="responses" className="w-auto mt-2">
+                    <Tabs defaultValue="dailyResponses">
                         <TabsList>
                             <TabsTrigger value="responses">Responses</TabsTrigger>
                             <TabsTrigger value="surveyInfo">
@@ -36,6 +35,9 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                             </TabsTrigger>
                             <TabsTrigger value="confidentialResponses">
                                 Confidential Responses
+                            </TabsTrigger>
+                            <TabsTrigger value="dailyResponses">
+                                Daily Response Exports
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="responses">
@@ -54,6 +56,13 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                             <ConfidentialResponseDownloader
                                 studyKey={props.studyKey}
                             />
+                        </TabsContent>
+                        <TabsContent value="dailyResponses">
+                            <Suspense fallback={<DailyExportsLoaderSkeleton />}>
+                                <DailyExportsLoader
+                                    studyKey={props.studyKey}
+                                />
+                            </Suspense>
                         </TabsContent>
                     </Tabs>
                 </CardContent>
