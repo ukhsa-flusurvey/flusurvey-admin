@@ -1,3 +1,4 @@
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
@@ -18,6 +19,7 @@ const AdvancedConfigs: React.FC<AdvancedConfigsProps> = (props) => {
     const onToggleConfidentialMode = (checked: boolean) => {
         if (!checked) {
             currentItem.confidentialMode = undefined;
+            currentItem.mapToKey = undefined;
         } else {
             currentItem.confidentialMode = 'replace';
         }
@@ -44,26 +46,52 @@ const AdvancedConfigs: React.FC<AdvancedConfigsProps> = (props) => {
             </div>
 
             {confidentialModeOn && (
-                <fieldset className='space-y-2 flex'>
-                    <legend className='font-semibold text-sm'>Confidential mode</legend>
-                    <div>
-                        <Select value={currentItem.confidentialMode || ''}
-                            onValueChange={(value) => {
-                                currentItem.confidentialMode = value as 'replace' | 'add';
+                <>
+
+                    <fieldset className='space-y-2 flex'>
+                        <legend className='font-semibold text-sm'>Confidential mode</legend>
+                        <div>
+                            <Select value={currentItem.confidentialMode || ''}
+                                onValueChange={(value) => {
+                                    currentItem.confidentialMode = value as 'replace' | 'add';
+                                    props.onUpdateSurveyItem(currentItem);
+                                }}
+                            >
+
+                                <SelectTrigger className='w-64'>
+                                    <SelectValue placeholder="Select a confidential mode..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value='replace'>Replace</SelectItem>
+                                    <SelectItem value='add'>Add</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </fieldset>
+                    <div className='space-y-1.5'>
+                        <Label
+                            htmlFor="mapToKey"
+                            className='text-sm font-semibold'
+                        >
+                            Map to key (optional)
+                        </Label>
+                        <Input
+                            id="mapToKey"
+                            type="text"
+                            value={currentItem.mapToKey || ''}
+                            onChange={(e) => {
+                                const value = e.target.value;
+
+                                currentItem.mapToKey = value === '' ? undefined : value;
                                 props.onUpdateSurveyItem(currentItem);
                             }}
-                        >
-
-                            <SelectTrigger className='w-64'>
-                                <SelectValue placeholder="Select a confidential mode..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value='replace'>Replace</SelectItem>
-                                <SelectItem value='add'>Add</SelectItem>
-                            </SelectContent>
-                        </Select>
+                            placeholder='Enter a key...'
+                        />
+                        <p className='text-xs text-muted-foreground'>
+                            The response for this item will be saved in the confidential data store with the key provided here.
+                        </p>
                     </div>
-                </fieldset>
+                </>
             )}
         </div>
     );

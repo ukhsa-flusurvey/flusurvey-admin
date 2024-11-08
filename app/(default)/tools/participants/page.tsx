@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 
 import StudySelector, { StudySelectorSkeleton } from "./_components/StudySelector";
+import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
+import { BreadcrumbItem, BreadcrumbPage } from "@/components/ui/breadcrumb";
 
 
 export const dynamic = 'force-dynamic';
@@ -13,16 +15,24 @@ export const metadata = {
 
 export default async function Page() {
     return (
-
-        <main
-            className="p-6"
-        >
-            <div className="flex">
-                <Suspense fallback={<StudySelectorSkeleton />}>
-                    <StudySelector />
-                </Suspense>
-            </div>
-        </main>
+        <div className="flex flex-col h-screen">
+            <SidebarToggleWithBreadcrumbs
+                breadcrumbs={[
+                    {
+                        content: 'Select a study'
+                    }
+                ]}
+            />
+            <main
+                className="flex items-center justify-center p-6 grow"
+            >
+                <div className="flex">
+                    <Suspense fallback={<StudySelectorSkeleton />}>
+                        <StudySelector />
+                    </Suspense>
+                </div>
+            </main>
+        </div>
 
     )
 }

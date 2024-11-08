@@ -97,12 +97,40 @@ export const startResponseExport = async (
         url,
         session.CASEaccessToken,
         {
-            method: 'GET',
+            method: 'POST',
             revalidate: 0,
         }
     );
     if (resp.status !== 200) {
         return { error: `Failed to start export task: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
+export const getDailyResponseExports = async (
+    studyKey: string
+): Promise<{
+    error?: string,
+    dailyExports?: string[]
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+
+    const queryParams = new URLSearchParams();
+    const queryString = queryParams.toString();
+    const url = `/v1/studies/${studyKey}/data-exporter/responses/daily-exports?${queryString}`;
+
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch daily response exports: ${resp.status} - ${resp.body.error}` };
     }
     return resp.body;
 }

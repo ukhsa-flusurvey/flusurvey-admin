@@ -31,6 +31,7 @@ const fixedCols = [
     "version",
     "opened",
     "submitted",
+    "arrived",
     "language",
     "engineVersion",
     "session",
@@ -85,6 +86,7 @@ const escapeCsvValue = (val: string | undefined) => {
 
 const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     const [isMounted, setIsMounted] = React.useState(false);
+    const [drowndownOpen, setDrowndownOpen] = React.useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
     const [responses, setResponses] = React.useState(props.responses || []);
@@ -192,7 +194,7 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     return (
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
-                <ScrollArea className='block pb-3 pe-3 h-full overscroll-x-contain'>
+                <ScrollArea className='block ps-2 pt-2 pb-3 pe-3 h-full overscroll-x-contain'>
                     <table className='text-xs border border-neutral-300 mx-1 shadow-md drop-shadow-md mb-2'>
                         <thead className='sticky top-0 z-10 shadow-sm border-b-4'>
                             <tr className='bg-slate-200/70 backdrop-blur-md '>
@@ -274,12 +276,16 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
 
 
 
-                        <DropdownMenu>
+                        <DropdownMenu
+                            modal={false}
+                            open={drowndownOpen}
+                            onOpenChange={setDrowndownOpen}
+                        >
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost"
                                     size='icon'
                                     className='size-4 px-0 flex items-center justify-center'
-
+                                    onClick={() => setDrowndownOpen(true)}
                                 >
                                     <MoreVertical className="size-3" />
                                 </Button>

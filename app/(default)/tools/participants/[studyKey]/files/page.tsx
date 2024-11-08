@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Suspense } from "react";
 import ParticipantFiles, { ParticipantFilesSkeleton } from "./_components/ParticipantFiles";
+import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
+import { FilesPageLinkContent } from "../../_components/breacrumbs-contents";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,8 +30,20 @@ export default async function Page(props: PageProps) {
 
     return (
         <div
-            className="h-full w-full py-6 flex flex-col gap-4" >
-            <div className="grow flex overflow-hidden">
+            className="h-full w-full flex flex-col" >
+            <SidebarToggleWithBreadcrumbs
+                breadcrumbs={[
+                    {
+                        href: "/tools/participants",
+                        content: props.params.studyKey
+                    },
+                    {
+                        content: <FilesPageLinkContent />
+                    }
+                ]}
+            />
+            <main className="grow flex overflow-hidden px-4 pb-1">
+
                 <Card
                     variant={'opaque'}
                     className="w-full h-full flex flex-col overflow-hidden"
@@ -64,7 +78,7 @@ export default async function Page(props: PageProps) {
                         </Suspense>
                     </div>
                 </Card>
-            </div>
+            </main>
         </div>
     );
 }

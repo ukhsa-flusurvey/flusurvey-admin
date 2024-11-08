@@ -11,6 +11,7 @@ interface ItemListCardWrapperWithAddButtonProps {
     addLabel: string;
     className?: string;
     contentClassName?: string;
+    hideAddButton?: boolean;
 }
 
 export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithAddButtonProps> = (props) => {
@@ -32,17 +33,19 @@ export const ItemListCardWrapperWithAddButton: React.FC<ItemListCardWrapperWithA
                 {props.children}
             </CardContent>
 
-            <CardFooter>
-                <Button
-                    disabled={props.isLoading}
-                    asChild={!props.isLoading}
-                >
-                    <Link
-                        href={props.addHref}>
-                        {props.addLabel}
-                    </Link>
-                </Button>
-            </CardFooter>
+            {!props.hideAddButton && (
+                <CardFooter>
+                    <Button
+                        disabled={props.isLoading}
+                        asChild={!props.isLoading}
+                    >
+                        <Link
+                            href={props.addHref}>
+                            {props.addLabel}
+                        </Link>
+                    </Button>
+                </CardFooter>
+            )}
         </Card>
     );
 }
