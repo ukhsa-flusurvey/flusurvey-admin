@@ -8,11 +8,13 @@ import { ResponsesPageLinkContent } from "../../../_components/breacrumbs-conten
 
 export default async function Page(
     {
-        params: { studyKey }
+        params: { studyKey },
+        searchParams: { tab }
     }: {
         params: {
             studyKey: string;
         };
+        searchParams: { tab: string };
     }
 ) {
     let surveyKeys: string[] = [];
@@ -59,6 +61,7 @@ export default async function Page(
                         <ExporterTabs
                             studyKey={studyKey}
                             availableSurveyKeys={surveyKeys}
+                            currentTab={tab}
                         />
                     </div>
                 </div>
