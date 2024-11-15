@@ -44,9 +44,9 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
         />
     }
 
-    const allowedToCreateStudy = currentUserPermissions.permissions.some((permission) => {
+    const allowedToCreateStudy = currentUserPermissions.isAdmin || currentUserPermissions.permissions?.some((permission) => {
         return permission.action === 'create-study';
-    }) || currentUserPermissions.isAdmin;
+    });
 
 
     const studies: Array<Study> | undefined = filterStudiesWithPermissions(currentUserPermissions, resp.studies);
