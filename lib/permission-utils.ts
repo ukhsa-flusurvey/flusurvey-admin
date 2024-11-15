@@ -14,6 +14,9 @@ export const filterStudiesWithPermissions = (
     if (permissionInfos.isAdmin) {
         return studies;
     }
+    if (!permissionInfos.permissions || permissionInfos.permissions.length === 0) {
+        return [];
+    }
     return studies.filter((study) => {
         return permissionInfos.permissions.some((permission) => {
             if (permission.resourceType !== 'study') {
