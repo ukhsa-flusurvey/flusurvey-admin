@@ -33,8 +33,8 @@ const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
     }
 
     if (!participants || participants.length === 0 || !pagination || pagination.totalCount === 0) {
-        return <div className='w-[330px] relative border-r border-neutral-300 p-4'>
-            <div className="flex py-6 flex-col justify-center items-center text-center">
+        return <div className='w-[330px] relative border-r border-neutral-300 p-4 '>
+            <div className="flex py-6 flex-col justify-center items-center text-center h-full">
                 <p className="font-bold ">No participants</p>
                 <p className="text-neutral-500 text-sm">
                     With the current filter, no participants were found

@@ -2,9 +2,12 @@ import CogLoader from "@/components/CogLoader";
 import ErrorAlert from "@/components/ErrorAlert";
 import { LinkMenu } from "@/components/LinkMenu";
 import StudyCard from "@/components/StudyCard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStudies } from "@/lib/data/studyAPI";
+import { getPermissionsForCurrentUser } from "@/lib/data/userManagementAPI";
+import { filterStudiesWithPermissions } from "@/lib/permission-utils";
 import { Study } from "@/utils/server/types/studyInfos";
+import { redirect } from "next/navigation";
 import { BsJournalMedical } from "react-icons/bs";
 
 interface StudyListProps {
@@ -21,11 +24,8 @@ const StudyListCardWrapper: React.FC<{
         >
             <CardHeader>
                 <CardTitle>
-                    Studies
+                    Select a study
                 </CardTitle>
-                <CardDescription>
-                    Available studies
-                </CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -38,9 +38,17 @@ const StudyListCardWrapper: React.FC<{
 
 const StudyList: React.FC<StudyListProps> = async (props) => {
     const resp = await getStudies();
+    const currentUserPermissions = await getPermissionsForCurrentUser();
 
-    const studies: Array<Study> | undefined = resp.studies;
+    if (currentUserPermissions.error) {
+        return <ErrorAlert
+            title="Error loading permissions"
+            error={currentUserPermissions.error}
+        />
+    }
+
     const error = resp.error;
+    const studies: Array<Study> | undefined = filterStudiesWithPermissions(currentUserPermissions, resp.studies);
 
     let content = null;
     if (error) {
@@ -51,9 +59,13 @@ const StudyList: React.FC<StudyListProps> = async (props) => {
     } else if (!studies || studies.length === 0) {
         content = <div className="flex py-6 flex-col justify-center items-center text-center">
             <BsJournalMedical className="text-3xl text-neutral-300 mb-3" />
-            <p className="font-bold ">No studies</p>
-            <p className="text-neutral-500 text-sm">Get started by adding a new study</p>
+            <p className="font-bold ">
+                {"You don't have access to any studies"}
+            </p>
+            <p className="text-neutral-500 text-sm">Ask your administrator to add you to a study</p>
         </div>
+    } else if (studies.length === 1) {
+        redirect(`/tools/participants/${studies[0].key}`);
     } else {
         content = (
             <LinkMenu>

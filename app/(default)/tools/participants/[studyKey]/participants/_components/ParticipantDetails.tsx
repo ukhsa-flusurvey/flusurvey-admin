@@ -10,7 +10,7 @@ import React from 'react';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface ParticipantDetailsProps {
     studyKey: string;
@@ -123,8 +123,10 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
             )
             }
             {flags.map(([key, value]) => (
-                <TableRow key={key}>
-                    <TableCell>{key}</TableCell>
+                <TableRow key={key}
+                    className='font-mono'
+                >
+                    <TableCell className='text-muted-foreground'>{key}</TableCell>
                     <TableCell>{value}</TableCell>
                 </TableRow>
             ))}

@@ -1,18 +1,21 @@
-'use client';
-
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import SurveyInfoDownloader from './SurveyInfoDownloader';
 import ResponseDownloader from './ResponseDownloader';
 import ConfidentialResponseDownloader from './ConfidentialResponseDownloader';
+import DailyExportsLoader, { DailyExportsLoaderSkeleton } from './daily-exports-loader';
+import TabList from './tab-list';
+
 
 interface ExporterTabsProps {
     studyKey: string;
+    currentTab?: string;
     availableSurveyKeys: string[];
 }
 
 const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
+
     return (
         <div>
             <Card
@@ -28,16 +31,11 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                 </CardHeader>
                 <CardContent>
                     <p className='font-bold'>What do you want to export:</p>
-                    <Tabs defaultValue="responses" className="w-auto mt-2">
-                        <TabsList>
-                            <TabsTrigger value="responses">Responses</TabsTrigger>
-                            <TabsTrigger value="surveyInfo">
-                                Survey Info
-                            </TabsTrigger>
-                            <TabsTrigger value="confidentialResponses">
-                                Confidential Responses
-                            </TabsTrigger>
-                        </TabsList>
+                    <Tabs
+                        value={props.currentTab || "responses"}
+                    >
+                        <TabList />
+
                         <TabsContent value="responses">
                             <ResponseDownloader
                                 studyKey={props.studyKey}
@@ -54,6 +52,13 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                             <ConfidentialResponseDownloader
                                 studyKey={props.studyKey}
                             />
+                        </TabsContent>
+                        <TabsContent value="dailyResponses">
+                            <Suspense fallback={<DailyExportsLoaderSkeleton />}>
+                                <DailyExportsLoader
+                                    studyKey={props.studyKey}
+                                />
+                            </Suspense>
                         </TabsContent>
                     </Tabs>
                 </CardContent>
