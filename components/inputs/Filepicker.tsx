@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
-import { Accept, useDropzone } from "react-dropzone";
+import { Accept, FileWithPath, useDropzone } from "react-dropzone";
 import { BsFileEarmarkArrowUp } from 'react-icons/bs';
 
 interface FilepickerProps {
@@ -13,7 +13,7 @@ interface FilepickerProps {
         drag: string;
     }
 
-    onChange: (files: File[]) => void;
+    onChange: (files: readonly FileWithPath[]) => void;
 }
 
 const Filepicker: React.FC<FilepickerProps> = (props) => {
