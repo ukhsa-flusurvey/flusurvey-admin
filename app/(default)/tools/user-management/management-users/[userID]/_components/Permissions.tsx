@@ -115,7 +115,9 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                             <TableCell>
                                 <PermissionActions
                                     userId={props.userId}
-                                    permission={permission} />
+                                    permission={permission}
+                                    userType='management-user'
+                                />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -125,6 +127,7 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
 
             <AddPermissionDialog
                 userId={props.userId}
+                userType='management-user'
             />
         </CardWrapper >
     );
