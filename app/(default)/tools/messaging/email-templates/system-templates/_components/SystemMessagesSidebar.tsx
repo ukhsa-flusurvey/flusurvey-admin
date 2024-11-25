@@ -7,9 +7,6 @@ import { BsEnvelopeExclamation, BsEnvelopePlus, BsExclamationCircle, BsHouse, Bs
 import { Recycle } from 'lucide-react';
 
 
-interface SystemMessagesSidebarProps {
-}
-
 const sideBarLinkItems = [
     {
         href: '/tools/messaging/email-templates/system-templates/registration',
@@ -68,7 +65,7 @@ const sideBarLinkItems = [
     },
 ]
 
-const SystemMessagesSidebar: React.FC<SystemMessagesSidebarProps> = (props) => {
+const SystemMessagesSidebar: React.FC = () => {
     const pathname = usePathname();
 
     return (

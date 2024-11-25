@@ -147,6 +147,7 @@ export const permissionSchema = z.object({
             JSON.parse(value);
             return true;
         } catch (error) {
+            console.error(error);
             return false;
         }
     })

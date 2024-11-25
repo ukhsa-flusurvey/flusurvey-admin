@@ -16,7 +16,7 @@ export interface ManagementUser {
 }
 
 interface ListItemProps {
-    user: any;
+    user: ManagementUser;
 }
 
 const ListItem: React.FC<ListItemProps> = (props) => {

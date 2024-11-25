@@ -30,14 +30,12 @@ const ScheduledEmailsCardWrapper = ({
     )
 }
 
-interface ScheduleListProps {
-}
 
 
-const ScheduledEmails: React.FC<ScheduleListProps> = async (props) => {
+const ScheduledEmails: React.FC = async () => {
     const resp = await getEmailSchedules();
 
-    let schedules: Array<MessageSchedule> = resp.schedules;
+    const schedules: Array<MessageSchedule> = resp.schedules;
     const error = resp.error;
 
 
@@ -66,7 +64,7 @@ const ScheduledEmails: React.FC<ScheduleListProps> = async (props) => {
 
 export default ScheduledEmails;
 
-export const ScheduledEmailsSkeleton: React.FC<ScheduleListProps> = (props) => {
+export const ScheduledEmailsSkeleton: React.FC = () => {
     return (
         <ScheduledEmailsCardWrapper isLoading={true}>
             <CogLoader

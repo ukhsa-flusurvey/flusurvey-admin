@@ -8,10 +8,7 @@ import { ShieldCheck } from 'lucide-react';
 import LoadingButton from '@/components/LoadingButton';
 
 
-interface LoginProps {
-}
-
-const Login: React.FC<LoginProps> = (props) => {
+const Login: React.FC = () => {
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
