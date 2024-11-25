@@ -3,7 +3,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import React from 'react';
-import { BsDownload, BsExclamationTriangle } from 'react-icons/bs';
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
