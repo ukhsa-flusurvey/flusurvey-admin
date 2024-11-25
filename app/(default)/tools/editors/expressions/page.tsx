@@ -2,14 +2,16 @@
 
 import ExpressionEditor from '@/components/expression-editor/ExpressionEditor';
 import { supportedBuiltInSlotTypes, testExpressionCategories, testServerExpressionRegistry } from '@/components/expression-editor/exampleRegistry';
-import { ExpEditorContext } from '@/components/expression-editor/utils';
+import { ExpEditorContext, Expression } from '@/components/expression-editor/utils';
 import React from 'react';
 import { Toaster } from 'sonner';
 
 
 
 const Page: React.FC = () => {
-    const [expression, setExpression] = React.useState<any>({
+    const [expression, setExpression] = React.useState<
+        Expression
+    >({
         name: 'IF',
         data: [],
         // todo: test metadata

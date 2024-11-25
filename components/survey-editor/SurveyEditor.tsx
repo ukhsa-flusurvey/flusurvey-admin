@@ -35,20 +35,20 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     const runDebounced = useDebounceCallback((f) => f(), 1000);
 
     //  Main State
-    const [surveyStorage, setSurveyStorage, removeSurveyStorage] = useLocalStorage('SurveyStorage', new SurveyStorage(), { serializer: (storage) => JSON.stringify(storage.asObject()), deserializer: (s) => new SurveyStorage(s) });
+    const [surveyStorage, setSurveyStorage] = useLocalStorage('SurveyStorage', new SurveyStorage(), { serializer: (storage) => JSON.stringify(storage.asObject()), deserializer: (s) => new SurveyStorage(s) });
 
     //  Associated State
     const [storedSurvey, setStoredSurvey] = React.useState<StoredSurvey | undefined>(props.initialSurvey ? new StoredSurvey(getSurveyIdentifier(props.initialSurvey), props.initialSurvey, new Date()) : undefined);
 
     //  Derived state
-    let survey = storedSurvey?.survey;
-    let setSurvey = (s: Survey) => {
+    const survey = storedSurvey?.survey;
+    const setSurvey = (s: Survey) => {
         setStoredSurvey(new StoredSurvey(storedSurvey?.id ?? getSurveyIdentifier(s), s, new Date()));
     };
 
     //  Update associated state if survey storage changes. Usually external changes trigger this.
     useEffect(() => {
-        let updatedStoredSurvey = surveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
+        const updatedStoredSurvey = surveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
         if (updatedStoredSurvey && JSON.stringify(updatedStoredSurvey?.survey) !== JSON.stringify(storedSurvey?.survey)) {
             setStoredSurvey(updatedStoredSurvey);
         }
@@ -162,8 +162,8 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     onSave={() => setOpenSaveDialog(true)}
                     onOpen={() => setOpenLoadDialog(true)}
                     onNew={() => setOpenNewDialog(true)}
-                    onExit={() => { props.onExit && props.onExit() }}
-                    onUploadNewVersion={() => { props.onUploadNewVersion && props.onUploadNewVersion(survey) }}
+                    onExit={() => { props.onExit?.() }}
+                    onUploadNewVersion={() => { props.onUploadNewVersion?.(survey) }}
                     notLatestVersion={props.notLatestVersion}
                 />
 
