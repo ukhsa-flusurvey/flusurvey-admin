@@ -1,7 +1,6 @@
 import ContentLink from './content-link'
 import { cn } from '@/lib/utils'
-import { H1, H2 } from './headings'
-import remarkGfm from "remark-gfm";
+
 
 import * as runtime from 'react/jsx-runtime'
 

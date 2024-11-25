@@ -139,6 +139,7 @@ const ApiKeyItem = (props: {
                 <LoadingButton
                     variant={'ghost'}
                     size={'icon'}
+                    isLoading={isPending}
                     onClick={() => {
                         if (!confirm('Are you sure you want to delete this API key?')) {
                             return;
