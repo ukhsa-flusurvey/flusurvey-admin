@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { Pagination } from "@/utils/server/types/paginationInfo";
 import { ParticipantState } from "@/utils/server/types/participantState";
-import { Task, startFileExportTask, getTaskProgress } from "./tasks";
+import { Task, startFileExportTask } from "./tasks";
 
 
 export const getParticipants = async (

@@ -9,7 +9,7 @@ import ExpressionPreview from './ExpressionPreview';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
 import ExpressionEditor from '../ExpressionEditor';
 import Block from '../components/Block';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 
 interface ListEditorProps {
@@ -30,7 +30,6 @@ interface ListEditorProps {
 
 const ListEditor: React.FC<ListEditorProps> = (props) => {
     const [hideSlotContent, setHideSlotContent] = useState<Array<number>>([]);
-    const { toast } = useToast()
 
     const listCircle = <span className={cn(
         "absolute flex items-center justify-center w-[20px] h-[20px]",
@@ -100,10 +99,10 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                                         value: currentArgValue
                                                     }
                                                     navigator.clipboard.writeText(JSON.stringify(cbContent));
-                                                    toast({
-                                                        title: 'Item copied to clipboard',
-                                                        duration: 3000
-                                                    })
+                                                    toast(
+                                                        'Item copied to clipboard',
+                                                        { duration: 3000 }
+                                                    )
                                                 }}
                                             >
                                                 <Copy className='w-4 h-4 mr-2 text-slate-400' />
@@ -172,14 +171,14 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         depth={(props.depth || 0) + 1}
                                         context={props.context}
                                         onChange={(newExpression) => {
-                                            const newValues = [...props.currentSlotValues].map((val, i) => val.value);
+                                            const newValues = [...props.currentSlotValues].map((val) => val.value);
                                             newValues[index] = {
                                                 exp: newExpression as CaseExpression,
                                                 dtype: 'exp'
                                             }
                                             props.onChangeValues(
                                                 newValues,
-                                                props.currentSlotValues.map((val, i) => val.slotType)
+                                                props.currentSlotValues.map((val) => val.slotType)
                                             );
                                         }}
                                     />
@@ -210,11 +209,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         const cbContent = await navigator.clipboard.readText();
                                         const content = JSON.parse(cbContent);
                                         if (!content || !content.slotType) {
-                                            toast({
-                                                title: 'Clipboard content is not valid',
-                                                duration: 3000,
-                                                variant: 'destructive'
-                                            })
+                                            toast.error('Clipboard content is not valid')
                                             return;
                                         }
                                         currentSlotTypes.push(content.slotType);

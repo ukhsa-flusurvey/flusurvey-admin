@@ -39,7 +39,7 @@ const ServiceAccountPermissions: React.FC<ServiceAccountPermissionsProps> = (pro
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {props.permissions?.map((permission: any) => (
+                        {props.permissions?.map((permission: ManagementUserPermission) => (
                             <TableRow key={permission.id}>
                                 <TableCell className=''>
                                     <Badge
