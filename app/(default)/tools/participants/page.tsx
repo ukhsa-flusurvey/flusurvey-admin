@@ -2,7 +2,6 @@ import { Suspense } from "react";
 
 import StudySelector, { StudySelectorSkeleton } from "./_components/StudySelector";
 import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
-import { BreadcrumbItem, BreadcrumbPage } from "@/components/ui/breadcrumb";
 
 
 export const dynamic = 'force-dynamic';

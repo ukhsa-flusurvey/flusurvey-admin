@@ -31,9 +31,9 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
                     return;
                 }
                 toast.success('Survey unpublished successfully.');
-            } catch (e: any) {
+            } catch (e: unknown) {
                 console.error(e);
-                toast.error('Failed to unpublish survey.');
+                toast.error('Failed to unpublish survey.', { description: (e as Error).message });
             }
         })
     }

@@ -44,7 +44,7 @@ const StudyRuleVersionMenu: React.FC<StudyRuleVersionMenuProps> = (props) => {
                 document.body.appendChild(element);
                 element.click();
                 toast.success('Study rules downloaded successfully');
-            } catch (e: any) {
+            } catch (e: unknown) {
                 console.error(e);
                 toast.error('Error downloading study rules');
             }
@@ -66,7 +66,7 @@ const StudyRuleVersionMenu: React.FC<StudyRuleVersionMenuProps> = (props) => {
                     return;
                 }
                 toast.success('Rules deleted successfully');
-            } catch (e: any) {
+            } catch (e: unknown) {
                 console.error(e);
                 toast.error('Error deleting rules');
             }

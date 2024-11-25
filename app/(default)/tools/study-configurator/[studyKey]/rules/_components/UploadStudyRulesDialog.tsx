@@ -14,7 +14,7 @@ interface UploadStudyRulesDialogProps {
     studyKey: string;
 }
 
-const checkIfValidStudyRule = (rules: any): boolean => {
+const checkIfValidStudyRule = (rules: unknown): boolean => {
     // check if an array and if all items are expressions
     if (!Array.isArray(rules)) {
         return false;
@@ -65,8 +65,8 @@ const UploadStudyRulesDialog: React.FC<UploadStudyRulesDialogProps> = (props) =>
                         dialogCloseRef.current.click();
                     }
                 }
-                catch (e: any) {
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    setErrorMsg((e as Error).message);
                     console.error(e);
                 }
             })

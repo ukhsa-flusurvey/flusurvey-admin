@@ -30,8 +30,8 @@ const FileUploadToggle: React.FC<FileUploadToggleProps> = (props) => {
                                 return;
                             }
                             toast.success('File upload updated');
-                        } catch (error) {
-                            toast.error('An error occurred');
+                        } catch (error: unknown) {
+                            toast.error('An error occurred', { description: (error as Error).message });
                         }
                     });
                 }}
