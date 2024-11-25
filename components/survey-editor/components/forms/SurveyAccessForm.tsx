@@ -49,8 +49,8 @@ export function SurveyAccessForm() {
 
     // Subscribe to changes in the form and save changes to survey debounced
     useEffect(() => {
-        let watcher = form.watch((values) => {
-            let hasChanges = JSON.stringify(values) != JSON.stringify(initialValues(survey))
+        const watcher = form.watch((values) => {
+            const hasChanges = JSON.stringify(values) != JSON.stringify(initialValues(survey))
             if (hasChanges) {
                 runDebounced(() => {
                     form.handleSubmit(onSubmit)();

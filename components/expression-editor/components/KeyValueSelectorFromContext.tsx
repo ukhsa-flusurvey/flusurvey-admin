@@ -15,7 +15,7 @@ interface KeyValueSelectorFromContextProps {
 }
 
 const KeyValueSelectorFromContext: React.FC<KeyValueSelectorFromContextProps> = (props) => {
-    let contextObject: ContextObjectItem | undefined = { ...props.context?.[props.slotTypeDef.contextObjectKey] } as ContextObjectItem | undefined;
+    const contextObject: ContextObjectItem | undefined = { ...props.context?.[props.slotTypeDef.contextObjectKey] } as ContextObjectItem | undefined;
 
     const [currentKey, setCurrentKey] = React.useState<string | undefined>(props.currentKey);
     const [currentValue, setCurrentValue] = React.useState<string | undefined>(props.currentValue);

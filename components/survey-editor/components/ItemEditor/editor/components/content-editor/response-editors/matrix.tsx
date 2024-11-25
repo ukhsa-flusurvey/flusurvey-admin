@@ -29,11 +29,8 @@ const CellItem = (props: {
     onDeleteComponent: () => void,
     existingKeys?: string[]
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
     const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
 
-    const dropdownOptionItems = (props.component as ItemGroupComponent).items || [];
-    const dropdownOptions = dropdownOptionItems.map((item) => localisedObjectToMap(item.content).get(selectedLanguage)).join('\n');
 
     return (<SortableItem
         id={props.component.key || props.index.toString()}
@@ -144,7 +141,6 @@ const RowCellEditor = (props: {
     row: ItemGroupComponent,
     onUpdateComponent: (component: ItemComponent) => void,
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
     const cells = props.row.items;
@@ -215,7 +211,7 @@ const RowCellEditor = (props: {
                             onUpdateComponent={(updatedComponent) => {
                                 props.onUpdateComponent({
                                     ...props.row,
-                                    items: cells.map((c, i) => {
+                                    items: cells.map((c) => {
                                         if (c.key === component.key) {
                                             return updatedComponent;
                                         }

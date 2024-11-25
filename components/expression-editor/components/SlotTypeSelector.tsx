@@ -49,7 +49,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                     return;
                 }
                 setHasClipboardData(true)
-            } catch (error) {
+            } catch {
                 setHasClipboardData(false)
             }
         }
@@ -101,7 +101,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                                                 return (
                                                     <CommandItem key={slotType.id}
                                                         onSelect={(currentValue) => {
-                                                            props.onSelect(slotType.id);
+                                                            props.onSelect(currentValue);
                                                             setOpen(false)
                                                         }}
                                                     >
