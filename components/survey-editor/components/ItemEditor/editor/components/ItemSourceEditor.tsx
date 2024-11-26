@@ -39,11 +39,7 @@ const ItemSourceEditor: React.FC<ItemSourceEditorProps> = (props) => {
                 onChange={(e) => {
                     setEditorContent(e);
                     if (!e) return;
-                    try {
 
-                    } catch (e) {
-
-                    }
                 }}
             />
 

@@ -16,7 +16,7 @@ export const getResponses = async (
 ): Promise<{
     error?: string,
     responses?: Array<{
-        [key: string]: number | string | boolean | Object
+        [key: string]: number | string | boolean | object
     }>
     pagination?: Pagination
 }> => {

@@ -26,6 +26,7 @@ import Time from './InputTypes/Time';
 import Consent from './InputTypes/Consent';
 import ValidatedRandomQuestion from './InputTypes/validated-random-question';
 import ContactForm from './InputTypes/contact-form';
+import { Locale } from 'date-fns';
 
 
 interface ResponseComponentProps {
@@ -38,7 +39,7 @@ interface ResponseComponentProps {
     showOptionKey?: boolean;
     showErrors?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
-    dateLocales: Array<{ code: string, locale: any, format: string }>;
+    dateLocales: Array<{ code: string, locale: Locale, format: string }>;
 }
 
 export interface CustomSurveyResponseComponent {

@@ -1,5 +1,3 @@
-'use server'
-
 import ErrorAlert from '@/components/ErrorAlert';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { Cog } from 'lucide-react';
@@ -34,13 +32,10 @@ const StudyEmailTemplatesCard: React.FC<StudyEmailTemplatesCardProps> = (props) 
     );
 }
 
-interface StudyEmailTemplatesProps {
-
-}
 
 
 
-const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) => {
+const StudyEmailTemplates: React.FC = async () => {
 
     const resp = await getStudyMessageTemplates();
 
@@ -64,7 +59,7 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
         cardContent = (
             <div className='grow overflow-y-auto'>
                 <LinkMenu>
-                    {studyTemplates.map((template: any) => (
+                    {studyTemplates.map((template: EmailTemplate) => (
                         <EmailTemplateLinkItem key={template.messageType} template={template} />
                     ))}
                 </LinkMenu>
@@ -82,7 +77,7 @@ const StudyEmailTemplates: React.FC<StudyEmailTemplatesProps> = async (props) =>
 
 export default StudyEmailTemplates;
 
-export const StudyEmailTemplatesSkeleton: React.FC<StudyEmailTemplatesProps> = (props) => {
+export const StudyEmailTemplatesSkeleton: React.FC = () => {
     return (
         <StudyEmailTemplatesCard isLoading={true}>
             <div className='animate-pulse px-6 py-3 rounded-md bg-white'>

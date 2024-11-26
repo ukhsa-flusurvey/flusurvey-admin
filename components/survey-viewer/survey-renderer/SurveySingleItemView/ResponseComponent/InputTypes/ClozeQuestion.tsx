@@ -10,19 +10,14 @@ import NumberInput from './NumberInput';
 import TextInput from './TextInput';
 import Time from './Time';
 
-interface ClozeQuestionProps extends CommonResponseComponentProps {
 
-}
+type ClozeQuestionProps = CommonResponseComponentProps
 
 const defaultInputClassName = "mx-3 my-2";
 
 const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-
-    const [subResponseCache, setSubResponseCache] = useState<Array<ResponseItem>>(
-        (props.prefill && props.prefill.items) ? [...props.prefill.items] : []
-    );
 
     useEffect(() => {
         if (touched) {
@@ -76,7 +71,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
             });
     };
 
-    const renderItems = (item: ItemComponent, isLast: boolean): React.ReactNode => {
+    const renderItems = (item: ItemComponent): React.ReactNode => {
         if (item.displayCondition === false) {
             return null;
         }
@@ -202,7 +197,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
         <div className="flex items-center flex-wrap">
             {
                 (props.compDef as ItemGroupComponent).items.map(
-                    (option, index) => renderItems(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                    (option) => renderItems(option)
                 )
             }
         </div>

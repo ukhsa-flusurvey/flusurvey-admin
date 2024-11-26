@@ -1,3 +1,4 @@
+import { DocsItem } from '@/.velite';
 import { NavGroupDef, NavItemDef } from './navgroup';
 
 
@@ -55,7 +56,7 @@ export const getCategoryPathBySlug = (slug: string): string[] => {
 }
 
 
-const generateNavGroupForKey = (key: string, docs: Array<any>): NavGroupDef => {
+const generateNavGroupForKey = (key: string, docs: Array<DocsItem>): NavGroupDef => {
     const items = docs.filter(doc => doc.category === key && doc.subcategory === '').map(doc => {
         return {
             title: doc.title,
@@ -88,7 +89,7 @@ const generateNavGroupForKey = (key: string, docs: Array<any>): NavGroupDef => {
     }
 }
 
-export const parseForNav = (docs: Array<any>): { items: Array<NavItemDef>, navGroups: Array<NavGroupDef> } => {
+export const parseForNav = (docs: Array<DocsItem>): { items: Array<NavItemDef>, navGroups: Array<NavGroupDef> } => {
     const navItems: Array<NavItemDef> = [];
     const navGroups: Array<NavGroupDef> = [];
 

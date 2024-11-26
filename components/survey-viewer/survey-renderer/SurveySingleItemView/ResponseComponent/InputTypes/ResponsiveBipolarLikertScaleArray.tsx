@@ -2,13 +2,11 @@ import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { isItemGroupComponent, ItemComponent, ItemGroupComponent, ResponseItem } from 'survey-engine/data_types';
 import { renderFormattedContent } from '../../renderUtils';
-import { CommonResponseComponentProps, getClassName } from '../../utils';
+import { CommonResponseComponentProps } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
 
-interface ResponsiveBipolarLikertScaleArrayProps extends CommonResponseComponentProps {
-
-}
+type ResponsiveBipolarLikertScaleArrayProps = CommonResponseComponentProps
 
 const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleArrayProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);

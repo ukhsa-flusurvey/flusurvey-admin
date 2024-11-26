@@ -8,12 +8,18 @@ export class SurveyStorage {
 
     constructor(json?: string) {
         if (json) {
-            SurveyStorage.debug && console.log('Constructing SurveyStorage from string.');
+            if (SurveyStorage.debug) {
+                console.log('Constructing SurveyStorage from string.');
+            }
             this.storedSurveys = [];
             try {
                 const parsed = JSON.parse(json);
                 if (parsed.storedSurveys) {
-                    this.storedSurveys = parsed.storedSurveys.map((s: any) => new StoredSurvey(s.id, s.survey, new Date(s.date)));
+                    this.storedSurveys = parsed.storedSurveys.map((s: {
+                        id: string;
+                        survey: Survey;
+                        date: string;
+                    }) => new StoredSurvey(s.id, s.survey, new Date(s.date)));
                 }
             } catch (error) {
                 console.error('Error parsing SurveyStorage:', error);
@@ -30,24 +36,24 @@ export class SurveyStorage {
     }
 
     updateSurvey = (updatedStoredSurvey: StoredSurvey) => {
-        SurveyStorage.debug && console.log('Updating survey in storage with id:', updatedStoredSurvey.id);
+        if (SurveyStorage.debug) { console.log('Updating survey in storage with id:', updatedStoredSurvey.id); }
         this.storedSurveys = this.storedSurveys.filter(s => s.id !== updatedStoredSurvey.id);
         this.storedSurveys.push(updatedStoredSurvey);
         this.applyLimit();
     }
 
     public getRecentlyEditedSurveys = (): StoredSurvey[] => {
-        let sortedSurveys = this.storedSurveys.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
+        const sortedSurveys = this.storedSurveys.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
         return sortedSurveys;
     }
 
     public getMostRecentlyEditedSurvey = (): StoredSurvey | undefined => {
-        let res = this.getRecentlyEditedSurveys();
+        const res = this.getRecentlyEditedSurveys();
         return res.length > 0 ? res[0] : undefined;
     }
 
     public removeSurvey = (storedSurvey: StoredSurvey) => {
-        SurveyStorage.debug && console.log('Removing survey in storage with id:', storedSurvey.id);
+        if (SurveyStorage.debug) { console.log('Removing survey in storage with id:', storedSurvey.id); }
         this.storedSurveys = this.storedSurveys.filter(s => s.id !== storedSurvey.id);
     }
 }
@@ -63,7 +69,7 @@ export class StoredSurvey {
         this.id = id;
     }
 
-    toJSON = (): any => {
+    toJSON = (): unknown => {
         return {
             id: this.id,
             survey: this.survey,

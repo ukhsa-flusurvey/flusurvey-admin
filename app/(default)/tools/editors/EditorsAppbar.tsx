@@ -2,10 +2,8 @@ import AppbarBaseForTools from '@/components/navbar/AppbarBaseForTools';
 import EditorsIcon from '@/components/tool-icons/EditorsIcons';
 import React from 'react';
 
-interface EditorsAppbarProps {
-}
 
-const EditorsAppbarBase: React.FC<EditorsAppbarProps> = (props) => {
+const EditorsAppbarBase: React.FC = () => {
     return (
         <AppbarBaseForTools
             toolName='Standalone Editors'

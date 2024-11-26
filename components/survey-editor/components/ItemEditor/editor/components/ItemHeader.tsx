@@ -27,7 +27,7 @@ interface ItemHeaderProps {
 
 const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
-    const [copiedText, copy] = useCopyToClipboard()
+    const [, copy] = useCopyToClipboard()
     const [moveItemDialogOpen, setMoveItemDialogOpen] = React.useState(false);
 
     const item = {

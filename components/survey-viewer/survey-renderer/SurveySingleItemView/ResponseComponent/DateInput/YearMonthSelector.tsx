@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getYear, format, eachMonthOfInterval, startOfYear, getMonth, endOfYear } from 'date-fns';
+import { getYear, format, eachMonthOfInterval, startOfYear, getMonth, endOfYear, Locale } from 'date-fns';
 
 
 interface YearMonthSelectorProps {
@@ -9,7 +9,7 @@ interface YearMonthSelectorProps {
     maxDate: Date;
     onlyYear?: boolean;
     languageCode: string;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
 }
 
 

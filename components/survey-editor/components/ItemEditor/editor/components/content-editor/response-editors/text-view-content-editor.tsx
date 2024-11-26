@@ -3,7 +3,6 @@ import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUti
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';

@@ -34,8 +34,8 @@ const NotificationSubsList: React.FC<NotificationSubsListProps> = (props) => {
                     return
                 }
                 toast.success('Subscription removed');
-            } catch (error) {
-                toast.error('Failed to remove subscription');
+            } catch (error: unknown) {
+                toast.error('Failed to remove subscription', { description: (error as Error).message });
             }
         });
 

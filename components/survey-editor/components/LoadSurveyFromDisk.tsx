@@ -79,7 +79,9 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     const onLoadClick = () => {
         if (storedSurveySelectionId) {
             const storedSurvey = storedSurveys.find(ss => ss.id === storedSurveySelectionId);
-            storedSurvey && setStoredSurvey(storedSurvey);
+            if (storedSurvey) {
+                setStoredSurvey(storedSurvey);
+            }
         } else {
             console.log('load survey from file contents', surveyFileContent);
             if (!surveyFileContent) return;
@@ -163,7 +165,11 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                             variant='ghost'
                                             className='grow pre'
                                             onClick={() => {
-                                                storedSurveySelectionId == ss.id ? setStoredSurveySelectionId(undefined) : setStoredSurveySelectionId(ss.id);
+                                                if (storedSurveySelectionId == ss.id) {
+                                                    setStoredSurveySelectionId(undefined);
+                                                } else {
+                                                    setStoredSurveySelectionId(ss.id);
+                                                }
                                             }}
                                         >
                                             <>{ss.id}&nbsp;{"("}{formatDistance(ss.lastUpdated, new Date())}{" ago)"}</>
@@ -173,7 +179,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                             size='icon'
                                             onClick={() => {
                                                 if (confirm(`Are you sure you want to delete survey ${"\"" + ss.id + "\""} from memory?`)) {
-                                                    let deletedSurvey = storedSurveys.find(s => s.id === ss.id);
+                                                    const deletedSurvey = storedSurveys.find(s => s.id === ss.id);
                                                     if (deletedSurvey) {
                                                         surveyStorage.removeSurvey(deletedSurvey);
                                                         setSurveyStorage(surveyStorage);

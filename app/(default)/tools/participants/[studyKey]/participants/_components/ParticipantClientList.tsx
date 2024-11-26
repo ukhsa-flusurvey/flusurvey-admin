@@ -59,7 +59,7 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
             className="h-full w-full overflow-y-auto pt-8 "
         >
             <ul className="divide-y p-1 w-full">
-                {participants.map((participant, index) => (
+                {participants.map((participant) => (
                     <ParticipantListItem
                         key={participant.participantId}
                         participant={participant}

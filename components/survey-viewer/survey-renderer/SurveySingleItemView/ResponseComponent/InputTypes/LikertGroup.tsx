@@ -5,9 +5,7 @@ import TextViewComponent from '../../SurveyComponents/TextViewComponent';
 import LikertScale from './LikertScale';
 import { CommonResponseComponentProps } from '../../utils';
 
-interface LikertGroupProps extends CommonResponseComponentProps {
-
-}
+type LikertGroupProps = CommonResponseComponentProps
 
 const LikertGroup: React.FC<LikertGroupProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);

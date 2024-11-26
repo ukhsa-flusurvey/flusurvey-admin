@@ -5,9 +5,6 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 
 
-interface NavbarAuthProps {
-}
-
 const NavbarAuthContent = async () => {
     const session = await auth()
 
@@ -35,7 +32,7 @@ const NavbarAuthContent = async () => {
     )
 }
 
-const NavbarAuth: React.FC<NavbarAuthProps> = (props) => {
+const NavbarAuth: React.FC = () => {
     return (
         <Suspense fallback={<div>
             <UserButtonSkeleton />

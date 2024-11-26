@@ -12,7 +12,7 @@ interface CopyIdToClipboadProps {
 
 
 const CopyIdToClipboad: React.FC<CopyIdToClipboadProps> = (props) => {
-    const [copiedText, copyToClipboard] = useCopyToClipboard();
+    const [, copyToClipboard] = useCopyToClipboard();
 
     return (
         <Button

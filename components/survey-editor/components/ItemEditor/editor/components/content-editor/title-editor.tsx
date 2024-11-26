@@ -22,7 +22,7 @@ interface TitleEditorProps {
 const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
-    let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
+    const titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {
         return null;
     }
@@ -128,7 +128,7 @@ const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
 
 
 const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
-    let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
+    const titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {
         return null;
     }
@@ -208,7 +208,7 @@ const AdvancedTitleEditor: React.FC<TitleEditorProps> = (props) => {
 }
 
 const determineAdvancedMode = (item: SurveySingleItem) => {
-    let titleComponentIndex = item.components?.items.findIndex(comp => comp.role === 'title');
+    const titleComponentIndex = item.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {
         return false;
     }
@@ -238,7 +238,7 @@ const TitleEditor: React.FC<TitleEditorProps> = (props) => {
         }
 
 
-        let titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
+        const titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
         const existingComponents = props.surveyItem.components?.items || [];
         if (titleComponentIndex === undefined || titleComponentIndex === -1) {
             // add a new title component

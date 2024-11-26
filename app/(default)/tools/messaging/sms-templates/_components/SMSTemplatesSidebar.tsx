@@ -4,8 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Sidebar, SidebarLinkItem } from "@/components/Sidebar";
 import { BadgeCheck, Home, ShieldEllipsis } from 'lucide-react';
 
-interface SMSTemplatesSidebarProps {
-}
+
 
 const sideBarLinkItems = [
     {
@@ -21,7 +20,7 @@ const sideBarLinkItems = [
 ]
 
 
-const SMSTemplatesSidebar: React.FC<SMSTemplatesSidebarProps> = (props) => {
+const SMSTemplatesSidebar: React.FC = () => {
     const pathname = usePathname();
 
     return (

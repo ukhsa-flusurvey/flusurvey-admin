@@ -52,9 +52,9 @@ const SmsTemplateConfigForm: React.FC<SmsTemplateConfigFormProps> = (props) => {
                 toast.success('SMS template saved');
                 router.refresh();
                 setIsDirty(false);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: error.message });
+                toast.error('Something went wrong', { description: (error as Error).message });
             }
 
         })

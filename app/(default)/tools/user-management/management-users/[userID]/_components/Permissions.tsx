@@ -7,7 +7,7 @@ import AddPermissionDialog from './AddPermissionDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import PermissionActions from './PermissionActions';
 import { Badge } from '@/components/ui/badge';
-import { getPermissions } from '@/lib/data/userManagementAPI';
+import { ManagementUserPermission, getPermissions } from '@/lib/data/userManagementAPI';
 
 
 interface PermissionsProps {
@@ -92,7 +92,7 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {permissions.map((permission: any) => (
+                    {permissions.map((permission: ManagementUserPermission) => (
                         <TableRow key={permission.id}>
                             <TableCell className=''>
                                 <Badge
