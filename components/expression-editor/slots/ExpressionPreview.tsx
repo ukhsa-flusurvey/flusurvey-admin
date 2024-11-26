@@ -1,7 +1,5 @@
 import React from 'react';
-import { ExpEditorContext, Expression, ExpressionCategory, ExpressionDef, lookupExpressionDef } from '../utils';
-import { cn } from '@/lib/utils';
-import ExpressionIcon from '../components/ExpressionIcon';
+import { Expression, ExpressionCategory, ExpressionDef, lookupExpressionDef } from '../utils';
 import BlockHeader from '../components/BlockHeader';
 import Block from '../components/Block';
 

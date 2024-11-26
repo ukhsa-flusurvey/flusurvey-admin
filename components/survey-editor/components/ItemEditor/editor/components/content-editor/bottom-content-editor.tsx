@@ -5,7 +5,7 @@ import { AlertCircle, AlertTriangle, Type } from 'lucide-react';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { filterForBodyComponents, findBottomComponents, findTopComponents } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
+import { filterForBodyComponents, findBottomComponents } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';

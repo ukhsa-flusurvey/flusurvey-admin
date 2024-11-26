@@ -5,10 +5,8 @@ import LinkCard from '@/components/LinkCard';
 import { BsFiletypeHtml, BsShuffle, BsUiChecks } from 'react-icons/bs';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-interface PageProps {
-}
 
-const Page: React.FC<PageProps> = (props) => {
+const Page: React.FC = () => {
     return (
         <div>
             <EditorsAppbarBase />

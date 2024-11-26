@@ -32,9 +32,6 @@ const GlobalEmailTemplatesCard: React.FC<GlobalEmailTemplatesCardProps> = (props
     );
 }
 
-interface GlobalEmailTemplatesProps {
-
-}
 
 const systemMessageTypes = [
     'registration',
@@ -50,12 +47,12 @@ const systemMessageTypes = [
 ]
 
 
-const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) => {
+const GlobalEmailTemplates: React.FC = async () => {
 
     const resp = await getGlobalMessageTemplates();
 
     const globalTemplates: EmailTemplate[] | undefined = resp.templates;
-    const relevantTemplates = globalTemplates?.filter((template: any) => !systemMessageTypes.includes(template.messageType));
+    const relevantTemplates = globalTemplates?.filter((template: EmailTemplate) => !systemMessageTypes.includes(template.messageType));
 
     let cardContent = null;
     const error = null;
@@ -74,7 +71,7 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
         cardContent = (
             <div className='grow overflow-y-auto'>
                 <LinkMenu>
-                    {relevantTemplates.map((template: any) => (
+                    {relevantTemplates.map((template: EmailTemplate) => (
                         <EmailTemplateLinkItem key={template.messageType} template={template} />
                     ))}
                 </LinkMenu>
@@ -92,7 +89,7 @@ const GlobalEmailTemplates: React.FC<GlobalEmailTemplatesProps> = async (props) 
 
 export default GlobalEmailTemplates;
 
-export const GlobalEmailTemplatesSkeleton: React.FC<GlobalEmailTemplatesProps> = (props) => {
+export const GlobalEmailTemplatesSkeleton: React.FC = () => {
     return (
         <GlobalEmailTemplatesCard isLoading={true}>
             <CogLoader

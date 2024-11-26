@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Calendar, GripHorizontal, Info, Plus, Type, X } from 'lucide-react';
+import { Calendar, GripHorizontal, Info, Type, X } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, LocalizedString } from 'survey-engine/data_types';
 

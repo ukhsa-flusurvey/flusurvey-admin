@@ -58,8 +58,8 @@ const NewNotificationSubDialog: React.FC<NewNotificationSubDialogProps> = (props
                 toast.success('Subscription added');
                 form.reset();
                 closeBtnRef.current?.click();
-            } catch (error) {
-                toast.error('Failed to add subscription');
+            } catch (error: unknown) {
+                toast.error('Failed to add subscription', { description: (error as Error).message });
             }
         });
 
@@ -122,7 +122,9 @@ const NewNotificationSubDialog: React.FC<NewNotificationSubDialogProps> = (props
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <LoadingButton type="submit">Add</LoadingButton>
+                            <LoadingButton
+                                isLoading={isPending}
+                                type="submit">Add</LoadingButton>
                         </DialogFooter>
                     </form>
                 </Form>

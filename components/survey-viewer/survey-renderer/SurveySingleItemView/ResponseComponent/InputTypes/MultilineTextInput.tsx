@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ResponseItem } from 'survey-engine/data_types';
 import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode, getStyleValueByKey } from '../../utils';
-import clsx from 'clsx';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-interface MultilineTextInputProps extends CommonResponseComponentProps {
-}
+type MultilineTextInputProps = CommonResponseComponentProps
 
 const MultilineTextInput: React.FC<MultilineTextInputProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);

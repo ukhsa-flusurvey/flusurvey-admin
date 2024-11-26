@@ -46,8 +46,8 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                     return;
                 }
                 toast.success('Action performed successfully');
-            } catch (error) {
-                toast.error('Failed to start action');
+            } catch (error: unknown) {
+                toast.error('Failed to start action', { description: (error as Error).message });
             }
         });
     }
@@ -68,8 +68,8 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                 }
                 toast.success('Action started successfully');
                 router.push(`/tools/participants/${props.studyKey}/actions/on-responses/${resp.task.id}`);
-            } catch (error) {
-                toast.error('Failed to start action');
+            } catch (error: unknown) {
+                toast.error('Failed to start action', { description: (error as Error).message });
             }
         });
     }

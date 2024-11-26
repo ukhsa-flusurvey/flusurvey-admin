@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
 import { getLocaleStringTextByCode, getItemComponentByRole, CommonResponseComponentProps } from '../../utils';
-import clsx from 'clsx';
-import NumberInput from './NumberInput';
 import DropDownGroup from './DropDownGroup';
-import TextInput from './TextInput';
 
-interface MatrixProps extends CommonResponseComponentProps {
 
-}
+type MatrixProps = CommonResponseComponentProps
 
 
 const Matrix: React.FC<MatrixProps> = (props) => {
@@ -57,7 +53,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         });
     }*/
 
-    const checkboxSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    /*const checkboxSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!rowKey) { return; }
         setTouched(true);
         const selectedValue = event.target.value;
@@ -113,7 +109,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             });
         }
 
-    }
+    }*/
 
     const handleCellResponseChange = (rowKey: string | undefined, itemKey: string | undefined) => (response: ResponseItem | undefined) => {
         if (!rowKey || !itemKey) { return; }
@@ -173,12 +169,12 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         return resp;
     }
 
-    const isResponseSet = (rowKey: string | undefined, itemKey: string | undefined): boolean => {
+    /*const isResponseSet = (rowKey: string | undefined, itemKey: string | undefined): boolean => {
         if (!getCellResponse(rowKey, itemKey)) {
             return false;
         }
         return true;
-    }
+    }*/
 
     /*
     const renderRadioRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
@@ -249,7 +245,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
     const matrixDef = (props.compDef as ItemGroupComponent);
     const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
 
-    const renderResponseRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
+    const renderResponseRow = (compDef: ItemGroupComponent): React.ReactNode => {
         const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || '';
         const rowKey = [props.parentKey, compDef.key].join('.');
 
@@ -397,7 +393,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         // </tr>
     }
 
-    const renderTableRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
+    const renderTableRow = (compDef: ItemGroupComponent): React.ReactNode => {
         if (compDef.displayCondition === false) {
             return null;
         }
@@ -406,7 +402,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                 return renderRadioRow(compDef, index);
                 */
             case 'responseRow':
-                return renderResponseRow(compDef, index);
+                return renderResponseRow(compDef);
             case 'headerRow':
                 // header is already rendered separately
                 return null;
@@ -454,7 +450,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             {/* Table Header for large screens */}
             {renderHeaderRow(headerRow as ItemGroupComponent)}
             {/* Rows */}
-            {matrixDef.items.map((row, index) => renderTableRow(row as ItemGroupComponent, index))}
+            {matrixDef.items.map((row) => renderTableRow(row as ItemGroupComponent))}
         </div >)
 };
 

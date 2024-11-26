@@ -3,12 +3,13 @@ import { ItemComponent } from 'survey-engine/data_types';
 import { getClassName } from '../utils';
 import clsx from 'clsx';
 import { renderFormattedContent } from '../renderUtils';
+import { Locale } from 'date-fns';
 
 interface TextViewComponentProps {
     compDef: ItemComponent;
     languageCode: string;
     className?: string;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
     embedded: boolean;
 }
 
@@ -27,7 +28,7 @@ const getVariant = (styles?: Array<{ key: string, value: string }>): Variant | u
     if (!variantObj) {
         return;
     }
-    let variant = variantObj.value;
+    const variant = variantObj.value;
     if (!isValidVariant(variant)) {
         console.warn(`unsupported variant "${variant}", fallback to "p"`);
         return;

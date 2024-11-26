@@ -7,8 +7,7 @@ import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 
 
-interface ConsentProps extends CommonResponseComponentProps {
-}
+type ConsentProps = CommonResponseComponentProps
 
 const Consent: React.FC<ConsentProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
@@ -78,7 +77,7 @@ const Consent: React.FC<ConsentProps> = (props) => {
                     name={optionKey}
                     className='size-5 bg-white'
                     checked={checked}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={() => {
                         setDialogOpen(true);
                     }}
 

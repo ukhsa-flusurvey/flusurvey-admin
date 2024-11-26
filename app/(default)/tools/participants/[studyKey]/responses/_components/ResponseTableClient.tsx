@@ -20,7 +20,7 @@ interface ResponseTableClientProps {
     sort?: string;
     pageSize?: number;
     responses?: Array<{
-        [key: string]: number | string | boolean | Object
+        [key: string]: number | string | boolean | object
     }>;
     pagination?: Pagination;
 }
@@ -38,8 +38,8 @@ const fixedCols = [
 ]
 
 
-const ObjectValue = (props: { value: Object }) => {
-    const [copiedText, copyToClipboard] = useCopyToClipboard();
+const ObjectValue = (props: { value: object }) => {
+    const [, copyToClipboard] = useCopyToClipboard();
     return (
         <div className='flex items-center'>
             {'<Object>'}
@@ -58,7 +58,7 @@ const ObjectValue = (props: { value: Object }) => {
     )
 }
 
-const printValue = (value: number | string | boolean | Object): string | React.ReactNode => {
+const printValue = (value: number | string | boolean | object): string | React.ReactNode => {
     if (typeof value === 'object') {
         return <ObjectValue value={value} />
     }

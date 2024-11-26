@@ -2,16 +2,16 @@
 
 import ExpressionEditor from '@/components/expression-editor/ExpressionEditor';
 import { supportedBuiltInSlotTypes, testExpressionCategories, testServerExpressionRegistry } from '@/components/expression-editor/exampleRegistry';
-import { ExpEditorContext } from '@/components/expression-editor/utils';
-import { Toaster } from '@/components/ui/toaster';
+import { ExpEditorContext, Expression } from '@/components/expression-editor/utils';
 import React from 'react';
+import { Toaster } from 'sonner';
 
 
-interface PageProps {
-}
 
-const Page: React.FC<PageProps> = (props) => {
-    const [expression, setExpression] = React.useState<any>({
+const Page: React.FC = () => {
+    const [expression, setExpression] = React.useState<
+        Expression
+    >({
         name: 'IF',
         data: [],
         // todo: test metadata
@@ -47,7 +47,7 @@ const Page: React.FC<PageProps> = (props) => {
             <main className="px-6">
 
                 <div className="flex justify-start items-center p-6 h-full w-full overflow-x-scroll">
-                    <Toaster></Toaster>
+                    <Toaster />
 
                     <ExpressionEditor
                         expressionValue={expression}

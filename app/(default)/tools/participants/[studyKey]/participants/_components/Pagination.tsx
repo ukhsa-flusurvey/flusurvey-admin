@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 interface PaginationProps {
     className?: string;

@@ -4,6 +4,7 @@ export default function Page(props: {
         ruleId: string
     }
 }) {
+    console.log(props)
 
     return (
         <div>

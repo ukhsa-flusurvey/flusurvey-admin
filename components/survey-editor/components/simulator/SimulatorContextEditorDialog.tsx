@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export const SurveyContextEditorDialog: React.FC<{
     contextValues: ContextValues;
@@ -25,8 +25,8 @@ export const SurveyContextEditorDialog: React.FC<{
     }, [props.contextValues.participantFlags, props.isOpen]);
 
 
-    const errorDuplicate = new Set(keyValuePairs.map(([key, _]) => key)).size !== keyValuePairs.length;
-    const errorEmptyKey = keyValuePairs.some(([key, value]) => key.length === 0);
+    const errorDuplicate = new Set(keyValuePairs.map(([key]) => key)).size !== keyValuePairs.length;
+    const errorEmptyKey = keyValuePairs.some(([key]) => key.length === 0);
     const error = errorDuplicate || errorEmptyKey;
 
 
@@ -130,7 +130,7 @@ export const SurveyContextEditorDialog: React.FC<{
                     <Button
                         className='p-3'
                         variant='outline'
-                        disabled={keyValuePairs.some(([key, value]) => key.length === 0)}
+                        disabled={keyValuePairs.some(([key]) => key.length === 0)}
                         onClick={() => {
                             setKeyValuePairs((prev) => {
                                 prev.push(['', '']);

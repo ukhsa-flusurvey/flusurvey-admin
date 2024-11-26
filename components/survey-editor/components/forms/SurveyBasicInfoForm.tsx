@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect } from "react"
 import { SurveyContext } from "../../surveyContext"
 import { LocalizedString, Survey } from "survey-engine/data_types"
 import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
@@ -45,8 +45,8 @@ export function SurveyBasicInfoForm() {
 
     // Subscribe to changes in the form and save changes to survey debounced
     useEffect(() => {
-        let watcher = form.watch((values) => {
-            let hasChanges = JSON.stringify(values) != JSON.stringify(initialValues(survey, selectedLanguage))
+        const watcher = form.watch((values) => {
+            const hasChanges = JSON.stringify(values) != JSON.stringify(initialValues(survey, selectedLanguage))
             if (hasChanges) {
                 runDebounced(() => {
                     form.handleSubmit(onSubmit)();

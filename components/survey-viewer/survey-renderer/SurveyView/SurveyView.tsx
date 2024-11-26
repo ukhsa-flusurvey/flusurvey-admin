@@ -5,6 +5,7 @@ import { CustomSurveyResponseComponent } from '../SurveySingleItemView/ResponseC
 import SurveyPageView from './SurveyPageView/SurveyPageView';
 import SurveyProgress from './SurveyProgress/SurveyProgress';
 import { isFirefox } from 'react-device-detect';
+import { Locale } from 'date-fns';
 
 interface SurveyViewProps {
     instanceKey?: string;
@@ -23,7 +24,7 @@ interface SurveyViewProps {
     hideButtons?: boolean;
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
     showEngineDebugMsg?: boolean;
     // init with temporary loaded results
     // save temporary result

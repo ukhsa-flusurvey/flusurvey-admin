@@ -104,7 +104,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
         return response.items[0].key;
     }
 
-    const renderResponseOption = (option: ItemComponent, isLast: boolean): React.ReactNode => {
+    const renderResponseOption = (option: ItemComponent): React.ReactNode => {
         if (option.displayCondition === false) {
             return null;
         }
@@ -265,7 +265,7 @@ const SingleChoiceGroup: React.FC<SingleChoiceGroupProps> = (props) => {
         >
             {
                 (props.compDef as ItemGroupComponent).items.map(
-                    (option, index) => renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                    (option) => renderResponseOption(option)
                 )
             }
         </RadioGroup>

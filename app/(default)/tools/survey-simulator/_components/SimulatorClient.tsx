@@ -3,13 +3,10 @@
 import { SimulatorConfig } from '@/components/survey-editor/components/SurveySimulator';
 import SurveyView from '@/components/survey-viewer/survey-renderer/SurveyView/SurveyView';
 import { LoaderIcon } from 'lucide-react';
-import React, { Suspense, useEffect } from 'react';
-
-interface SimulatorClientProps {
-}
+import React, { useEffect } from 'react';
 
 
-const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
+const SimulatorClient: React.FC = () => {
     const [isMounted, setIsMounted] = React.useState(false);
     const [counter, setCounter] = React.useState(0);
 
@@ -76,7 +73,7 @@ const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
                     dateLocales={[]}
                     loading={false}
                     onResponsesChanged={(responses, version, surveyEngine) => {
-                        //console.log('responses changed', responses, version, surveyEngine);
+                        console.log('responses changed', responses, version, surveyEngine);
                         window.parent.postMessage({ type: 'response', data: JSON.stringify(responses) }, '*');
 
                     }}

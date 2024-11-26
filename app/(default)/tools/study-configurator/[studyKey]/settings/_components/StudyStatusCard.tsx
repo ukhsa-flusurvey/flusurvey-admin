@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import React from 'react';
 import StatusToggle from '../../_components/StatusToggle';
 import { getStudy } from '@/lib/data/studyAPI';

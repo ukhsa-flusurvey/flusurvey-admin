@@ -40,9 +40,9 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
                     toast.success('Survey uploaded successfully');
                     router.push(`/tools/study-configurator/${props.studyKey}/surveys/${newSurvey.surveyDefinition.key}`);
                 }
-                catch (e: any) {
-                    toast.error('Error uploading survey');
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    toast.error('Error uploading survey', { description: (e as Error).message });
+                    setErrorMsg((e as Error).message);
                 }
             })
         };

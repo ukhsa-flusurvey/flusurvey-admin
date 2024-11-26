@@ -215,7 +215,7 @@ const OptionsEditor = (props: {
             dragOverlayItem={(draggedId && draggedItem) ?
                 <OptionEditor
                     option={draggedItem}
-                    onChange={(newOption) => { }}
+                    onChange={() => { }}
                     onDelete={() => { }}
                 />
                 : null}
@@ -337,7 +337,7 @@ const RowEditor = (props: {
                                         const value = e.target.value;
                                         const updatedComponent = { ...props.row };
                                         const updatedContent = localisedObjectToMap(updatedComponent.content);
-                                        updatedContent.set(selectedLanguage, e.target.value);
+                                        updatedContent.set(selectedLanguage, value);
                                         updatedComponent.content = generateLocStrings(updatedContent);
                                         props.onChange(updatedComponent);
                                     }}
@@ -523,7 +523,7 @@ const RowsEditor = (props: {
             dragOverlayItem={(draggedId && draggedItem) ?
                 <RowEditor
                     row={draggedItem}
-                    onChange={(newRow) => { }}
+                    onChange={() => { }}
                     onDelete={() => { }}
                 />
                 : null}

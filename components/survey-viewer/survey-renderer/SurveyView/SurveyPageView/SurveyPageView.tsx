@@ -9,6 +9,7 @@ import { CustomSurveyResponseComponent } from '../../SurveySingleItemView/Respon
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Loader } from 'lucide-react';
+import { Locale } from 'date-fns';
 
 
 
@@ -36,7 +37,7 @@ interface SurveyPageViewProps {
     ignoreValidation?: boolean;
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
     hideButtons?: boolean;
 }
 
@@ -147,7 +148,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     id="submit"
                     color='primary'
                     className='text-lg font-semibold'
-                    onClick={(event) => {
+                    onClick={() => {
                         handleClickWithValidation(props.onSubmit)
                     }
                     }
@@ -172,7 +173,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     color='primary'
                     variant={'outline'}
                     className='text-lg font-semibold'
-                    onClick={(event) => {
+                    onClick={() => {
                         props.onPreviousPage()
                     }}
                     disabled={props.loading}
@@ -187,7 +188,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                 name="next"
                 color='primary'
                 className='text-lg font-semibold'
-                onClick={(event) => {
+                onClick={() => {
                     handleClickWithValidation(props.onNextPage)
                 }}
                 disabled={props.loading}

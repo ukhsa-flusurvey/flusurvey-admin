@@ -16,10 +16,6 @@ import { createStudy } from '@/actions/study/create';
 import { useRouter } from 'next/navigation';
 
 
-interface CreateStudyFormProps {
-}
-
-
 
 export const newStudySchema = z.object({
     studyKey: z.string().min(2).max(50).refine((studyKey) => {
@@ -31,7 +27,7 @@ export const newStudySchema = z.object({
     isSystemDefaultStudy: z.boolean()
 })
 
-const CreateStudyForm: React.FC<CreateStudyFormProps> = (props) => {
+const CreateStudyForm: React.FC = () => {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
