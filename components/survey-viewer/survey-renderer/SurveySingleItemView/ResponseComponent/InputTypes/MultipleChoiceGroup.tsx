@@ -149,7 +149,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return false;
     }
 
-    const renderResponseOption = (option: ItemComponent, isLast: boolean): React.ReactNode => {
+    const renderResponseOption = (option: ItemComponent): React.ReactNode => {
         if (option.displayCondition === false) {
             return null;
         }
@@ -157,7 +157,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         let labelComponent = <p>{'loading...'}</p>;
         const prefill = subResponseCache.find(r => r.key === option.key);
 
-        let arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
+        const arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
         if (isItemGroupComponent(option)) {
             switch (option.role) {
                 case 'option':
@@ -308,8 +308,8 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
             className='flex flex-col'
         >
             {
-                (props.compDef as ItemGroupComponent).items.map((option, index) =>
-                    renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                (props.compDef as ItemGroupComponent).items.map((option) =>
+                    renderResponseOption(option)
                 )
             }
         </div>

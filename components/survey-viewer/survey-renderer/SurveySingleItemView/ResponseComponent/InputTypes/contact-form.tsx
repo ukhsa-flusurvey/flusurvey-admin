@@ -14,8 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { ItemGroupComponent, ResponseItem } from 'survey-engine/data_types';
 
 
-interface ContactFormProps extends CommonResponseComponentProps {
-}
+type ContactFormProps = CommonResponseComponentProps
 
 interface FormFieldConfig {
     label: string;

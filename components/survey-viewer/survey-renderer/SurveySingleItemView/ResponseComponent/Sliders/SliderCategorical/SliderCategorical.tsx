@@ -1,84 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { ItemComponent, ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
+import React from 'react';
+import { ItemComponent, ResponseItem } from 'survey-engine/data_types';
 // import { Slider, Typography, Box } from '@material-ui/core';
-import { getLocaleStringTextByCode } from '../../../utils';
+// import { getLocaleStringTextByCode } from '../../../utils';
 
 interface SliderCategoricalProps {
-  compDef: ItemComponent;
-  prefill?: ResponseItem;
-  responseChanged: (response: ResponseItem | undefined) => void;
-  languageCode: string;
+    compDef: ItemComponent;
+    prefill?: ResponseItem;
+    responseChanged: (response: ResponseItem | undefined) => void;
+    languageCode: string;
 }
 
 
 const SliderCategorical: React.FC<SliderCategoricalProps> = (props) => {
-  const groupDef = (props.compDef as ItemGroupComponent);
+    return (
+        <p>not implemented {props.compDef.key}</p>
+    );
+    // const groupDef = (props.compDef as ItemGroupComponent);
 
-  const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
-  const [touched, setTouched] = useState(false);
+    /* const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
+    const [touched, setTouched] = useState(false);
+ */
+    /* const [selectedIndex, setSelectedIndex] = useState<number>(
+      props.prefill && props.prefill.items && props.prefill.items.length > 0 ? groupDef.items.findIndex(item => {
+        if (!props.prefill || !props.prefill.items) {
+          return -1;
+        }
+        return item.key === props.prefill.items[0].key;
+      }) : -1
+    ); */
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(
-    props.prefill && props.prefill.items && props.prefill.items.length > 0 ? groupDef.items.findIndex(item => {
-      if (!props.prefill || !props.prefill.items) {
-        return -1;
+    /*  useEffect(() => {
+         if (touched) {
+             const timer = setTimeout(() => {
+                 props.responseChanged(response);
+             }, 200);
+             return () => clearTimeout(timer);
+         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
+     }, [response]); */
+
+    /* const handleSliderChange = (key: string | undefined) => (event: any, newValue: number | number[]) => {
+      if (!key) { return; }
+      setTouched(true);
+      const currentIndex = newValue as number;
+      if (currentIndex < 0 || currentIndex >= groupDef.items.length) {
+        return;
       }
-      return item.key === props.prefill.items[0].key;
-    }) : -1
-  );
+      const currentSelection = groupDef.items[currentIndex];
+      setSelectedIndex(currentIndex);
 
-  useEffect(() => {
-    if (touched) {
-      const timer = setTimeout(() => {
-        props.responseChanged(response);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [response]);
+      setResponse(prev => {
+        if (!currentSelection || !currentSelection.key) {
+          return prev;
+        }
 
-  const handleSliderChange = (key: string | undefined) => (event: any, newValue: number | number[]) => {
-    if (!key) { return; }
-    setTouched(true);
-    const currentIndex = newValue as number;
-    if (currentIndex < 0 || currentIndex >= groupDef.items.length) {
-      return;
-    }
-    const currentSelection = groupDef.items[currentIndex];
-    setSelectedIndex(currentIndex);
-
-    setResponse(prev => {
-      if (!currentSelection || !currentSelection.key) {
-        return prev;
-      }
-
-      if (!prev) {
+        if (!prev) {
+          return {
+            key: props.compDef.key ? props.compDef.key : 'no key found',
+            items: [
+              { key: currentSelection.key }
+            ]
+          }
+        }
         return {
-          key: props.compDef.key ? props.compDef.key : 'no key found',
+          ...prev,
           items: [
             { key: currentSelection.key }
           ]
         }
-      }
+      })
+    };
+
+   */
+    /* const marks = groupDef.items.map((v, index) => {
       return {
-        ...prev,
-        items: [
-          { key: currentSelection.key }
-        ]
+        value: index,
+        label: getLocaleStringTextByCode(v.content, props.languageCode)
       }
-    })
-  };
-
-
-  const marks = groupDef.items.map((v, index) => {
-    return {
-      value: index,
-      label: getLocaleStringTextByCode(v.content, props.languageCode)
-    }
-  });
-
-  return (
-    <p>not implemented</p>
-  );
+    });
+   */
+    return (
+        <p>not implemented</p>
+    );
 };
 
 export default SliderCategorical;

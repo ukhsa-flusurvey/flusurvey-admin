@@ -6,10 +6,9 @@ import { CommonResponseComponentProps, getClassName } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
+import { Locale } from 'date-fns';
 
-interface ResponsiveSingleChoiceArrayProps extends CommonResponseComponentProps {
-
-}
+type ResponsiveSingleChoiceArrayProps = CommonResponseComponentProps
 
 interface VerticalModeOptionProps {
     slotFullKey: string;
@@ -20,7 +19,7 @@ interface VerticalModeOptionProps {
     isChecked: boolean;
     languageCode: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    dateLocales: Array<{ code: string, locale: any, format: string }>
+    dateLocales: Array<{ code: string, locale: Locale, format: string }>
 }
 
 const VerticalModeOption: React.FC<VerticalModeOptionProps> = (props) => {
@@ -159,7 +158,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
         return <ul
             className='flex flex-col divide-y divide-[--survey-card-table-border-color]'
         >
-            {rows.map((item, index) => {
+            {rows.map((item) => {
                 if (item.displayCondition === false) {
                     return null;
                 }
