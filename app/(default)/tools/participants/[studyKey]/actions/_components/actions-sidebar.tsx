@@ -22,6 +22,10 @@ const ActionsSidebar: React.FC<ActionsSidebarProps> = (props) => {
             label: 'On previous responses',
             href: `/tools/participants/${props.studyKey}/actions/on-responses`,
         },
+        {
+            label: 'Schedule message',
+            href: `/tools/participants/${props.studyKey}/actions/schedule-message`,
+        }
     ];
 
 
