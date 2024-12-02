@@ -15,6 +15,9 @@ interface ServiceAccountPermissionsProps {
 }
 
 const ServiceAccountPermissions: React.FC<ServiceAccountPermissionsProps> = (props) => {
+
+    const hasPermissions = props.permissions?.length > 0;
+
     return (
         <Card
             variant={"opaque"}
@@ -29,7 +32,7 @@ const ServiceAccountPermissions: React.FC<ServiceAccountPermissionsProps> = (pro
 
                 {(!props.error && !props.permissions) && <p className='text-center font-bold'>This service account has no permissions.</p>}
 
-                <Table className='bg-white rounded-lg overflow-hidden'>
+                {hasPermissions && <Table className='bg-white rounded-lg overflow-hidden'>
                     <TableHeader>
                         <TableRow className='bg-slate-50'>
                             <TableHead>Resource</TableHead>
@@ -70,7 +73,7 @@ const ServiceAccountPermissions: React.FC<ServiceAccountPermissionsProps> = (pro
                         ))}
 
                     </TableBody>
-                </Table>
+                </Table>}
 
                 <AddPermissionDialog
                     userId={props.serviceAccountID}
