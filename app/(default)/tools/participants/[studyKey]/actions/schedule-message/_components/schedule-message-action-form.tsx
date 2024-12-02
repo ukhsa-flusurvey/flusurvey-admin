@@ -5,7 +5,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { EmailTemplate } from '@/utils/server/types/messaging';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addDays, format } from 'date-fns';
@@ -16,12 +15,15 @@ import { Expression } from 'survey-engine/data_types';
 import { z } from "zod"
 import TaskRunner from './task-runner';
 import { StudyEngine } from 'case-editor-tools/expression-utils/studyEngineExpressions';
+import ParticipantInfoUploader, { participantInfoSchema } from './participant-info-uploader';
+
+
 
 const scheduleMessageActionSchema = z.object({
     studyKey: z.string().min(2).max(50),
     messageType: z.string().min(2, 'template type is required').max(50),
     scheduledFor: z.date(),
-    participantIDs: z.array(z.string()).min(1),
+    participantInfos: participantInfoSchema
 })
 
 interface ScheduleMessageActionFormProps {
@@ -50,27 +52,54 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             messageType: "",
             scheduledFor: new Date(),
             studyKey: props.studyKey,
-            participantIDs: [],
+            participantInfos: [],
         },
     })
 
     function onSubmit(values: z.infer<typeof scheduleMessageActionSchema>) {
 
         startTransition(() => {
-            const rules = [StudyEngine.participantActions.messages.add(
-                values.messageType,
-                Math.floor(values.scheduledFor.getTime() / 1000),
-            )]
-            const newTasks = values.participantIDs.filter(
-                id => id.length > 0
-            ).map(participantID => {
-                return {
+            const newTasks: Array<{
+                participantID: string;
+                rules: Expression[];
+                studyKey: string;
+                messageType: string;
+            }> = [];
+            for (const pInfos of values.participantInfos) {
+                const participantID = pInfos['participantID'];
+                if (!participantID) {
+                    continue;
+                }
+
+                const rules = [
+                    StudyEngine.participantActions.messages.add(
+                        values.messageType,
+                        Math.floor(values.scheduledFor.getTime() / 1000),
+                    ),
+                ]
+
+                for (const key in pInfos) {
+                    if (key === 'participantID') {
+                        continue;
+                    }
+                    if (!pInfos[key]) {
+                        continue;
+                    }
+                    rules.push(
+                        StudyEngine.participantActions.updateFlag(
+                            key,
+                            pInfos[key]
+                        )
+                    );
+                }
+
+                newTasks.push({
                     participantID,
                     rules,
                     studyKey: values.studyKey,
                     messageType: values.messageType,
-                }
-            })
+                })
+            }
             setTaskToRun(prev => {
                 return [...prev, ...newTasks]
             })
@@ -83,7 +112,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             <Alert className="">
                 <Info className="size-4" />
                 <AlertDescription>
-                    Use this form to schedule a message to be sent to the participants.
+                    {'Use this form to schedule a message to be sent to the participants. Use the CSV file to upload the participant IDs and their information. The CSV file should have a header row with the column names. One of the columns must be "participantID". All other columns will be added as flags to the participant.'}
 
                 </AlertDescription>
             </Alert>
@@ -121,32 +150,6 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
 
                     <FormField
                         control={form.control}
-                        name="participantIDs"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Participant IDs</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        rows={8}
-                                        name="participantIDs"
-                                        value={field.value.join('\n')}
-                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                                            const value = e.target.value;
-                                            const newValue = value.split('\n');
-                                            field.onChange(newValue);
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the participant IDs to send the message to.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
                         name="scheduledFor"
                         render={({ field }) => (
                             <FormItem>
@@ -172,7 +175,21 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                         )}
                     />
 
-
+                    <FormField
+                        control={form.control}
+                        name="participantInfos"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <ParticipantInfoUploader
+                                        values={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <LoadingButton
                         type="submit"
