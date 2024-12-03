@@ -16,7 +16,7 @@ interface ServiceAccountPermissionsProps {
 
 const ServiceAccountPermissions: React.FC<ServiceAccountPermissionsProps> = (props) => {
 
-    const hasPermissions = props.permissions?.length > 0;
+    const hasPermissions = props.permissions && props.permissions.length > 0;
 
     return (
         <Card
