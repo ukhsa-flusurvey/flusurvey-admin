@@ -22,6 +22,7 @@ interface FormFieldConfig {
     pattern?: string;
     error: string;
     description?: string;
+    optionItems?: Array<{ key: string, label: string }>;
 }
 
 interface ContactValues {
@@ -34,6 +35,7 @@ interface ContactValues {
         street2: string;
         city: string;
         postalCode: string;
+        country?: string;
     };
 }
 
@@ -58,6 +60,7 @@ interface ContactFormDialogProps {
             street2: FormFieldConfig;
             city: FormFieldConfig;
             postalCode: FormFieldConfig;
+            country?: FormFieldConfig;
         };
     }
     values?: ContactValues;
@@ -72,6 +75,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
     const useEmail = props.fieldConfig.email !== undefined;
     const usePhone = props.fieldConfig.phone !== undefined;
     const useAddress = props.fieldConfig.address !== undefined;
+    const useCountry = props.fieldConfig.address?.country !== undefined;
 
     const formSchema = z.object({
         fullName: useFullName ? z.string().refine((value) => {
@@ -114,7 +118,12 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                 return new RegExp(props.fieldConfig.address?.postalCode.pattern || '').test(postalCode);
             }, {
                 message: props.fieldConfig.address?.postalCode.error
-            })
+            }),
+            country: useCountry ? z.string().refine((value) => {
+                return new RegExp(props.fieldConfig.address?.country?.pattern || '').test(value)
+            }, {
+                message: props.fieldConfig.address?.country?.error
+            }) : z.any().optional(),
         }) : z.any().optional(),
     });
 
@@ -130,6 +139,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                 street2: '',
                 city: '',
                 postalCode: '',
+                country: '',
             }
         },
     })
@@ -145,6 +155,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                 street2: values.address?.street2 || '',
                 city: values.address?.city || '',
                 postalCode: values.address?.postalCode || '',
+                country: values.address?.country || '',
             }
         });
         setIsOpen(false);
@@ -368,6 +379,38 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                                     )}
                                 />
                             </div>
+
+                            {useCountry && <div className='space-y-1'>
+                                <FormField
+                                    control={form.control}
+                                    name="address.country"
+                                    render={({ field }) => (
+                                        <FormItem className='flex flex-col'>
+                                            <FormLabel>
+                                                {props.fieldConfig.address?.country?.label}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <>
+                                                    <Input
+                                                        placeholder={props.fieldConfig.address?.country?.placeholder}
+                                                        autoComplete='country-name'
+                                                        list='country-list'
+                                                        {...field} />
+                                                    <datalist id="country-list">
+                                                        {props.fieldConfig.address?.country?.optionItems?.map(item => (
+                                                            <option key={item.key} value={item.label}>{item.label}</option>
+                                                        ))}
+                                                    </datalist>
+                                                </>
+                                            </FormControl>
+                                            <FormDescription>
+                                                {props.fieldConfig.address?.country?.description}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>}
                         </div>}
 
                         <DialogFooter
@@ -450,6 +493,9 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
     const street2Comp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'street2');
     const cityComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'city');
     const postalCodeComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'postalCode');
+    const countryComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'country');
+
+    const useCountry = countryComp !== undefined;
 
 
     const contactValues = {
@@ -462,6 +508,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
             street2: getResponseValue(response, 'street2') || '',
             city: getResponseValue(response, 'city') || '',
             postalCode: getResponseValue(response, 'postalCode') || '',
+            country: getResponseValue(response, 'country') || '',
         },
     }
 
@@ -522,8 +569,12 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                     <p className='flex flex-col'>
                         <span>{contactValues.address?.street}</span>
                         <span>{contactValues.address?.street2}</span>
-                        <span>{contactValues.address?.city}</span>
-                        <span>{contactValues.address?.postalCode}</span>
+                        <span className='flex items-center gap-1'>
+                            <span>{contactValues.address?.postalCode}</span>
+                            <span>{contactValues.address?.city}</span>
+                        </span>
+                        <span>{contactValues.address?.country}</span>
+
                     </p>
                 </div>}
             </div>
@@ -568,6 +619,10 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                             {
                                 key: 'postalCode',
                                 value: newValues.address?.postalCode || ''
+                            },
+                            {
+                                key: 'country',
+                                value: useCountry ? newValues.address?.country || '' : ''
                             }
                         ];
 
@@ -652,6 +707,17 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                             error: getLocaleStringTextByCode((postalCodeComp as ItemGroupComponent).items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
                             description: getLocaleStringTextByCode((postalCodeComp as ItemGroupComponent).items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
                         },
+                        country: useCountry ? {
+                            label: getLocaleStringTextByCode(countryComp?.content, props.languageCode) || '',
+                            placeholder: getLocaleStringTextByCode(countryComp?.description, props.languageCode) || '',
+                            pattern: countryComp?.properties?.pattern,
+                            error: getLocaleStringTextByCode((countryComp as ItemGroupComponent)?.items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
+                            description: getLocaleStringTextByCode((countryComp as ItemGroupComponent)?.items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
+                            optionItems: ((countryComp as ItemGroupComponent)?.items?.find(item => item.role === 'optionItems') as ItemGroupComponent)?.items?.map((item, index) => ({
+                                key: item.key || index.toString(),
+                                label: getLocaleStringTextByCode(item.content, props.languageCode) || ''
+                            }))
+                        } : undefined,
                     } : undefined,
                 }}
             />
