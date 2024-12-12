@@ -78,8 +78,8 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                 toast.success('Permission added successfully');
                 form.reset()
                 setEditorOpen(false)
-            } catch (error) {
-                toast.error('Failed to add permission');
+            } catch (error: unknown) {
+                toast.error('Failed to add permission', { description: (error as Error).message });
             }
         });
     }

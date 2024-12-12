@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
@@ -21,8 +22,11 @@ const SimpleFieldConfigs: React.FC<{
     component: ItemGroupComponent | undefined;
     onChange: (newComp: ItemComponent | undefined) => void;
     hideToggle?: boolean;
+    allowOptionItems?: boolean;
 }> = (props) => {
     const isUsed = props.component !== undefined;
+
+    const optionItems = props.component?.items?.find(item => item.role === 'optionItems') as ItemGroupComponent;
 
     return (<div className='p-2 border border-border rounded-md space-y-2'>
         <p className='font-semibold text-sm '>
@@ -197,6 +201,84 @@ const SimpleFieldConfigs: React.FC<{
                     placeholder='Error message...'
                 />
             </div>
+
+            {props.allowOptionItems && <div className='space-y-1.5'>
+                <Label
+                    htmlFor={`${props.id}-datalist`}
+                >
+                    Option/Suggestion list (optional)
+                </Label>
+                <Textarea
+                    id={`${props.id}-datalist`}
+                    value={optionItems?.items?.map(item => localisedObjectToMap(item.content).get(props.selectedLanguage) || '').join('\n') || ''}
+                    placeholder='Enter option list...'
+                    onChange={(e) => {
+                        if (!props.component) {
+                            return;
+                        }
+                        const newOptionItems: ItemComponent[] = [];
+
+                        if (e.target.value.length === 0) {
+                            props.component.items = props.component.items.filter(item => item.role !== 'optionItems');
+                            props.onChange(props.component);
+                            return;
+                        }
+
+
+                        const lines = e.target.value.split('\n');
+                        if (optionItems?.items) {
+                            optionItems.items.slice(0, lines.length).forEach((item, index) => {
+                                const line = lines[index];
+
+                                const updatedContent = localisedObjectToMap(item.content);
+                                updatedContent.set(props.selectedLanguage, line);
+                                item.content = generateLocStrings(updatedContent);
+
+                                newOptionItems.push(item);
+                            });
+                        }
+
+                        if (lines.length > newOptionItems.length || 0) {
+                            const newItems = lines.slice(optionItems?.items?.length || 0).map((line, index) => {
+                                const newItem: ItemComponent = {
+                                    key: (newOptionItems.length + index).toString(),
+                                    role: 'optionItem',
+                                    content: generateLocStrings(new Map([[props.selectedLanguage, line]]))
+                                }
+                                return newItem;
+                            });
+                            newOptionItems.push(...newItems);
+                        }
+
+                        let comp = props.component?.items?.find(item => item.role === 'optionItems');
+                        if (props.component?.items === undefined) {
+                            props.component.items = [];
+                        }
+                        if (!comp) {
+                            comp = {
+                                key: 'optionItems',
+                                role: 'optionItems',
+                                items: newOptionItems,
+                            };
+                            props.component.items = [...props.component.items, comp];
+
+                        } else {
+                            props.component.items.map(item => {
+                                if (item.role === 'optionItems') {
+                                    (comp as ItemGroupComponent).items = newOptionItems;
+                                    return comp;
+                                }
+                                return item;
+                            });
+                        }
+                        props.onChange(props.component);
+                    }}
+                />
+                <span className='text-xs text-muted-foreground'>
+                    One option per line.
+                </span>
+            </div>
+            }
         </div>
         }
     </div>
@@ -289,7 +371,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
         const street2Comp = currentAddressComp?.items.find(item => item.role === 'street2');
         const cityComp = currentAddressComp?.items.find(item => item.role === 'city');
         const postalCodeComp = currentAddressComp?.items.find(item => item.role === 'postalCode');
-
+        const countryComp = currentAddressComp?.items.find(item => item.role === 'country');
 
         return <div className='space-y-4 p-2 border border-border rounded-md'>
             <p className='font-semibold text-sm '>
@@ -444,6 +526,26 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                     fieldName='Postal code'
                     selectedLanguage={selectedLanguage}
                     hideToggle={true}
+                />
+
+                <SimpleFieldConfigs
+                    component={countryComp as ItemGroupComponent}
+                    onChange={(newComp) => {
+                        currentAddressComp.items = currentAddressComp.items.filter(item => item.role !== 'country');
+                        if (!newComp) {
+                            onChange(currentAddressComp);
+                            return;
+                        }
+                        currentAddressComp.items.push(
+                            newComp
+                        );
+
+                        onChange(currentAddressComp);
+                    }}
+                    id='country'
+                    fieldName='Country'
+                    selectedLanguage={selectedLanguage}
+                    allowOptionItems={true}
                 />
             </>}
         </div>

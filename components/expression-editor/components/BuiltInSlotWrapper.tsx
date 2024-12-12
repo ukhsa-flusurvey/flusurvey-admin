@@ -3,7 +3,7 @@ import SlotLabel from './SlotLabel';
 import Block from './Block';
 import BlockHeader from './BlockHeader';
 import { ColorVariant, IconVariant } from '../utils';
-import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
+import { ContextMenuItem } from '@/components/ui/context-menu';
 import { X } from 'lucide-react';
 
 interface BuiltInSlotWrapperProps {

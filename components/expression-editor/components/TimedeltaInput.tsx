@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SlotDef, SlotInputDefSimple } from '../utils';
 import BuiltInSlotWrapper from './BuiltInSlotWrapper';
 import { Input } from '@/components/ui/input';

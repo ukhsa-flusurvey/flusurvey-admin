@@ -6,7 +6,7 @@ interface ActionExpressionPickerProps {
     onChange: (newExpression?: Expression[]) => void;
 }
 
-const checkIfValidCustomStudyRules = (rules: any): boolean => {
+const checkIfValidCustomStudyRules = (rules: unknown): boolean => {
     if (!Array.isArray(rules)) {
         return false;
     }

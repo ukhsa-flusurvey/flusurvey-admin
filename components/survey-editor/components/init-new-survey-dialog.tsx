@@ -21,7 +21,7 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
 
     const onCreateNewSurvey = () => {
         if (!surveyKey) return;
-        let newSurvey = {
+        const newSurvey = {
             availableFor: 'active_participants',
             surveyDefinition: {
                 key: surveyKey,

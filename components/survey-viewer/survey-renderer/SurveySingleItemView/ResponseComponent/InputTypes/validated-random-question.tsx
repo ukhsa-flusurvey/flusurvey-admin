@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-interface ValidatedRandomQuestionProps extends CommonResponseComponentProps {
-}
+type ValidatedRandomQuestionProps = CommonResponseComponentProps
 
 const getRandomQuestionIndex = (except: number, numberOfQuestions: number): number => {
     let index: number = Math.floor(Math.random() * numberOfQuestions);

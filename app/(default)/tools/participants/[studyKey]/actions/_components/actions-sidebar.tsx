@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -23,6 +22,10 @@ const ActionsSidebar: React.FC<ActionsSidebarProps> = (props) => {
             label: 'On previous responses',
             href: `/tools/participants/${props.studyKey}/actions/on-responses`,
         },
+        {
+            label: 'Schedule message',
+            href: `/tools/participants/${props.studyKey}/actions/schedule-message`,
+        }
     ];
 
 

@@ -30,8 +30,8 @@ const StudyDeletionDialog = ({ studyKey }: { studyKey: string }) => {
                 await deleteStudyAction(studyKey);
                 router.refresh();
                 router.replace('/tools/study-configurator');
-            } catch (error: any) {
-                setError(`failed to delete study: ${error.message}`);
+            } catch (error: unknown) {
+                setError(`failed to delete study: ${(error as Error).message}`);
                 console.error(error);
             }
         })

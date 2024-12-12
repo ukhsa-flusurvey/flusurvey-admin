@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ItemComponent, ResponseItem, ItemGroupComponent, isItemGroupComponent } from 'survey-engine/data_types';
+import { ItemComponent, ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
 import { CommonResponseComponentProps, getLocaleStringTextByCode } from '../../utils';
 import TextInput from './TextInput';
 import clsx from 'clsx';
@@ -12,7 +12,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
 import DateInput from '../DateInput/DateInput';
-import { set } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 
@@ -63,7 +62,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 }
                 setResponse(prev => {
                     if (prev && prev.items) {
-                        let newItems = prev.items.map((item) => item.key === key ? newRI : item);
+                        const newItems = prev.items.map((item) => item.key === key ? newRI : item);
                         if (!newItems.some(i => i.key === key)) {
                             newItems.push(newRI);
                         }
@@ -81,7 +80,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
             } else {
                 setResponse(prev => {
                     if (prev && prev.items) {
-                        let newItems = prev.items.filter(i => i.key !== key);
+                        const newItems = prev.items.filter(i => i.key !== key);
                         return newItems.length > 0 ? { ...prev, items: newItems } : undefined;
                     } else {
                         return undefined;
@@ -159,7 +158,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return response.items[0].key;
     }
 
-    const renderResponseOption = (option: ItemComponent, isLast: boolean): React.ReactNode => {
+    const renderResponseOption = (option: ItemComponent): React.ReactNode => {
         if (option.displayCondition === false) {
             return null;
         }
@@ -167,7 +166,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         let labelComponent = <p>{'loading...'}</p>;
         const prefill = subResponseCache.find(r => r.key === option.key);
 
-        let arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
+        const arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
         switch (option.role) {
             case ChoiceResponseOptionType.DisplayText:
                 return <TextViewComponent
@@ -347,7 +346,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
             >
                 {
                     (props.compDef as ItemGroupComponent).items.map(
-                        (option, index) => renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                        (option) => renderResponseOption(option)
                     )
                 }
             </RadioGroup>
@@ -360,8 +359,8 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 className='flex flex-col'
             >
                 {
-                    (props.compDef as ItemGroupComponent).items.map((option, index) =>
-                        renderResponseOption(option, (props.compDef as ItemGroupComponent).items.length - 1 === index)
+                    (props.compDef as ItemGroupComponent).items.map((option) =>
+                        renderResponseOption(option)
                     )
                 }
             </div>

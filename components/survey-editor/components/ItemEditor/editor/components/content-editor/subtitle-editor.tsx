@@ -78,7 +78,7 @@ const SimpleSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
 }
 
 const AdvancedSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
-    let subtitleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'subtitle');
+    const subtitleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'subtitle');
     if (subtitleComponentIndex === undefined || subtitleComponentIndex === -1) {
         return null;
     }
@@ -122,7 +122,7 @@ const AdvancedSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
 }
 
 const determineAdvancedMode = (item: SurveySingleItem) => {
-    let componentIndex = item.components?.items.findIndex(comp => comp.role === 'subtitle');
+    const componentIndex = item.components?.items.findIndex(comp => comp.role === 'subtitle');
     if (componentIndex === undefined || componentIndex === -1) {
         return false;
     }
@@ -154,7 +154,7 @@ const SubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
         }
 
 
-        let subtitleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'subtitle');
+        const subtitleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'subtitle');
         const existingComponents = props.surveyItem.components?.items || [];
         if (subtitleComponentIndex === undefined || subtitleComponentIndex === -1) {
             // add a new title component

@@ -161,7 +161,7 @@ const ParticipantFilesClient: React.FC<ParticipantFilesClientProps> = (props) =>
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
                 <ul className='p-4 space-y-4'>
-                    {fileInfos.map((fileInfo, index) => {
+                    {fileInfos.map((fileInfo) => {
                         return (<li key={fileInfo.id}
                             className='p-4 bg-white rounded-md border border-neutral-300 flex gap-4 items-center'
                         >

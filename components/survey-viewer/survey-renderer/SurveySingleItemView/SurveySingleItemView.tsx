@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { SurveySingleItem, ItemGroupComponent, ResponseItem, ItemComponent, isItemGroupComponent } from 'survey-engine/data_types';
-import { filterForBodyComponents, findBottomComponents, findResponseComponents, findTopComponents, getClassName, getItemComponentByRole, getItemComponentsByRole, getLocaleStringTextByCode } from './utils';
+import { SurveySingleItem, ItemGroupComponent, ResponseItem, ItemComponent } from 'survey-engine/data_types';
+import { filterForBodyComponents, findBottomComponents, findResponseComponents, findTopComponents, getClassName, getItemComponentByRole, getItemComponentsByRole } from './utils';
 import HelpGroup from './SurveyComponents/HelpGroup';
 import TextViewComponent from './SurveyComponents/TextViewComponent';
 import ErrorComponent from './SurveyComponents/ErrorComponent';
@@ -11,6 +11,7 @@ import BulletList from './SurveyComponents/BulletList';
 import MarkdownComponent from './SurveyComponents/MarkdownComponent';
 import { renderFormattedContent } from './renderUtils';
 import { cn } from '@/lib/utils';
+import { Locale } from 'date-fns';
 
 interface SurveySingleItemViewProps {
     renderItem: SurveySingleItem;
@@ -21,7 +22,7 @@ interface SurveySingleItemViewProps {
     invalidWarning: string;
     showKeys?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
 }
 
 const ItemBodyComponent: React.FC<{
@@ -34,7 +35,7 @@ const ItemBodyComponent: React.FC<{
     responsePrefill?: ResponseItem;
     requiredItem?: boolean;
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
-    dateLocales?: Array<{ code: string, locale: any, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
     setTouched: (touched: boolean) => void;
     setResponse: (response: ResponseItem | undefined) => void;
 }> = (props) => {

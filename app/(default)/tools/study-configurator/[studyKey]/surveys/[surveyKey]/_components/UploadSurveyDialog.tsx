@@ -47,8 +47,8 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
                         dialogCloseRef.current.click();
                     }
                 }
-                catch (e: any) {
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    setErrorMsg((e as Error).message);
                     console.error(e);
                 }
             })

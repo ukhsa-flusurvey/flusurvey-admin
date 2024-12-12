@@ -1,5 +1,5 @@
 import { ItemComponent, LocalizedString, LocalizedObject, ResponseItem } from "survey-engine/data_types";
-import { format } from 'date-fns';
+import { Locale, format } from 'date-fns';
 
 
 export interface CommonResponseComponentProps {
@@ -11,7 +11,7 @@ export interface CommonResponseComponentProps {
     showOptionKey?: boolean;
     disabled?: boolean;
     showErrors?: boolean;
-    dateLocales: Array<{ code: string, locale: any, format: string }>;
+    dateLocales: Array<{ code: string, locale: Locale, format: string }>;
 }
 
 export const getItemComponentTranslationByRole = (components: Array<ItemComponent>, role: string, code: string): string | null => {
@@ -39,7 +39,7 @@ export const getLocaleStringTextByCode = (translations: LocalizedObject[] | unde
     return translation.resolvedText;
 }
 
-export const getLocaleStringDateByCode = (translations: LocalizedObject[] | undefined, code: string, dateFormat: string, dateLocales?: Array<{ code: string, locale: any, format: string }>): string | undefined => {
+export const getLocaleStringDateByCode = (translations: LocalizedObject[] | undefined, code: string, dateFormat: string, dateLocales?: Array<{ code: string, locale: Locale, format: string }>): string | undefined => {
     if (!translations) { return; }
     let translation = (translations.find(cont => cont.code === code) as LocalizedString);
     if (!translation) {

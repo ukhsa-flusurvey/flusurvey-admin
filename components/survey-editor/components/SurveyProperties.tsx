@@ -4,10 +4,8 @@ import { SidebarNav } from './general/sidebar-nav';
 import { SurveyBasicInfoForm } from './forms/SurveyBasicInfoForm';
 import { SurveyAccessForm } from './forms/SurveyAccessForm';
 
-interface SurveyPropertiesProps {
-}
 
-const SurveyProperties: React.FC<SurveyPropertiesProps> = (props) => {
+const SurveyProperties: React.FC = () => {
     const [formIndex, setFormIndex] = useState(0);
 
     const formItems = [

@@ -45,9 +45,9 @@ const SurveyVersionMenu: React.FC<SurveyVersionMenuProps> = (props) => {
                 document.body.appendChild(element);
                 element.click();
                 toast.success('Survey downloaded successfully');
-            } catch (e: any) {
+            } catch (e: unknown) {
                 console.error(e);
-                toast.error('Error downloading survey');
+                toast.error('Error downloading survey', { description: (e as Error).message });
             }
         })
     }
@@ -67,9 +67,9 @@ const SurveyVersionMenu: React.FC<SurveyVersionMenuProps> = (props) => {
                     return;
                 }
                 toast.success('Survey deleted successfully');
-            } catch (e: any) {
+            } catch (e: unknown) {
                 console.error(e);
-                toast.error('Error deleting survey');
+                toast.error('Error deleting survey', { description: (e as Error).message });
             }
         })
     }

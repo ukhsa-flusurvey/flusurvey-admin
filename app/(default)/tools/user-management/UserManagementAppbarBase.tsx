@@ -2,10 +2,8 @@ import AppbarBaseForTools from '@/components/navbar/AppbarBaseForTools';
 import UserManagementIcon from '@/components/tool-icons/UserManagementIcon';
 import React from 'react';
 
-interface UserManagementAppbarBaseProps {
-}
 
-const UserManagementAppbarBase: React.FC<UserManagementAppbarBaseProps> = (props) => {
+const UserManagementAppbarBase: React.FC = () => {
     return (
         <AppbarBaseForTools
             toolName='User Management'

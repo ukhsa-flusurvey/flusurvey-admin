@@ -1,4 +1,4 @@
-import { Expression as CaseExpression, ExpressionArg as CaseExpressionArg } from 'survey-engine/data_types';
+import { ExpressionArg as CaseExpressionArg } from 'survey-engine/data_types';
 
 export interface Expression {
     name: string;
@@ -9,10 +9,7 @@ export interface Expression {
     }
 }
 
-export interface ExpressionArg extends CaseExpressionArg {
-
-}
-
+export type ExpressionArg = CaseExpressionArg
 
 type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean';
 

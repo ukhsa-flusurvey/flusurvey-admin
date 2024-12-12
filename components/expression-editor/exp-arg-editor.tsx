@@ -9,7 +9,6 @@ import SlotFormEditor from './slots/SlotFormEditor';
 import { Expression as CaseExpression } from 'survey-engine/data_types';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { useClipboardValue } from '@/hooks/useClipboardValue';
 import { Copy, X } from 'lucide-react';
 import ExpressionPreview from './slots/ExpressionPreview';
 import Block from './components/Block';
@@ -41,8 +40,8 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     slotDef,
     ...props
 }) => {
-    const [copiedText, copy] = useCopyToClipboard();
-    const [clipboardValue, readClipboard] = useClipboardValue();
+    const [, copy] = useCopyToClipboard();
+
 
     const isListSlot = slotDef.isListSlot || false;
 

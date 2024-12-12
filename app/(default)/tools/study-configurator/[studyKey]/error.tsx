@@ -3,10 +3,8 @@
 import ErrorAlert from '@/components/ErrorAlert';
 import React from 'react';
 
-interface ErrorProps {
-}
 
-const Error: React.FC<ErrorProps> = (props) => {
+const Error: React.FC = () => {
     return (
         <div className='p-6'>
             <ErrorAlert

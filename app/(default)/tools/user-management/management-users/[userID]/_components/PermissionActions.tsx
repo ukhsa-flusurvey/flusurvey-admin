@@ -8,10 +8,13 @@ import { BeatLoader } from 'react-spinners';
 import { toast } from 'sonner';
 import UpdatePermissionLimiterDialog from './UpdatePermissionLimiterDialog';
 import { getIfHideLimiter } from './AddPermissionDialog';
+import { ManagementUserPermission } from '@/lib/data/userManagementAPI';
+import { deletePermissionForServiceAccount } from '@/lib/data/service-accounts';
 
 interface PermissionActionsProps {
     userId: string;
-    permission: any;
+    permission: ManagementUserPermission;
+    userType?: 'service-account' | 'management-user';
 }
 
 const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
@@ -20,12 +23,22 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
     const handleOnDelete = () => {
         if (confirm('Are you sure you want to delete this permission?')) {
             startTransition(async () => {
-                const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
-                if (resp.error) {
-                    toast.error(resp.error);
+                if (props.userType === 'service-account') {
+                    const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
+                    if (resp.error) {
+                        toast.error(resp.error);
+                        return;
+                    }
+                    toast.success('Permission deleted');
                     return;
+                } else {
+                    const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
+                    if (resp.error) {
+                        toast.error(resp.error);
+                        return;
+                    }
+                    toast.success('Permission deleted');
                 }
-                toast.success('Permission deleted');
             });
         }
     }

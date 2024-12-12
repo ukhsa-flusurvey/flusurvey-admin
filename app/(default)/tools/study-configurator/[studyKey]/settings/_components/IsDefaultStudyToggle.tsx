@@ -30,8 +30,8 @@ const IsDefaultStudyToggle: React.FC<IsDefaultStudyToggleProps> = (props) => {
                                 return;
                             }
                             toast.success('Study updated');
-                        } catch (error) {
-                            toast.error('An error occurred');
+                        } catch (error: unknown) {
+                            toast.error('An error occurred', { description: (error as Error).message });
                         }
                     });
                 }}

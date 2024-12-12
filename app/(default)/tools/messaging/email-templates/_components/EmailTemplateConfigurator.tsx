@@ -64,9 +64,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     toast.success('Message template deleted');
                     router.back();
 
-                } catch (error: any) {
+                } catch (error: unknown) {
                     console.error(error);
-                    toast.error('Something went wrong', { description: error.message });
+                    toast.error('Something went wrong', { description: (error as Error).message });
                 }
             })
         }
@@ -89,9 +89,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     }
                 }
                 setIsDirty(false);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: error.message });
+                toast.error('Something went wrong', { description: (error as Error).message });
             }
 
         })

@@ -2,7 +2,6 @@ import { Toaster } from "sonner";
 import ParticipantsSidebar from "./_components/participants-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

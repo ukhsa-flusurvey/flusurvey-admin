@@ -1,6 +1,6 @@
 'use server'
 
-import Fuse from 'fuse.js'
+import Fuse, { FuseResultMatch } from 'fuse.js'
 import { docs } from ".velite"
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -11,6 +11,16 @@ const fuse = new Fuse(docs, {
     threshold: 0.3,
     ignoreLocation: true,
 })
+
+export interface SearchResult {
+    item: {
+        slug: string;
+        title: string;
+        category: string;
+        subcategory: string;
+    };
+    matches: readonly FuseResultMatch[] | undefined;
+}
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams

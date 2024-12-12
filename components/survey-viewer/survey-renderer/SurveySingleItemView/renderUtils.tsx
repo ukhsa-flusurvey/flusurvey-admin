@@ -2,9 +2,10 @@ import clsx from 'clsx';
 import React from 'react';
 import { isItemGroupComponent, ItemComponent } from 'survey-engine/data_types';
 import { getClassName, getLocaleStringDateByCode, getLocaleStringTextByCode, getStyleValueByKey } from './utils';
+import { Locale } from 'date-fns';
 
 
-export const renderFormattedContent = (component: ItemComponent, languageCode: string, defaultClassNamePerPart: string | undefined, dateLocales: Array<{ code: string, locale: any, format: string }>) => {
+export const renderFormattedContent = (component: ItemComponent, languageCode: string, defaultClassNamePerPart: string | undefined, dateLocales: Array<{ code: string, locale: Locale, format: string }>) => {
     if (isItemGroupComponent(component)) {
         return <React.Fragment>
             {

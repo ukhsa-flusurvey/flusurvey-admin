@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import "next-auth"
 
 import { Provider } from "next-auth/providers"
-import AzureADProvider from "next-auth/providers/azure-ad";
+import AzureADProvider from "next-auth/providers/microsoft-entra-id";
 import { extendSessionRequest, getRenewTokenRequest, signInWithIdPRequest } from "./utils/server/api";
 import { RenewAzureToken } from "./utils/auth";
 
@@ -12,7 +12,7 @@ const MsEntraIDProvider = AzureADProvider({
     name: "Management User Azure AD",
     clientId: process.env.AZURE_AD_CLIENT_ID,
     clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-    tenantId: process.env.AZURE_AD_TENANT_ID,
+    tenantId: process.env.AZURE_AD_TENANT_ID || '',
     authorization: { params: { scope: "openid email profile offline_access" } },
     profile: (profile) => {
         return {
