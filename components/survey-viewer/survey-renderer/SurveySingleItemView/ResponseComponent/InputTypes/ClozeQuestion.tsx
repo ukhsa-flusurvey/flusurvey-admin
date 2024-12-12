@@ -9,11 +9,10 @@ import DropDownGroup from './DropDownGroup';
 import NumberInput from './NumberInput';
 import TextInput from './TextInput';
 import Time from './Time';
+import { cn } from '@/lib/utils';
 
 
 type ClozeQuestionProps = CommonResponseComponentProps
-
-const defaultInputClassName = "mx-3 my-2";
 
 const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
@@ -100,8 +99,8 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         prefill={(prefill && prefill.key === item.key) ? prefill : undefined}
                         fullWidth={true}
                         parentKey={optionKey}
-                        defaultClassName={defaultInputClassName}
                         dateLocales={props.dateLocales}
+                        hideLabel={true}
                     />
             }
         } else {
@@ -135,8 +134,9 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         disabled={isDisabled}
                         nonFullWidth={true}
                         inputClassName={`text-${alignInputText ? alignInputText : 'center'}`}
-                        defaultClassName={defaultInputClassName}
                         dateLocales={props.dateLocales}
+                        embedded={true}
+                        hideLabel={true}
                     />;
 
                 case 'lineBreak':
@@ -152,9 +152,9 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         responseChanged={handleItemResponse(item.key ? item.key : 'undefined')}
                         ignoreClassName={optionClassName !== undefined}
                         nonFullWidth={true}
-                        defaultClassName={defaultInputClassName}
                         inputClassName={`text-${alignInputText ? alignInputText : 'center'}`}
                         dateLocales={props.dateLocales}
+                        hideLabel={true}
                     />;
                 case 'dateInput':
                     return <DateInput
@@ -166,8 +166,8 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         responseChanged={handleItemResponse(item.key ? item.key : 'undefined')}
                         openCalendar={undefined}
                         disabled={isDisabled}
-                        defaultClassName={defaultInputClassName}
                         dateLocales={props.dateLocales}
+                        hideLabel={true}
                     />;
                 case 'timeInput':
                     return <Time
@@ -178,10 +178,10 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         languageCode={props.languageCode}
                         responseChanged={handleItemResponse(item.key ? item.key : 'undefined')}
                         disabled={isDisabled}
-                        defaultClassName={defaultInputClassName}
                         ignoreClassName={optionClassName !== undefined}
                         nonFullWidth={true}
                         dateLocales={props.dateLocales}
+                        hideLabel={true}
                     />;
                 default:
                     return <p key={item.key}>role inside cloze question group not implemented yet: {item.role}</p>;
@@ -190,11 +190,14 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     }
 
     if (!(props.compDef as ItemGroupComponent).items) {
-        return <p className="text-red-600">ERROR: cloze question items array missing</p>
+        return <p className="text-destructive-foreground">ERROR: cloze question items array missing</p>
     }
 
     return (
-        <div className="flex items-center flex-wrap">
+        <div className={cn(
+            "flex items-center flex-wrap gap-2",
+            "px-[--survey-card-px-sm] sm:px-[--survey-card-px]"
+        )}>
             {
                 (props.compDef as ItemGroupComponent).items.map(
                     (option) => renderItems(option)
