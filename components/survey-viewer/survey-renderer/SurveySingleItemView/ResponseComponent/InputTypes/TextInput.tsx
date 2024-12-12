@@ -10,6 +10,7 @@ interface TextInputProps extends CommonResponseComponentProps {
     onClick?: () => void;
     nonFullWidth?: boolean;
     embedded?: boolean;
+    hideLabel?: boolean;
     defaultClassName?: string;
     inputClassName?: string;
 }
@@ -88,12 +89,13 @@ const TextInput: React.FC<TextInputProps> = (props) => {
         >
             <span className={clsx("grow",
                 {
-                    "me-2": labelText !== undefined && labelText.length > 0
+                    "me-2": labelText !== undefined && labelText.length > 0 && !props.hideLabel,
+                    "sr-only": props.hideLabel
                 }
             )}
                 style={{ maxWidth: 'fit-content' }}
             >
-                {getLocaleStringTextByCode(props.compDef.content, props.languageCode)}
+                {labelText}
             </span>
             <Input
                 className={clsx("grow", props.inputClassName)}

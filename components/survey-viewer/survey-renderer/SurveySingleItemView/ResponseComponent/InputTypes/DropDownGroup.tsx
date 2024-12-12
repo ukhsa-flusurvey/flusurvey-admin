@@ -5,12 +5,14 @@ import { CommonResponseComponentProps, getLocaleStringTextByCode } from '../../u
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectGroup, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dot } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 
 interface DropDownGroupProps extends CommonResponseComponentProps {
     fullWidth?: boolean;
     embedded?: boolean;
     defaultClassName?: string;
+    hideLabel?: boolean;
 }
 
 
@@ -113,7 +115,12 @@ const DropDownGroup: React.FC<DropDownGroupProps> = (props) => {
             {labelText ?
                 <Label
                     htmlFor={props.parentKey}
-                    className="m-0 me-2 shrink" style={{ minWidth: 80 }}>
+                    className={cn(
+                        "m-0 me-2 shrink",
+                        {
+                            "sr-only": props.hideLabel
+                        })}
+                    style={{ minWidth: 80 }}>
                     {labelText}
                 </Label>
                 : null}
