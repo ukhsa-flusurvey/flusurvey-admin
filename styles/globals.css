@@ -93,6 +93,10 @@
         @apply text-sm;
     }
 
+    .fw-bold {
+        @apply font-bold;
+    }
+
     .text-decoration-underline {
         @apply underline;
     }
