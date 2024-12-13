@@ -84,8 +84,6 @@ export const determineItemType = (item: SurveySingleItem): string => {
             return 'multipleChoice';
         case 'responsiveSingleChoiceArray':
             return 'responsiveSingleChoiceArray';
-        case 'responsiveSingleChoiceArray':
-            return 'responsiveSingleChoiceArray';
         case 'responsiveBipolarLikertScaleArray':
             return 'responsiveBipolarLikertScaleArray';
         case 'responsiveMatrix':
