@@ -9,3 +9,22 @@ export enum ChoiceResponseOptionType {
     Cloze = 'cloze',
     DisplayText = 'sectionHeader'
 }
+// TODO: Add all relevant types or remove this enum
+export enum ItemComponentRole {
+    ResponseGroup = 'responseGroup',
+    Cloze = 'cloze',
+}
+export enum ClozeItemType {
+    SimpleText = 'text',
+    Markdown = 'markdown',
+    TextInput = 'input',
+    LineBreak = 'lineBreak',
+    NumberInput = 'numberInput',
+    DateInput = 'dateInput',
+    TimeInput = 'timeInput'
+}
+//  Currently unused
+export enum ClozeItemGroupType {
+    Text = 'text',
+    Dropdown = 'dropDownGroup'
+}

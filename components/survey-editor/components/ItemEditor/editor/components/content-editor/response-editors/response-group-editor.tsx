@@ -14,7 +14,7 @@ import DropdownEditor from './dropdown-editor';
 import Consent from './consent';
 import Rsca from './rsca';
 import ContactForm from './contact-form';
-import { ClozeEditor } from './cloze-editor';
+import ClozeEditor from './cloze-editor';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -62,7 +62,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'clozeQuestion':
-            content = <ClozeEditor />;
+            content = <ClozeEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'consent':
             content = <Consent surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

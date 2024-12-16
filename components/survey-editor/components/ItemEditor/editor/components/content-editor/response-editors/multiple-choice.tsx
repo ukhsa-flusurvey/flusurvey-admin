@@ -27,7 +27,7 @@ interface MultipleChoiceProps {
 }
 
 const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
-    let optionType = option.role as keyof typeof ChoiceResponseOptionType;
+    const optionType = option.role as keyof typeof ChoiceResponseOptionType;
     return optionType as ChoiceResponseOptionType;
 }
 
@@ -83,7 +83,7 @@ export const ContentItem = (props: {
 
     const optionType = getOptionType(props.component);
 
-    console.log('optionType:', optionType);
+    //console.log('optionType:', optionType);
 
     const renderContent = () => {
         switch (optionType) {
@@ -280,8 +280,8 @@ export const ContentItem = (props: {
 
 const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-    console.log('props.surveyItem:', props.surveyItem);
-    console.log('props.isSingleChoice:', props.isSingleChoice);
+    //console.log('props.surveyItem:', props.surveyItem);
+    //console.log('props.isSingleChoice:', props.isSingleChoice);
     // TODO: remove magic strings
     const relevantResponseGroupRoleString = props.isSingleChoice ? 'singleChoiceGroup' : 'multipleChoiceGroup';
 
@@ -308,11 +308,11 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
 
     const onAddItem = (keyOfSelectedOption: string) => {
         const randomKey = Math.random().toString(36).substring(9);
-        console.log('keyOfSelectedOption:', keyOfSelectedOption);
-        let optionType = keyOfSelectedOption as keyof typeof ChoiceResponseOptionType;
+        //console.log('keyOfSelectedOption:', keyOfSelectedOption);
+        const optionType = keyOfSelectedOption as keyof typeof ChoiceResponseOptionType;
 
         // Create empty option of given type.
-        let newOption = {
+        const newOption = {
             key: randomKey,
             role: optionType,
         }
