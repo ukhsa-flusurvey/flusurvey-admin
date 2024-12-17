@@ -17,6 +17,7 @@ interface DateInputProps extends CommonResponseComponentProps {
     openCalendar: boolean | undefined;
     defaultClassName?: string;
     embedded?: boolean;
+    hideLabel?: boolean;
 }
 
 const DateInput: React.FC<DateInputProps> = (props) => {
@@ -143,7 +144,11 @@ const DateInput: React.FC<DateInputProps> = (props) => {
             },
             getClassName(props.compDef.style),
         )}>
-            {labelText ? <label className=""
+            {labelText ? <label className={cn(
+                {
+                    "sr-only": props.hideLabel
+                }
+            )}
                 htmlFor={props.parentKey}
             >
                 {labelText}

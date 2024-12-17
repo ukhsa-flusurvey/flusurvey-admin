@@ -43,8 +43,8 @@ const TextViewComponent: React.FC<TextViewComponentProps> = (props) => {
     const className = clsx(
         {
             'm-0': !variant,
+            'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded
         },
-        'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
         props.className,
         getClassName(props.compDef.style)
     );
