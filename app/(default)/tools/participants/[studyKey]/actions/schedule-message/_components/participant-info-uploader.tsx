@@ -46,9 +46,9 @@ const ParticipantInfoUploader: React.FC<ParticipantInfoUploaderProps> = (props) 
                                 return;
                             }
                             const delimiter = detectDelimiter(text);
-                            const keys = lines[0].split(delimiter);
+                            const keys = lines[0].split(delimiter).map(k => k.trim()).filter(k => k.length > 0);
                             const data = lines.filter(l => l.length > 0).slice(1).map(line => {
-                                const values = line.split(delimiter);
+                                const values = line.split(delimiter).map(v => v.trim());
                                 if (values.length !== keys.length) {
                                     return null;
                                 }
