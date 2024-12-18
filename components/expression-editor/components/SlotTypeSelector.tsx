@@ -100,8 +100,8 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                                             group.slotTypes.map((slotType) => {
                                                 return (
                                                     <CommandItem key={slotType.id}
-                                                        onSelect={(currentValue) => {
-                                                            props.onSelect(currentValue);
+                                                        onSelect={() => {
+                                                            props.onSelect(slotType.id);
                                                             setOpen(false)
                                                         }}
                                                     >

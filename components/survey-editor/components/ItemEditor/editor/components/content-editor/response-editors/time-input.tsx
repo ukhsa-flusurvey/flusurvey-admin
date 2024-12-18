@@ -1,14 +1,14 @@
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import DateInputContentConfig from './date-input-content-config';
 import { ItemComponentRole } from '@/components/survey-editor/components/types';
+import TimeInputContentConfig from './time-input-content-config';
 
-interface DateInputProps {
+interface TimeInputProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const DateInput: React.FC<DateInputProps> = (props) => {
+const TimeInput: React.FC<TimeInputProps> = (props) => {
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
@@ -18,14 +18,14 @@ const DateInput: React.FC<DateInputProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const dateInputCompIndex = rg.items.findIndex(comp => comp.role === ItemComponentRole.DateInput);
-    if (dateInputCompIndex === undefined || dateInputCompIndex === -1) {
-        return <p>Date input not found</p>;
+    const timeInputCompIndex = rg.items.findIndex(comp => comp.role === ItemComponentRole.TimeInput);
+    if (timeInputCompIndex === undefined || timeInputCompIndex === -1) {
+        return <p>Time input not found</p>;
     }
 
     const onChange = (newComp: ItemComponent) => {
         const existingComponents = props.surveyItem.components?.items || [];
-        (existingComponents[rgIndex] as ItemGroupComponent).items[dateInputCompIndex] = newComp;
+        (existingComponents[rgIndex] as ItemGroupComponent).items[timeInputCompIndex] = newComp;
         props.onUpdateSurveyItem({
             ...props.surveyItem,
             components: {
@@ -38,11 +38,11 @@ const DateInput: React.FC<DateInputProps> = (props) => {
     };
 
     return (
-        <DateInputContentConfig
-            component={rg.items[dateInputCompIndex]}
+        <TimeInputContentConfig
+            component={rg.items[timeInputCompIndex]}
             onChange={onChange}
         />
     );
 };
 
-export default DateInput;
+export default TimeInput;

@@ -15,6 +15,7 @@ import Consent from './consent';
 import Rsca from './rsca';
 import ContactForm from './contact-form';
 import ClozeEditor from './cloze-editor';
+import TimeInput from './time-input';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -38,6 +39,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <DateInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'timeInput':
+            content = <TimeInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'textInput':
             content = <TextInput surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

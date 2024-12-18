@@ -13,6 +13,8 @@ export enum ChoiceResponseOptionType {
 export enum ItemComponentRole {
     ResponseGroup = 'responseGroup',
     Cloze = 'cloze',
+    TimeInput = 'timeInput',
+    DateInput = 'dateInput',
 }
 export enum ClozeItemType {
     SimpleText = 'text',
