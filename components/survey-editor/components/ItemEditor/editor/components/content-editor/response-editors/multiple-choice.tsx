@@ -20,6 +20,7 @@ import NumberInputContentConfig from './number-input-content-config';
 import DateInputContentConfig from './date-input-content-config';
 import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
 import ClozeContentConfig from './cloze-content-config';
+import TimeInputContentConfig from './time-input-content-config';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -176,7 +177,16 @@ export const ContentItem = (props: {
                     />
                 </OptionContentTabCollapsible>;
             case ChoiceResponseOptionType.TimeInput:
-                return <div>Not implemented: Option with time input</div>;
+                return <OptionContentTabCollapsible
+                    compKey={props.component.key}
+                    type='WITH TIME INPUT'
+                    defaultOpen={props.index > -1}
+                >
+                    <TimeInputContentConfig
+                        component={props.component as ItemGroupComponent}
+                        onChange={props.onUpdateComponent}
+                    />
+                </OptionContentTabCollapsible>;
             case ChoiceResponseOptionType.DisplayText:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}

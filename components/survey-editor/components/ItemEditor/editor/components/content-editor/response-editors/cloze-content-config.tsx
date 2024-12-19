@@ -20,6 +20,7 @@ import SortableItem from "@/components/survey-editor/components/general/Sortable
 import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import TimeInputContentConfig from "./time-input-content-config";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -141,6 +142,17 @@ export const ContentItem = (props: {
                 >
                     <DateInputContentConfig
                         component={props.component}
+                        onChange={props.onUpdateComponent}
+                    />
+                </ContentTabCollapsible>;
+            case ClozeItemType.TimeInput:
+                return <ContentTabCollapsible
+                    compKey={props.component.key}
+                    type='WITH TIME INPUT'
+                    defaultOpen={props.index > -1}
+                >
+                    <TimeInputContentConfig
+                        component={props.component as ItemGroupComponent}
                         onChange={props.onUpdateComponent}
                     />
                 </ContentTabCollapsible>;
