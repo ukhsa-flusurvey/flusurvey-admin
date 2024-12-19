@@ -199,7 +199,7 @@ const RowCellEditor = (props: {
             <p className='text-sm font-semibold'>
                 Columns: <span className='text-muted-foreground'>({cells.length})</span>
             </p>
-            <div className=' my-2 overflow-x-scroll overscroll-x-contain max-w-full'>
+            <div className=' my-2 overflow-x-auto overscroll-x-contain max-w-full'>
                 <ol className='flex items-start gap-4 p-4 border border-border border-dashed rounded-md w-fit min-w-full' >
 
                     {cells.map((component, index) => {
@@ -585,7 +585,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                     />
                     : null}
             >
-                <div className='overflow-y-scroll py-1'>
+                <div className='overflow-y-auto py-1'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {matrixRows.map((component, index) => {
                             return <RowEditor

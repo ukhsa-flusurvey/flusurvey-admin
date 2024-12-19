@@ -35,7 +35,7 @@ const getClozeItemType = (item: ItemComponent): ClozeItemType => {
 
 export const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
-        <div className='p-4 ps-6 space-y-4 overflow-y-scroll'>
+        <div className='p-4 ps-6 space-y-4 overflow-y-auto'>
             {props.children}
         </div>
     )
@@ -333,7 +333,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                     />
                     : null}
             >
-                <div className='overflow-y-scroll'>
+                <div className='overflow-y-auto'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {clozeItems.map((component, index) => {
                             return <ContentItem

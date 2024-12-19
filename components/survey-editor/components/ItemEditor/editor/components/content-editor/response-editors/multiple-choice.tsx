@@ -35,7 +35,7 @@ const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
 
 export const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
-        <div className='p-4 ps-6 space-y-4 overflow-y-scroll'>
+        <div className='p-4 ps-6 space-y-4 overflow-y-auto'>
             {props.children}
         </div>
     )
@@ -391,7 +391,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                 onReorder={(activeIndex, overIndex) => {
                     const newItems = [...responseItems];
                     newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-
                     updateSurveyItemWithNewOptions(newItems);
                 }}
                 dragOverlayItem={(draggedId && draggedItem) ?
@@ -403,7 +402,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                     />
                     : null}
             >
-                <div className='overflow-y-scroll'>
+                <div className='overflow-y-auto'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {responseItems.map((component, index) => {
                             return <ContentItem
