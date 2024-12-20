@@ -125,7 +125,7 @@ const BottomContentEditor: React.FC<BottomContentEditorProps> = (props) => {
                     : null}
             >
 
-                <div className=' my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
+                <div className=' my-2 overflow-y-auto overscroll-y-contain max-w-full'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {topComponents.map((component, index) => {
                             return <ContentItem

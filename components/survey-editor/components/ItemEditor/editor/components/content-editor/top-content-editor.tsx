@@ -22,7 +22,7 @@ import MarkdownContentEditor from './markdown-content-editor';
 
 const TabWrapper = (props: { children: React.ReactNode }) => {
     return (
-        <div className='p-4 ps-6 h-[290px] space-y-4 overflow-y-scroll'>
+        <div className='p-4 ps-6 h-[290px] space-y-4 overflow-y-auto'>
             {props.children}
         </div>
     )
@@ -329,7 +329,7 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                     : null}
             >
 
-                <div className='my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
+                <div className='my-2 overflow-y-auto overscroll-y-contain max-w-full'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {topComponents.map((component, index) => {
                             return <ContentItem
