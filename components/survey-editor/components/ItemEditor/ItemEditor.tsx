@@ -30,9 +30,20 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
     React.useEffect(() => {
         if (survey) {
-            setEditorInstance(new EditorInstance(survey));
+            const newEditorInstance = new EditorInstance(survey);
+            setEditorInstance(newEditorInstance);
+
+            if (currentPath) {
+                const parentItem = newEditorInstance.findSurveyItem(currentPath);
+                if (!parentItem || parentItem.key !== currentPath) {
+                    setCurrentPath(survey.surveyDefinition.key);
+                    return;
+                }
+            } else {
+                setCurrentPath(survey.surveyDefinition.key);
+            }
         }
-    }, [survey]);
+    }, [survey, currentPath]);
 
     if (!editorInstance) {
         return <div>load survey first...</div>
