@@ -35,7 +35,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
             if (currentPath) {
                 const parentItem = newEditorInstance.findSurveyItem(currentPath);
-                if (!parentItem) {
+                if (!parentItem || parentItem.key !== currentPath) {
                     setCurrentPath(survey.surveyDefinition.key);
                     return;
                 }
