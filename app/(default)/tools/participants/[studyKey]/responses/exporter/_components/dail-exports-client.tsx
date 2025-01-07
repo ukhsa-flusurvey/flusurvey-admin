@@ -122,7 +122,6 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                                 <TableCell className='flex items-center'>
                                     <Checkbox
                                         checked={selectedFiles.includes(file.id)}
-                                        onCheckedChange={() => handleSelectFile(file.id)}
                                         aria-label={`Select file ${file.surveyKey}`}
                                     />
                                 </TableCell>
