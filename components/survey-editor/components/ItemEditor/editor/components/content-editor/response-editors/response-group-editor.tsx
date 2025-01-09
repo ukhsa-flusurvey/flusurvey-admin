@@ -16,6 +16,7 @@ import Rsca from './rsca';
 import ContactForm from './contact-form';
 import ClozeEditor from './cloze-editor';
 import TimeInput from './time-input';
+import Rblsa from './rblsa';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -57,6 +58,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             content = <Rsca surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'responsiveBipolarLikertScaleArray':
+            content = <Rblsa surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'responsiveMatrix':
             break;

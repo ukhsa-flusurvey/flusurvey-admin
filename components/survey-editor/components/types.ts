@@ -12,9 +12,14 @@ export enum ChoiceResponseOptionType {
 // TODO: Add all relevant types or remove this enum
 export enum ItemComponentRole {
     ResponseGroup = 'responseGroup',
+    Options = 'options',
+    Row = 'row',
+    StartLabel = 'start',
+    EndLabel = 'end',
     Cloze = 'cloze',
     TimeInput = 'timeInput',
     DateInput = 'dateInput',
+    ResponsiveBipolarLikertScaleArray = 'responsiveBipolarLikertScaleArray',
 }
 export enum ClozeItemType {
     SimpleText = 'text',
@@ -25,7 +30,7 @@ export enum ClozeItemType {
     DateInput = 'dateInput',
     TimeInput = 'timeInput'
 }
-//  Currently unused
+//  Currently unused, do we need this?
 export enum ClozeItemGroupType {
     Text = 'text',
     Dropdown = 'dropDownGroup'
