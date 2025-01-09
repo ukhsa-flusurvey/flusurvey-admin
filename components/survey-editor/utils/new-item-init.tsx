@@ -180,7 +180,7 @@ export const generateNewItemForType = (props: {
                 }
             });
             break;
-        case 'responsiveBipolarLikertArray':
+        case 'responsiveBipolarLikertScaleArray':
             newSurveyItem = SurveyItems.responsiveBipolarLikertArray({
                 parentKey: parentKey,
                 itemKey: newItemKey,
