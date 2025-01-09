@@ -12,6 +12,14 @@ interface YearMonthSelectorProps {
     dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
 }
 
+const computeYears = (min: Date, max: Date): number[] => {
+    const years = new Array<number>();
+    for (let i = getYear(min); i <= getYear(max); i++) {
+        years.push(i);
+    }
+    years.reverse();
+    return years;
+}
 
 const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
     const [selectedYear, setSelectedYear] = useState<number | undefined>(props.currentDate ? getYear(props.currentDate) : undefined);
@@ -40,11 +48,7 @@ const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedYear, selectedMonth]);
 
-    const years = new Array<number>();
-    for (let i = getYear(props.minDate); i <= getYear(props.maxDate); i++) {
-        years.push(i);
-    }
-    years.reverse();
+    const years = computeYears(props.minDate, props.maxDate);
 
     const referenceYear = getYear(new Date());
     const months = eachMonthOfInterval({

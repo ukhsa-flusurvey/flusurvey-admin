@@ -4,10 +4,12 @@ import { CommonResponseComponentProps, getClassName, getInputMaxWidth, getLabelP
 import clsx from 'clsx';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 interface NumberInputProps extends CommonResponseComponentProps {
     ignoreClassName?: boolean;
     embedded: boolean;
+    hideLabel?: boolean;
     nonFullWidth?: boolean;
     defaultClassName?: string;
     inputClassName?: string;
@@ -115,7 +117,8 @@ const NumberInput: React.FC<NumberInputProps> = (props) => {
         {!placeAfter ? <span className={clsx(
             "grow",
             {
-                "me-2": labelText !== undefined && labelText.length > 0
+                "me-2": labelText !== undefined && labelText.length > 0 && !props.hideLabel,
+                "sr-only": props.hideLabel
             }
         )}
             style={{ maxWidth: 'fit-content' }}
@@ -149,7 +152,12 @@ const NumberInput: React.FC<NumberInputProps> = (props) => {
             step={stepSize ? stepSize as number : undefined}
         />
 
-        {placeAfter ? <label htmlFor={fullKey} className="ms-2">
+        {placeAfter ? <label htmlFor={fullKey} className={cn(
+            "ms-2",
+            {
+                "sr-only": props.hideLabel
+            }
+        )}>
             {getLocaleStringTextByCode(content, props.languageCode)}
         </label> : null}
     </Label>

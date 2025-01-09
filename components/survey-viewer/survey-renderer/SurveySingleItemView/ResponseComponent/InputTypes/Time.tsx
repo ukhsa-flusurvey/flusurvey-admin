@@ -9,6 +9,7 @@ interface TimeProps extends CommonResponseComponentProps {
     ignoreClassName?: boolean;
     nonFullWidth?: boolean;
     embedded?: boolean;
+    hideLabel?: boolean;
     defaultClassName?: string;
 }
 
@@ -97,7 +98,8 @@ const Time: React.FC<TimeProps> = (props) => {
         {!placeAfter ? <label htmlFor={fullKey} className={clsx(
             "grow",
             {
-                "me-1": labelText !== undefined && labelText.length > 0
+                "me-1": labelText !== undefined && labelText.length > 0 && !props.hideLabel,
+                "sr-only": props.hideLabel
             }
         )}
             style={{ maxWidth: 'fit-content' }}

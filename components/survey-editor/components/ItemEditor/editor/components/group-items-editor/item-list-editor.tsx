@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from '../../../explorer/ItemCreator';
 import { Button } from '@/components/ui/button';
-import { Plus, Shield } from 'lucide-react';
+import { ClipboardCopyIcon, Plus, Shield } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
@@ -11,6 +11,13 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import { generateNewItemForType } from '@/components/survey-editor/utils/new-item-init';
 import { toast } from 'sonner';
 import { ItemEditorContext } from '../../../item-editor-context';
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { useCopyToClipboard } from 'usehooks-ts';
 
 interface ItemListEditorProps {
     surveyItem: SurveyItem;
@@ -22,6 +29,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
 
     const groupItem = props.surveyItem as SurveyGroupItem;
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
+    const [, copy] = useCopyToClipboard()
 
 
     const currentItems = groupItem.items.map(surveyItem => {
@@ -170,35 +178,55 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                             key={item.id}
 
                         >
-                            <Button
-                                variant={'outline'}
-                                className={cn(
-                                    'w-full gap-2 py-3 h-auto px-3 text-start',
-                                    item.className,
-                                    {
+                            <ContextMenu>
+                                <ContextMenuTrigger>
+                                    <Button
+                                        variant={'outline'}
+                                        className={cn(
+                                            'w-full gap-2 py-3 h-auto px-3 text-start',
+                                            item.className,
+                                            {
+                                                'font-bold': item.isPathActive,
+                                            })}
+                                        style={{
+                                            color: item.textColor,
+                                            borderColor: item.textColor,
+                                        }}
+                                        onDoubleClick={() => {
+                                            setCurrentPath(groupItem.key);
+                                            setSelectedItemKey(item.id);
+                                        }}
+                                    >
+                                        <div>
+                                            <item.icon className='size-5' />
+                                        </div>
+                                        <span className={cn(
+                                            'grow',
+                                        )}>{item.label}</span>
+                                        {item.isConfidential && <span className='p-1 bg-neutral-600/90 rounded-full text-white'>
+                                            <Shield className='size-4' />
+                                        </span>}
 
-                                        'font-bold': item.isPathActive,
-                                    })}
-                                style={{
-                                    color: item.textColor,
-                                    borderColor: item.textColor,
-                                }}
-                                onDoubleClick={() => {
-                                    setCurrentPath(groupItem.key);
-                                    setSelectedItemKey(item.id);
-                                }}
-                            >
-                                <div>
-                                    <item.icon className='size-5' />
-                                </div>
-                                <span className={cn(
-                                    'grow',
-                                )}>{item.label}</span>
-                                {item.isConfidential && <span className='p-1 bg-neutral-600/90 rounded-full text-white'>
-                                    <Shield className='size-4' />
-                                </span>}
-
-                            </Button>
+                                    </Button>
+                                </ContextMenuTrigger>
+                                <ContextMenuContent>
+                                    <ContextMenuItem
+                                        onClick={() => {
+                                            const surveyItemToCopy = (props.surveyItem as SurveyGroupItem).items.find(i => i.key === item.id);
+                                            if (!surveyItemToCopy) {
+                                                toast.error('Item not found');
+                                                return;
+                                            }
+                                            const surveyItemJSON = JSON.stringify(surveyItemToCopy, null, 2);
+                                            copy(surveyItemJSON);
+                                            toast('Item copied to clipboard');
+                                        }}
+                                    >
+                                        <ClipboardCopyIcon className='size-4' />
+                                        <span className='ml-2'>Copy</span>
+                                    </ContextMenuItem>
+                                </ContextMenuContent>
+                            </ContextMenu>
                         </SortableItem>
                     ))}
                 </ol>
