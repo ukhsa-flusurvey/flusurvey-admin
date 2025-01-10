@@ -32,6 +32,24 @@ export const TabWrapper = (props: { children: React.ReactNode }) => {
     )
 }
 
+const StyleClassNameEditor = (props: {
+    styles: { key: string, value: string }[],
+    styleKey: string,
+    label: string,
+    onChange: (key: string, value: string | undefined) => void
+}) => {
+    return <div className="flex items-center gap-2">
+        <Label htmlFor={'input-' + props.styleKey} className="text-xs">
+            {props.label}
+        </Label>
+        <Input
+            id={'input-' + props.styleKey}
+            value={props.styles?.find(st => st.key === props.styleKey)?.value ?? ""}
+            onChange={(e) => { props.onChange(props.styleKey, e.target.value) }}
+        />
+    </div>
+}
+
 const ModeSelector = (props: {
     size: string,
     mode?: ResponsiveBipolarLikertArrayVariant | undefined,
@@ -82,7 +100,7 @@ const KeyEditor = (props: {
             Key
         </Label>
         <Input
-            id={'validation-key-' + props.currentKey}
+            id={'item-key-' + props.currentKey}
             className='w-32'
             value={editedKey}
             onChange={(e) => {
@@ -617,6 +635,29 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
         rblsaGroup.style = existingStyles;
         onChangeRBLSA(rblsaGroup);
     }
+
+    const onStyleChange = (key: string, value: string | undefined) => {
+        if (!key) {
+            return;
+        }
+        const existingStyles = [...styles];
+        const index = existingStyles.findIndex(st => st.key === key);
+        if (value) {
+            if (index > -1) {
+                existingStyles[index] = { key, value };
+            } else {
+                existingStyles.push({ key, value });
+            }
+        } else {
+            if (index > -1) {
+                existingStyles.splice(index, 1);
+            }
+        }
+
+        rblsaGroup.style = existingStyles;
+        onChangeRBLSA(rblsaGroup);
+    }
+
     return (
         <div className="space-y-4">
             <OptionsEditor
@@ -679,6 +720,37 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
                     mode={xlMode}
                     onChange={onModeChange}
                 />
+            </div>
+
+            <div className='space-y-2'>
+                <p className='font-semibold'>
+                    Styling attributes:
+                </p>
+                <StyleClassNameEditor
+                    styles={styles}
+                    styleKey="labelRowPosition"
+                    label="labelRowPosition"
+                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                <StyleClassNameEditor
+                    styles={styles}
+                    styleKey="labelRowMaxLabelWidth"
+                    label="labelRowMaxLabelWidth"
+                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                <StyleClassNameEditor
+                    styles={styles}
+                    styleKey="tableModeLayout"
+                    label="tableModeLayout"
+                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                <StyleClassNameEditor
+                    styles={styles}
+                    styleKey="tableModeLabelColWidth"
+                    label="tableModeLabelColWidth"
+                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                <StyleClassNameEditor
+                    styles={styles}
+                    styleKey="tableModeClassName"
+                    label="tableModeClassName"
+                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
             </div>
         </div>
 
