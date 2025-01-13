@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { SquareChevronDown, Type } from "lucide-react";
-import { get } from "node:http";
-import { it } from "node:test";
 import React, { useEffect } from "react";
 import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
@@ -55,7 +53,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
     const rowKeys = matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map(comp => comp.key);
     const colKeys = (matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.map(comp => comp.key);
     const cellKeys = matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map(comp => (comp as ItemGroupComponent).items.map(cell => cell.key)).flat();
-    let allKeys = [...rowKeys, ...colKeys, ...cellKeys];
+    const allKeys = [...rowKeys, ...colKeys, ...cellKeys];
 
     //console.log(matrixDef);
 
@@ -94,7 +92,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 const headerRow = comp as ItemGroupComponent;
                 const newHeaderRow = {
                     ...comp,
-                    items: Array.from({ length: newNumCols }).map((v, i) => {
+                    items: Array.from({ length: newNumCols }).map((_v, i) => {
                         if (headerRow.items[i]) {
                             return headerRow.items[i];
                         } else {
@@ -112,7 +110,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
 
                 const newResponseRow = {
                     ...comp,
-                    items: Array.from({ length: newNumCols }).map((v, i) => {
+                    items: Array.from({ length: newNumCols }).map((_v, i) => {
                         if (responseRow.items[i]) {
                             return responseRow.items[i];
                         } else {
@@ -140,14 +138,14 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
         if (!headerRow) return;
 
         const oldRows = (matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow) as ItemGroupComponent[]);
-        const newRows = Array.from({ length: newNumRows }).map((v, i) => {
+        const newRows = Array.from({ length: newNumRows }).map((_v, i) => {
             if (oldRows[i]) {
                 return oldRows[i];
             } else {
                 return {
                     key: getUniqueRandomKey(allKeys as string[], ""),
                     role: ItemComponentRole.ResponseRow,
-                    items: Array.from({ length: numCols }).map((v, j) => {
+                    items: Array.from({ length: numCols }).map(() => {
                         return {
                             key: getUniqueRandomKey(allKeys as string[], ""),
                             role: ItemComponentRole.DropdownGroup,
@@ -184,7 +182,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 <thead>
                     <tr>
                         <th className="border-none"></th>
-                        {(matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.map((header, index) => {
+                        {(matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.map((header) => {
                             return (
                                 <th key={header.key} className={selectedElement?.key == header.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(header)}>
                                     {textElement(header)}
@@ -194,12 +192,12 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map((row, rowIndex) => (
+                    {matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map((row) => (
                         <tr key={row.key}>
                             <th className={selectedElement?.key == row.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(row)}>
                                 {textElement(row)}
                             </th>
-                            {(row as ItemGroupComponent).items.map((cell, colIndex) => (
+                            {(row as ItemGroupComponent).items.map((cell) => (
                                 <td key={cell.key} className={selectedElement?.key == cell.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(cell)}>
                                     {/* Render cell content or a placeholder */}
                                     {OverviewMatrixCellContent({ cell })}
