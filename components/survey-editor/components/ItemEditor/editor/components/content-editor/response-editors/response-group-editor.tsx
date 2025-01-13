@@ -4,7 +4,6 @@ import { SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from '../editor-wrapper';
 import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import MultipleChoice from './multiple-choice';
-import Matrix from './matrix';
 import ValidatedRandomQuestion from './validated-random-question';
 import TextInput from './text-input';
 import DateInput from './date-input';
@@ -17,6 +16,7 @@ import ContactForm from './contact-form';
 import ClozeEditor from './cloze-editor';
 import TimeInput from './time-input';
 import Rblsa from './rblsa';
+import NewMatrix from './matrix-new';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -63,7 +63,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'responsiveMatrix':
             break;
         case 'matrix':
-            content = <Matrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            content = <NewMatrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'clozeQuestion':
             content = <ClozeEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;

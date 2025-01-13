@@ -15,7 +15,7 @@ const randomString = (targetLength: number = 3) => {
     return randomLetter + randomNumbers;
 }
 
-const getUniqueRandomKey = (existingKeys: string[], parentKey: string) => {
+export const getUniqueRandomKey = (existingKeys: string[], parentKey: string) => {
     let newKey = randomString();
     while (existingKeys.includes([parentKey, newKey].join('.'))) {
         newKey = randomString();

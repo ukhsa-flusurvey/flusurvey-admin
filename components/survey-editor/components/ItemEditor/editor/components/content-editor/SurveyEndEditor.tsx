@@ -3,11 +3,11 @@ import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { checkMissingTranslations } from '@/components/survey-editor/utils/localeUtils';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { getLocalizedString } from '@/utils/localizedStrings';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from './editor-wrapper';
+import { getLocalizedString } from '@/components/survey-editor/utils/localizedStrings';
 
 
 interface SurveyEndEditorProps {
