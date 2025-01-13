@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { SquareChevronDown } from "lucide-react";
+import { SquareChevronDown, Type } from "lucide-react";
+import { get } from "node:http";
+import { it } from "node:test";
 import React, { useEffect } from "react";
 import { useContext } from "react";
-import { ItemComponent, ItemGroupComponent, LocalizedObject, SurveySingleItem } from "survey-engine/data_types";
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;
@@ -165,6 +167,18 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
 
 
     function generateTableOverview(matrixDef: ItemGroupComponent): React.ReactNode {
+        const textElement = (item: ItemComponent) => {
+            if (item.role === ItemComponentRole.Text || item.role === ItemComponentRole.ResponseRow) {
+                const hasTranslation = getLocalizedString(item.content, selectedLanguage) !== undefined && getLocalizedString(item.content, selectedLanguage) !== '';
+                console.log('Has translation:', hasTranslation);
+                if (hasTranslation) {
+                    return <div className="flex flex-row items-center gap-2"><Type size={16} /><p>{getLocalizedString(item.content, selectedLanguage)}</p></div>;
+                } else {
+                    return <div className="flex flex-row items-center gap-2"><Type size={16} /><Badge className='h-auto py-0'>{item.key}</Badge></div>;
+                }
+            }
+        }
+
         return (
             <table className="table-auto w-full">
                 <thead>
@@ -173,7 +187,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                         {(matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.map((header, index) => {
                             return (
                                 <th key={header.key} className={selectedElement?.key == header.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(header)}>
-                                    {getLocalizedString(header.content, selectedLanguage) || <Badge className='h-auto py-0'>{header.key}</Badge>}
+                                    {textElement(header)}
                                 </th>
                             );
                         })}
@@ -183,7 +197,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                     {matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map((row, rowIndex) => (
                         <tr key={row.key}>
                             <th className={selectedElement?.key == row.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(row)}>
-                                {getLocalizedString(row.content, selectedLanguage) || <Badge className='h-auto py-0'>{row.key}</Badge>}
+                                {textElement(row)}
                             </th>
                             {(row as ItemGroupComponent).items.map((cell, colIndex) => (
                                 <td key={cell.key} className={selectedElement?.key == cell.key ? cellClassnameSelected : cellClassname} onClick={() => setSelectedElement(cell)}>
