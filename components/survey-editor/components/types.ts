@@ -15,6 +15,15 @@ export enum ItemComponentRole {
     DateInput = 'dateInput',
     ResponsiveBipolarLikertScaleArray = 'responsiveBipolarLikertScaleArray',
 }
+export enum MatrixCellType {
+    Text = 'text',
+    TextInput = 'input',
+    NumberInput = 'numberInput',
+    DateInput = 'dateInput',
+    TimeInput = 'timeInput',
+    Dropdown = 'dropDownGroup',
+    Checkbox = 'checkbox',
+}
 export enum ChoiceResponseOptionType {
     SimpleText = 'option',
     FormattedText = 'formattedOption',
