@@ -26,6 +26,7 @@ import Consent from './InputTypes/Consent';
 import ValidatedRandomQuestion from './InputTypes/validated-random-question';
 import ContactForm from './InputTypes/contact-form';
 import { Locale } from 'date-fns';
+import ResponsiveMatrix from './InputTypes/ResponsiveMatrix';
 
 
 interface ResponseComponentProps {
@@ -263,18 +264,15 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         dateLocales={props.dateLocales}
                     />
                 case 'responsiveMatrix':
-                    return <div key={respComp.key}>
-                        responsive matrix not implemented yet
-                    </div>
-                /*return <ResponsiveMatrix
-                  key={respComp.key}
-                  parentKey={currentKeyPath}
-                  languageCode={props.languageCode}
-                  compDef={respComp}
-                  prefill={getPrefillForItem(respComp)}
-                  responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
-                  dateLocales={props.dateLocales}
-                />*/
+                    return <ResponsiveMatrix
+                        key={respComp.key}
+                        parentKey={currentKeyPath}
+                        languageCode={props.languageCode}
+                        compDef={respComp}
+                        prefill={getPrefillForItem(respComp)}
+                        responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
+                        dateLocales={props.dateLocales}
+                    />
                 case 'eq5d-health-indicator':
                     return <EQ5DHealthIndicatorInput
                         key={respComp.key}

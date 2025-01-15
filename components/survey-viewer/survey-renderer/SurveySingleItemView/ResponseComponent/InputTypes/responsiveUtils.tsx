@@ -77,19 +77,29 @@ export const getResponsiveModes = (width: number, renderMode: (variant: Variant,
     )
 }
 
+const breakpoints = {
+    sm: 649,
+    md: 768,
+    lg: 1024,
+    xl: 1280,
+    xxl: 1440,
+}
 
-const getScreenSizeLabel = (width: number): string => {
-    if (width < 649) {
-        return 'xs';
+
+export const getScreenSizeLabel = (width: number): string => {
+    let screenSizeLabel = 'xs';
+    for (const key in breakpoints) {
+        if (width < breakpoints[key as keyof typeof breakpoints]) {
+            screenSizeLabel = key;
+            break;
+        }
     }
-    if (width < 768) {
-        return 'sm';
+    return screenSizeLabel;
+}
+
+export const getBreakpointValue = (bp?: string): number => {
+    if (!bp || !bootstrapBreakpoints.includes(bp)) {
+        return 0;
     }
-    if (width < 1024) {
-        return 'md';
-    }
-    if (width < 1280) {
-        return 'lg';
-    }
-    return 'xl';
+    return breakpoints[bp as keyof typeof breakpoints];
 }
