@@ -5,6 +5,7 @@ import { renderFormattedContent } from '../../renderUtils';
 import { CommonResponseComponentProps } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
+import { cn } from '@/lib/utils';
 
 type ResponsiveBipolarLikertScaleArrayProps = CommonResponseComponentProps
 
@@ -84,6 +85,17 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         const resp = rowResponse.items.find(item => item.key === itemKey);
         return resp !== undefined;
     }
+
+    const rowHasResponse = (rowKey: string | undefined): boolean => {
+        if (!rowKey) { return false; }
+
+        if (!response || !response.items || response.items.length < 1) {
+            return false;
+        }
+        const rowResponse = response.items.find(item => item.key === rowKey);
+        return rowResponse !== undefined;
+    }
+
 
     const getSingleVerticalItem = (rowDef: ItemComponent, options: ItemGroupComponent, isfirst: boolean, isLast: boolean, namePrefix: string) => {
         const rowKey = rowDef.key;
@@ -281,14 +293,29 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         const tableClassName = props.compDef.style?.find(st => st.key === 'tableModeClassName')?.value;
 
 
-        return <table className={clsx(
-            "table m-0",
-            tableClassName
+        return <table className={cn(
+            "table m-0 ",
+            tableClassName,
+            {
+                'table-fixed': useFixedLayout
+            }
         )}
-            style={useFixedLayout ? {
-                tableLayout: 'fixed',
-            } : undefined}
         >
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+
+                    {options.items.map(item => <th
+                        key={props.compDef + '.' + item.key}
+                        scope="col"
+                        className="text-center p-1"
+                    >
+                        {item.key}
+                    </th>)}
+                    <th scope="col"></th>
+
+                </tr>
+            </thead>
             <tbody>
                 {props.compDef.items.map(item => {
                     let rowContent = <td colSpan={options.items.length + 1}>Unknown row type: {item.role}</td>;
@@ -311,28 +338,40 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
                             const htmlKey = `${namePrefix}.${props.parentKey}.${item.key}-table`;
                             rowContent = <React.Fragment>
                                 <td scope="row"
-                                    className="text-start"
+                                    className="text-start text-balance"
                                     style={labelColWidth ? {
                                         width: labelColWidth
                                     } : undefined}
                                 >
                                     {renderFormattedContent(startLabelComp, props.languageCode, undefined, props.dateLocales)}
                                 </td>
-                                {options.items.map(oi => <td
-                                    key={props.compDef + '.' + oi.key}
-                                    className="text-center align-middle"
-                                >
-                                    <input
-                                        className="form-check-input cursor-pointer"
-                                        type="radio"
-                                        name={htmlKey}
-                                        onChange={radioSelectionChanged(item.key)}
-                                        value={oi.key}
-                                        checked={isResponseSet(item.key, oi.key)}
-                                    />
-                                </td>)}
+                                {options.items.map(oi => {
+                                    const optionKey = `${props.compDef.key}.${item.key}.${oi.key}`;
+                                    return <td
+                                        key={optionKey + 'cell'}
+                                        className="text-center align-middle"
+                                    >
+                                        <label
+                                            className='h-full w-full p-2 cursor-pointer hover:bg-black/5 flex items-center justify-center rounded-[--survey-card-border-radius-sm]'
+                                            htmlFor={optionKey}
+                                        >
+                                            <input
+                                                className="form-check-input cursor-pointer size-5"
+                                                type="radio"
+                                                id={optionKey}
+                                                name={htmlKey}
+                                                onChange={radioSelectionChanged(item.key)}
+                                                value={oi.key}
+                                                checked={isResponseSet(item.key, oi.key)}
+                                            />
+                                            <span className='sr-only'>
+                                                {oi.key}
+                                            </span>
+                                        </label>
+                                    </td>
+                                })}
                                 <td scope="row"
-                                    className="text-end"
+                                    className="text-end text-balance"
                                     style={labelColWidth ? {
                                         width: labelColWidth
                                     } : undefined}
@@ -346,9 +385,17 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
                         default:
                             break;
                     }
+
                     const rowClassName = item.style?.find(st => st.key === 'tableModeClassName')?.value;
+
                     return <tr key={props.compDef + '.' + item.key}
-                        className={rowClassName}
+                        className={cn(
+                            'border-b border-[--survey-card-table-border-color] last:border-b-0',
+                            rowClassName,
+                            {
+                                'bg-[--survey-card-invalid-bg]': props.showErrors && !rowHasResponse(item.key)
+                            },
+                        )}
                     >
                         {rowContent}
                     </tr>
@@ -371,9 +418,9 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
     }
 
     return (
-        <React.Fragment>
+        <div className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'>
             {getResponsiveModes(width, renderMode, props.compDef.style)}
-        </React.Fragment>
+        </div>
     );
 };
 
