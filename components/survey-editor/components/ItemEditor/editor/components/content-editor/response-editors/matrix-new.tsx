@@ -23,10 +23,12 @@ interface MatrixProps {
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const cellClassname = 'border border-gray-300 p-2 hover:bg-gray-100 cursor-pointer';
-const cellClassnameSelected = 'border border-gray-300 p-2 bg-gray-200 cursor-pointer';
+const cellClassname = 'border border-gray-300 p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
+const cellClassnameSelected = 'border border-gray-300 p-2 bg-gray-200 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
 
 const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent }> = ({ cell }) => {
+    const { selectedLanguage } = useContext(SurveyContext);
+    const hasTranslation = getLocalizedString(cell.content, selectedLanguage) !== undefined && getLocalizedString(cell.content, selectedLanguage) !== '';
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
             case MatrixCellType.Dropdown:
@@ -47,9 +49,10 @@ const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent }> = ({ cell }) 
                 return <CircleHelp size={16} />;
         }
     }
+    const content = hasTranslation ? <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p> : <Badge className='h-auto py-0'>{cell.key}</Badge>;
     return (
         <>
-            <div className="flex flex-row items-center gap-2">{icon(cell)}<Badge className='h-auto py-0'>{cell.key}</Badge></div>
+            <div className="flex flex-row items-center gap-2">{icon(cell)}{content}</div>
         </>
     );
 }
@@ -62,7 +65,7 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
             const hasTranslation = getLocalizedString(item.content, selectedLanguage) !== undefined && getLocalizedString(item.content, selectedLanguage) !== '';
             //console.log('Has translation:', hasTranslation);
             if (hasTranslation) {
-                return <div className="flex flex-row items-center gap-2"><Type size={16} /><p>{getLocalizedString(item.content, selectedLanguage)}</p></div>;
+                return <div className="flex flex-row items-center gap-2"><Type size={16} /><p className="text-sm">{getLocalizedString(item.content, selectedLanguage)}</p></div>;
             } else {
                 return <div className="flex flex-row items-center gap-2"><Type size={16} /><Badge className='h-auto py-0'>{item.key}</Badge></div>;
             }
@@ -70,7 +73,7 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
     }
 
     return (
-        <table className="table-auto w-full">
+        <table className="w-full table-fixed">
             <thead>
                 <tr>
                     <th className="border-none"></th>
@@ -145,6 +148,8 @@ const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: strin
 }
 
 const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[], cellKeys: string[], onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, allKeys, cellKeys, onChange }) => {
+
+    // Key editor, needs to rerender when the selected element is changed
     const KeyEditor = (props: {
         currentKey: string;
         existingKeys?: string[];
@@ -206,8 +211,9 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
 
     console.log(cellKeys.indexOf(selectedElement.key ?? "") < 0);
 
-    return <div className='space-y-8'>
+    return <div className='space-y-4'>
         <Separator orientation='horizontal' />
+        {selectedElement && <p className='font-semibold mb-2'>Selected Element: </p>}
         {selectedElement && <div className='space-y-4'>
             <KeyEditor
                 currentKey={selectedElement.key ?? ''}
@@ -237,7 +243,7 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value={MatrixCellType.Dropdown}>Dropdown</SelectItem>
-                        <SelectItem value={MatrixCellType.Text}>Display text</SelectItem>
+                        <SelectItem value={MatrixCellType.Text}>Display text / Placeholder</SelectItem>
                         <SelectItem value={MatrixCellType.TextInput}>Text input</SelectItem>
                         <SelectItem value={MatrixCellType.NumberInput}>Number input</SelectItem>
                         <SelectItem value={MatrixCellType.DateInput}>Date input</SelectItem>
@@ -420,38 +426,39 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
 
     return (
         <div className="space-y-4">
-            <div className='space-y-1.5'>
-                <Label
-                    htmlFor={matrixDef.key + '-numCols'}
-                >
-                    Number of columns (excl. labels)
-                </Label>
-                <Input
-                    id={matrixDef.key + '-numCols'}
-                    value={numCols || '0'}
-                    type='number'
-                    onChange={(e) => { changeCols(parseInt(e.target.value)) }}
-                    placeholder='Define the nuber of columns...'
-                />
+            <p className='font-semibold mb-2'>Rows and Columns: </p>
+            <div className="flex flex-row gap-4 w-full">
+                <div className='space-y-1.5 flex-1'>
+                    <Label
+                        htmlFor={matrixDef.key + '-numCols'}
+                    >
+                        Number of columns (excl. labels)
+                    </Label>
+                    <Input
+                        id={matrixDef.key + '-numCols'}
+                        value={numCols || '0'}
+                        type='number'
+                        onChange={(e) => { changeCols(parseInt(e.target.value)) }}
+                        placeholder='Define the number of columns...'
+                    />
+                </div>
+                <div className='space-y-1.5 flex-1'>
+                    <Label
+                        htmlFor={matrixDef.key + '-numRows'}
+                    >
+                        Number of rows (excl. labels)
+                    </Label>
+                    <Input
+                        id={matrixDef.key + '-numRows'}
+                        value={numRows || '0'}
+                        type='number'
+                        onChange={(e) => { changeRows(parseInt(e.target.value)) }}
+                        placeholder='Define the number of rows...'
+                    />
+                </div>
             </div>
-            <div className='space-y-1.5'>
-                <Label
-                    htmlFor={matrixDef.key + '-numRows'}
-                >
-                    Number of rows (excl. labels)
-                </Label>
-                <Input
-                    id={matrixDef.key + '-numRows'}
-                    value={numRows || '0'}
-                    type='number'
-                    onChange={(e) => { changeRows(parseInt(e.target.value)) }}
-                    placeholder='Define the nuber of rows...'
-                />
-            </div>
-
-            <Separator orientation='horizontal' />
             <div className='space-y-4'>
-                <p>Overview (select cell to edit)</p>
+                <p className='font-semibold mb-2'>Overview: </p>
                 <OverviewTable matrixDef={matrixDef} selectedElement={selectedElement}
                     onClick={function (i: ItemComponent): void {
                         setSelectedElement(i);
