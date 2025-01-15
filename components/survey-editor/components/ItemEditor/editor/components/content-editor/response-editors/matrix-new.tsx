@@ -209,8 +209,6 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
         </div>
     }
 
-    console.log(cellKeys.indexOf(selectedElement.key ?? "") < 0);
-
     return <div className='space-y-4'>
         <Separator orientation='horizontal' />
         {selectedElement && <p className='font-semibold mb-2'>Selected Element: </p>}
@@ -234,7 +232,8 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
                     disabled={cellKeys.indexOf(selectedElement.key!) < 0}
                     onValueChange={(value) => {
                         if (value != selectedElement.role && selectedElement.key) {
-                            onChange(selectedElement.key, { ...selectedElement, role: value });
+                            // Cleanup all contents if the type is changed, except the key
+                            onChange(selectedElement.key, { role: value, key: selectedElement.key });
                         }
                     }}
                 >
@@ -269,13 +268,7 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
 }
 
 const NewMatrix: React.FC<MatrixProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
-    //const [draggedId, setDraggedId] = React.useState<string | null>(null);
     const [selectedElement, setSelectedElement] = React.useState<ItemComponent | undefined>(undefined);
-
-    useEffect(() => {
-        console.log('Selected element:', selectedElement);
-    }, [selectedElement]);
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {
@@ -288,15 +281,19 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
     }
 
     const matrixDef = (rg.items[matrixIndex] as ItemGroupComponent);
-    const numCols = (matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.length || 0;
+    let headerRow = matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent;
+    if (!headerRow) {
+        headerRow = { items: new Array<ItemComponent>, role: ItemComponentRole.HeaderRow } as ItemGroupComponent
+        matrixDef.items.push(headerRow);
+    }
+    const numCols = headerRow.items.length || 0;
     const numRows = (matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow) as ItemGroupComponent[]).length || 0;
 
     const rowKeys = matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map(comp => comp.key) as string[];
-    const colKeys = (matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow) as ItemGroupComponent).items.map(comp => comp.key) as string[];
+    const colKeys = headerRow.items.map(comp => comp.key) as string[];
     const cellKeys = matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow).map(comp => (comp as ItemGroupComponent).items.map(cell => cell.key)).flat() as string[];
     const allKeys = [...rowKeys, ...colKeys, ...cellKeys];
 
-    //console.log(matrixDef);
 
     const updateSurveyItemWithNewRg = (matrixItems: ItemComponent[]) => {
         const newMatrixDef = {
@@ -395,9 +392,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
     }
 
     const changeRows = (newNumRows: number) => {
-        const headerRow = (matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow));
-        if (!headerRow) return;
-
+        const headerRow = (matrixDef.items.find(comp => comp.role === ItemComponentRole.HeaderRow))!;
         const oldRows = (matrixDef.items.filter(comp => comp.role === ItemComponentRole.ResponseRow) as ItemGroupComponent[]);
         const newRows = Array.from({ length: newNumRows }).map((_v, i) => {
             if (oldRows[i]) {
@@ -457,13 +452,13 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                     />
                 </div>
             </div>
-            <div className='space-y-4'>
+            {matrixDef.items.length > 0 && <div className='space-y-4'>
                 <p className='font-semibold mb-2'>Overview: </p>
                 <OverviewTable matrixDef={matrixDef} selectedElement={selectedElement}
                     onClick={function (i: ItemComponent): void {
                         setSelectedElement(i);
                     }} />
-            </div>
+            </div>}
             {selectedElement &&
                 <EditSection selectedElement={selectedElement} allKeys={allKeys} cellKeys={cellKeys} onChange={function (key: string, item: ItemComponent): void {
                     selectedElementUpdated(key, item);
