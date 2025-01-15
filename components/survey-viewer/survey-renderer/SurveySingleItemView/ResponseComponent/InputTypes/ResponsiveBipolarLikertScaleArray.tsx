@@ -6,6 +6,8 @@ import { CommonResponseComponentProps } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 type ResponsiveBipolarLikertScaleArrayProps = CommonResponseComponentProps
 
@@ -74,6 +76,38 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         });
     }
 
+    const setResponseForRow = (rowKey: string | undefined, value: string) => {
+        if (!rowKey) { return; }
+
+        setTouched(true);
+        setResponse(prev => {
+            if (!prev || !prev.items) {
+                return {
+                    key: props.compDef.key ? props.compDef.key : 'no key found',
+                    items: [{
+                        key: rowKey, items: [{ key: value }]
+                    }]
+                }
+            }
+
+            const rowIndex = prev.items.findIndex(item => item.key === rowKey);
+            const items = [...prev.items];
+            if (rowIndex > -1) {
+                items[rowIndex].items = [{ key: value }];
+            } else {
+                items.push({
+                    key: rowKey, items: [{ key: value }]
+                });
+            }
+
+            return {
+                ...prev,
+                items: items
+            }
+        });
+    }
+
+
     const isResponseSet = (rowKey: string | undefined, itemKey: string | undefined): boolean => {
         if (!rowKey || !itemKey) { return false; }
 
@@ -84,6 +118,18 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         if (!rowResponse || !rowResponse.items || rowResponse.items.length < 1) { return false; }
         const resp = rowResponse.items.find(item => item.key === itemKey);
         return resp !== undefined;
+    }
+
+    const getRowResponseValue = (rowKey: string | undefined): string | undefined => {
+        if (!rowKey) { return undefined; }
+
+        if (!response || !response.items || response.items.length < 1) {
+            return undefined;
+        }
+        const rowResponse = response.items.find(item => item.key === rowKey);
+        if (!rowResponse || !rowResponse.items || rowResponse.items.length < 1) { return undefined; }
+        const resp = rowResponse.items[0]
+        return resp?.key;
     }
 
     const rowHasResponse = (rowKey: string | undefined): boolean => {
@@ -190,21 +236,22 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         }
 
         const labelRow = <div
-            className={clsx("d-flex",
+            className={cn("flex gap-6 justify-between",
                 {
-                    "pb-1a align-items-end": labelOnTop,
-                    "pt-1a": !labelOnTop,
+                    "items-end": labelOnTop,
+                    "items-start": !labelOnTop,
                 }
             )}
+            id={rowKey + 'label'}
         >
-            <div className="pe-2 flex-grow-1">
+            <div className="grow text-balance">
                 <div style={{
                     maxWidth: labelRowMaxLabelWidth
                 }}>
                     {renderFormattedContent(startLabelComp, props.languageCode, undefined, props.dateLocales)}
                 </div>
             </div>
-            <div className="ps-3 flex-grow-1 text-end d-flex justify-content-end">
+            <div className="text-end flex justify-end text-balance">
                 <div style={{
                     maxWidth: labelRowMaxLabelWidth
                 }}>
@@ -214,11 +261,11 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         </div>;
 
         const rowClassName = rowDef.style?.find(st => st.key === 'withLabelRowModeClassName')?.value;
-        const htmlKey = `${namePrefix}_${props.parentKey}.${rowKey}-label-row`;
+
         return <div
             key={rowKey}
             className={clsx(
-                "py-2",
+                "py-2 w-full",
                 {
                     "pb-0": isLast,
                     "pt-0": isfirst,
@@ -227,32 +274,33 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
             )}
         >
             {labelOnTop ? labelRow : null}
-            <fieldset
-                id={htmlKey}
-                name={htmlKey}
-                className={clsx(
-                    "d-flex justify-content-between",
-                )}
+            <RadioGroup
+                className='flex'
                 aria-describedby={rowKey + 'label'}
+                value={getRowResponseValue(rowKey)}
+                onValueChange={(value) => setResponseForRow(rowKey, value)}
             >
-                {
-                    options.items.map(
-                        option => {
-                            const optionKey = option.key;
-                            return <input
-                                key={optionKey}
-                                className="form-check-input cursor-pointer"
-                                type="radio"
-                                name={htmlKey}
-                                id={optionKey}
-                                onChange={radioSelectionChanged(rowKey)}
-                                value={option.key}
-                                checked={isResponseSet(rowKey, option.key)}
-                            />
-                        }
-                    )
-                }
-            </fieldset>
+                {options.items.map((option) => {
+                    const optionKey = option.key;
+
+                    return <Label
+                        key={optionKey}
+                        className={cn("grow w-full flex flex-col p-2 justify-center items-center space-y-2 cursor-pointer hover:bg-black/5 rounded-[--survey-card-border-radius-sm]",
+                            {
+                                'bg-black/5': isResponseSet(rowKey, option.key)
+                            }
+                        )}
+                    >
+                        {labelOnTop ? null : <span className=''>{option.key}</span>}
+                        <RadioGroupItem
+                            className='bg-white'
+                            value={option.key || ''}
+                        />
+                        {labelOnTop ? <span className=''>{option.key}</span> : null}
+                    </Label>
+                })}
+
+            </RadioGroup>
             {!labelOnTop ? labelRow : null}
         </div>
     }
@@ -267,7 +315,7 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
         }
 
         const rows = props.compDef.items.filter(item => item.role === "row");
-        return <React.Fragment>
+        return <ul className='divide-y divide-[--survey-card-table-border-color]'>
             {rows.map((item, index) => {
                 if (item.displayCondition === false) {
                     return null;
@@ -276,7 +324,7 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
                 const labelRowMaxLabelWidth = props.compDef.style?.find(s => s.key === 'labelRowMaxLabelWidth')?.value;
                 return getSingleItemWithLabelRow(item, options, index === 0, index === rows.length - 1, labelOnTop, namePrefix, labelRowMaxLabelWidth);
             })}
-        </React.Fragment>
+        </ul>
     }
 
     const renderTableMode = (namePrefix: string) => {
