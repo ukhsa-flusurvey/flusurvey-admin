@@ -1,5 +1,6 @@
 import React, { InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
+import { Input } from '@/components/ui/input';
 
 export const preprocessTimeInputValue = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): number | undefined => {
     const value = event.target.value;
@@ -47,11 +48,11 @@ const TimeInput: React.FC<TimeInputProps> = (props) => {
                     {inputProps.label}
                 </label>
                 : null}
-            <input
+            <Input
                 {...inputProps}
                 id={inputProps.id}
                 className={clsx(
-                    "form-control border-2 d-flex",
+                    "form-control border-2 flex",
                     {
                         "border-danger": hasError && !props.disabled,
                         "border-0": !hasError,

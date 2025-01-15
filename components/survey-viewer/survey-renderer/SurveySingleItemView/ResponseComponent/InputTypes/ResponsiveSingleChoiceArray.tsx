@@ -399,7 +399,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                     </th>
                                     {options.items.map(oi => <td
                                         key={props.compDef + '.' + oi.key}
-                                        className="text-center  py-1"
+                                        className="text-center py-1"
                                     >
                                         <div className='align-middle flex items-center justify-center px-1'>
                                             <input

@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
 import { getLocaleStringTextByCode, getItemComponentByRole, CommonResponseComponentProps } from '../../utils';
 import DropDownGroup from './DropDownGroup';
+import TextViewComponent from '../../SurveyComponents/TextViewComponent';
+import TextInput from './TextInput';
+import NumberInput from './NumberInput';
+import Time from './Time';
+import DateInput from '../DateInput/DateInput';
 
 
 type MatrixProps = CommonResponseComponentProps
@@ -249,7 +254,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || '';
         const rowKey = [props.parentKey, compDef.key].join('.');
 
-
         return <div
             key={rowKey}
             role="row"
@@ -268,13 +272,10 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                     const cellKey = [rowKey, cell.key].join('.');
                     const headerLabel = (headerRow) && getLocaleStringTextByCode((headerRow as ItemGroupComponent).items.at(cindex)?.content, props.languageCode) || '';
 
-                    return <div key={cellKey}
-                        role="cell" className="flex-1 px-2 py-0.5">
-                        <div className='block md:hidden text-sm font-semibold mb-1' role="columnheader">
-                            {headerLabel}
-                        </div>
-                        <div>
-                            <DropDownGroup
+                    let inputSlot = <p>No input slot found</p>;
+                    switch (cell.role) {
+                        case 'dropDownGroup':
+                            inputSlot = <DropDownGroup
                                 compDef={cell}
                                 embedded={true}
                                 languageCode={props.languageCode}
@@ -284,7 +285,81 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 parentKey={cellKey}
                                 dateLocales={props.dateLocales}
                             />
+                            break;
+                        case 'text':
+                            inputSlot = <TextViewComponent
+                                key={cell.key}
+                                compDef={cell}
+                                languageCode={props.languageCode}
+                                embedded={true}
+                                className='text-center'
+                            />;
+                            break;
+                        case 'input':
+                            inputSlot = <TextInput
+                                parentKey={props.parentKey}
+                                key={cell.key}
+                                compDef={cell}
+                                embedded={true}
+                                languageCode={props.languageCode}
+                                responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+                                prefill={getCellResponse(compDef.key, cell.key)}
+                                updateDelay={5}
+                                dateLocales={props.dateLocales}
+                            />;
+                            break;
+                        case 'numberInput':
+                            inputSlot = <NumberInput
+                                parentKey={props.parentKey}
+                                key={cell.key}
+                                compDef={cell}
+                                embedded={true}
+                                languageCode={props.languageCode}
+                                responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+                                prefill={getCellResponse(compDef.key, cell.key)}
+                                dateLocales={props.dateLocales}
+                            />;
+                            break;
+                        case 'timeInput':
+                            inputSlot = <Time
+                                parentKey={props.parentKey}
+                                defaultClassName='justify-center'
+                                key={cell.key}
+                                compDef={cell}
+                                embedded={true}
+                                languageCode={props.languageCode}
+                                responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+                                prefill={getCellResponse(compDef.key, cell.key)}
+                                dateLocales={props.dateLocales}
+                            />
+                            break;
+                        case 'dateInput':
+                            inputSlot = <DateInput
+                                parentKey={props.parentKey}
+                                key={cell.key}
+                                compDef={cell}
+                                embedded={true}
+                                languageCode={props.languageCode}
+                                responseChanged={handleCellResponseChange(compDef.key, cell.key)}
+                                prefill={getCellResponse(compDef.key, cell.key)}
+                                openCalendar={false}
+                                dateLocales={props.dateLocales}
+                            />;
+                            break;
+                        default:
+                            inputSlot = <p>Unknown role: {cell.role}</p>;
+                            break;
+                    }
 
+
+
+                    return <div key={cellKey}
+                        role="cell" className="flex-1 px-2 py-0.5">
+                        <div className='block md:hidden text-sm font-semibold mb-1' role="columnheader">
+                            {headerLabel}
+                        </div>
+                        <div className='my-2'>
+                            {inputSlot}
                         </div>
                     </div>
                 })}
