@@ -159,7 +159,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                         <p className='mb-2'>From recently opened surveys:</p>
                         <div className='flex flex-col gap-2'>
                             {
-                                storedSurveys ? storedSurveys.map((ss, i) => (
+                                storedSurveys ? storedSurveys.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime()).map((ss, i) => (
                                     <Card key={i} className={cn('flex items-center justify-between', storedSurveySelectionId == ss.id ? "bg-slate-200" : "")}>
                                         <Button
                                             variant='ghost'
@@ -170,6 +170,14 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                                 } else {
                                                     setStoredSurveySelectionId(ss.id);
                                                 }
+                                            }}
+                                            onDoubleClick={() => {
+                                                const storedSurvey = storedSurveys.find(item => ss.id === item.id);
+                                                if (storedSurvey) {
+                                                    setStoredSurvey(storedSurvey);
+                                                }
+                                                toast.success('Survey loaded successfully');
+                                                onClose();
                                             }}
                                         >
                                             <>{ss.id}&nbsp;{"("}{formatDistance(ss.lastUpdated, new Date())}{" ago)"}</>
