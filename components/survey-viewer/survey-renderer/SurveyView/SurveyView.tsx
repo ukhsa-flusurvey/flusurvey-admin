@@ -113,7 +113,7 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
     return (
         <div
             ref={surveyRef}
-            className='focus:outline-none'
+            className='focus:outline-none survey'
             tabIndex={-1}>
             {surveyPages.length > 1 ?
                 <div className="p-6">

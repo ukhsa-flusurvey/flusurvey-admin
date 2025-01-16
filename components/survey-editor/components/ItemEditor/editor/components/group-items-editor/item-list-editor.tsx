@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from '../../../explorer/ItemCreator';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopyIcon, Plus, Shield } from 'lucide-react';
+import { ClipboardCopyIcon, Plus, Shield, TrashIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
@@ -15,6 +15,7 @@ import {
     ContextMenu,
     ContextMenuContent,
     ContextMenuItem,
+    ContextMenuSeparator,
     ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useCopyToClipboard } from 'usehooks-ts';
@@ -22,6 +23,7 @@ import { useCopyToClipboard } from 'usehooks-ts';
 interface ItemListEditorProps {
     surveyItem: SurveyItem;
     onUpdateSurveyItem: (item: SurveyItem) => void;
+    onDeleteItem: (itemKey: string) => void;
 }
 
 const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
@@ -224,6 +226,18 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                                     >
                                         <ClipboardCopyIcon className='size-4' />
                                         <span className='ml-2'>Copy</span>
+                                    </ContextMenuItem>
+
+                                    <ContextMenuSeparator />
+                                    <ContextMenuItem
+                                        onClick={() => {
+                                            if (confirm('Are you sure you want to delete this item?')) {
+                                                props.onDeleteItem(item.id);
+                                            }
+                                        }}
+                                    >
+                                        <TrashIcon className='size-4' />
+                                        <span className='ml-2'>Delete</span>
                                     </ContextMenuItem>
                                 </ContextMenuContent>
                             </ContextMenu>

@@ -2,7 +2,7 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { BoxSelect, LucideIcon, Shield } from 'lucide-react';
+import { BoxSelectIcon, LucideIcon, Shield } from 'lucide-react';
 
 
 interface CompactExplorerNavItemProps {
@@ -69,7 +69,7 @@ const EmptyList: React.FC = () => {
                 <div
                     className='text-gray-500 py-2 '
                 >
-                    <BoxSelect />
+                    <BoxSelectIcon />
                 </div>
             </TooltipTrigger>
             <TooltipContent side="right" className="flex items-center gap-4">

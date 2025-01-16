@@ -226,7 +226,9 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     }
                                     (parentItem as SurveyGroupItem).items = (parentItem as SurveyGroupItem).items.filter(item => item.key !== itemKey);
                                     editorInstance.updateSurveyItem(parentItem);
-                                    setSelectedItemKey(null);
+                                    if (selectedItemKey === itemKey) {
+                                        setSelectedItemKey(parentItem.key);
+                                    }
                                     setSurvey(editorInstance.getSurvey());
                                     toast(`Item "${itemKey}" deleted`);
                                 }}
