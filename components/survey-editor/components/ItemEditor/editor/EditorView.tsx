@@ -40,6 +40,7 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
             <ItemEditorTabs
                 surveyItem={props.surveyItem}
                 onUpdateSurveyItem={props.onUpdateSurveyItem}
+                onDeleteItem={props.onDeleteItem}
             />
         );
     }

@@ -12,6 +12,7 @@ import AdvancedConfigs from './advanced-configs/advanced-configs';
 interface ItemEditorTabsProps {
     surveyItem: SurveyItem;
     onUpdateSurveyItem: (item: SurveyItem) => void;
+    onDeleteItem: (itemKey: string) => void;
 }
 
 const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
@@ -101,6 +102,7 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                     <GroupItemsEditor
                         surveyItem={props.surveyItem}
                         onUpdateSurveyItem={props.onUpdateSurveyItem}
+                        onDeleteItem={props.onDeleteItem}
                     />
                 </TabsContent>
 
