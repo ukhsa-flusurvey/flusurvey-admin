@@ -6,7 +6,7 @@ import { CommonResponseComponentProps } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
 type ResponsiveBipolarLikertScaleArrayProps = CommonResponseComponentProps
@@ -295,7 +295,7 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
                     >
                         {labelOnTop ? null : <span className=''>{option.key}</span>}
                         <RadioGroupItem
-                            className='bg-white'
+                            className='bg-white size-5'
                             value={option.key || ''}
                         />
                         {labelOnTop ? <span className=''>{option.key}</span> : null}
