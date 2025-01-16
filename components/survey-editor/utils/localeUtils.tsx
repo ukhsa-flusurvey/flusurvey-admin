@@ -1,5 +1,5 @@
 import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedObject, LocalizedString, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem } from "survey-engine/data_types";
-import { getLocalizedString } from "./localizedStrings";
+import { getLocalizedString } from '@/utils/localizedStrings';
 
 export const getLocStringLocales = (locString?: LocalizedObject[]): string[] => {
     if (!locString) return [];

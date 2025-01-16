@@ -19,7 +19,7 @@ import { LocalizedString, Survey } from "survey-engine/data_types"
 import React from "react"
 import LanguageSelector from "@/components/LanguageSelector"
 import { useDebounceCallback } from "usehooks-ts"
-import { getLocalizedString, updateLocalizedString } from "../../utils/localizedStrings"
+import { getLocalizedString, updateLocalizedString } from '@/utils/localizedStrings';
 
 const formSchema = z.object({ "name": z.string().max(255), "description": z.string(), "duration_notice": z.string() })
 

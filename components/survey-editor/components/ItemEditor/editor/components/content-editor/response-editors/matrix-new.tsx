@@ -1,6 +1,6 @@
 import { ItemComponentRole, MatrixCellType } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
-import { getLocalizedString, updateLocalizedString } from "@/components/survey-editor/utils/localizedStrings";
+import { getLocalizedString, updateLocalizedString } from '@/utils/localizedStrings';
 import { getUniqueRandomKey } from "@/components/survey-editor/utils/new-item-init";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

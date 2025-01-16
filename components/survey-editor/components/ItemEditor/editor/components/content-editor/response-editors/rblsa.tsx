@@ -5,7 +5,7 @@ import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
-import { updateLocalizedString } from "@/components/survey-editor/utils/localizedStrings";
+import { updateLocalizedString } from '@/utils/localizedStrings';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -362,7 +362,7 @@ const RowEditor = (props: {
                                     placeholder='Enter row start label...'
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        let rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
+                                        const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
                                         const newStartLabelItem = { ...rowStartLabelItem, content: generateLocStrings(localisedObjectToMap(rowStartLabelItem?.content).set(selectedLanguage, value)), role: ItemComponentRole.StartLabel };
                                         const updatedComponent = { ...props.row, items: props.row.items.map(comp => comp.role == ItemComponentRole.StartLabel ? newStartLabelItem : comp) } as ItemGroupComponent;
                                         props.onChange(updatedComponent);

@@ -7,7 +7,7 @@ import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-g
 import React, { useContext } from 'react';
 import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from './editor-wrapper';
-import { getLocalizedString } from '@/components/survey-editor/utils/localizedStrings';
+import { getLocalizedString } from '@/utils/localizedStrings';
 
 
 interface SurveyEndEditorProps {
