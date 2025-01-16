@@ -21,6 +21,7 @@ interface SurveyEditorProps {
     initialSurvey?: Survey;
     notLatestVersion?: boolean;
     embedded?: boolean;
+    simulatorUrl: string;
     onUploadNewVersion?: (survey?: Survey) => void;
     onExit?: () => void;
 }
@@ -131,7 +132,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <div>Advanced</div>;
             break;
         case EditorMode.Simulator:
-            mainContent = <SurveySimulator />
+            mainContent = <SurveySimulator
+                simulatorUrl={props.simulatorUrl}
+            />
             break;
     }
 

@@ -40,7 +40,9 @@ const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement>, config: Si
     }
 };
 
-const SurveySimulator: React.FC = () => {
+const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
+    simulatorUrl,
+}) => {
     const { survey, selectedLanguage } = useContext(SurveyContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -125,7 +127,7 @@ const SurveySimulator: React.FC = () => {
                 >
                     <iframe
                         ref={iframeRef}
-                        src={`/tools/survey-simulator`}
+                        src={simulatorUrl}
                         height={'100%'}
                         className="relative w-full bg-background"
                     />

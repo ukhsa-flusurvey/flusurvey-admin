@@ -8,7 +8,7 @@ const EditorWrapper: React.FC = () => {
     const router = useRouter();
     return (
         <SurveyEditor
-
+            simulatorUrl="/tools/survey-simulator"
             onExit={() => {
                 router.push('/tools/editors')
             }}
