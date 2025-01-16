@@ -1,1 +1,1 @@
-export enum EditorMode { Properties = 'properties', ItemEditor = 'itemEditor', Advanced = 'advanced', Simulator = 'simulator' }
+export enum EditorMode { Properties = 'properties', ItemEditor = 'itemEditor', Simulator = 'simulator' }
