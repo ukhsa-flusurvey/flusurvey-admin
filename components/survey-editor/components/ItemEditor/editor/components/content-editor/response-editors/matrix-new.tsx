@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Binary, Calendar, Check, CircleHelp, Clock, SquareChevronDown, TextCursorInput, Type, X } from "lucide-react";
-import React, { useEffect } from "react";
 import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
@@ -17,6 +16,7 @@ import NumberInputContentConfig from "./number-input-content-config";
 import DateInputContentConfig from "./date-input-content-config";
 import TimeInputContentConfig from "./time-input-content-config";
 import DropdownContentConfig from "./dropdown-content-config";
+import React from "react";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;

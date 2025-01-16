@@ -5,18 +5,18 @@ import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
+import { updateLocalizedString } from "@/components/survey-editor/utils/localizedStrings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { getLocalizedString } from "@/utils/localizedStrings";
 import { ResponsiveBipolarLikertArrayVariant } from "case-editor-tools/surveys/types";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
 import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from "lucide-react";
 import React from "react";
 import { useContext } from "react";
-import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
+import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -143,7 +143,6 @@ const OptionEditor = (props: {
     onDelete: () => void;
 }) => {
     const { selectedLanguage } = useContext(SurveyContext);
-
     const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
 
     return <SortableItem
@@ -178,6 +177,27 @@ const OptionEditor = (props: {
                 >
                     <Trash2 className='size-4' />
                 </Button>
+            </div>
+            <div
+                data-no-dnd="true"
+                // incase we want to allow for different label than the key, remove hidden?
+                className='flex gap-2 items-center hidden' >
+                <Label htmlFor={'option-key-' + props.option.key}>
+                    Label
+                </Label>
+                <Input
+                    id={'option-key-' + props.option.key}
+                    className='w-32'
+                    value={optionLabel}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        const updatedContent = updateLocalizedString(props.option.content as LocalizedString[] || [], selectedLanguage, value);
+                        props.onChange({
+                            ...props.option,
+                            content: updatedContent,
+                        })
+                    }}
+                />
             </div>
         </div>
     </SortableItem>
@@ -342,8 +362,8 @@ const RowEditor = (props: {
                                     placeholder='Enter row start label...'
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
-                                        const newStartLabelItem = { ...rowStartLabelItem, content: generateLocStrings(localisedObjectToMap(rowStartLabelItem?.content).set(selectedLanguage, value)) };
+                                        let rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
+                                        const newStartLabelItem = { ...rowStartLabelItem, content: generateLocStrings(localisedObjectToMap(rowStartLabelItem?.content).set(selectedLanguage, value)), role: ItemComponentRole.StartLabel };
                                         const updatedComponent = { ...props.row, items: props.row.items.map(comp => comp.role == ItemComponentRole.StartLabel ? newStartLabelItem : comp) } as ItemGroupComponent;
                                         props.onChange(updatedComponent);
                                     }}
@@ -555,9 +575,10 @@ const RowsEditor = (props: {
                 ]}
                 onAddItem={(type) => {
                     if (type === 'row') {
-                        const newRow: ItemComponent = {
+                        const newRow: ItemGroupComponent = {
                             key: Math.random().toString(36).substring(9),
                             role: 'row',
+                            items: [{ role: ItemComponentRole.StartLabel, content: [] }, { role: ItemComponentRole.EndLabel, content: [] }]
                         }
                         props.onChange([...props.rows as ItemGroupComponent[], newRow as ItemGroupComponent]);
                     }
@@ -568,8 +589,6 @@ const RowsEditor = (props: {
 }
 
 const Rblsa: React.FC<RblsaProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
-
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;

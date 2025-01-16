@@ -3,7 +3,7 @@ import {
     Binary, Calendar, CheckCircle2, CheckSquare2, ChevronDownSquare, Clock,
     CornerDownLeft,
     Folder,
-    GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, PenLine, Send, Settings2, SquareStack,
+    GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, Send, Settings2, SquareStack,
     TextCursorInput, UnfoldHorizontal, BotOff,
     Contact
 } from "lucide-react";
