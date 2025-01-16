@@ -7,6 +7,8 @@ import TextInput from './TextInput';
 import NumberInput from './NumberInput';
 import Time from './Time';
 import DateInput from '../DateInput/DateInput';
+import { Checkbox } from '../../../components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 
 type MatrixProps = CommonResponseComponentProps
@@ -26,64 +28,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [response]);
 
-
-    /*const checkboxSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (!rowKey) { return; }
-        setTouched(true);
-        const selectedValue = event.target.value;
-        const checked = event.target.checked;
-        if (checked) {
-            const newRI: ResponseItem = {
-                key: selectedValue,
-            }
-            setResponse(prev => {
-                if (!prev || !prev.items) {
-                    return {
-                        key: props.compDef.key ? props.compDef.key : 'no key found',
-                        items: [{
-                            key: rowKey, items: [newRI]
-                        }]
-                    }
-                }
-                const rowIndex = prev.items.findIndex(item => item.key === rowKey);
-                const items = [...prev.items];
-                if (rowIndex > -1) {
-                    const currentItems = items[rowIndex];
-                    items[rowIndex].items = currentItems.items ? [...currentItems.items, newRI] : [newRI];
-                } else {
-                    items.push({
-                        key: rowKey, items: [newRI]
-                    });
-                }
-                return {
-                    ...prev,
-                    items: items
-                }
-
-            });
-        } else {
-            setResponse(prev => {
-                if (!prev || !prev.items) {
-                    return {
-                        key: props.compDef.key ? props.compDef.key : 'no key found',
-                        items: []
-                    }
-                }
-                const rowIndex = prev.items.findIndex(item => item.key === rowKey);
-                const items = [...prev.items];
-                if (rowIndex > -1) {
-                    const currentItems = items[rowIndex];
-                    items[rowIndex].items = currentItems.items?.filter(i => i.key !== selectedValue);
-                }
-                return {
-                    ...prev,
-                    items: items,
-                }
-
-            });
-        }
-
-    }*/
 
     const handleCellResponseChange = (rowKey: string | undefined, itemKey: string | undefined) => (response: ResponseItem | undefined) => {
         if (!rowKey || !itemKey) { return; }
@@ -143,12 +87,27 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         return resp;
     }
 
-    /*const isResponseSet = (rowKey: string | undefined, itemKey: string | undefined): boolean => {
+    const isResponseSet = (rowKey: string | undefined, itemKey: string | undefined): boolean => {
         if (!getCellResponse(rowKey, itemKey)) {
             return false;
         }
         return true;
-    }*/
+    }
+
+    const checkboxSelectionChanged = (rowKey: string | undefined, columnKey: string | undefined) => (checked: boolean) => {
+        if (!rowKey || !columnKey) { return; }
+        setTouched(true);
+
+        if (checked) {
+            handleCellResponseChange(rowKey, columnKey)({
+                key: columnKey,
+            });
+            return;
+        } else {
+            handleCellResponseChange(rowKey, columnKey)(undefined);
+            return;
+        }
+    }
 
     const matrixDef = (props.compDef as ItemGroupComponent);
     const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
@@ -249,6 +208,20 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />;
                             break;
+                        case 'checkbox':
+                            inputSlot = <Label className='-my-2 py-2 px-1 flex items-center gap-2 justify-center cursor-pointer hover:bg-black/5 rounded-[--survey-card-border-radius-sm]'>
+                                <Checkbox
+                                    className='bg-background size-5'
+                                    checked={isResponseSet(compDef.key, cell.key)}
+                                    value={cell.key}
+                                    onCheckedChange={checkboxSelectionChanged(compDef.key, cell.key)}
+                                />
+                                <span className='text-balance'>
+                                    <span className='sr-only'>{cell.key}</span>
+                                    {getLocaleStringTextByCode(cell.content, props.languageCode)}
+                                </span>
+                            </Label>
+                            break;
                         default:
                             inputSlot = <p>Unknown role: {cell.role}</p>;
                             break;
@@ -302,9 +275,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         //             />
         //             /*
         //             <Checkbox
-        //               checked={isResponseSet(compDef.key, cell.key)}
-        //               value={cell.key}
-        //               onChange={checkboxSelectionChanged(compDef.key)}
+
         //               inputProps={{ 'aria-label': cell.key }}
         //               disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
         //             />;*/
