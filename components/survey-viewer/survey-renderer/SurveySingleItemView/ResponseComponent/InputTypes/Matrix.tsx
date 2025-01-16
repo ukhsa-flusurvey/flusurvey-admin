@@ -26,37 +26,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [response]);
 
-    /*const radioSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (!rowKey) { return; }
-        const selectedValue = event.target.value;
-
-        setTouched(true);
-        setResponse(prev => {
-            if (!prev || !prev.items) {
-                return {
-                    key: props.compDef.key ? props.compDef.key : 'no key found',
-                    items: [{
-                        key: rowKey, items: [{ key: selectedValue }]
-                    }]
-                }
-            }
-
-            const rowIndex = prev.items.findIndex(item => item.key === rowKey);
-            const items = [...prev.items];
-            if (rowIndex > -1) {
-                items[rowIndex].items = [{ key: selectedValue }];
-            } else {
-                items.push({
-                    key: rowKey, items: [{ key: selectedValue }]
-                });
-            }
-
-            return {
-                ...prev,
-                items: items
-            }
-        });
-    }*/
 
     /*const checkboxSelectionChanged = (rowKey: string | undefined) => (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!rowKey) { return; }
@@ -180,72 +149,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         }
         return true;
     }*/
-
-    /*
-    const renderRadioRow = (compDef: ItemGroupComponent, index: number): React.ReactNode => {
-        const rowKey = [props.parentKey, compDef.key].join('.');
-
-        const cells = (compDef as ItemGroupComponent).items.map((cell, cindex) => {
-            let currentCellContent: React.ReactNode | null;
-            const cellKey = [rowKey, cell.key].join('.');
-            switch (cell.role) {
-                case 'label':
-                    currentCellContent = getLocaleStringTextByCode(cell.content, props.languageCode);
-                    if (cindex === 0) {
-                        return <th
-                            key={cell.key ? cell.key : cindex.toString()}
-                            className={clsx(
-                                "border-bottom border-grey-2",
-                                "px-2 py-1",
-                            )}
-                        >{currentCellContent}</th>
-                    }
-                    break;
-                case 'option':
-                    currentCellContent = <input
-                        className="form-check-input cursor-pointer"
-                        type="radio"
-                        id={cellKey}
-                        value={cell.key}
-                        aria-label={cell.key}
-                        checked={isResponseSet(compDef.key, cell.key)}
-                        onChange={radioSelectionChanged(compDef.key)}
-                        disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-                    />
-                    <Radio
-                        checked={isResponseSet(compDef.key, cell.key)}
-                        onChange={radioSelectionChanged(compDef.key)}
-                        value={cell.key}
-                        disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-                        inputProps={{ 'aria-label': cell.key }}
-                      />;
-                    break;
-                default:
-                    console.warn('cell role for matrix question unknown: ', cell.role);
-                    break;
-            }
-            return <td
-                key={cell.key ? cell.key : cindex.toString()}
-                className={clsx(
-                    "border-bottom border-grey-2",
-                    "px-2 py-1",
-                    {
-                        'text-center': cell.role === 'option',
-                    })}
-                style={{
-                    minWidth: 33,
-                }}
-            >{currentCellContent}</td>
-        }
-
-        );
-        return <tr key={compDef.key}
-        >
-            {cells}
-        </tr>
-    }
-    */
-
 
     const matrixDef = (props.compDef as ItemGroupComponent);
     const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');

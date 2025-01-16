@@ -9,8 +9,7 @@ export const useClipboardValue = (): [string | null, () => void, Date | null] =>
             try {
                 const text = await navigator.clipboard.readText();
                 setClipboardValue(text);
-            } catch (error: any) {
-                // console.warn('Failed to read clipboard contents: ', error);
+            } catch {
                 setClipboardValue(null);
             }
         }
