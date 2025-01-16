@@ -110,28 +110,33 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
 const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, onChange }) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
+    const simpleTextContentEditor = (selectedElement: ItemComponent) => {
+        return <div className='flex items-center gap-2'
+            data-no-dnd="true"
+        >
+            <p className='w-32 font-semibold text-sm'>Text</p>
+            <Input
+                className="w-full"
+                placeholder="Text in selected language..."
+                key={selectedLanguage + '-content-input-' + selectedElement.key}
+                value={getLocalizedString(selectedElement.content, selectedLanguage)}
+                onChange={(e) => {
+                    if (selectedElement.key) {
+                        const updatedElement = { ...selectedElement, content: updateLocalizedString(selectedElement.content as LocalizedString[], selectedLanguage, e.target.value) };
+                        onChange(selectedElement.key, updatedElement);
+                    }
+                }}
+            />
+        </div>;
+    }
+
     switch (selectedElement.role) {
         case MatrixCellType.Dropdown:
             return <DropdownContentConfig component={selectedElement} onChange={(n) => onChange(selectedElement.key!, n)} />
         case ItemComponentRole.ResponseRow:
+        case MatrixCellType.Checkbox:
         case MatrixCellType.Text:
-            return <div className='flex items-center gap-2'
-                data-no-dnd="true"
-            >
-                <p className='w-32 font-semibold text-sm'>Display text</p>
-                <Input
-                    className="w-full"
-                    placeholder="Text in selected language..."
-                    key={selectedLanguage + '-content-input-' + selectedElement.key}
-                    value={getLocalizedString(selectedElement.content, selectedLanguage)}
-                    onChange={(e) => {
-                        if (selectedElement.key) {
-                            const updatedElement = { ...selectedElement, content: updateLocalizedString(selectedElement.content as LocalizedString[], selectedLanguage, e.target.value) };
-                            onChange(selectedElement.key, updatedElement);
-                        }
-                    }}
-                />
-            </div>;
+            return simpleTextContentEditor(selectedElement);
         case MatrixCellType.TextInput:
             return <TextInputContentConfig component={selectedElement} onChange={(n) => onChange(selectedElement.key!, n)} allowMultipleLines={false} />
         case MatrixCellType.NumberInput:
@@ -247,7 +252,7 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
                         <SelectItem value={MatrixCellType.NumberInput}>Number input</SelectItem>
                         <SelectItem value={MatrixCellType.DateInput}>Date input</SelectItem>
                         <SelectItem value={MatrixCellType.TimeInput}>Time input</SelectItem>
-                        <SelectItem disabled={true} value={MatrixCellType.Checkbox}>Checkbox</SelectItem>
+                        <SelectItem value={MatrixCellType.Checkbox}>Checkbox</SelectItem>
                         <SelectItem disabled={true} hidden={true} value={ItemComponentRole.ResponseRow}>Response row (text)</SelectItem>
                     </SelectContent>
                 </Select>
