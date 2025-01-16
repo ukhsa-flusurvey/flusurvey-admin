@@ -24,7 +24,7 @@ const SurveyProgress: React.FC<SurveyProgressProps> = (props) => {
                                 key={index.toString()}
                                 className={
                                     clsx(
-                                        'h-full rounded',
+                                        'h-full rounded-[--survey-card-border-radius-sm]',
                                         'grow',
                                         {
                                             'bg-[--survey-card-header-bg]': index > props.currentIndex,
