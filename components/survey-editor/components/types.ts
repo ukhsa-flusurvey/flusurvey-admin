@@ -5,6 +5,7 @@ export enum ItemComponentRole {
     Row = 'row',
     StartLabel = 'start',
     EndLabel = 'end',
+    Matrix = 'matrix',
     HeaderRow = 'headerRow',
     ResponseRow = 'responseRow',
     DropdownGroup = 'dropDownGroup',
