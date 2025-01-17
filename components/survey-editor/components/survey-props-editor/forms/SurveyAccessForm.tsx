@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { SurveyContext } from "../../surveyContext"
+import { SurveyContext } from "../../../surveyContext"
 import { useContext, useEffect } from "react"
 import { Survey } from "survey-engine/data_types"
 import { useDebounceCallback } from "usehooks-ts"
@@ -74,7 +74,7 @@ export function SurveyAccessForm() {
     return (
         <>
             <div>
-                <h3 className="text-lg font-medium">Survey Access</h3>
+                <h3 className="text-lg font-medium  mb-1">Survey Access</h3>
                 <p className="text-sm text-muted-foreground">
                     Conditions regarding who can access the survey.
                 </p>

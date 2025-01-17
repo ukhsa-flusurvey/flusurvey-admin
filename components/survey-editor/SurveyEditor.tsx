@@ -7,7 +7,7 @@ import { Survey } from 'survey-engine/data_types';
 import { EditorMode } from './components/types';
 import { Toaster } from 'sonner';
 import { SurveyContext } from './surveyContext';
-import SurveyProperties from './components/SurveyProperties';
+import SurveyProperties from './components/survey-props-editor/survey-props-editor';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';

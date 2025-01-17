@@ -6,6 +6,7 @@ import SurveyPageView from './SurveyPageView/SurveyPageView';
 import SurveyProgress from './SurveyProgress/SurveyProgress';
 import { isFirefox } from 'react-device-detect';
 import { Locale } from 'date-fns';
+import { useWindowSize } from 'usehooks-ts';
 
 interface SurveyViewProps {
     instanceKey?: string;
@@ -33,7 +34,8 @@ interface SurveyViewProps {
 
 const SurveyView: React.FC<SurveyViewProps> = (props) => {
     const [surveyEngine, setSurveyEngine] = useState<SurveyEngineCore>(new SurveyEngineCore(props.survey, props.context, props.prefills, props.showEngineDebugMsg));
-    const surveyPages = surveyEngine.getSurveyPages();
+    const { width = 0 } = useWindowSize()
+    const surveyPages = surveyEngine.getSurveyPages(width < 649 ? 'small' : 'large');
 
     const [responseCount, setResponseCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
