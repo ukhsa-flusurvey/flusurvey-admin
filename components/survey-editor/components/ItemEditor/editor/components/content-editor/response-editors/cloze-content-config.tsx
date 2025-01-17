@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Binary, Calendar, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripVertical, Heading, Languages, ToggleLeft } from "lucide-react";
+import { Binary, Calendar, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripVertical, Heading, Languages, SquareChevronDown, ToggleLeft } from "lucide-react";
 import React from "react";
 import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
+import DropdownContentConfig from "./dropdown-content-config";
+import TextViewContentEditor from "./text-view-content-editor";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -94,22 +96,27 @@ export const ContentItem = (props: {
                     compKey={props.component.key}
                     type='SIMPLE TEXT'
                     defaultOpen={props.index > -1}>
-                    <div className='space-y-1.5'
-                        data-no-dnd="true">
-                        <Label htmlFor={props.component.key + '-text'} />
-                        <Input
-                            id={props.component.key + '-text'}
-                            placeholder='Text in selected language...'
-                            value={currentContent}
-                            onChange={(e) => {
-                                const updatedPart = { ...props.component };
-                                const updatedContent = localisedObjectToMap(updatedPart.content);
-                                updatedContent.set(selectedLanguage, e.target.value);
-                                updatedPart.content = generateLocStrings(updatedContent);
-                                props.onUpdateComponent(updatedPart);
-                            }}
-                        />
-                    </div>
+                    <TextViewContentEditor
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                        useAdvancedMode={false}
+                        hideToggle={true}
+                        hideStyling={true}
+                    />
+                </ContentTabCollapsible>;
+            case ClozeItemType.Dropdown:
+                return <ContentTabCollapsible
+                    compKey={props.component.key}
+                    type='DROPDOWN'
+                    defaultOpen={props.index > -1}
+
+                >
+                    <DropdownContentConfig
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                        hideLabel={true}
+                        hidePlaceholder={true}
+                    />
                 </ContentTabCollapsible>;
             case ClozeItemType.TextInput:
                 return <ContentTabCollapsible
@@ -279,7 +286,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
     const clozeItems = props.component.items || [];
-    console.log('clozeItems:', clozeItems);
+    //console.log('clozeItems:', clozeItems);
 
     const updateComponent = (newItems: ItemComponent[]) => {
         props.onChange({
@@ -362,6 +369,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                                 options={[
                                     { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
                                     { key: ClozeItemType.Markdown, label: 'Markdown', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.Dropdown, label: 'Dropdown', icon: <SquareChevronDown className='size-4 text-muted-foreground me-2' /> },
                                     { key: ClozeItemType.TextInput, label: 'Text Input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
                                     { key: ClozeItemType.NumberInput, label: 'Number Input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
                                     { key: ClozeItemType.TimeInput, label: 'Time Input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },

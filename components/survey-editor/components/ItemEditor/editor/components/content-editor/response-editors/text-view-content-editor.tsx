@@ -12,6 +12,8 @@ interface TextViewContentEditorProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
     hideToggle?: boolean;
+    // only works in simple mode
+    hideStyling?: boolean;
     useAdvancedMode?: boolean;
 }
 
@@ -22,6 +24,7 @@ interface TextViewContentEditorProps {
 const SimpleModeEditor: React.FC<{
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
+    hideStyling?: boolean;
 }> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
@@ -51,7 +54,7 @@ const SimpleModeEditor: React.FC<{
                 placeholder='Enter content here for the selected language...'
             />
         </div>
-        <div className='space-y-1.5 mt-4'>
+        {!props.hideStyling && <div className='space-y-1.5 mt-4'>
             <Label
                 htmlFor={props.component.key + 'className'}
             >
@@ -76,7 +79,7 @@ const SimpleModeEditor: React.FC<{
                 }}
                 placeholder='Enter optional CSS classes...'
             />
-        </div>
+        </div>}
 
     </div>
 }
@@ -154,6 +157,7 @@ const TextViewContentEditor: React.FC<TextViewContentEditorProps> = (props) => {
                 <SimpleModeEditor
                     component={props.component}
                     onChange={props.onChange}
+                    hideStyling={props.hideStyling}
                 />
             )}
         </div>

@@ -9,8 +9,6 @@ interface ClozeEditorProps {
 }
 
 const ClozeEditor: React.FC<ClozeEditorProps> = (props) => {
-    //const [draggedId, setDraggedId] = React.useState<string | null>(null);
-    //console.log('props.surveyItem:', props.surveyItem);
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
@@ -24,17 +22,6 @@ const ClozeEditor: React.FC<ClozeEditorProps> = (props) => {
     if (clozeComponentIndex === undefined || clozeComponentIndex === -1) {
         return <p>Cloze group not found</p>;
     }
-
-    //const responseGroup = props.surveyItem.components?.items.find(item => item.role === ItemComponentRole.ResponseGroup) as ItemGroupComponent;
-
-    /*     const updateSurveyItemWithNewItems = (newItems: ItemComponent[]) => {
-            responseGroup.items = responseGroup.items.map(comp => comp.role === ItemComponentRole.Cloze ? { ...comp, items: newItems } : comp);
-            const updatedItemGroupComponent = { ...props.surveyItem.components, items: props.surveyItem.components?.items.map(comp => comp.key === responseGroup.key ? responseGroup : comp) } as ItemGroupComponent;
-            props.onUpdateSurveyItem({
-                ...props.surveyItem,
-                components: updatedItemGroupComponent,
-            });
-        } */
 
     const onChange = (newComp: ItemGroupComponent) => {
         const existingComponents = props.surveyItem.components?.items || [];
