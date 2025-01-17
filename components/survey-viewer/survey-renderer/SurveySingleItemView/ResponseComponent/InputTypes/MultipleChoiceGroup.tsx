@@ -10,7 +10,6 @@ import ClozeQuestion from './ClozeQuestion';
 import Time from './Time';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
 import DateInput from '../DateInput/DateInput';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -18,6 +17,17 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 interface MultipleChoiceGroupProps extends CommonResponseComponentProps {
     showOptionKey?: boolean;
     isSingleChoice?: boolean;
+}
+
+export enum ChoiceResponseOptionType {
+    SimpleText = 'option',
+    FormattedText = 'formattedOption',
+    TextInput = 'input',
+    NumberInput = 'numberInput',
+    TimeInput = 'timeInput',
+    DateInput = 'dateInput',
+    Cloze = 'cloze',
+    DisplayText = 'sectionHeader'
 }
 
 const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {

@@ -15,36 +15,3 @@ export enum ItemComponentRole {
     DateInput = 'dateInput',
     ResponsiveBipolarLikertScaleArray = 'responsiveBipolarLikertScaleArray',
 }
-export enum MatrixCellType {
-    Text = 'text',
-    TextInput = 'input',
-    NumberInput = 'numberInput',
-    DateInput = 'dateInput',
-    TimeInput = 'timeInput',
-    Dropdown = 'dropDownGroup',
-    Checkbox = 'checkbox',
-}
-export enum ChoiceResponseOptionType {
-    SimpleText = 'option',
-    FormattedText = 'formattedOption',
-    TextInput = 'input',
-    NumberInput = 'numberInput',
-    TimeInput = 'timeInput',
-    DateInput = 'dateInput',
-    Cloze = 'cloze',
-    DisplayText = 'sectionHeader'
-}
-export enum ClozeItemType {
-    SimpleText = 'text',
-    Markdown = 'markdown',
-    TextInput = 'input',
-    LineBreak = 'lineBreak',
-    NumberInput = 'numberInput',
-    DateInput = 'dateInput',
-    TimeInput = 'timeInput'
-}
-//  Currently unused, do we need this?
-export enum ClozeItemGroupType {
-    Text = 'text',
-    Dropdown = 'dropDownGroup'
-}

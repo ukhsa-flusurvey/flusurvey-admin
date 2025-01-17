@@ -1,4 +1,4 @@
-import { ItemComponentRole, MatrixCellType } from "@/components/survey-editor/components/types";
+import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { getLocalizedString, updateLocalizedString } from '@/utils/localizedStrings';
 import { getUniqueRandomKey } from "@/components/survey-editor/utils/new-item-init";
@@ -17,6 +17,7 @@ import DateInputContentConfig from "./date-input-content-config";
 import TimeInputContentConfig from "./time-input-content-config";
 import DropdownContentConfig from "./dropdown-content-config";
 import React from "react";
+import { MatrixCellType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;

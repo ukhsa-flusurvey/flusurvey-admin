@@ -18,9 +18,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import TextInputContentConfig from './text-input-content-config';
 import NumberInputContentConfig from './number-input-content-config';
 import DateInputContentConfig from './date-input-content-config';
-import { ChoiceResponseOptionType } from '@/components/survey-editor/components/types';
 import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
+import { ChoiceResponseOptionType } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;

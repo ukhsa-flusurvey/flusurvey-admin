@@ -1,6 +1,5 @@
 import SortableWrapper from "@/components/survey-editor/components/general/SortableWrapper";
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
-import { ClozeItemType } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,7 @@ import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
+import { ClozeItemType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;

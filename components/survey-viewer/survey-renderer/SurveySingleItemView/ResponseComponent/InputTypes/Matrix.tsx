@@ -13,6 +13,16 @@ import { Label } from '@/components/ui/label';
 
 type MatrixProps = CommonResponseComponentProps
 
+export enum MatrixCellType {
+    Text = 'text',
+    TextInput = 'input',
+    NumberInput = 'numberInput',
+    DateInput = 'dateInput',
+    TimeInput = 'timeInput',
+    Dropdown = 'dropDownGroup',
+    Checkbox = 'checkbox',
+}
+
 
 const Matrix: React.FC<MatrixProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
