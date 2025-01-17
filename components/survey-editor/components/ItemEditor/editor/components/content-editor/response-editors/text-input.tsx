@@ -5,7 +5,6 @@ import TextInputContentConfig from './text-input-content-config';
 interface TextInputProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
-
 }
 
 const TextInput: React.FC<TextInputProps> = (props) => {

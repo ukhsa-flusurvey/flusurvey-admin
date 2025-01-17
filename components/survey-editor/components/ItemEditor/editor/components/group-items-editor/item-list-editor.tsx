@@ -65,7 +65,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
             parentGroup: groupItem,
         });
 
-        console.log('newSurveyItem', newSurveyItem);
+        //console.log('newSurveyItem', newSurveyItem);
 
         if (newSurveyItem) {
             groupItem.items.push(newSurveyItem);

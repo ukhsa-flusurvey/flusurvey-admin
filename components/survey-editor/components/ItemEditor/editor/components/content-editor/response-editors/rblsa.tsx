@@ -604,7 +604,7 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
 
     const styles = rblsaGroup.style || [];
 
-    console.log('rblsaGroup', rblsaGroup);
+    //console.log('rblsaGroup', rblsaGroup);
 
     const defaultMode = styles?.find(st => st.key === 'defaultMode')?.value as ResponsiveBipolarLikertArrayVariant | undefined;
     const smMode = styles?.find(st => st.key === 'smMode')?.value as ResponsiveBipolarLikertArrayVariant | undefined;

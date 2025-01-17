@@ -89,40 +89,6 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             break;
     }
 
-    /* case 'input':
-            return 'textInput';
-        case 'multilineTextInput':
-            return 'multilineTextInput';
-        case 'numberInput':
-            return 'numericInput';
-        case 'dropDownGroup':
-            return 'dropdown';
-        case 'singleChoiceGroup':
-            return 'singleChoice';
-        case 'multipleChoiceGroup':
-            return 'multipleChoice';
-        case 'responsiveSingleChoiceArray':
-            return 'responsiveSingleChoiceArray';
-        case 'responsiveSingleChoiceArray':
-            return 'responsiveSingleChoiceArray';
-        case 'responsiveBipolarLikertScaleArray':
-            return 'responsiveBipolarLikertScaleArray';
-        case 'responsiveMatrix':
-            return 'responsiveMatrix';
-        case 'matrix':
-            return 'matrix';
-        case 'sliderNumeric':
-            return 'sliderNumeric';
-        case 'dateInput':
-            return 'dateInput';
-        case 'timeInput':
-            return 'timeInput';
-        case 'cloze':
-            return 'clozeQuestion';
-        case 'consent':
-            return 'consent';
-            */
-
     return (
         <EditorWrapper>
             <div className='flex justify-end'>
