@@ -23,6 +23,7 @@ import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
 import TextViewContentEditor from "./text-view-content-editor";
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -33,14 +34,6 @@ interface ClozeContentConfigProps {
 const getClozeItemType = (item: ItemComponent): ClozeItemType => {
     const itemType = item.role as keyof typeof ClozeItemType;
     return itemType as ClozeItemType;
-}
-
-export const TabWrapper = (props: { children: React.ReactNode }) => {
-    return (
-        <div className='p-4 ps-6 space-y-4 overflow-y-auto'>
-            {props.children}
-        </div>
-    )
 }
 
 export const KeyAndType = (props: { compKey?: string, type: string }) => {

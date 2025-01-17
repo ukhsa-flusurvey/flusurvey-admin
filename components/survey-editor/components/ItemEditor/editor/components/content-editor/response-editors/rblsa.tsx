@@ -17,6 +17,7 @@ import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, Togg
 import React from "react";
 import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -24,13 +25,7 @@ interface RblsaProps {
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-export const TabWrapper = (props: { children: React.ReactNode }) => {
-    return (
-        <div className='p-4 ps-6 space-y-4 overflow-y-auto'>
-            {props.children}
-        </div>
-    )
-}
+
 
 const StyleClassNameEditor = (props: {
     styles: { key: string, value: string }[],

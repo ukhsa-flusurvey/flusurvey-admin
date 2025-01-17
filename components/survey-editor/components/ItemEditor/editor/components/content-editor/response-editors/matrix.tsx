@@ -10,13 +10,13 @@ import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-gener
 import { ChevronDown, Cog, Columns2, GripVertical, Languages, List, ToggleLeft } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import { TabWrapper } from './multiple-choice';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import DropdownContentConfig from './dropdown-content-config';
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;

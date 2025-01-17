@@ -21,6 +21,7 @@ import DateInputContentConfig from './date-input-content-config';
 import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
 import { ChoiceResponseOptionType } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -31,14 +32,6 @@ interface MultipleChoiceProps {
 const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
     const optionType = option.role as keyof typeof ChoiceResponseOptionType;
     return optionType as ChoiceResponseOptionType;
-}
-
-export const TabWrapper = (props: { children: React.ReactNode }) => {
-    return (
-        <div className='p-4 ps-6 space-y-4 overflow-y-auto'>
-            {props.children}
-        </div>
-    )
 }
 
 export const KeyAndType = (props: { compKey?: string, type: string }) => {

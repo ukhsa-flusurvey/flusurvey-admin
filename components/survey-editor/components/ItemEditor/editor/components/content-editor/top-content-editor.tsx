@@ -18,15 +18,8 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import MarkdownContentEditor from './markdown-content-editor';
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
-
-const TabWrapper = (props: { children: React.ReactNode }) => {
-    return (
-        <div className='p-4 ps-6 h-[290px] space-y-4 overflow-y-auto'>
-            {props.children}
-        </div>
-    )
-}
 
 interface TopContentEditorProps {
     surveyItem: SurveySingleItem;
