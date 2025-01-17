@@ -75,7 +75,7 @@ export function SurveyBasicInfoForm() {
         <>
             <div className="flex flex-row justify-between grow">
                 <div>
-                    <h3 className="text-lg font-medium">Basic Info</h3>
+                    <h3 className="text-lg font-medium  mb-1">Basic Info</h3>
                     <p className="text-sm text-muted-foreground">
                         How the survey is represented.
                     </p>

@@ -74,7 +74,7 @@ export function SurveyAccessForm() {
     return (
         <>
             <div>
-                <h3 className="text-lg font-medium">Survey Access</h3>
+                <h3 className="text-lg font-medium  mb-1">Survey Access</h3>
                 <p className="text-sm text-muted-foreground">
                     Conditions regarding who can access the survey.
                 </p>
