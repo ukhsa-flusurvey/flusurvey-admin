@@ -86,10 +86,6 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                         break;
                     case '3':
                         event.preventDefault();
-                        setMode(EditorMode.Advanced);
-                        break;
-                    case '4':
-                        event.preventDefault();
                         setMode(EditorMode.Simulator);
                         break;
                     case 's':
@@ -127,9 +123,6 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
             mainContent = <ItemEditor
                 className='grow'
             />;
-            break;
-        case EditorMode.Advanced:
-            mainContent = <div>Advanced</div>;
             break;
         case EditorMode.Simulator:
             mainContent = <SurveySimulator
