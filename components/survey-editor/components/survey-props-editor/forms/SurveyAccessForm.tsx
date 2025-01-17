@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { SurveyContext } from "../../surveyContext"
+import { SurveyContext } from "../../../surveyContext"
 import { useContext, useEffect } from "react"
 import { Survey } from "survey-engine/data_types"
 import { useDebounceCallback } from "usehooks-ts"

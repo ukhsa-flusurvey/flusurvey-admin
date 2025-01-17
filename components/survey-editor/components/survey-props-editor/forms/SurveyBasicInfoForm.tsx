@@ -14,12 +14,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useContext, useEffect } from "react"
-import { SurveyContext } from "../../surveyContext"
+import { SurveyContext } from "../../../surveyContext"
 import { LocalizedString, Survey } from "survey-engine/data_types"
 import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
 import React from "react"
-import LanguageSelector from "@/components/LanguageSelector"
 import { useDebounceCallback } from "usehooks-ts"
+import SurveyLanguageToggle from "../../general/SurveyLanguageToggle"
 
 const formSchema = z.object({ "name": z.string().max(255), "description": z.string(), "duration_notice": z.string() })
 
@@ -31,7 +31,7 @@ const initialValues = (survey: Survey | undefined, selectedLanguage: string) => 
 
 export function SurveyBasicInfoForm() {
     const runDebounced = useDebounceCallback((f) => f(), 500);
-    const { survey, setSurvey, selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
+    const { survey, setSurvey, selectedLanguage } = useContext(SurveyContext);
     const form = useForm<z.infer<typeof formSchema>>({
         mode: 'onSubmit',
         resolver: zodResolver(formSchema),
@@ -81,7 +81,7 @@ export function SurveyBasicInfoForm() {
                     </p>
                 </div>
                 <div className="flex justify-end self-start">
-                    <LanguageSelector onLanguageChange={setSelectedLanguage} initialLanguage={selectedLanguage} />
+                    <SurveyLanguageToggle />
                 </div>
             </div>
             <Separator />
