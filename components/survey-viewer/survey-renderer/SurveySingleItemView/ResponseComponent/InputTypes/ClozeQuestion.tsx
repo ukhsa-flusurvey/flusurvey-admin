@@ -12,7 +12,9 @@ import Time from './Time';
 import { cn } from '@/lib/utils';
 
 
-type ClozeQuestionProps = CommonResponseComponentProps
+interface ClozeQuestionProps extends CommonResponseComponentProps {
+    embedded?: boolean;
+}
 
 export enum ClozeItemType {
     SimpleText = 'text',
@@ -212,7 +214,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     return (
         <div className={cn(
             "flex items-center flex-wrap gap-2",
-            "px-[--survey-card-px-sm] sm:px-[--survey-card-px]"
+            { 'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded }
         )}>
             {
                 (props.compDef as ItemGroupComponent).items.map(

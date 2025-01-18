@@ -210,6 +210,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                     }}
                     disabled={isDisabled(option)}
                     dateLocales={props.dateLocales}
+                    embedded={true}
                 />;
                 break;
             case ChoiceResponseOptionType.TextInput:
@@ -248,10 +249,10 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                         }}
                         disabled={isDisabled(option)}
                         dateLocales={props.dateLocales}
+                        embedded={true}
                     />;
                 break;
             case ChoiceResponseOptionType.DateInput:
-            case 'dateInput':
                 labelComponent = <DateInput
                     parentKey={optionKey}
                     key={option.key}
