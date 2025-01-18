@@ -148,7 +148,7 @@ export const ContentItem = (props: {
             case ClozeItemType.TimeInput:
                 return <ContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH TIME INPUT'
+                    type='TIME INPUT'
                     defaultOpen={props.index > -1}
                 >
                     <TimeInputContentConfig

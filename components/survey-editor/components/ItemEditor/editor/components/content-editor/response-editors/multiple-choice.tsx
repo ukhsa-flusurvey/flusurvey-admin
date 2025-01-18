@@ -127,7 +127,7 @@ export const ContentItem = (props: {
             case ChoiceResponseOptionType.TextInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH TEXT INPUT'
+                    type='TEXT INPUT'
                     defaultOpen={props.index > -1}
                 >
                     <TextInputContentConfig
@@ -139,7 +139,7 @@ export const ContentItem = (props: {
             case ChoiceResponseOptionType.NumberInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH NUMBER INPUT'
+                    type='NUMBER INPUT'
                     defaultOpen={props.index > -1}
                 >
                     <NumberInputContentConfig
@@ -150,7 +150,7 @@ export const ContentItem = (props: {
             case ChoiceResponseOptionType.DateInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH DATE INPUT'
+                    type='DATE INPUT'
                     defaultOpen={props.index > -1}
                 >
                     <DateInputContentConfig
@@ -161,7 +161,7 @@ export const ContentItem = (props: {
             case ChoiceResponseOptionType.Cloze:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH CLOZE'
+                    type='CLOZE'
                     defaultOpen={props.index > -1}
                 >
                     <ClozeContentConfig
@@ -172,7 +172,7 @@ export const ContentItem = (props: {
             case ChoiceResponseOptionType.TimeInput:
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
-                    type='WITH TIME INPUT'
+                    type='TIME INPUT'
                     defaultOpen={props.index > -1}
                 >
                     <TimeInputContentConfig
