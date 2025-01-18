@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
-import TextViewContentEditor from "./text-view-content-editor";
+import TextViewContentEditor, { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 interface ClozeContentConfigProps {
@@ -89,12 +89,10 @@ export const ContentItem = (props: {
                     compKey={props.component.key}
                     type='SIMPLE TEXT'
                     defaultOpen={props.index > -1}>
-                    <TextViewContentEditor
+                    <SimpleTextViewContentEditor
                         component={props.component}
                         onChange={props.onUpdateComponent}
-                        useAdvancedMode={false}
-                        hideToggle={true}
-                        hideStyling={true}
+                        label='Text'
                     />
                 </ContentTabCollapsible>;
             case ClozeItemType.Dropdown:

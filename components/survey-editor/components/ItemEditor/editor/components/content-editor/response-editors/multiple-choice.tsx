@@ -11,7 +11,7 @@ import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-gener
 import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import TextViewContentEditor from './text-view-content-editor';
+import TextViewContentEditor, { SimpleTextViewContentEditor } from './text-view-content-editor';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -89,27 +89,11 @@ export const ContentItem = (props: {
                     type='SIMPLE OPTION'
                     defaultOpen={props.index > -1}
                 >
-                    <div className='space-y-1.5'
-                        data-no-dnd="true"
-                    >
-                        <Label
-                            htmlFor={props.component.key + '-option-label'}
-                        >
-                            Option label
-                        </Label>
-                        <Input
-                            id={props.component.key + '-option-label'}
-                            placeholder='Enter option label for selected language...'
-                            value={currentContent}
-                            onChange={(e) => {
-                                const updatedPart = { ...props.component };
-                                const updatedContent = localisedObjectToMap(updatedPart.content);
-                                updatedContent.set(selectedLanguage, e.target.value);
-                                updatedPart.content = generateLocStrings(updatedContent);
-                                props.onUpdateComponent(updatedPart);
-                            }}
-                        />
-                    </div>
+                    <SimpleTextViewContentEditor
+                        component={props.component}
+                        onChange={props.onUpdateComponent}
+                        label='Option label'
+                    />
                 </OptionContentTabCollapsible>;
             case ChoiceResponseOptionType.FormattedText:
                 return <OptionContentTabCollapsible
@@ -186,11 +170,11 @@ export const ContentItem = (props: {
                     type='DISPLAY TEXT'
                     defaultOpen={props.index > -1}
                 >
-                    <TextViewContentEditor
+                    <SimpleTextViewContentEditor
                         component={props.component}
                         onChange={props.onUpdateComponent}
-                        hideToggle={true}
-                        useAdvancedMode={true}
+                        label='Display text'
+                        hideStyling={false}
                     />
                 </OptionContentTabCollapsible>;
             default:

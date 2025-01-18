@@ -8,6 +8,7 @@ import React, { useContext } from 'react';
 import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from './editor-wrapper';
 import { getLocalizedString } from '@/utils/localizedStrings';
+import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 
 interface SurveyEndEditorProps {
@@ -43,42 +44,21 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
                 />
             </div>
 
-            <div className='space-y-1'>
-                <Label
-                    htmlFor='survey-end-content'
-                >
-                    Content
-                </Label>
-                <Textarea
-                    key={props.surveyItem.key + selectedLanguage}
-                    id='survey-end-content'
-                    value={currentLocaleContent || ''}
-                    placeholder='-- no translation available - please add one --'
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        const updatedComponent = { ...surveyEndContent };
-                        if (!updatedComponent.content) {
-                            updatedComponent.content = [];
+            <SimpleTextViewContentEditor
+                component={surveyEndContent}
+                hideStyling={true}
+                label='End content'
+                useTextArea={true}
+                onChange={(newComp) => {
+                    const updatedItem = {
+                        ...props.surveyItem,
+                        components: {
+                            ...props.surveyItem.components,
+                            items: [newComp],
                         }
-
-                        const localeIndex = updatedComponent.content.findIndex((c) => c.code === selectedLanguage);
-                        if (localeIndex < 0) {
-                            updatedComponent.content.push({ code: selectedLanguage, parts: [{ str: value }] });
-                        } else {
-                            (updatedComponent.content[localeIndex] as LocalizedString).parts = [{ str: value }];
-                        }
-
-                        const updatedItem = {
-                            ...props.surveyItem,
-                            components: {
-                                ...props.surveyItem.components,
-                                items: [updatedComponent],
-                            }
-                        } as SurveySingleItem;
-                        props.onUpdateSurveyItem(updatedItem);
-                    }}
-                />
-            </div>
+                    } as SurveySingleItem;
+                    props.onUpdateSurveyItem(updatedItem);
+                }} />
         </EditorWrapper>
     );
 };

@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { getItemComponentByRole } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Textarea } from '@/components/ui/textarea';
+import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 interface FootnoteEditorProps {
     surveyItem: SurveySingleItem;
@@ -100,35 +101,16 @@ const FootnoteEditor: React.FC<FootnoteEditorProps> = (props) => {
                         <SurveyLanguageToggle />
                     </div>
 
-                    <div className='space-y-1.5'>
-                        <Label
-                            className=''
-                            htmlFor='footnote-content'
-                        >
-                            Content
-                        </Label>
-                        <Textarea
-                            id='footnote-content'
-                            value={content}
-                            placeholder='Add footnote content for the selected language...'
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                const updatedComponent = { ...footnote };
-                                if (!updatedComponent.content) {
-                                    updatedComponent.content = [];
-                                }
+                    <SimpleTextViewContentEditor
+                        component={footnote}
+                        onChange={(newComp) => {
+                            props.onUpdateSurveyItem(updateFootnote(newComp));
+                        }}
+                        hideStyling={true}
+                        label={'Footnote'}
+                        useTextArea={true}
+                    />
 
-                                const localeIndex = updatedComponent.content.findIndex((c) => c.code === selectedLanguage);
-                                if (localeIndex < 0) {
-                                    updatedComponent.content.push({ code: selectedLanguage, parts: [{ str: value }] });
-                                } else {
-                                    (updatedComponent.content[localeIndex] as LocalizedString).parts = [{ str: value }];
-                                }
-
-                                props.onUpdateSurveyItem(updateFootnote(updatedComponent));
-                            }}
-                        />
-                    </div>
                 </div>
             )}
         </EditorWrapper>

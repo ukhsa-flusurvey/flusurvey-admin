@@ -17,6 +17,7 @@ import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/s
 import { Calendar, GripHorizontal, Info, Type, X } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, LocalizedString } from 'survey-engine/data_types';
+import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 interface FormattedTextListEditorProps {
     sortableID: string;
@@ -41,61 +42,12 @@ const FormattedPartEditor: React.FC<{
 
     switch (type) {
         case 'formatted-text':
-            content = <div className='space-y-3'>
-                <div className='space-y-1'
-                    data-no-dnd="true"
-                >
-                    <Label
-                        htmlFor={'title-part-input-' + props.part.key}
-                        className='text-xs'
-                    >
-                        Content
-                    </Label>
-                    <Textarea
-                        id={'title-part-input-' + props.part.key}
-                        value={localisedObjectToMap(props.part.content).get(selectedLanguage) || ''}
-                        onChange={(e) => {
-                            const updatedPart = { ...props.part };
-                            const updatedContent = localisedObjectToMap(updatedPart.content);
-                            updatedContent.set(selectedLanguage, e.target.value);
-                            updatedPart.content = generateLocStrings(updatedContent);
-                            props.onUpdatePart(updatedPart);
-                        }}
-                        placeholder='Enter content here for the selected language...'
-                    />
-                </div>
-
-                <div className='space-y-1'
-                    data-no-dnd="true"
-                >
-                    <Label
-                        htmlFor={'title-part-class-name-' + props.part.key}
-                        className='text-xs'
-                    >
-                        CSS classes
-                    </Label>
-                    <Input
-                        id={'title-part-class-name-' + props.part.key}
-                        placeholder='Enter optional CSS classes for the part...'
-                        value={props.part.style?.find(style => style.key === 'className')?.value || ''}
-                        onChange={(e) => {
-                            const updatedPart = { ...props.part };
-                            const classNameIndex = updatedPart.style?.findIndex(style => style.key === 'className');
-                            if (classNameIndex === undefined || classNameIndex === -1) {
-                                updatedPart.style = [
-                                    {
-                                        key: 'className',
-                                        value: e.target.value,
-                                    }
-                                ]
-                            } else {
-                                updatedPart.style![classNameIndex].value = e.target.value;
-                            }
-                            props.onUpdatePart(updatedPart);
-                        }}
-                    />
-                </div>
-            </div>
+            content = <SimpleTextViewContentEditor
+                component={props.part}
+                onChange={props.onUpdatePart}
+                hideStyling={false}
+                label={'Part'}
+                useTextArea={true} />
             break;
         case 'dynamic-date':
             if (!props.part.content || props.part.content.length < 1) {
