@@ -25,7 +25,11 @@ interface RblsaProps {
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-
+enum RblsaStyleKeys {
+    tableModeClassName = 'tableModeClassName',
+    labelRowModeClassName = 'withLabelRowModeClassName',
+    verticalModeClassName = 'verticalModeClassName',
+}
 
 const StyleClassNameEditor = (props: {
     styles: { key: string, value: string }[],
@@ -33,7 +37,7 @@ const StyleClassNameEditor = (props: {
     label: string,
     onChange: (key: string, value: string | undefined) => void
 }) => {
-    return <div className="flex items-center gap-2">
+    return <div className="flex items-center gap-2" data-no-dnd="true">
         <Label htmlFor={'input-' + props.styleKey} className="text-xs">
             {props.label}
         </Label>
@@ -301,10 +305,26 @@ const RowEditor = (props: {
     const rowEndLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.EndLabel);
     const rowEndLabel = localisedObjectToMap(rowEndLabelItem?.content).get(selectedLanguage) || ''
 
-    const tableModeClassName = props.row.style?.find(st => st.key === 'tableModeClassName')?.value || '';
-    const withLabelRowModeClassName = props.row.style?.find(st => st.key === 'withLabelRowModeClassName')?.value || '';
-    const verticalModeClassName = props.row.style?.find(st => st.key === 'verticalModeClassName')?.value
+    const tableModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.tableModeClassName)?.value || '';
+    const labelRowModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.labelRowModeClassName)?.value || '';
+    const verticalModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.verticalModeClassName)?.value || '';
 
+    const onRowStyleChange = (key: string, newValue: string | undefined) => {
+        const existingStyles = [...props.row.style || []];
+        const index = existingStyles.findIndex(st => st.key === key);
+        if (newValue) {
+            if (index > -1) {
+                existingStyles[index] = { key, value: newValue };
+            } else {
+                existingStyles.push({ key, value: newValue });
+            }
+        } else {
+            if (index > -1) {
+                existingStyles.splice(index, 1);
+            }
+        }
+        props.onChange({ ...props.row, style: existingStyles });
+    }
 
     return <SortableItem
         id={props.row.key!}
@@ -398,89 +418,23 @@ const RowEditor = (props: {
                         label: 'Extras',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>tableModeClassName:</p>
-                                <Input
-                                    value={tableModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'tableModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'tableModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'tableModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RblsaStyleKeys.tableModeClassName}
+                                label={RblsaStyleKeys.tableModeClassName}
+                                onChange={onRowStyleChange} />
                             <Separator />
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>withLabelRowModeClassName:</p>
-                                <Input
-                                    value={withLabelRowModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'withLabelRowModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'withLabelRowModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'withLabelRowModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RblsaStyleKeys.labelRowModeClassName}
+                                label={RblsaStyleKeys.labelRowModeClassName}
+                                onChange={onRowStyleChange} />
                             <Separator />
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>verticalModeClassName:</p>
-                                <Input
-                                    value={verticalModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'verticalModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'verticalModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'verticalModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RblsaStyleKeys.verticalModeClassName}
+                                label={RblsaStyleKeys.verticalModeClassName}
+                                onChange={onRowStyleChange} />
                         </TabWrapper>
                     }
                 ]}
