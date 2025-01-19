@@ -413,7 +413,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                                     { key: ChoiceResponseOptionType.Cloze, label: 'Option with cloze', icon: <SquareStack className='size-4 text-muted-foreground me-2' /> },
                                     { key: ChoiceResponseOptionType.TimeInput, label: 'Option with time input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
                                     { key: ChoiceResponseOptionType.DateInput, label: 'Option with date input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.DisplayText, label: 'Display text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ChoiceResponseOptionType.DisplayText, label: 'Display text (section header)', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
                                 ]}
                                 onAddItem={onAddItem}
                             />
