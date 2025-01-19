@@ -18,6 +18,7 @@ import TimeInputContentConfig from "./time-input-content-config";
 import DropdownContentConfig from "./dropdown-content-config";
 import React from "react";
 import { MatrixCellType, MatrixRowType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
+import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;
@@ -134,7 +135,7 @@ const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: strin
         case MatrixRowType.ResponseRow:
         case MatrixCellType.Checkbox:
         case MatrixCellType.Text:
-            return simpleTextContentEditor(selectedElement);
+            return <SimpleTextViewContentEditor component={selectedElement} onChange={(newComp) => { onChange(selectedElement.key!, newComp); }} hideStyling={true} />;
         case MatrixCellType.TextInput:
             return <TextInputContentConfig component={selectedElement} onChange={(n) => onChange(selectedElement.key!, n)} allowMultipleLines={false} />
         case MatrixCellType.NumberInput:
