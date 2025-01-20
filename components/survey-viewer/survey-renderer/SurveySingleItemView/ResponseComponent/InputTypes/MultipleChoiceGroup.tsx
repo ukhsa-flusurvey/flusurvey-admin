@@ -355,7 +355,6 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
     }
 
     if (isSingleChoice) {
-        console.log('render single choice group')
         return (
             <RadioGroup
                 id={props.parentKey}
