@@ -6,12 +6,10 @@ import SortableWrapper from '@/components/survey-editor/components/general/Sorta
 import { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
-import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Calendar, GripHorizontal, Info, Type, X } from 'lucide-react';
@@ -30,7 +28,6 @@ const FormattedPartEditor: React.FC<{
     onUpdatePart: (part: ItemComponent) => void,
     onDeletePart: () => void,
 }> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
     const [hideSlotContent, setHideSlotContent] = React.useState<boolean>(false);
 
     let type = 'formatted-text';
@@ -96,8 +93,6 @@ const FormattedPartEditor: React.FC<{
                         isHidden={hideSlotContent}
                         onToggleHide={(hide) => { setHideSlotContent(hide) }}
                         onChange={(newArgs, newSlotTypes) => {
-                            //console.log(newArgs)
-                            //console.log(newSlotTypes)
                             const updatedExp = newArgs.length > 0 ? newArgs[0] : {
                                 dtype: 'exp',
                                 exp: {

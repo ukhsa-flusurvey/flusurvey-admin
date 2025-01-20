@@ -1,6 +1,6 @@
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { SurveyContext } from "@/components/survey-editor/surveyContext";
-import { getLocalizedString, updateLocalizedString } from '@/utils/localizedStrings';
+import { getLocalizedString } from '@/utils/localizedStrings';
 import { getUniqueRandomKey } from "@/components/survey-editor/utils/new-item-init";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Binary, Calendar, Check, CircleHelp, Clock, SquareChevronDown, TextCursorInput, Type, X } from "lucide-react";
-import { use, useContext, useEffect } from "react";
-import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
+import { useContext, useEffect } from "react";
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
 import DateInputContentConfig from "./date-input-content-config";
@@ -107,28 +107,6 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
 
 
 const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, onChange }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
-
-    const simpleTextContentEditor = (selectedElement: ItemComponent) => {
-        return <div className='flex items-center gap-2'
-            data-no-dnd="true"
-        >
-            <p className='w-32 font-semibold text-sm'>Text</p>
-            <Input
-                className="w-full"
-                placeholder="Text in selected language..."
-                key={selectedLanguage + '-content-input-' + selectedElement.key}
-                value={getLocalizedString(selectedElement.content, selectedLanguage)}
-                onChange={(e) => {
-                    if (selectedElement.key) {
-                        const updatedElement = { ...selectedElement, content: updateLocalizedString(selectedElement.content as LocalizedString[], selectedLanguage, e.target.value) };
-                        onChange(selectedElement.key, updatedElement);
-                    }
-                }}
-            />
-        </div>;
-    }
-
     switch (selectedElement.role) {
         case MatrixCellType.Dropdown:
             return <DropdownContentConfig component={selectedElement} onChange={(n) => onChange(selectedElement.key!, n)} />

@@ -301,13 +301,9 @@ const RowEditor = (props: {
 }) => {
     const { selectedLanguage } = useContext(SurveyContext);
     const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
-    const rowStartLabel = localisedObjectToMap(rowStartLabelItem?.content).get(selectedLanguage) || ''
+    const rowStartLabel = localisedObjectToMap(rowStartLabelItem?.content).get(selectedLanguage) || '';
     const rowEndLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.EndLabel);
-    const rowEndLabel = localisedObjectToMap(rowEndLabelItem?.content).get(selectedLanguage) || ''
-
-    const tableModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.tableModeClassName)?.value || '';
-    const labelRowModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.labelRowModeClassName)?.value || '';
-    const verticalModeClassName = props.row.style?.find(st => st.key === RblsaStyleKeys.verticalModeClassName)?.value || '';
+    const rowEndLabel = localisedObjectToMap(rowEndLabelItem?.content).get(selectedLanguage) || '';
 
     const onRowStyleChange = (key: string, newValue: string | undefined) => {
         const existingStyles = [...props.row.style || []];

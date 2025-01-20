@@ -1,13 +1,10 @@
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { checkMissingTranslations } from '@/components/survey-editor/utils/localeUtils';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { generateTitleComponent } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
-import { LocalizedString, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
+import { SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from './editor-wrapper';
-import { getLocalizedString } from '@/utils/localizedStrings';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 
@@ -33,8 +30,6 @@ const SurveyEndEditor: React.FC<SurveyEndEditorProps> = (props) => {
     }
 
     const surveyEndContent = itemComponents[0];
-
-    const currentLocaleContent = getLocalizedString(surveyEndContent.content, selectedLanguage);
 
     return (
         <EditorWrapper>

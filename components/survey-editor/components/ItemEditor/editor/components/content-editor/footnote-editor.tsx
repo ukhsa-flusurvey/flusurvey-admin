@@ -1,13 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import EditorWrapper from './editor-wrapper';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
-import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from 'survey-engine/data_types';
+import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { getItemComponentByRole } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
-import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { Textarea } from '@/components/ui/textarea';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 interface FootnoteEditorProps {
@@ -16,8 +13,6 @@ interface FootnoteEditorProps {
 }
 
 const FootnoteEditor: React.FC<FootnoteEditorProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
-
     const updateFootnote = (newFootnote?: ItemComponent): SurveySingleItem => {
         if (!newFootnote) {
             return {
@@ -72,13 +67,6 @@ const FootnoteEditor: React.FC<FootnoteEditorProps> = (props) => {
 
     const useFootnote = footnote ? true : false;
 
-    let content = '';
-    if (footnote) {
-        const currentLocaleContent = localisedObjectToMap(footnote.content).get(selectedLanguage);
-        if (currentLocaleContent) {
-            content = currentLocaleContent;
-        }
-    }
     return (
         <EditorWrapper>
             <Label

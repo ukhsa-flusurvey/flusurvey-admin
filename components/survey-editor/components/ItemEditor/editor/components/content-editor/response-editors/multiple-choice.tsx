@@ -2,14 +2,11 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import TabCard from '@/components/survey-editor/components/general/tab-card';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
-import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TextViewContentEditor, { SimpleTextViewContentEditor } from './text-view-content-editor';
 import { Button } from '@/components/ui/button';
@@ -73,17 +70,13 @@ export const ContentItem = (props: {
     existingKeys?: string[]
 
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
     const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
 
     const optionType = getOptionType(props.component);
 
-    //console.log('optionType:', optionType);
-
     const renderContent = () => {
         switch (optionType) {
             case ChoiceResponseOptionType.SimpleText:
-                const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
                 return <OptionContentTabCollapsible
                     compKey={props.component.key}
                     type='SIMPLE OPTION'
@@ -277,8 +270,7 @@ export const ContentItem = (props: {
 
 const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-    //console.log('props.surveyItem:', props.surveyItem);
-    //console.log('props.isSingleChoice:', props.isSingleChoice);
+
     // TODO: remove magic strings
     const relevantResponseGroupRoleString = props.isSingleChoice ? 'singleChoiceGroup' : 'multipleChoiceGroup';
 
