@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Binary, Calendar, Check, CircleHelp, Clock, SquareChevronDown, TextCursorInput, Type, X } from "lucide-react";
-import { useContext } from "react";
+import { use, useContext, useEffect } from "react";
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
@@ -149,67 +149,71 @@ const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: strin
     }
 }
 
-const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[], cellKeys: string[], onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, allKeys, cellKeys, onChange }) => {
+const KeyEditor = (props: {
+    currentKey: string;
+    existingKeys?: string[];
+    onChange: (newKey: string) => void;
+}) => {
+    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
 
-    // Key editor needs to rerender when the selected element is changed, thats why it is defined inside this component
-    const KeyEditor = (props: {
-        currentKey: string;
-        existingKeys?: string[];
-        onChange: (newKey: string) => void;
-    }) => {
-        const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
+    // Ensure the edited key is updated when the key changes (selection changes)
+    useEffect(() => {
+        setEditedKey(props.currentKey);
+    }, [props.currentKey]);
 
-        const hasValidKey = (key: string): boolean => {
-            if (key.length < 1) {
-                return false;
-            }
-            if (props.existingKeys?.includes(key)) {
-                return false;
-            }
-            return true;
+    const hasValidKey = (key: string): boolean => {
+        if (key.length < 1) {
+            return false;
         }
-
-        return <div className='flex items-center gap-2'
-            data-no-dnd="true"
-        >
-            <Label htmlFor={'item-key-' + props.currentKey} className="w-32">
-                Key
-            </Label>
-            <Input
-                id={'item-key-' + props.currentKey}
-                className='w-full'
-                value={editedKey}
-                onChange={(e) => {
-                    const value = e.target.value;
-                    setEditedKey(value);
-                }}
-            />
-            {editedKey !== props.currentKey &&
-                <div className='flex items-center'>
-                    <Button
-                        variant='ghost'
-                        className='text-destructive'
-                        size='icon'
-                        onClick={() => {
-                            setEditedKey(props.currentKey);
-                        }}
-                    >
-                        <X className='size-4' />
-                    </Button>
-                    <Button
-                        variant='ghost'
-                        size='icon'
-                        className='text-primary'
-                        disabled={!hasValidKey(editedKey)}
-                        onClick={() => {
-                            props.onChange(editedKey);
-                        }}
-                    >
-                        <Check className='size-4' />
-                    </Button>
-                </div>}
-        </div>
+        if (props.existingKeys?.includes(key)) {
+            return false;
+        }
+        return true;
     }
+
+    return <div className='flex items-center gap-2'
+        data-no-dnd="true"
+    >
+        <Label htmlFor={'item-key-' + props.currentKey} className="w-32">
+            Key
+        </Label>
+        <Input
+            id={'item-key-' + props.currentKey}
+            className='w-full'
+            value={editedKey}
+            onChange={(e) => {
+                const value = e.target.value;
+                setEditedKey(value);
+            }}
+        />
+        {editedKey !== props.currentKey &&
+            <div className='flex items-center'>
+                <Button
+                    variant='ghost'
+                    className='text-destructive'
+                    size='icon'
+                    onClick={() => {
+                        setEditedKey(props.currentKey);
+                    }}
+                >
+                    <X className='size-4' />
+                </Button>
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    className='text-primary'
+                    disabled={!hasValidKey(editedKey)}
+                    onClick={() => {
+                        props.onChange(editedKey);
+                    }}
+                >
+                    <Check className='size-4' />
+                </Button>
+            </div>}
+    </div>
+}
+
+const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[], cellKeys: string[], onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, allKeys, cellKeys, onChange }) => {
 
     return <div className='space-y-4'>
         <Separator orientation='horizontal' />
