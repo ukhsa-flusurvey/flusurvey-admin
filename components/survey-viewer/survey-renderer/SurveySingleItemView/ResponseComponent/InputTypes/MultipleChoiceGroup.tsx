@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ItemComponent, ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
-import { CommonResponseComponentProps, getLocaleStringTextByCode } from '../../utils';
+import { ItemComponent, ResponseItem, ItemGroupComponent, isItemGroupComponent } from 'survey-engine/data_types';
+import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode } from '../../utils';
 import TextInput from './TextInput';
 import clsx from 'clsx';
 import TextViewComponent from '../../SurveyComponents/TextViewComponent';
@@ -27,7 +27,7 @@ export enum ChoiceResponseOptionType {
     TimeInput = 'timeInput',
     DateInput = 'dateInput',
     Cloze = 'cloze',
-    DisplayText = 'sectionHeader'
+    DisplayText = 'text'
 }
 
 const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
@@ -175,8 +175,15 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         const optionKey = props.parentKey + '.' + option.key;
         let labelComponent = <p>{'loading...'}</p>;
         const prefill = subResponseCache.find(r => r.key === option.key);
-
+        const optionClassName = getClassName(option.style);
         const arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
+
+        // Fix 'legacy' case of ItemGroupComponent & role='option' meaning 'formattedOption'
+        if (isItemGroupComponent(option) && option.role === ChoiceResponseOptionType.SimpleText) {
+            option.role = ChoiceResponseOptionType.FormattedText;
+        }
+
+
         switch (option.role) {
             case ChoiceResponseOptionType.DisplayText:
                 return <TextViewComponent
@@ -310,7 +317,8 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 {
                     'cursor-not-allowed opacity-50': isDisabled(option),
                     'cursor-pointer': !isDisabled(option),
-                }
+                },
+                optionClassName
             )}
             key={option.key} >
 
