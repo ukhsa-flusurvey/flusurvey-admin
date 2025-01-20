@@ -53,9 +53,10 @@ const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent }> = ({ cell }) 
     }
     const content = hasTranslation ? <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p> : <Badge className='h-auto py-0'>{cell.key}</Badge>;
     return (
-        <>
-            <div className="flex flex-row items-center gap-2">{icon(cell)}{content}</div>
-        </>
+        <div className="flex flex-row items-center gap-2">
+            <span className="text-muted-foreground">{icon(cell)}</span>
+            {content}
+        </div>
     );
 }
 
@@ -65,11 +66,19 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
     const textElement = (item: ItemComponent) => {
         if (item.role === MatrixCellType.Text || item.role === MatrixRowType.ResponseRow) {
             const hasTranslation = getLocalizedString(item.content, selectedLanguage) !== undefined && getLocalizedString(item.content, selectedLanguage) !== '';
+            let content: React.ReactNode;
+
             if (hasTranslation) {
-                return <div className="flex flex-row items-center gap-2"><Type size={16} /><p className="text-sm">{getLocalizedString(item.content, selectedLanguage)}</p></div>;
+                content = <p className="text-sm">{getLocalizedString(item.content, selectedLanguage)}</p>;
             } else {
-                return <div className="flex flex-row items-center gap-2"><Type size={16} /><Badge className='h-auto py-0'>{item.key}</Badge></div>;
+                content = <Badge className='h-auto py-0'>{item.key}</Badge>;
             }
+            return <div className="flex flex-row items-center gap-2">
+                <span className="text-muted-foreground">
+                    <Type size={16} />
+                </span>
+                {content}
+            </div>;
         }
     }
 
