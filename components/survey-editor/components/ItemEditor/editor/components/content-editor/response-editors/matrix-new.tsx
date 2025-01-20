@@ -344,7 +344,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 const newHeaderRow = {
                     ...comp,
                     items: Array.from({ length: newNumCols }).map((_v, i) => {
-                        if (headerRow.items[i]) {
+                        if (i < headerRow.items.length) {
                             return headerRow.items[i];
                         } else {
                             return {
@@ -362,7 +362,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 const newResponseRow = {
                     ...comp,
                     items: Array.from({ length: newNumCols }).map((_v, i) => {
-                        if (responseRow.items[i]) {
+                        if (i < responseRow.items.length) {
                             return responseRow.items[i];
                         } else {
                             return {
@@ -389,7 +389,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
         const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
         const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
         const newRows = Array.from({ length: newNumRows }).map((_v, i) => {
-            if (oldRows[i]) {
+            if (i < oldRows.length) {
                 return oldRows[i];
             } else {
                 return {
