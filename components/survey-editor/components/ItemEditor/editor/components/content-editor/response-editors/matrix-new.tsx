@@ -95,7 +95,7 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
                         </th>
                         {(row as ItemGroupComponent).items.map((cell) => (
                             <td key={cell.key} className={selectedElement?.key == cell.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(cell)}>
-                                {OverviewMatrixCellContent({ cell })}
+                                <OverviewMatrixCellContent cell={cell} />
                             </td>
                         ))}
                     </tr>
