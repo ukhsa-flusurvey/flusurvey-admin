@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ItemComponent, ResponseItem, ItemGroupComponent, isItemGroupComponent } from 'survey-engine/data_types';
-import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode } from '../../utils';
+import { ItemComponent, ResponseItem, ItemGroupComponent } from 'survey-engine/data_types';
+import { CommonResponseComponentProps, getLocaleStringTextByCode } from '../../utils';
 import TextInput from './TextInput';
 import clsx from 'clsx';
 import TextViewComponent from '../../SurveyComponents/TextViewComponent';
@@ -27,14 +27,13 @@ export enum ChoiceResponseOptionType {
     TimeInput = 'timeInput',
     DateInput = 'dateInput',
     Cloze = 'cloze',
-    DisplayText = 'text'
+    DisplayText = 'sectionHeader'
 }
 
-//TODO: There is way too much "business logic" in this component. Maybe refactor response stuff.
 const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
-    const isSingleChoice = props.isSingleChoice ?? false;
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
+    const isSingleChoice = props.isSingleChoice ?? false;
     const [subResponseCache, setSubResponseCache] = useState<Array<ResponseItem>>(
         (props.prefill && props.prefill.items) ? [...props.prefill.items] : []
     );
@@ -49,52 +48,20 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [response]);
 
-    const onScOptionSelected = (key: string) => {
-        setTouched(true);
-        setResponse(prev => {
-            if (!prev) {
-                return {
-                    key: props.compDef.key ? props.compDef.key : 'no key found',
-                    items: [{ key: key }]
-                }
-            }
-            const subResp = subResponseCache.find(sr => sr.key === key);
-            return {
-                ...prev,
-                items: [
-                    subResp ? subResp : { key }
-                ]
-            }
-        });
-    }
 
     const setResponseForKey = useCallback((key: string, checked: boolean, value?: string, dtype?: string, items?: ResponseItem[]) => {
-        if (!key || !props.compDef.key) { return; }
         setTouched(true);
         if (isSingleChoice) {
-            if (!response) {
-                setResponse({ key: props.compDef.key, items: [] });
-                setSubResponseCache(prev => {
-                    const ind = prev.findIndex(pr => pr.key === key);
-                    if (ind < 0) {
-                        return prev;
-                    }
-                    prev.splice(ind, 1);
-                    return [...prev]
-                })
-            } else {
-                setResponse({ key: props.compDef.key, items: [{ ...response }] });
-                setSubResponseCache(prev => {
-                    const ind = prev.findIndex(pr => pr.key === key);
-                    if (ind < 0) {
-                        prev.push(response);
-                    }
-                    else {
-                        prev[ind] = { ...response };
-                    }
-                    return [...prev];
-                })
+            const newRI: ResponseItem = {
+                key: key,
+                value: value,
+                dtype: dtype,
+                items: items,
             }
+            setResponse({
+                key: props.compDef.key ? props.compDef.key : 'no key found',
+                items: [newRI]
+            });
         } else {
             if (checked) {
                 const newRI: ResponseItem = {
@@ -133,7 +100,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         }
     }, [isSingleChoice, props.compDef.key])
 
-    const handleMcSelectionChange = useCallback((key: string, checked: boolean) => {
+    const handleSelectionChange = useCallback((key: string, checked: boolean) => {
         const subResp = subResponseCache.find(sr => sr.key === key);
         if (subResp) {
             setResponseForKey(key, checked, subResp.value, subResp.dtype, subResp.items);
@@ -208,14 +175,8 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         const optionKey = props.parentKey + '.' + option.key;
         let labelComponent = <p>{'loading...'}</p>;
         const prefill = subResponseCache.find(r => r.key === option.key);
+
         const arialLabel = getLocaleStringTextByCode(option.content, props.languageCode) || option.key;
-        const optionClassName = getClassName(option.style);
-
-        // Fix 'legacy' case of ItemGroupComponent & role='option' meaning 'formattedOption'
-        if (isItemGroupComponent(option) && option.role === ChoiceResponseOptionType.SimpleText) {
-            option.role = ChoiceResponseOptionType.FormattedText;
-        }
-
         switch (option.role) {
             case ChoiceResponseOptionType.DisplayText:
                 return <TextViewComponent
@@ -349,8 +310,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 {
                     'cursor-not-allowed opacity-50': isDisabled(option),
                     'cursor-pointer': !isDisabled(option),
-                },
-                optionClassName
+                }
             )}
             key={option.key} >
 
@@ -374,7 +334,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 checked={isChecked(option.key ? option.key : 'no key found')}
                 disabled={isDisabled(option)}
                 onCheckedChange={(checked) => {
-                    handleMcSelectionChange(option.key ? option.key : 'no key found', checked === true)
+                    handleSelectionChange(option.key ? option.key : 'no key found', checked === true)
                 }}
             />}
             {labelComponent}
@@ -394,7 +354,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                 aria-label="single choice options"
                 className=' flex flex-col gap-0'
                 value={getSelectedKey()}
-                onValueChange={(value) => { onScOptionSelected(value) }}
+                onValueChange={(value) => { handleSelectionChange(value, true) }}
             >
                 {
                     (props.compDef as ItemGroupComponent).items.map(
