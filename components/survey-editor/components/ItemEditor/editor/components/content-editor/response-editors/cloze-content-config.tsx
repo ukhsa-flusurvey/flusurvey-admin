@@ -20,7 +20,7 @@ import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
-import { ClozeItemType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
+import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";

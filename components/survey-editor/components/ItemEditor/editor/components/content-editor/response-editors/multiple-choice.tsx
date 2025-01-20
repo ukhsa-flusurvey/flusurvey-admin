@@ -17,7 +17,7 @@ import NumberInputContentConfig from './number-input-content-config';
 import DateInputContentConfig from './date-input-content-config';
 import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
-import { ChoiceResponseOptionType } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
+import { ChoiceResponseOptionType } from '@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
 interface MultipleChoiceProps {

@@ -6,7 +6,7 @@ import { AlertCircle, AlertTriangle, Cog, GripVertical, Languages, ToggleLeft, T
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { filterForBodyComponents, findTopComponents } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
+import { filterForBodyComponents, findTopComponents } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';

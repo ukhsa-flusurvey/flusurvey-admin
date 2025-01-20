@@ -17,7 +17,7 @@ import DateInputContentConfig from "./date-input-content-config";
 import TimeInputContentConfig from "./time-input-content-config";
 import DropdownContentConfig from "./dropdown-content-config";
 import React from "react";
-import { MatrixCellType, MatrixRowType } from "@/components/survey-viewer/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
+import { MatrixCellType, MatrixRowType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 
 interface MatrixProps {

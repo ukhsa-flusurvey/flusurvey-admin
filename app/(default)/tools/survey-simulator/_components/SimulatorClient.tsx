@@ -1,7 +1,7 @@
 'use client';
 
 import { SimulatorConfig } from '@/components/survey-editor/components/SurveySimulator';
-import SurveyView from '@/components/survey-viewer/survey-renderer/SurveyView/SurveyView';
+import SurveyView from '@/components/survey-renderer/SurveyView/SurveyView';
 import { LoaderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 

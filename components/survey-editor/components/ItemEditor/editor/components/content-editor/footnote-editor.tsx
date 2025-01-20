@@ -4,7 +4,7 @@ import SurveyLanguageToggle from '@/components/survey-editor/components/general/
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { getItemComponentByRole } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
+import { getItemComponentByRole } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
 interface FootnoteEditorProps {
