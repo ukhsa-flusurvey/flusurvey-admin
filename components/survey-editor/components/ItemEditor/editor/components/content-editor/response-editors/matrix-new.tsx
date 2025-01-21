@@ -28,7 +28,11 @@ interface MatrixProps {
 const cellClassname = 'border border-border p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
 const cellClassnameSelected = 'border border-border p-2 bg-secondary cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
 
-const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent, isSelected: boolean }> = ({ cell, isSelected }) => {
+const OverviewMatrixCellContent: React.FC<{
+    cell: ItemComponent, isSelected: boolean,
+    hideKey?: boolean
+    hideIcon?: boolean
+}> = ({ cell, isSelected, hideKey, hideIcon }) => {
     const { selectedLanguage } = useContext(SurveyContext);
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
@@ -53,24 +57,40 @@ const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent, isSelected: boo
     }
     return (
         <div className="flex flex-row items-center gap-2">
-            <span className="text-muted-foreground">{icon(cell)}</span>
-            <Badge variant={!isSelected ? 'outline' : 'default'} className='h-auto border-2 py-0'>{cell.key}</Badge>
+            {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
+            {!hideKey && <Badge variant={!isSelected ? 'outline' : 'default'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
             <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
         </div>
     );
 }
 
-const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: ItemComponent | undefined, onClick(i: ItemComponent): void }> = ({ matrixDef, selectedElement, onClick }) => {
+interface Selection {
+    rowIndex: number;
+    colIndex: number;
+}
+
+const OverviewTable: React.FC<{
+    matrixDef: ItemGroupComponent,
+    selectedElement: Selection | undefined,
+    onSelectionChange(selection: Selection | undefined): void,
+}> = ({ matrixDef, selectedElement, onSelectionChange }) => {
+
+    const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
     return (
         <table className="w-full table-fixed">
             <thead>
                 <tr>
                     <th className="border-none"></th>
-                    {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header) => {
+                    {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header, colIndex) => {
+                        const isSelected = selectedElement?.colIndex === colIndex && selectedElement?.rowIndex === -1;
                         return (
-                            <th key={header.key} className={selectedElement?.key == header.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(header)}>
+                            <th
+                                key={header.key}
+                                className={isSelected ? cellClassnameSelected : cellClassname}
+                                onClick={() => onSelectionChange({ rowIndex: -1, colIndex })}
+                            >
                                 <OverviewMatrixCellContent cell={header}
-                                    isSelected={selectedElement?.key == header.key}
+                                    isSelected={isSelected}
                                 />
                             </th>
                         );
@@ -78,22 +98,38 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
                 </tr>
             </thead>
             <tbody>
-                {matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow).map((row) => (
-                    <tr key={row.key}>
-                        <th className={selectedElement?.key == row.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(row)}>
+                {responseRows.map((row, rowIndex) => {
+                    const isRowSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === -1;
+                    return <tr key={row.key}>
+                        <th className={isRowSelected ? cellClassnameSelected : cellClassname}
+                            onClick={() => onSelectionChange({
+                                rowIndex,
+                                colIndex: -1
+                            })}
+                        >
                             <OverviewMatrixCellContent cell={row}
-                                isSelected={selectedElement?.key == row.key}
+                                isSelected={isRowSelected}
                             />
                         </th>
-                        {(row as ItemGroupComponent).items.map((cell) => (
-                            <td key={cell.key} className={selectedElement?.key == cell.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(cell)}>
-                                <OverviewMatrixCellContent cell={cell}
-                                    isSelected={selectedElement?.key == cell.key}
-                                />
-                            </td>
-                        ))}
+                        {(row as ItemGroupComponent).items.map((cell, colIndex) => {
+                            const isSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === colIndex;
+                            return (
+                                <td key={cell.key} className={isSelected ? cellClassnameSelected : cellClassname}
+                                    onClick={() => onSelectionChange({
+                                        rowIndex,
+                                        colIndex
+                                    })}
+                                >
+                                    <OverviewMatrixCellContent
+                                        cell={cell}
+                                        isSelected={isSelected}
+                                        hideKey={false}
+                                    />
+                                </td>
+                            )
+                        })}
                     </tr>
-                ))}
+                })}
             </tbody>
         </table>
     );
@@ -185,7 +221,12 @@ const KeyEditor = (props: {
     </div>
 }
 
-const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[], cellKeys: string[], onChange(key: string, item: ItemComponent): void }> = ({ selectedElement, allKeys, cellKeys, onChange }) => {
+const EditSection: React.FC<{
+    selectedElement: ItemComponent,
+    isHeaderCell?: boolean,
+    usedKeys: string[],
+    onChange(item: ItemComponent): void
+}> = ({ selectedElement, isHeaderCell, usedKeys, onChange }) => {
 
     return <div className='space-y-4'>
         <Separator orientation='horizontal' />
@@ -193,10 +234,10 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
         {selectedElement && <div className='space-y-4'>
             <KeyEditor
                 currentKey={selectedElement.key ?? ''}
-                existingKeys={allKeys.filter((key): key is string => key !== undefined)}
+                existingKeys={usedKeys.filter((key): key is string => key !== undefined)}
                 onChange={(newKey) => {
                     if (selectedElement.key) {
-                        onChange(selectedElement.key, { ...selectedElement, key: newKey });
+                        onChange({ ...selectedElement, key: newKey });
                     }
                 }}
             />
@@ -207,11 +248,11 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
                 <p className='w-32 font-semibold text-sm'>Cell type</p>
                 <Select
                     value={selectedElement.role || ''}
-                    disabled={cellKeys.indexOf(selectedElement.key!) < 0}
+                    disabled={isHeaderCell}
                     onValueChange={(value) => {
                         if (value != selectedElement.role && selectedElement.key) {
                             // Cleanup all contents if the type is changed, except the key
-                            onChange(selectedElement.key, { role: value, key: selectedElement.key });
+                            onChange({ role: value, key: selectedElement.key });
                         }
                     }}
                 >
@@ -236,7 +277,7 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
             <CellEditor
                 selectedElement={selectedElement}
                 onChange={function (key: string, item: ItemComponent): void {
-                    onChange(key, item);
+                    onChange(item);
                 }} />
 
 
@@ -246,7 +287,7 @@ const EditSection: React.FC<{ selectedElement: ItemComponent, allKeys: string[],
 }
 
 const NewMatrix: React.FC<MatrixProps> = (props) => {
-    const [selectedElement, setSelectedElement] = React.useState<ItemComponent | undefined>(undefined);
+    const [selectedElement, setSelectedElement] = React.useState<Selection | undefined>(undefined);
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
@@ -265,12 +306,12 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
         matrixDef.items.push(headerRow);
     }
     const numCols = headerRow.items.length || 0;
-    const numRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]).length || 0;
 
-    const rowKeys = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow).map(comp => comp.key) as string[];
-    const colKeys = headerRow.items.map(comp => comp.key) as string[];
-    const cellKeys = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow).map(comp => (comp as ItemGroupComponent).items.map(cell => cell.key)).flat() as string[];
-    const allKeys = [...rowKeys, ...colKeys, ...cellKeys];
+    const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
+    const numRows = responseRows.length || 0;
+
+    const rowKeys = responseRows.map(comp => comp.key) as string[];
+    const headerColKeys = headerRow.items.map(comp => comp.key) as string[];
 
 
     const updateSurveyItemWithNewRg = (matrixItems: ItemComponent[]) => {
@@ -302,27 +343,73 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
         props.onUpdateSurveyItem(newSurveyItem);
     }
 
-    const selectedElementUpdated = (key: string, updatedElement: ItemComponent) => {
+    const selectedElementUpdated = (updatedElement: ItemComponent) => {
         if (!selectedElement) return;
-        const newMatrixItems = matrixDef.items.map(comp => {
-            if (comp.key === key) {
-                return updatedElement;
+
+        if (selectedElement.rowIndex === -1 && selectedElement.colIndex === -1) {
+            return;
+        }
+
+
+
+        let newMatrixItems: ItemComponent[] = [];
+        if (selectedElement.rowIndex === -1) {
+            newMatrixItems = matrixDef.items.map((comp) => {
+                // update header row
+                if (comp.role === MatrixRowType.HeaderRow) {
+                    return {
+                        ...comp,
+                        items: (comp as ItemGroupComponent).items.map((item, colIndex) => {
+                            if (colIndex === selectedElement.colIndex) {
+                                return updatedElement;
+                            }
+                            return item;
+                        })
+                    }
+                }
+                return comp;
+            })
+            updateSurveyItemWithNewRg(newMatrixItems);
+            return;
+        }
+
+
+        const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
+        const headerRow = matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent;
+
+        newMatrixItems = [headerRow, ...responseRows.map((row, rowIndex) => {
+            if (selectedElement.rowIndex !== rowIndex) {
+                return row;
             }
-            if ((comp as ItemGroupComponent).items.length > 0) {
-                (comp as ItemGroupComponent).items = (comp as ItemGroupComponent).items.map(cell => {
-                    if (cell.key === key) {
+            if (selectedElement.colIndex === -1) {
+                return {
+                    ...updatedElement,
+                    items: row.items,
+                };
+            }
+            return {
+                ...row,
+                items: row.items.map((cell, colIndex) => {
+                    if (colIndex === selectedElement.colIndex) {
                         return updatedElement;
                     }
                     return cell;
-                });
+                })
             }
-            return comp;
-        });
-        setSelectedElement(updatedElement);
+        })];
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
     const changeCols = (newNumCols: number) => {
+        if (selectedElement !== undefined && selectedElement?.colIndex > newNumCols - 1) {
+            setSelectedElement(undefined);
+        }
+
+        const newHeaderRowKeys = [...headerColKeys];
+        for (let i = headerColKeys.length; i < newNumCols; i++) {
+            newHeaderRowKeys.push(getUniqueRandomKey(newHeaderRowKeys, ""));
+        }
+
         const newMatrixItems = matrixDef.items.map(comp => {
             if (comp.role === MatrixRowType.HeaderRow) {
                 const headerRow = comp as ItemGroupComponent;
@@ -333,7 +420,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                             return headerRow.items[i];
                         } else {
                             return {
-                                key: getUniqueRandomKey(allKeys as string[], comp.key ?? ""),
+                                key: newHeaderRowKeys[i],
                                 role: MatrixCellType.Text,
                             }
                         }
@@ -341,6 +428,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 };
                 return newHeaderRow;
             }
+
             if (comp.role === MatrixRowType.ResponseRow) {
                 const responseRow = comp as ItemGroupComponent;
 
@@ -351,7 +439,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                             return responseRow.items[i];
                         } else {
                             return {
-                                key: getUniqueRandomKey(allKeys as string[], comp.key ?? ""),
+                                key: newHeaderRowKeys[i],
                                 role: MatrixCellType.Dropdown,
                                 items: [],
                                 order: {
@@ -371,18 +459,27 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
     }
 
     const changeRows = (newNumRows: number) => {
+        if (selectedElement !== undefined && selectedElement?.rowIndex > newNumRows - 1) {
+            setSelectedElement(undefined);
+        }
+
         const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
         const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
+
+        const newRowKeys = [...rowKeys];
+        for (let i = rowKeys.length; i < newNumRows; i++) {
+            newRowKeys.push(getUniqueRandomKey(newRowKeys, ""));
+        }
         const newRows = Array.from({ length: newNumRows }).map((_v, i) => {
             if (i < oldRows.length) {
                 return oldRows[i];
             } else {
                 return {
-                    key: getUniqueRandomKey(allKeys as string[], ""),
+                    key: newRowKeys[i],
                     role: MatrixRowType.ResponseRow,
-                    items: Array.from({ length: numCols }).map(() => {
+                    items: Array.from({ length: numCols }).map((_, j) => {
                         return {
-                            key: getUniqueRandomKey(allKeys as string[], ""),
+                            key: headerColKeys[j],
                             role: MatrixCellType.Dropdown,
                             items: [],
                             order: {
@@ -397,6 +494,39 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
 
         const newMatrixItems: ItemComponent[] = [headerRow, ...newRows];
         updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
+    const getSelectedItem = (): ItemComponent | undefined => {
+        if (selectedElement === undefined) {
+            return undefined;
+        }
+
+        if (selectedElement.rowIndex === -1 && selectedElement.colIndex === -1) {
+            return undefined;
+        }
+
+        if (selectedElement.rowIndex === -1) {
+            return headerRow.items[selectedElement.colIndex];
+        }
+
+        if (selectedElement.colIndex === -1) {
+            return responseRows[selectedElement.rowIndex];
+        }
+
+        return responseRows[selectedElement.rowIndex].items[selectedElement.colIndex];
+    }
+    const selectedItemComp = getSelectedItem();
+    const getUsedKeys = (): string[] => {
+        if (selectedItemComp === undefined) {
+            return [];
+        }
+        if (selectedItemComp.role === MatrixRowType.HeaderRow) {
+            return headerColKeys;
+        }
+        if (selectedItemComp.role === MatrixRowType.ResponseRow) {
+            return rowKeys;
+        }
+        return headerColKeys;
     }
 
     return (
@@ -434,15 +564,21 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
             </div>
             {matrixDef.items.length > 0 && <div className='space-y-4'>
                 <p className='font-semibold mb-2'>Overview: </p>
-                <OverviewTable matrixDef={matrixDef} selectedElement={selectedElement}
-                    onClick={function (i: ItemComponent): void {
-                        setSelectedElement(i);
-                    }} />
+                <OverviewTable
+                    matrixDef={matrixDef}
+                    selectedElement={selectedElement}
+                    onSelectionChange={setSelectedElement}
+                />
             </div>}
-            {selectedElement &&
-                <EditSection selectedElement={selectedElement} allKeys={allKeys} cellKeys={cellKeys} onChange={function (key: string, item: ItemComponent): void {
-                    selectedElementUpdated(key, item);
-                }} />}
+            {selectedItemComp &&
+                <EditSection
+                    selectedElement={selectedItemComp}
+                    usedKeys={getUsedKeys()}
+                    isHeaderCell={selectedElement !== undefined && (selectedElement.rowIndex === -1 || selectedElement.colIndex === -1)}
+                    onChange={(item: ItemComponent) => {
+                        selectedElementUpdated(item);
+                    }}
+                />}
 
         </div>
 
