@@ -25,16 +25,16 @@ interface MatrixProps {
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const cellClassname = 'border border-gray-300 p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
-const cellClassnameSelected = 'border border-gray-300 p-2 bg-gray-200 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
+const cellClassname = 'border border-border p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
+const cellClassnameSelected = 'border border-border p-2 bg-secondary cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
 
-const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent }> = ({ cell }) => {
+const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent, isSelected: boolean }> = ({ cell, isSelected }) => {
     const { selectedLanguage } = useContext(SurveyContext);
-    const hasTranslation = getLocalizedString(cell.content, selectedLanguage) !== undefined && getLocalizedString(cell.content, selectedLanguage) !== '';
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
             case MatrixCellType.Dropdown:
                 return <SquareChevronDown size={16} />;
+            case MatrixRowType.ResponseRow:
             case MatrixCellType.Text:
                 return <Type size={16} />;
             case MatrixCellType.TextInput:
@@ -51,37 +51,16 @@ const OverviewMatrixCellContent: React.FC<{ cell: ItemComponent }> = ({ cell }) 
                 return <CircleHelp size={16} />;
         }
     }
-    const content = hasTranslation ? <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p> : <Badge className='h-auto py-0'>{cell.key}</Badge>;
     return (
         <div className="flex flex-row items-center gap-2">
             <span className="text-muted-foreground">{icon(cell)}</span>
-            {content}
+            <Badge variant={!isSelected ? 'outline' : 'default'} className='h-auto border-2 py-0'>{cell.key}</Badge>
+            <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
         </div>
     );
 }
 
 const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: ItemComponent | undefined, onClick(i: ItemComponent): void }> = ({ matrixDef, selectedElement, onClick }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
-
-    const textElement = (item: ItemComponent) => {
-        if (item.role === MatrixCellType.Text || item.role === MatrixRowType.ResponseRow) {
-            const hasTranslation = getLocalizedString(item.content, selectedLanguage) !== undefined && getLocalizedString(item.content, selectedLanguage) !== '';
-            let content: React.ReactNode;
-
-            if (hasTranslation) {
-                content = <p className="text-sm">{getLocalizedString(item.content, selectedLanguage)}</p>;
-            } else {
-                content = <Badge className='h-auto py-0'>{item.key}</Badge>;
-            }
-            return <div className="flex flex-row items-center gap-2">
-                <span className="text-muted-foreground">
-                    <Type size={16} />
-                </span>
-                {content}
-            </div>;
-        }
-    }
-
     return (
         <table className="w-full table-fixed">
             <thead>
@@ -90,7 +69,9 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
                     {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header) => {
                         return (
                             <th key={header.key} className={selectedElement?.key == header.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(header)}>
-                                {textElement(header)}
+                                <OverviewMatrixCellContent cell={header}
+                                    isSelected={selectedElement?.key == header.key}
+                                />
                             </th>
                         );
                     })}
@@ -100,11 +81,15 @@ const OverviewTable: React.FC<{ matrixDef: ItemGroupComponent, selectedElement: 
                 {matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow).map((row) => (
                     <tr key={row.key}>
                         <th className={selectedElement?.key == row.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(row)}>
-                            {textElement(row)}
+                            <OverviewMatrixCellContent cell={row}
+                                isSelected={selectedElement?.key == row.key}
+                            />
                         </th>
                         {(row as ItemGroupComponent).items.map((cell) => (
                             <td key={cell.key} className={selectedElement?.key == cell.key ? cellClassnameSelected : cellClassname} onClick={() => onClick(cell)}>
-                                <OverviewMatrixCellContent cell={cell} />
+                                <OverviewMatrixCellContent cell={cell}
+                                    isSelected={selectedElement?.key == cell.key}
+                                />
                             </td>
                         ))}
                     </tr>
