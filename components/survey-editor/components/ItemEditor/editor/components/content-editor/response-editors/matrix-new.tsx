@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Binary, Calendar, Check, CircleHelp, Clock, SquareChevronDown, TextCursorInput, Type, X } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, SquareChevronDown, TextCursorInput, Type, X, XCircle } from "lucide-react";
 import { useContext, useEffect } from "react";
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
@@ -20,12 +20,16 @@ import React from "react";
 import { MatrixCellType, MatrixRowType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { cn } from "@/lib/utils";
+import { ContextMenu, ContextMenuContent, ContextMenuSubContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuSub, ContextMenuSubTrigger, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { useCopyToClipboard } from "usehooks-ts";
+
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
+type MatrixAction = 'add-row-above' | 'add-row-below' | 'add-column-before' | 'add-column-after' | 'delete-row' | 'delete-column' | 'copy' | 'paste' | 'move-right' | 'move-left' | 'move-up' | 'move-down';
 
 const OverviewMatrixCellContent: React.FC<{
     cell: ItemComponent,
@@ -33,7 +37,9 @@ const OverviewMatrixCellContent: React.FC<{
     hideKey?: boolean,
     highlightKey?: boolean,
     hideIcon?: boolean,
-}> = ({ cell, isSelected, hideKey, highlightKey, hideIcon }) => {
+    context: 'header' | 'row' | 'cell',
+    onAction: (action: MatrixAction) => void,
+}> = ({ cell, isSelected, hideKey, highlightKey, hideIcon, context, onAction }) => {
     const { selectedLanguage } = useContext(SurveyContext);
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
@@ -57,17 +63,98 @@ const OverviewMatrixCellContent: React.FC<{
         }
     }
     return (
-        <div className={cn(
-            "flex flex-row items-center gap-2 h-5 box-content",
-            'p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden',
-            {
-                'bg-secondary ring ring-primary ring-inset': isSelected,
-            }
-        )}>
-            {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
-            {!hideKey && <Badge variant={(isSelected || highlightKey) ? 'default' : 'outline'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
-            <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
-        </div>
+        <ContextMenu>
+            <ContextMenuTrigger>
+                <div className={cn(
+                    "flex flex-row items-center gap-2 h-5 box-content",
+                    'p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden',
+                    {
+                        'bg-secondary ring ring-primary ring-inset': isSelected,
+                    }
+                )}>
+                    {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
+                    {!hideKey && <Badge variant={(isSelected || highlightKey) ? 'default' : 'outline'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
+                    <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                {context !== 'cell' && <>
+                    <ContextMenuSub>
+                        <ContextMenuSubTrigger>
+                            <span className="text-muted-foreground mr-2" ><MoveIcon size={16} /></span>
+                            Move
+                        </ContextMenuSubTrigger>
+                        <ContextMenuSubContent>
+                            {context === 'header' && <>
+                                <ContextMenuItem onClick={() => { onAction('move-right') }}>
+                                    <span className="text-muted-foreground mr-2" ><ArrowRight size={16} /></span>
+                                    Right
+                                </ContextMenuItem>
+                                <ContextMenuItem onClick={() => { onAction('move-left') }}>
+                                    <span className="text-muted-foreground mr-2" ><ArrowLeft size={16} /></span>
+                                    Left
+                                </ContextMenuItem>
+                            </>}
+                            {context === 'row' && <>
+                                <ContextMenuItem onClick={() => { onAction('move-up') }}>
+                                    <span className="text-muted-foreground mr-2" ><ArrowUp size={16} /></span>
+                                    Up
+                                </ContextMenuItem>
+                                <ContextMenuItem onClick={() => { onAction('move-down') }}>
+                                    <span className="text-muted-foreground mr-2" ><ArrowDown size={16} /></span>
+                                    Down
+                                </ContextMenuItem>
+                            </>}
+                        </ContextMenuSubContent>
+                    </ContextMenuSub>
+                    <ContextMenuSeparator />
+                </>}
+
+                {context === 'header' && <ContextMenuGroup >
+                    <ContextMenuItem onClick={() => { onAction('add-column-before') }}>
+                        <span className="text-muted-foreground mr-2" ><PanelLeftCloseIcon size={16} /></span>
+                        Add column before
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => { onAction('add-column-after') }}>
+                        <span className="text-muted-foreground mr-2" ><PanelRightCloseIcon size={16} /></span>
+                        Add column after
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => { onAction('delete-column') }}>
+                        <span className="text-muted-foreground mr-2" ><XCircle size={16} /></span>
+                        Delete column
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                </ContextMenuGroup>}
+
+                {context === 'row' && <ContextMenuGroup >
+                    <ContextMenuItem onClick={() => { onAction('add-row-above') }}>
+                        <span className="text-muted-foreground mr-2" ><PanelTopCloseIcon size={16} /></span>
+                        Add row above
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => { onAction('add-row-below') }}>
+                        <span className="text-muted-foreground mr-2" ><PanelBottomClose size={16} /></span>
+                        Add row below
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => { onAction('delete-row') }}>
+                        <span className="text-muted-foreground mr-2" ><XCircle size={16} /></span>
+                        Delete row
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                </ContextMenuGroup>}
+
+
+                <ContextMenuGroup>
+                    <ContextMenuItem onClick={() => { onAction('copy') }}>
+                        <span className="text-muted-foreground mr-2" ><CopyIcon size={16} /></span>
+                        Copy content
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => { onAction('paste') }}>
+                        <span className="text-muted-foreground mr-2" ><ClipboardIcon size={16} /></span>
+                        Paste
+                    </ContextMenuItem>
+                </ContextMenuGroup>
+            </ContextMenuContent>
+        </ContextMenu>
     );
 }
 
@@ -81,7 +168,8 @@ const OverviewTable: React.FC<{
     selectedElement: Selection | undefined,
     headerColKeys: string[],
     onSelectionChange(selection: Selection | undefined): void,
-}> = ({ matrixDef, selectedElement, headerColKeys, onSelectionChange }) => {
+    onAction: (action: MatrixAction, position: Selection) => void,
+}> = ({ matrixDef, selectedElement, headerColKeys, onSelectionChange, onAction }) => {
 
     const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
     return (
@@ -106,6 +194,8 @@ const OverviewTable: React.FC<{
                                     cell={header}
                                     isSelected={isSelected}
                                     highlightKey={isColSelected}
+                                    context="header"
+                                    onAction={(action) => { onAction(action, { rowIndex: -1, colIndex }) }}
                                 />
                             </th>
                         );
@@ -130,6 +220,8 @@ const OverviewTable: React.FC<{
                             <OverviewMatrixCellContent cell={row}
                                 isSelected={isRowSelected && selectedElement?.colIndex === -1}
                                 highlightKey={isRowSelected}
+                                context="row"
+                                onAction={(action) => { onAction(action, { rowIndex: rowIndex, colIndex: -1 }) }}
                             />
                         </th>
                         {(row as ItemGroupComponent).items.map((cell, colIndex) => {
@@ -146,6 +238,8 @@ const OverviewTable: React.FC<{
                                         cell={cell}
                                         isSelected={isSelected}
                                         hideKey={headerColKeys[colIndex] === cell.key}
+                                        context="cell"
+                                        onAction={(action) => { onAction(action, { rowIndex: rowIndex, colIndex }) }}
                                     />
                                 </td>
                             )
@@ -310,6 +404,7 @@ const EditSection: React.FC<{
 
 const MatrixEditor: React.FC<MatrixProps> = (props) => {
     const [selectedElement, setSelectedElement] = React.useState<Selection | undefined>(undefined);
+    const [copiedValue, copyToClipboard] = useCopyToClipboard();
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
@@ -365,17 +460,15 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         props.onUpdateSurveyItem(newSurveyItem);
     }
 
-    const selectedElementUpdated = (updatedElement: ItemComponent) => {
-        if (!selectedElement) return;
+    const updateTargetComp = (updatedElement: ItemComponent, targetPosition?: Selection) => {
+        if (!targetPosition) return;
 
-        if (selectedElement.rowIndex === -1 && selectedElement.colIndex === -1) {
+        if (targetPosition.rowIndex === -1 && targetPosition.colIndex === -1) {
             return;
         }
 
-
-
         let newMatrixItems: ItemComponent[] = [];
-        if (selectedElement.rowIndex === -1) {
+        if (targetPosition.rowIndex === -1) {
             let updateColKey: {
                 from: string,
                 to: string
@@ -387,7 +480,7 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                     return {
                         ...comp,
                         items: (comp as ItemGroupComponent).items.map((item, colIndex) => {
-                            if (colIndex === selectedElement.colIndex) {
+                            if (colIndex === targetPosition.colIndex) {
                                 if (item.key !== updatedElement.key) {
                                     // column key changed, update key for all cells in the column with same key
                                     updateColKey = {
@@ -408,8 +501,8 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                 newMatrixItems = newMatrixItems.map((comp) => {
                     if (comp.role === MatrixRowType.ResponseRow) {
                         const row = comp as ItemGroupComponent;
-                        if (row.items[selectedElement.colIndex].key === updateColKey?.from) {
-                            row.items[selectedElement.colIndex].key = updateColKey?.to;
+                        if (row.items[targetPosition.colIndex].key === updateColKey?.from) {
+                            row.items[targetPosition.colIndex].key = updateColKey?.to;
                         }
                         return row;
                     }
@@ -425,10 +518,10 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         const headerRow = matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent;
 
         newMatrixItems = [headerRow, ...responseRows.map((row, rowIndex) => {
-            if (selectedElement.rowIndex !== rowIndex) {
+            if (targetPosition.rowIndex !== rowIndex) {
                 return row;
             }
-            if (selectedElement.colIndex === -1) {
+            if (targetPosition.colIndex === -1) {
                 return {
                     ...updatedElement,
                     items: row.items,
@@ -437,7 +530,7 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
             return {
                 ...row,
                 items: row.items.map((cell, colIndex) => {
-                    if (colIndex === selectedElement.colIndex) {
+                    if (colIndex === targetPosition.colIndex) {
                         return updatedElement;
                     }
                     return cell;
@@ -543,26 +636,28 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
-    const getSelectedItem = (): ItemComponent | undefined => {
-        if (selectedElement === undefined) {
+
+
+    const getItemAt = (position?: Selection): ItemComponent | undefined => {
+        if (position === undefined) {
             return undefined;
         }
 
-        if (selectedElement.rowIndex === -1 && selectedElement.colIndex === -1) {
+        if (position.rowIndex === -1 && position.colIndex === -1) {
             return undefined;
         }
 
-        if (selectedElement.rowIndex === -1) {
-            return headerRow.items[selectedElement.colIndex];
+        if (position.rowIndex === -1) {
+            return headerRow.items[position.colIndex];
         }
 
-        if (selectedElement.colIndex === -1) {
-            return responseRows[selectedElement.rowIndex];
+        if (position.colIndex === -1) {
+            return responseRows[position.rowIndex];
         }
 
-        return responseRows[selectedElement.rowIndex].items[selectedElement.colIndex];
+        return responseRows[position.rowIndex].items[position.colIndex];
     }
-    const selectedItemComp = getSelectedItem();
+    const selectedItemComp = getItemAt(selectedElement);
     const getUsedKeys = (): string[] => {
         if (selectedItemComp === undefined) {
             return [];
@@ -577,6 +672,46 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
             return responseRows[selectedElement.rowIndex].items.map(cell => cell.key!);
         }
         return headerColKeys
+    }
+
+    const handleCellAction = async (action: MatrixAction, position: Selection) => {
+        if (selectedElement === undefined) {
+            return;
+        }
+        switch (action) {
+            case 'copy':
+                await copyToClipboard(JSON.stringify(getItemAt(position)));
+                return;
+            case 'paste':
+                if (copiedValue === null) {
+                    return;
+                }
+                const pastedItem = JSON.parse(copiedValue);
+                if (pastedItem === null) {
+                    return;
+                }
+                const targetItem = getItemAt(position);
+                if (targetItem === undefined) {
+                    return;
+                }
+                if (
+                    position.rowIndex === -1 || position.colIndex === -1 ||
+                    targetItem.role === MatrixRowType.ResponseRow || targetItem.role === MatrixRowType.HeaderRow ||
+                    pastedItem.role === MatrixRowType.ResponseRow || pastedItem.role === MatrixRowType.HeaderRow
+                ) {
+                    const newItem = { ...targetItem };
+                    newItem.content = pastedItem.content;
+                    updateTargetComp(newItem, position);
+                    return;
+                }
+                const newItem = { ...pastedItem };
+                newItem.key = targetItem.key;
+                updateTargetComp(newItem, position);
+                return;
+            default:
+                console.warn('Unknown action: ', action);
+                return;
+        }
     }
 
     return (
@@ -619,6 +754,7 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                     selectedElement={selectedElement}
                     onSelectionChange={setSelectedElement}
                     headerColKeys={headerColKeys}
+                    onAction={handleCellAction}
                 />
             </div>}
             {selectedItemComp &&
@@ -627,7 +763,7 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                     usedKeys={getUsedKeys()}
                     isHeaderCell={selectedElement !== undefined && (selectedElement.rowIndex === -1 || selectedElement.colIndex === -1)}
                     onChange={(item: ItemComponent) => {
-                        selectedElementUpdated(item);
+                        updateTargetComp(item, selectedElement);
                     }}
                 />}
 
