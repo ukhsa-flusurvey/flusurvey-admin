@@ -78,8 +78,9 @@ interface Selection {
 const OverviewTable: React.FC<{
     matrixDef: ItemGroupComponent,
     selectedElement: Selection | undefined,
+    headerColKeys: string[],
     onSelectionChange(selection: Selection | undefined): void,
-}> = ({ matrixDef, selectedElement, onSelectionChange }) => {
+}> = ({ matrixDef, selectedElement, headerColKeys, onSelectionChange }) => {
 
     const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
     return (
@@ -131,7 +132,7 @@ const OverviewTable: React.FC<{
                                     <OverviewMatrixCellContent
                                         cell={cell}
                                         isSelected={isSelected}
-                                        hideKey={false}
+                                        hideKey={headerColKeys[colIndex] === cell.key}
                                     />
                                 </td>
                             )
@@ -534,7 +535,10 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
         if (selectedItemComp.role === MatrixRowType.ResponseRow) {
             return rowKeys;
         }
-        return headerColKeys;
+        if (selectedElement && selectedElement?.rowIndex > -1) {
+            return responseRows[selectedElement.rowIndex].items.map(cell => cell.key!);
+        }
+        return headerColKeys
     }
 
     return (
@@ -576,6 +580,7 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                     matrixDef={matrixDef}
                     selectedElement={selectedElement}
                     onSelectionChange={setSelectedElement}
+                    headerColKeys={headerColKeys}
                 />
             </div>}
             {selectedItemComp &&
