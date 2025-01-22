@@ -19,17 +19,17 @@ import DropdownContentConfig from "./dropdown-content-config";
 import React from "react";
 import { MatrixCellType, MatrixRowType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/Matrix";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
+import { cn } from "@/lib/utils";
 
 interface MatrixProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const cellClassname = 'border border-border p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
-const cellClassnameSelected = 'border border-border p-2 bg-secondary cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden';
 
 const OverviewMatrixCellContent: React.FC<{
-    cell: ItemComponent, isSelected: boolean,
+    cell: ItemComponent,
+    isSelected: boolean,
     hideKey?: boolean
     hideIcon?: boolean
 }> = ({ cell, isSelected, hideKey, hideIcon }) => {
@@ -56,7 +56,13 @@ const OverviewMatrixCellContent: React.FC<{
         }
     }
     return (
-        <div className="flex flex-row items-center gap-2">
+        <div className={cn(
+            "flex flex-row items-center gap-2",
+            'p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden',
+            {
+                'bg-secondary box-content ring ring-primary ring-inset': isSelected,
+            }
+        )}>
             {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
             {!hideKey && <Badge variant={!isSelected ? 'outline' : 'default'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
             <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
@@ -86,7 +92,7 @@ const OverviewTable: React.FC<{
                         return (
                             <th
                                 key={header.key}
-                                className={isSelected ? cellClassnameSelected : cellClassname}
+                                className="p-0 border border-border"
                                 onClick={() => onSelectionChange({ rowIndex: -1, colIndex })}
                             >
                                 <OverviewMatrixCellContent cell={header}
@@ -101,7 +107,8 @@ const OverviewTable: React.FC<{
                 {responseRows.map((row, rowIndex) => {
                     const isRowSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === -1;
                     return <tr key={row.key}>
-                        <th className={isRowSelected ? cellClassnameSelected : cellClassname}
+                        <th
+                            className="p-0 border border-border"
                             onClick={() => onSelectionChange({
                                 rowIndex,
                                 colIndex: -1
@@ -114,7 +121,8 @@ const OverviewTable: React.FC<{
                         {(row as ItemGroupComponent).items.map((cell, colIndex) => {
                             const isSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === colIndex;
                             return (
-                                <td key={cell.key} className={isSelected ? cellClassnameSelected : cellClassname}
+                                <td key={cell.key}
+                                    className="p-0 border border-border"
                                     onClick={() => onSelectionChange({
                                         rowIndex,
                                         colIndex
