@@ -660,6 +660,10 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         const newHeaderRowKeys = [...headerColKeys];
         newHeaderRowKeys.splice(targetColIndex, 1);
 
+        if (selectedElement?.colIndex === targetColIndex) {
+            setSelectedElement(undefined);
+        }
+
         const newMatrixItems = matrixDef.items.map(comp => {
             if (comp.role === MatrixRowType.HeaderRow) {
                 const headerRow = comp as ItemGroupComponent;
@@ -678,6 +682,37 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                     ...responseRow
                 };
                 return newResponseRow;
+            }
+            return comp;
+        });
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
+    const moveColAt = (fromColIndex: number, toColIndex: number) => {
+        if (fromColIndex === toColIndex) {
+            return;
+        }
+        if (toColIndex < 0 || headerColKeys.length <= toColIndex) {
+            return;
+        }
+
+        const newMatrixItems = matrixDef.items.map(comp => {
+            if (comp.role === MatrixRowType.HeaderRow) {
+                const headerRow = comp as ItemGroupComponent;
+                const item = headerRow.items[fromColIndex];
+                headerRow.items.splice(fromColIndex, 1);
+                headerRow.items.splice(toColIndex, 0, item);
+
+                return headerRow;
+            }
+
+            if (comp.role === MatrixRowType.ResponseRow) {
+                const responseRow = comp as ItemGroupComponent;
+                const item = responseRow.items[fromColIndex];
+                responseRow.items.splice(fromColIndex, 1);
+                responseRow.items.splice(toColIndex, 0, item);
+
+                return responseRow;
             }
             return comp;
         });
@@ -732,9 +767,33 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
         oldRows.splice(targetRowIndex, 1);
 
+        if (selectedElement?.rowIndex === targetRowIndex) {
+            setSelectedElement(undefined);
+        }
+
         const newMatrixItems: ItemComponent[] = [headerRow, ...oldRows];
         updateSurveyItemWithNewRg(newMatrixItems);
     }
+
+    const moveRowAt = (fromRowIndex: number, toRowIndex: number) => {
+        if (fromRowIndex === toRowIndex) {
+            return;
+        }
+        if (toRowIndex < 0 || rowKeys.length <= toRowIndex) {
+            return;
+        }
+
+        const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
+        const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
+
+        const item = oldRows[fromRowIndex];
+        oldRows.splice(fromRowIndex, 1);
+        oldRows.splice(toRowIndex, 0, item);
+
+        const newMatrixItems: ItemComponent[] = [headerRow, ...oldRows];
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
 
     const changeRows = (newNumRows: number) => {
         if (selectedElement !== undefined && selectedElement?.rowIndex > newNumRows - 1) {
@@ -813,9 +872,8 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
     }
 
     const handleCellAction = async (action: MatrixAction, position: Selection) => {
-        if (selectedElement === undefined) {
-            return;
-        }
+        const colIndex = position?.colIndex || 0;
+        const rowIndex = position?.rowIndex || 0;
         switch (action) {
             case 'copy':
                 await copyToClipboard(JSON.stringify(getItemAt(position)));
@@ -847,22 +905,34 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                 updateTargetComp(newItem, position);
                 return;
             case 'add-column-after':
-                addColAt((position?.colIndex || 0) + 1);
+                addColAt(colIndex + 1);
                 return;
             case 'add-column-before':
-                addColAt(position?.colIndex || 0);
+                addColAt(colIndex);
                 return;
             case 'delete-column':
-                deleteColAt(position?.colIndex || 0);
+                deleteColAt(colIndex);
                 return;
             case 'add-row-above':
-                addRowAt(position?.rowIndex || 0);
+                addRowAt(rowIndex);
                 return;
             case 'add-row-below':
-                addRowAt((position?.rowIndex || 0) + 1);
+                addRowAt(rowIndex + 1);
                 return;
             case 'delete-row':
-                deleteRowAt(position?.rowIndex || 0);
+                deleteRowAt(rowIndex);
+                return;
+            case 'move-left':
+                moveColAt(colIndex, colIndex - 1);
+                return;
+            case 'move-right':
+                moveColAt(colIndex, colIndex + 1);
+                return;
+            case 'move-up':
+                moveRowAt(rowIndex, rowIndex - 1);
+                return;
+            case 'move-down':
+                moveRowAt(rowIndex, rowIndex + 1);
                 return;
             default:
                 console.warn('Unknown action: ', action);
