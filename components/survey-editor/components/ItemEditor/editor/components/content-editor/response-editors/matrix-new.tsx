@@ -430,7 +430,6 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
     const numCols = headerRow.items.length || 0;
 
     const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
-    const numRows = responseRows.length || 0;
 
     const rowKeys = responseRows.map(comp => comp.key) as string[];
     const headerColKeys = headerRow.items.map(comp => comp.key) as string[];
