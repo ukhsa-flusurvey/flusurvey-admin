@@ -30,9 +30,10 @@ interface MatrixProps {
 const OverviewMatrixCellContent: React.FC<{
     cell: ItemComponent,
     isSelected: boolean,
-    hideKey?: boolean
-    hideIcon?: boolean
-}> = ({ cell, isSelected, hideKey, hideIcon }) => {
+    hideKey?: boolean,
+    highlightKey?: boolean,
+    hideIcon?: boolean,
+}> = ({ cell, isSelected, hideKey, highlightKey, hideIcon }) => {
     const { selectedLanguage } = useContext(SurveyContext);
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
@@ -57,14 +58,14 @@ const OverviewMatrixCellContent: React.FC<{
     }
     return (
         <div className={cn(
-            "flex flex-row items-center gap-2",
+            "flex flex-row items-center gap-2 h-5 box-content",
             'p-2 hover:bg-gray-100 cursor-pointer overflow-ellipsis whitespace-nowrap overflow-hidden',
             {
-                'bg-secondary box-content ring ring-primary ring-inset': isSelected,
+                'bg-secondary ring ring-primary ring-inset': isSelected,
             }
         )}>
             {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
-            {!hideKey && <Badge variant={!isSelected ? 'outline' : 'default'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
+            {!hideKey && <Badge variant={(isSelected || highlightKey) ? 'default' : 'outline'} className='h-auto border-2 py-0'>{cell.key}</Badge>}
             <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
         </div>
     );
@@ -89,15 +90,22 @@ const OverviewTable: React.FC<{
                 <tr>
                     <th className="border-none"></th>
                     {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header, colIndex) => {
-                        const isSelected = selectedElement?.colIndex === colIndex && selectedElement?.rowIndex === -1;
+                        const isColSelected = selectedElement?.colIndex === colIndex;
+                        const isSelected = selectedElement?.rowIndex === -1 && isColSelected;
                         return (
                             <th
                                 key={header.key}
-                                className="p-0 border border-border"
+                                className={cn(
+                                    "p-0 border border-border",
+                                    {
+                                        'bg-secondary': isColSelected,
+                                    })}
                                 onClick={() => onSelectionChange({ rowIndex: -1, colIndex })}
                             >
-                                <OverviewMatrixCellContent cell={header}
+                                <OverviewMatrixCellContent
+                                    cell={header}
                                     isSelected={isSelected}
+                                    highlightKey={isColSelected}
                                 />
                             </th>
                         );
@@ -106,8 +114,12 @@ const OverviewTable: React.FC<{
             </thead>
             <tbody>
                 {responseRows.map((row, rowIndex) => {
-                    const isRowSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === -1;
-                    return <tr key={row.key}>
+                    const isRowSelected = selectedElement?.rowIndex === rowIndex;
+                    return <tr key={row.key}
+                        className={cn({
+                            'bg-secondary': isRowSelected,
+                        })}
+                    >
                         <th
                             className="p-0 border border-border"
                             onClick={() => onSelectionChange({
@@ -116,14 +128,15 @@ const OverviewTable: React.FC<{
                             })}
                         >
                             <OverviewMatrixCellContent cell={row}
-                                isSelected={isRowSelected}
+                                isSelected={isRowSelected && selectedElement?.colIndex === -1}
+                                highlightKey={isRowSelected}
                             />
                         </th>
                         {(row as ItemGroupComponent).items.map((cell, colIndex) => {
                             const isSelected = selectedElement?.rowIndex === rowIndex && selectedElement?.colIndex === colIndex;
                             return (
                                 <td key={cell.key}
-                                    className="p-0 border border-border"
+                                    className="p-0 border border-border bg-white"
                                     onClick={() => onSelectionChange({
                                         rowIndex,
                                         colIndex
@@ -241,7 +254,7 @@ const EditSection: React.FC<{
         <Separator orientation='horizontal' />
         {selectedElement && <p className='font-semibold mb-2'>Selected Element: </p>}
         {selectedElement && <div className='space-y-4'>
-            <KeyEditor
+            {isHeaderCell && <KeyEditor
                 currentKey={selectedElement.key ?? ''}
                 existingKeys={usedKeys.filter((key): key is string => key !== undefined)}
                 onChange={(newKey) => {
@@ -249,7 +262,7 @@ const EditSection: React.FC<{
                         onChange({ ...selectedElement, key: newKey });
                     }
                 }}
-            />
+            />}
 
             <div className='flex items-center gap-2'
                 data-no-dnd="true"
@@ -295,7 +308,7 @@ const EditSection: React.FC<{
     </div>
 }
 
-const NewMatrix: React.FC<MatrixProps> = (props) => {
+const MatrixEditor: React.FC<MatrixProps> = (props) => {
     const [selectedElement, setSelectedElement] = React.useState<Selection | undefined>(undefined);
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
@@ -623,4 +636,4 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
     );
 }
 
-export default NewMatrix;
+export default MatrixEditor;

@@ -16,7 +16,7 @@ import ContactForm from './contact-form';
 import ClozeEditor from './cloze-editor';
 import TimeInput from './time-input';
 import Rblsa from './rblsa';
-import NewMatrix from './matrix-new';
+import MatrixEditor from './matrix-new';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -63,7 +63,7 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
         case 'responsiveMatrix':
             break;
         case 'matrix':
-            content = <NewMatrix surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            content = <MatrixEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         case 'clozeQuestion':
             content = <ClozeEditor surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
