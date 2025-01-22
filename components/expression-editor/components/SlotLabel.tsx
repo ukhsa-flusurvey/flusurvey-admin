@@ -1,6 +1,7 @@
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
-import { BsCaretDownFill, BsCaretRightFill } from "react-icons/bs";
+import { ChevronDown, ChevronRight } from "lucide-react";
+
 
 const SlotLabel = (props: {
     label: string, required?: boolean,
@@ -37,7 +38,7 @@ const SlotLabel = (props: {
                 }
             }}
         >
-            {!props.isHidden ? <BsCaretDownFill /> : <BsCaretRightFill />}
+            {!props.isHidden ? <ChevronDown /> : <ChevronRight />}
         </button>}
         <span className=''>{props.label}</span>
         {props.required && <span className='text-red-500 ms-1'>*</span>}
