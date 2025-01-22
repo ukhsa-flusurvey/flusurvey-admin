@@ -684,6 +684,58 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
+    const addRowAt = (targetRowIndex: number) => {
+        const newRowKey = getUniqueRandomKey(rowKeys, "");
+
+        const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
+        const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
+
+        const newRowKeys = [...rowKeys];
+        newRowKeys.splice(targetRowIndex, 0, newRowKey);
+
+        const newRows = Array.from({ length: newRowKeys.length }).map((_, i) => {
+            const k = newRowKeys[i];
+
+            if (k !== newRowKey) {
+                const row = oldRows.find(row => row.key === k);
+                if (row) {
+                    return row;
+                }
+            }
+            return {
+                key: k,
+                role: MatrixRowType.ResponseRow,
+                items: Array.from({ length: numCols }).map((_, j) => {
+                    return {
+                        key: headerColKeys[j],
+                        role: MatrixCellType.Dropdown,
+                        items: [],
+                        order: {
+                            name: 'sequential'
+                        },
+                    }
+                })
+            }
+        });
+
+
+        const newMatrixItems: ItemComponent[] = [headerRow, ...newRows];
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
+    const deleteRowAt = (targetRowIndex: number) => {
+        if (!confirm('Are you sure you want to delete this row?')) {
+            return;
+        }
+
+        const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
+        const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
+        oldRows.splice(targetRowIndex, 1);
+
+        const newMatrixItems: ItemComponent[] = [headerRow, ...oldRows];
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
     const changeRows = (newNumRows: number) => {
         if (selectedElement !== undefined && selectedElement?.rowIndex > newNumRows - 1) {
             setSelectedElement(undefined);
@@ -803,16 +855,15 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
             case 'delete-column':
                 deleteColAt(position?.colIndex || 0);
                 return;
-            /*case 'add-row-above':
-                addRowAt(position?.rowIndex || 0 + 1);
-                return;
-            case 'add-row-below':
+            case 'add-row-above':
                 addRowAt(position?.rowIndex || 0);
                 return;
-
+            case 'add-row-below':
+                addRowAt((position?.rowIndex || 0) + 1);
+                return;
             case 'delete-row':
                 deleteRowAt(position?.rowIndex || 0);
-                return;*/
+                return;
             default:
                 console.warn('Unknown action: ', action);
                 return;
