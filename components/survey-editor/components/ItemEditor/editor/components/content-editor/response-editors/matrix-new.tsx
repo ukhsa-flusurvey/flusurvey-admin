@@ -363,6 +363,11 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
 
         let newMatrixItems: ItemComponent[] = [];
         if (selectedElement.rowIndex === -1) {
+            let updateColKey: {
+                from: string,
+                to: string
+            } | undefined = undefined;
+
             newMatrixItems = matrixDef.items.map((comp) => {
                 // update header row
                 if (comp.role === MatrixRowType.HeaderRow) {
@@ -370,6 +375,13 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                         ...comp,
                         items: (comp as ItemGroupComponent).items.map((item, colIndex) => {
                             if (colIndex === selectedElement.colIndex) {
+                                if (item.key !== updatedElement.key) {
+                                    // column key changed, update key for all cells in the column with same key
+                                    updateColKey = {
+                                        from: item.key ?? '',
+                                        to: updatedElement.key ?? ''
+                                    };
+                                }
                                 return updatedElement;
                             }
                             return item;
@@ -378,6 +390,19 @@ const NewMatrix: React.FC<MatrixProps> = (props) => {
                 }
                 return comp;
             })
+
+            if (updateColKey) {
+                newMatrixItems = newMatrixItems.map((comp) => {
+                    if (comp.role === MatrixRowType.ResponseRow) {
+                        const row = comp as ItemGroupComponent;
+                        if (row.items[selectedElement.colIndex].key === updateColKey?.from) {
+                            row.items[selectedElement.colIndex].key = updateColKey?.to;
+                        }
+                        return row;
+                    }
+                    return comp;
+                })
+            }
             updateSurveyItemWithNewRg(newMatrixItems);
             return;
         }
