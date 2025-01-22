@@ -13,6 +13,19 @@ interface AddDropdownProps {
 }
 
 const AddDropdown: React.FC<AddDropdownProps> = (props) => {
+    if (props.options.length === 1) {
+        return <Button
+            variant={'outline'}
+            size={'sm'}
+            className='w-60'
+            onClick={() => {
+                props.onAddItem(props.options[0].key);
+            }}
+        >
+            <span><Plus className='size-4 me-2' /></span>{props.options[0].label}
+        </Button>
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
