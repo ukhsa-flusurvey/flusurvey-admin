@@ -213,7 +213,21 @@ export const generateNewItemForType = (props: {
                 generateTitleComponent(new Map<string, string>())
             );
             const rg = matrixEditor.addNewResponseComponent({ role: 'responseGroup' });
-            const rg_inner = initMatrixQuestion('mat', [],)
+            const rg_inner = initMatrixQuestion('mat', [], { name: 'sequential' })
+            rg_inner.items.push({
+                key: 'headerRow',
+                role: 'headerRow',
+                items: [
+                    { key: 'col1', role: 'text' },
+                ]
+            })
+            rg_inner.items.push({
+                key: 'row1',
+                role: 'responseRow',
+                items: [
+                    { key: 'col1', role: 'dropDownGroup' },
+                ]
+            })
 
             matrixEditor.addExistingResponseComponent(rg_inner, rg?.key);
 
