@@ -598,6 +598,92 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
+    const addColAt = (targetColIndex: number) => {
+        const newColKey = getUniqueRandomKey(headerColKeys, "");
+        const newHeaderRowKeys = [...headerColKeys];
+
+        newHeaderRowKeys.splice(targetColIndex, 0, newColKey);
+
+        const newNumCols = newHeaderRowKeys.length;
+
+        const newMatrixItems = matrixDef.items.map(comp => {
+            if (comp.role === MatrixRowType.HeaderRow) {
+                const headerRow = comp as ItemGroupComponent;
+                const newHeaderRow = {
+                    ...comp,
+                    items: Array.from({ length: newNumCols }).map((_v, i) => {
+                        if (newColKey === newHeaderRowKeys[i]) {
+                            return {
+                                key: newHeaderRowKeys[i],
+                                role: MatrixCellType.Text,
+                            }
+                        } else {
+                            return headerRow.items.find(item => item.key === newHeaderRowKeys[i]);
+                        }
+                    })
+                };
+                return newHeaderRow;
+            }
+
+            if (comp.role === MatrixRowType.ResponseRow) {
+                const responseRow = comp as ItemGroupComponent;
+
+                const newResponseRow = {
+                    ...comp,
+                    items: Array.from({ length: newNumCols }).map((_v, i) => {
+                        if (newColKey === newHeaderRowKeys[i]) {
+                            return {
+                                key: newHeaderRowKeys[i],
+                                role: MatrixCellType.Dropdown,
+                                items: [],
+                                order: {
+                                    //TODO: avoid magic strings
+                                    name: 'sequential'
+                                }
+                            }
+                        } else {
+                            return responseRow.items.find(item => item.key === newHeaderRowKeys[i]);
+                        }
+                    })
+                };
+                return newResponseRow;
+            }
+            return comp;
+        });
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
+    const deleteColAt = (targetColIndex: number) => {
+        if (!confirm('Are you sure you want to delete this column?')) {
+            return;
+        }
+        const newHeaderRowKeys = [...headerColKeys];
+        newHeaderRowKeys.splice(targetColIndex, 1);
+
+        const newMatrixItems = matrixDef.items.map(comp => {
+            if (comp.role === MatrixRowType.HeaderRow) {
+                const headerRow = comp as ItemGroupComponent;
+                headerRow.items.splice(targetColIndex, 1);
+                const newHeaderRow = {
+                    ...headerRow,
+
+                };
+                return newHeaderRow;
+            }
+
+            if (comp.role === MatrixRowType.ResponseRow) {
+                const responseRow = comp as ItemGroupComponent;
+                responseRow.items.splice(targetColIndex, 1);
+                const newResponseRow = {
+                    ...responseRow
+                };
+                return newResponseRow;
+            }
+            return comp;
+        });
+        updateSurveyItemWithNewRg(newMatrixItems);
+    }
+
     const changeRows = (newNumRows: number) => {
         if (selectedElement !== undefined && selectedElement?.rowIndex > newNumRows - 1) {
             setSelectedElement(undefined);
@@ -708,6 +794,25 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                 newItem.key = targetItem.key;
                 updateTargetComp(newItem, position);
                 return;
+            case 'add-column-after':
+                addColAt((position?.colIndex || 0) + 1);
+                return;
+            case 'add-column-before':
+                addColAt(position?.colIndex || 0);
+                return;
+            case 'delete-column':
+                deleteColAt(position?.colIndex || 0);
+                return;
+            /*case 'add-row-above':
+                addRowAt(position?.rowIndex || 0 + 1);
+                return;
+            case 'add-row-below':
+                addRowAt(position?.rowIndex || 0);
+                return;
+
+            case 'delete-row':
+                deleteRowAt(position?.rowIndex || 0);
+                return;*/
             default:
                 console.warn('Unknown action: ', action);
                 return;
