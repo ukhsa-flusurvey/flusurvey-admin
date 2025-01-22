@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, SquareChevronDown, TextCursorInput, Type, X, XCircle } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, Plus, SquareChevronDown, TextCursorInput, Type, X, XCircle } from "lucide-react";
 import { useContext, useEffect } from "react";
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
@@ -175,7 +175,7 @@ const OverviewTable: React.FC<{
     return (
         <table className="w-full table-fixed">
             <thead>
-                <tr>
+                <tr >
                     <th className="border-none"></th>
                     {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header, colIndex) => {
                         const isColSelected = selectedElement?.colIndex === colIndex;
@@ -200,6 +200,7 @@ const OverviewTable: React.FC<{
                             </th>
                         );
                     })}
+
                 </tr>
             </thead>
             <tbody>
@@ -358,37 +359,41 @@ const EditSection: React.FC<{
                 }}
             />}
 
-            <div className='flex items-center gap-2'
-                data-no-dnd="true"
-            >
-                <p className='w-32 font-semibold text-sm'>Cell type</p>
-                <Select
-                    value={selectedElement.role || ''}
-                    disabled={isHeaderCell}
-                    onValueChange={(value) => {
-                        if (value != selectedElement.role && selectedElement.key) {
-                            // Cleanup all contents if the type is changed, except the key
-                            onChange({ role: value, key: selectedElement.key });
-                        }
-                    }}
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a type..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={MatrixCellType.Dropdown}>Dropdown</SelectItem>
-                        <SelectItem value={MatrixCellType.Text}>Display text / Placeholder</SelectItem>
-                        <SelectItem value={MatrixCellType.TextInput}>Text input</SelectItem>
-                        <SelectItem value={MatrixCellType.NumberInput}>Number input</SelectItem>
-                        <SelectItem value={MatrixCellType.DateInput}>Date input</SelectItem>
-                        <SelectItem value={MatrixCellType.TimeInput}>Time input</SelectItem>
-                        <SelectItem value={MatrixCellType.Checkbox}>Checkbox</SelectItem>
-                        <SelectItem disabled={true} hidden={true} value={MatrixRowType.ResponseRow}>Response row (text)</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+            {!isHeaderCell &&
+                <>
+                    <div className='flex items-center gap-2'
+                        data-no-dnd="true"
+                    >
 
-            <Separator orientation='horizontal' />
+                        <p className='w-32 font-semibold text-sm'>Cell type</p>
+                        <Select
+                            value={selectedElement.role || ''}
+                            disabled={isHeaderCell}
+                            onValueChange={(value) => {
+                                if (value != selectedElement.role && selectedElement.key) {
+                                    // Cleanup all contents if the type is changed, except the key
+                                    onChange({ role: value, key: selectedElement.key });
+                                }
+                            }}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a type..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={MatrixCellType.Dropdown}>Dropdown</SelectItem>
+                                <SelectItem value={MatrixCellType.Text}>Display text / Placeholder</SelectItem>
+                                <SelectItem value={MatrixCellType.TextInput}>Text input</SelectItem>
+                                <SelectItem value={MatrixCellType.NumberInput}>Number input</SelectItem>
+                                <SelectItem value={MatrixCellType.DateInput}>Date input</SelectItem>
+                                <SelectItem value={MatrixCellType.TimeInput}>Time input</SelectItem>
+                                <SelectItem value={MatrixCellType.Checkbox}>Checkbox</SelectItem>
+                                <SelectItem disabled={true} hidden={true} value={MatrixRowType.ResponseRow}>Response row (text)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <Separator orientation='horizontal' />
+                </>}
 
             <CellEditor
                 selectedElement={selectedElement}
@@ -537,64 +542,6 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                 })
             }
         })];
-        updateSurveyItemWithNewRg(newMatrixItems);
-    }
-
-    const changeCols = (newNumCols: number) => {
-        if (selectedElement !== undefined && selectedElement?.colIndex > newNumCols - 1) {
-            setSelectedElement(undefined);
-        }
-
-        const newHeaderRowKeys = [...headerColKeys];
-        for (let i = headerColKeys.length; i < newNumCols; i++) {
-            newHeaderRowKeys.push(getUniqueRandomKey(newHeaderRowKeys, ""));
-        }
-
-        const newMatrixItems = matrixDef.items.map(comp => {
-            if (comp.role === MatrixRowType.HeaderRow) {
-                const headerRow = comp as ItemGroupComponent;
-                const newHeaderRow = {
-                    ...comp,
-                    items: Array.from({ length: newNumCols }).map((_v, i) => {
-                        if (i < headerRow.items.length) {
-                            return headerRow.items[i];
-                        } else {
-                            return {
-                                key: newHeaderRowKeys[i],
-                                role: MatrixCellType.Text,
-                            }
-                        }
-                    })
-                };
-                return newHeaderRow;
-            }
-
-            if (comp.role === MatrixRowType.ResponseRow) {
-                const responseRow = comp as ItemGroupComponent;
-
-                const newResponseRow = {
-                    ...comp,
-                    items: Array.from({ length: newNumCols }).map((_v, i) => {
-                        if (i < responseRow.items.length) {
-                            return responseRow.items[i];
-                        } else {
-                            return {
-                                key: newHeaderRowKeys[i],
-                                role: MatrixCellType.Dropdown,
-                                items: [],
-                                order: {
-                                    //TODO: avoid magic strings
-                                    name: 'sequential'
-                                }
-                            }
-
-                        }
-                    })
-                };
-                return newResponseRow;
-            }
-            return comp;
-        });
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
@@ -794,47 +741,6 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
         updateSurveyItemWithNewRg(newMatrixItems);
     }
 
-
-    const changeRows = (newNumRows: number) => {
-        if (selectedElement !== undefined && selectedElement?.rowIndex > newNumRows - 1) {
-            setSelectedElement(undefined);
-        }
-
-        const headerRow = (matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow))!;
-        const oldRows = (matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[]);
-
-        const newRowKeys = [...rowKeys];
-        for (let i = rowKeys.length; i < newNumRows; i++) {
-            newRowKeys.push(getUniqueRandomKey(newRowKeys, ""));
-        }
-        const newRows = Array.from({ length: newNumRows }).map((_v, i) => {
-            if (i < oldRows.length) {
-                return oldRows[i];
-            } else {
-                return {
-                    key: newRowKeys[i],
-                    role: MatrixRowType.ResponseRow,
-                    items: Array.from({ length: numCols }).map((_, j) => {
-                        return {
-                            key: headerColKeys[j],
-                            role: MatrixCellType.Dropdown,
-                            items: [],
-                            order: {
-                                //TODO: avoid magic strings
-                                name: 'sequential'
-                            },
-                        }
-                    })
-                }
-            }
-        });
-
-        const newMatrixItems: ItemComponent[] = [headerRow, ...newRows];
-        updateSurveyItemWithNewRg(newMatrixItems);
-    }
-
-
-
     const getItemAt = (position?: Selection): ItemComponent | undefined => {
         if (position === undefined) {
             return undefined;
@@ -942,46 +848,35 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
 
     return (
         <div className="space-y-4">
-            <p className='font-semibold mb-2'>Rows and Columns: </p>
-            <div className="flex flex-row gap-4 w-full">
-                <div className='space-y-1.5 flex-1'>
-                    <Label
-                        htmlFor={matrixDef.key + '-numCols'}
-                    >
-                        Number of columns (excl. labels)
-                    </Label>
-                    <Input
-                        id={matrixDef.key + '-numCols'}
-                        value={numCols || '0'}
-                        type='number'
-                        onChange={(e) => { changeCols(parseInt(e.target.value)) }}
-                        placeholder='Define the number of columns...'
-                    />
-                </div>
-                <div className='space-y-1.5 flex-1'>
-                    <Label
-                        htmlFor={matrixDef.key + '-numRows'}
-                    >
-                        Number of rows (excl. labels)
-                    </Label>
-                    <Input
-                        id={matrixDef.key + '-numRows'}
-                        value={numRows || '0'}
-                        type='number'
-                        onChange={(e) => { changeRows(parseInt(e.target.value)) }}
-                        placeholder='Define the number of rows...'
-                    />
-                </div>
-            </div>
             {matrixDef.items.length > 0 && <div className='space-y-4'>
                 <p className='font-semibold mb-2'>Overview: </p>
-                <OverviewTable
-                    matrixDef={matrixDef}
-                    selectedElement={selectedElement}
-                    onSelectionChange={setSelectedElement}
-                    headerColKeys={headerColKeys}
-                    onAction={handleCellAction}
-                />
+                <div>
+                    <div className="flex items-center -mr-4">
+                        <OverviewTable
+                            matrixDef={matrixDef}
+                            selectedElement={selectedElement}
+                            onSelectionChange={setSelectedElement}
+                            headerColKeys={headerColKeys}
+                            onAction={handleCellAction}
+                        />
+                        <Button className="rounded-full min-h-full" variant={'ghost'} size={'icon'}
+                            onClick={() => {
+                                addColAt(headerColKeys.length);
+                            }}
+                        >
+                            <Plus size={12} />
+                        </Button>
+                    </div>
+                    <div className="flex justify-center">
+                        <Button className="rounded-full" variant={'ghost'} size={'icon'}
+                            onClick={() => {
+                                addRowAt(rowKeys.length);
+                            }}
+                        >
+                            <Plus size={12} />
+                        </Button>
+                    </div>
+                </div>
             </div>}
             {selectedItemComp &&
                 <EditSection
