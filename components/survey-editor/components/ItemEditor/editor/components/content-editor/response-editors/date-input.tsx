@@ -1,6 +1,7 @@
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import DateInputContentConfig from './date-input-content-config';
+import { ItemComponentRole } from '@/components/survey-editor/components/types';
 
 interface DateInputProps {
     surveyItem: SurveySingleItem;
@@ -8,7 +9,7 @@ interface DateInputProps {
 }
 
 const DateInput: React.FC<DateInputProps> = (props) => {
-    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
+    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
     }
@@ -17,7 +18,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const dateInputCompIndex = rg.items.findIndex(comp => comp.role === 'dateInput');
+    const dateInputCompIndex = rg.items.findIndex(comp => comp.role === ItemComponentRole.DateInput);
     if (dateInputCompIndex === undefined || dateInputCompIndex === -1) {
         return <p>Date input not found</p>;
     }

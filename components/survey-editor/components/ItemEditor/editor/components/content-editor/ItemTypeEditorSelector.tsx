@@ -14,7 +14,6 @@ interface ItemTypeEditorSelectorProps {
 const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) => {
     const typeInfos = getItemTypeInfos(props.surveyItem);
 
-
     if (typeInfos.key === 'surveyEnd') {
         return (
             <div className='py-4'>
@@ -37,7 +36,6 @@ const ItemTypeEditorSelector: React.FC<ItemTypeEditorSelectorProps> = (props) =>
 
     return (
         <div>
-
             <div className='mx-auto mt-4'>
                 <ComponentSelector
                     surveyItem={props.surveyItem}

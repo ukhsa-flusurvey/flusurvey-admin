@@ -51,6 +51,7 @@ const MultilineTextInput: React.FC<MultilineTextInputProps> = (props) => {
     };
 
     const maxLengthValue = getStyleValueByKey(props.compDef.style, 'maxLength');
+    const rows = parseInt(getStyleValueByKey(props.compDef.style, 'rows') ?? "3");
     const fullKey = [props.parentKey, props.compDef.key].join('.');
     return (
         <div
@@ -70,7 +71,7 @@ const MultilineTextInput: React.FC<MultilineTextInputProps> = (props) => {
                     placeholder={getLocaleStringTextByCode(props.compDef.description, props.languageCode)}
                     value={inputValue}
                     maxLength={maxLengthValue ? parseInt(maxLengthValue) : 4000}
-                    rows={3}
+                    rows={rows}
                     onChange={handleInputValueChange(props.compDef.key)}
                     disabled={props.compDef.disabled !== undefined}
                 />

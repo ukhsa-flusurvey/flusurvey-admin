@@ -1,34 +1,39 @@
-import SortableItem from '@/components/survey-editor/components/general/SortableItem';
-import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
-import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import TabCard from '@/components/survey-editor/components/general/tab-card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
-import React from 'react';
-import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import TextViewContentEditor, { SimpleTextViewContentEditor } from './text-view-content-editor';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import TextInputContentConfig from './text-input-content-config';
-import NumberInputContentConfig from './number-input-content-config';
-import DateInputContentConfig from './date-input-content-config';
-import ClozeContentConfig from './cloze-content-config';
-import TimeInputContentConfig from './time-input-content-config';
-import { ChoiceResponseOptionType } from '@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
+import SortableWrapper from "@/components/survey-editor/components/general/SortableWrapper";
+import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
+import { SurveyContext } from "@/components/survey-editor/surveyContext";
+import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
+import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
+import { Binary, Calendar, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripVertical, Heading, Languages, SquareChevronDown, ToggleLeft } from "lucide-react";
+import React from "react";
+import { useContext } from "react";
+import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
+import TextInputContentConfig from "./text-input-content-config";
+import NumberInputContentConfig from "./number-input-content-config";
+import DateInputContentConfig from "./date-input-content-config";
+import MarkdownContentEditor from "../markdown-content-editor";
+import SortableItem from "@/components/survey-editor/components/general/SortableItem";
+import TabCard from "@/components/survey-editor/components/general/tab-card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import TimeInputContentConfig from "./time-input-content-config";
+import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
+import DropdownContentConfig from "./dropdown-content-config";
+import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 
-interface MultipleChoiceProps {
-    surveyItem: SurveySingleItem;
-    onUpdateSurveyItem: (item: SurveySingleItem) => void;
-    isSingleChoice?: boolean;
+interface ClozeContentConfigProps {
+    component: ItemGroupComponent;
+    onChange: (newComp: ItemGroupComponent) => void;
 }
 
-const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
-    const optionType = option.role as keyof typeof ChoiceResponseOptionType;
-    return optionType as ChoiceResponseOptionType;
+
+const getClozeItemType = (item: ItemComponent): ClozeItemType => {
+    const itemType = item.role as keyof typeof ClozeItemType;
+    return itemType as ClozeItemType;
 }
 
 export const KeyAndType = (props: { compKey?: string, type: string }) => {
@@ -42,7 +47,7 @@ export const KeyAndType = (props: { compKey?: string, type: string }) => {
     </div>
 }
 
-export const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
+export const ContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
     return <div className='space-y-4'>
         <Collapsible defaultOpen={props.defaultOpen}
             className='group'
@@ -62,7 +67,6 @@ export const OptionContentTabCollapsible = (props: { compKey?: string, type: str
     </div>
 }
 
-
 export const ContentItem = (props: {
     index: number, component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void,
@@ -70,39 +74,43 @@ export const ContentItem = (props: {
     existingKeys?: string[]
 
 }) => {
+    const { selectedLanguage } = useContext(SurveyContext);
     const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
 
-    const optionType = getOptionType(props.component);
+    const clozeItemType = getClozeItemType(props.component);
+
+    //console.log('optionType:', clozeItemType);
 
     const renderContent = () => {
-        switch (optionType) {
-            case ChoiceResponseOptionType.SimpleText:
-                return <OptionContentTabCollapsible
+        const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
+        switch (clozeItemType) {
+            case ClozeItemType.SimpleText:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
-                    type='SIMPLE OPTION'
-                    defaultOpen={props.index > -1}
-                >
+                    type='SIMPLE TEXT'
+                    defaultOpen={props.index > -1}>
                     <SimpleTextViewContentEditor
                         component={props.component}
                         onChange={props.onUpdateComponent}
-                        label='Option label'
+                        label='Text'
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.FormattedText:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.Dropdown:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
-                    type='FORMATTED OPTION'
+                    type='DROPDOWN'
                     defaultOpen={props.index > -1}
+
                 >
-                    <TextViewContentEditor
+                    <DropdownContentConfig
                         component={props.component}
                         onChange={props.onUpdateComponent}
-                        hideToggle={true}
-                        useAdvancedMode={true}
+                        hideLabel={true}
+                        hidePlaceholder={true}
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.TextInput:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.TextInput:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
                     type='TEXT INPUT'
                     defaultOpen={props.index > -1}
@@ -110,11 +118,11 @@ export const ContentItem = (props: {
                     <TextInputContentConfig
                         component={props.component}
                         onChange={props.onUpdateComponent}
-                        allowMultipleLines={false}
+                        allowMultipleLines={true}
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.NumberInput:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.NumberInput:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
                     type='NUMBER INPUT'
                     defaultOpen={props.index > -1}
@@ -123,9 +131,9 @@ export const ContentItem = (props: {
                         component={props.component}
                         onChange={props.onUpdateComponent}
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.DateInput:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.DateInput:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
                     type='DATE INPUT'
                     defaultOpen={props.index > -1}
@@ -134,20 +142,9 @@ export const ContentItem = (props: {
                         component={props.component}
                         onChange={props.onUpdateComponent}
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.Cloze:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='CLOZE'
-                    defaultOpen={props.index > -1}
-                >
-                    <ClozeContentConfig
-                        component={props.component as ItemGroupComponent}
-                        onChange={props.onUpdateComponent}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.TimeInput:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.TimeInput:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
                     type='TIME INPUT'
                     defaultOpen={props.index > -1}
@@ -156,23 +153,31 @@ export const ContentItem = (props: {
                         component={props.component as ItemGroupComponent}
                         onChange={props.onUpdateComponent}
                     />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.DisplayText:
-                return <OptionContentTabCollapsible
+                </ContentTabCollapsible>;
+            case ClozeItemType.Markdown:
+                return <ContentTabCollapsible
                     compKey={props.component.key}
-                    type='DISPLAY TEXT'
-                    defaultOpen={props.index > -1}
-                >
-                    <SimpleTextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        label='Display text'
-                        hideStyling={false}
-                    />
-                </OptionContentTabCollapsible>;
+                    type='MARKDOWN'
+                    defaultOpen={props.index > -1}>
+                    <div className='space-y-1.5'
+                        data-no-dnd="true">
+                        <MarkdownContentEditor
+                            content={currentContent}
+                            onUpdateContent={(content) => {
+                                const updatedPart = { ...props.component };
+                                const updatedContent = localisedObjectToMap(updatedPart.content);
+                                updatedContent.set(selectedLanguage, content);
+                                updatedPart.content = generateLocStrings(updatedContent);
+                                props.onUpdateComponent(updatedPart);
+                            }}
+                        />
+                    </div>
+                </ContentTabCollapsible>;
+            case ClozeItemType.LineBreak:
+                return <div>Line break</div>;
             default:
-                console.warn('Unknown / unimplemented choice option type:', optionType);
-                return <div>Unknown option type</div>;
+                console.warn('Unknown / unimplemented item type:', clozeItemType);
+                return <div>Unknown / unimplemented role: {clozeItemType}</div>;
         }
     }
 
@@ -268,88 +273,42 @@ export const ContentItem = (props: {
     </SortableItem>)
 }
 
-const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
+const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
-    // TODO: remove magic strings
-    const relevantResponseGroupRoleString = props.isSingleChoice ? 'singleChoiceGroup' : 'multipleChoiceGroup';
+    const clozeItems = props.component.items || [];
+    //console.log('clozeItems:', clozeItems);
 
-    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
-    if (rgIndex === undefined || rgIndex === -1) {
-        return <p>Response group not found</p>;
-    }
-    const rg = props.surveyItem.components?.items[rgIndex] as ItemGroupComponent;
-    if (!rg || !rg.items) {
-        return <p>Response group not found</p>;
+    const updateComponent = (newItems: ItemComponent[]) => {
+        props.onChange({
+            ...props.component,
+            items: newItems,
+        });
     }
 
-    const choiceGroupIndex = rg.items.findIndex(comp => comp.role === relevantResponseGroupRoleString);
-    if (choiceGroupIndex === undefined || choiceGroupIndex === -1) {
-        return <p>Multiple / Single choice group not found</p>;
-    }
-    const choiceGroup = rg.items[choiceGroupIndex] as ItemGroupComponent;
-    if (!choiceGroup || !choiceGroup.items) {
-        return <p>Multiple / Single choice group not found</p>;
-    }
-
-
-    const responseItems: ItemComponent[] = choiceGroup.items || [];
-
-    const onAddItem = (keyOfSelectedOption: string) => {
+    const onAddItem = (keyOfSelectedItem: string) => {
         const randomKey = Math.random().toString(36).substring(9);
-        //console.log('keyOfSelectedOption:', keyOfSelectedOption);
-        const optionType = keyOfSelectedOption as keyof typeof ChoiceResponseOptionType;
-
-        // Create empty option of given type.
-        const newOption = {
+        const itemType = keyOfSelectedItem as keyof typeof ClozeItemType;
+        const newItem = {
             key: randomKey,
-            role: optionType,
+            role: itemType,
         }
 
-        const newItems = [...responseItems, newOption];
-        updateSurveyItemWithNewOptions(newItems);
+        const newItems = [...clozeItems, newItem];
+        updateComponent(newItems);
     };
 
-    const draggedItem = responseItems.find(comp => comp.key === draggedId);
+    const draggedItem = clozeItems.find(comp => comp.key === draggedId);
 
-    const updateSurveyItemWithNewOptions = (options: ItemComponent[]) => {
-        const newChoiceGroup = {
-            ...choiceGroup,
-            items: options,
-        };
-
-        const newRg = {
-            ...rg,
-            items: rg.items.map(comp => {
-                if (comp.role === relevantResponseGroupRoleString) {
-                    return newChoiceGroup;
-                }
-                return comp;
-            }),
-        };
-
-        const existingComponents = props.surveyItem.components?.items || [];
-        existingComponents[rgIndex] = newRg;
-
-        const newSurveyItem = {
-            ...props.surveyItem,
-            components: {
-                ...props.surveyItem.components as ItemGroupComponent,
-                items: existingComponents,
-            }
-        }
-        props.onUpdateSurveyItem(newSurveyItem);
-    }
-
-    const usedKeys = responseItems.map(comp => comp.key || '');
+    const usedKeys = clozeItems.map(comp => comp.key || '');
 
     return (
         <div className='mt-4'>
-            <p className='font-semibold mb-2'>Options: <span className='text-muted-foreground'>({responseItems.length})</span></p>
+            <p className='font-semibold mb-2'>Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
             <SortableWrapper
                 sortableID={'response-group-editor'}
                 direction='vertical'
-                items={responseItems.map((component, index) => {
+                items={clozeItems.map((component, index) => {
                     return {
                         id: component.key || index.toString(),
                     }
@@ -358,9 +317,10 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                     setDraggedId(id);
                 }}
                 onReorder={(activeIndex, overIndex) => {
-                    const newItems = [...responseItems];
+                    const newItems = [...clozeItems];
                     newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-                    updateSurveyItemWithNewOptions(newItems);
+
+                    updateComponent(newItems);
                 }}
                 dragOverlayItem={(draggedId && draggedItem) ?
                     <ContentItem
@@ -373,24 +333,24 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
             >
                 <div className='overflow-y-auto'>
                     <ol className='flex flex-col gap-4 min-w-full'>
-                        {responseItems.map((component, index) => {
+                        {clozeItems.map((component, index) => {
                             return <ContentItem
                                 key={component.key || index}
                                 index={index}
                                 component={component}
                                 existingKeys={usedKeys}
                                 onDeleteComponent={() => {
-                                    const newItems = responseItems.filter(comp => comp.key !== component.key);
-                                    updateSurveyItemWithNewOptions(newItems);
+                                    const newItems = clozeItems.filter(comp => comp.key !== component.key);
+                                    updateComponent(newItems);
                                 }}
                                 onUpdateComponent={(updatedItem) => {
-                                    const newItems = responseItems.map((comp => {
+                                    const newItems = clozeItems.map((comp => {
                                         if (comp.key === component.key) {
                                             return updatedItem;
                                         }
                                         return comp;
                                     }))
-                                    updateSurveyItemWithNewOptions(newItems);
+                                    updateComponent(newItems);
                                 }}
                             />
                         })}
@@ -398,14 +358,14 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                         <div className='flex justify-center w-full'>
                             <AddDropdown
                                 options={[
-                                    { key: ChoiceResponseOptionType.SimpleText, label: 'Option with simple label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.FormattedText, label: 'Option with formatted label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.TextInput, label: 'Option with text input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.NumberInput, label: 'Option with number input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.Cloze, label: 'Option with cloze', icon: <SquareStack className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.TimeInput, label: 'Option with time input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.DateInput, label: 'Option with date input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.DisplayText, label: 'Display text (section header)', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.Markdown, label: 'Markdown', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.Dropdown, label: 'Dropdown', icon: <SquareChevronDown className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.TextInput, label: 'Text Input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.NumberInput, label: 'Number Input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.TimeInput, label: 'Time Input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.DateInput, label: 'Date Input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
+                                    { key: ClozeItemType.LineBreak, label: 'Line Break', icon: <CornerDownLeft className='size-4 text-muted-foreground me-2' /> },
                                 ]}
                                 onAddItem={onAddItem}
                             />
@@ -416,6 +376,8 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
             </SortableWrapper>
         </div>
     );
+
+
 };
 
-export default MultipleChoice;
+export default ClozeContentConfig;

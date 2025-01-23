@@ -12,7 +12,25 @@ import Time from './Time';
 import { cn } from '@/lib/utils';
 
 
-type ClozeQuestionProps = CommonResponseComponentProps
+interface ClozeQuestionProps extends CommonResponseComponentProps {
+    embedded?: boolean;
+}
+
+export enum ClozeItemType {
+    SimpleText = 'text',
+    Markdown = 'markdown',
+    TextInput = 'input',
+    LineBreak = 'lineBreak',
+    NumberInput = 'numberInput',
+    DateInput = 'dateInput',
+    TimeInput = 'timeInput',
+    Dropdown = 'dropDownGroup',
+}
+
+export enum ClozeItemGroupType {
+    Text = 'text',
+    Dropdown = 'dropDownGroup'
+}
 
 const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
@@ -85,11 +103,11 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
 
         if (isItemGroupComponent(item)) {
             switch (item.role) {
-                case 'text':
+                case ClozeItemGroupType.Text:
                     return <div key={optionKey}>
                         {renderFormattedContent(item, props.languageCode, undefined, props.dateLocales)}
                     </div>
-                case 'dropDownGroup':
+                case ClozeItemGroupType.Dropdown:
                     return <DropDownGroup
                         key={optionKey}
                         compDef={item}
@@ -106,7 +124,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
         } else {
             // Simplified option type (no styled text, single input)
             switch (item.role) {
-                case 'text':
+                case ClozeItemType.SimpleText:
                     return <TextViewComponent
                         key={item.key}
                         compDef={item}
@@ -114,7 +132,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         languageCode={props.languageCode}
                         embedded={true}
                     />
-                case 'markdown':
+                case ClozeItemType.Markdown:
                     return <MarkdownComponent
                         key={item.key}
                         className={optionClassName}
@@ -122,7 +140,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         languageCode={props.languageCode}
                         embedded={true}
                     />;
-                case 'input':
+                case ClozeItemType.TextInput:
                     return <TextInput
                         parentKey={props.parentKey}
                         key={item.key}
@@ -139,9 +157,9 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         hideLabel={true}
                     />;
 
-                case 'lineBreak':
+                case ClozeItemType.LineBreak:
                     return <div key={item.key} className="w-full" />
-                case 'numberInput':
+                case ClozeItemType.NumberInput:
                     return <NumberInput
                         parentKey={props.parentKey}
                         key={item.key}
@@ -156,7 +174,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         dateLocales={props.dateLocales}
                         hideLabel={true}
                     />;
-                case 'dateInput':
+                case ClozeItemType.DateInput:
                     return <DateInput
                         parentKey={optionKey}
                         key={item.key}
@@ -169,7 +187,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
                         dateLocales={props.dateLocales}
                         hideLabel={true}
                     />;
-                case 'timeInput':
+                case ClozeItemType.TimeInput:
                     return <Time
                         parentKey={optionKey}
                         key={item.key}
@@ -196,7 +214,7 @@ const ClozeQuestion: React.FC<ClozeQuestionProps> = (props) => {
     return (
         <div className={cn(
             "flex items-center flex-wrap gap-2",
-            "px-[--survey-card-px-sm] sm:px-[--survey-card-px]"
+            { 'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded }
         )}>
             {
                 (props.compDef as ItemGroupComponent).items.map(

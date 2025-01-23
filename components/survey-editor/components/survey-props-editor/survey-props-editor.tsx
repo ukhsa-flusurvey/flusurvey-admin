@@ -37,7 +37,7 @@ const SurveyProperties: React.FC = () => {
                         </p>
                     </div>
                     <Separator className="my-6" />
-                    <div className="flex flex-col lg:flex-row">
+                    <div className="flex flex-row">
                         <aside className="pr-6 border-r border-border ">
                             <ul className='space-y-2'>
                                 {formItems.map((item, index) => (

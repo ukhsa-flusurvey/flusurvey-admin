@@ -28,7 +28,7 @@ export interface SimulatorConfig {
     surveyContext?: ContextValues;
 }
 
-const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement>, config: SimulatorConfig) => {
+const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement | null>, config: SimulatorConfig) => {
     console.log('sending simulator config')
     const message = {
         type: 'simulatorConfig',

@@ -16,6 +16,7 @@ import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 
 interface DropdownContentConfigProps {
     hideLabel?: boolean;
+    hidePlaceholder?: boolean;
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
 }
@@ -128,7 +129,7 @@ const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
                 />
             </div>}
 
-            <div className='space-y-1.5'>
+            {!props.hidePlaceholder && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'placeholder'}
                 >
@@ -146,7 +147,7 @@ const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
                     }}
                     placeholder='Enter placeholder...'
                 />
-            </div>
+            </div>}
 
 
             <div>

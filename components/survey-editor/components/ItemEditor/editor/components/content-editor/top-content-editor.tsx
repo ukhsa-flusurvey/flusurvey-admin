@@ -6,7 +6,7 @@ import { AlertCircle, AlertTriangle, Cog, GripVertical, Languages, ToggleLeft, T
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { filterForBodyComponents, findTopComponents } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
+import { filterForBodyComponents, findTopComponents } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
@@ -15,18 +15,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import MarkdownContentEditor from './markdown-content-editor';
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
+import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 
-
-const TabWrapper = (props: { children: React.ReactNode }) => {
-    return (
-        <div className='p-4 ps-6 h-[290px] space-y-4 overflow-y-scroll'>
-            {props.children}
-        </div>
-    )
-}
 
 interface TopContentEditorProps {
     surveyItem: SurveySingleItem;
@@ -72,59 +65,13 @@ export const ContentItem = (props: {
             <div className='space-y-1.5'
                 data-no-dnd="true"
             >
-                <Label
-                    htmlFor={props.component.key + '-content'}
-
-                >
-                    Content
-                </Label>
-                <Textarea
-                    placeholder='Enter content here for the selected language...'
-                    value={currentContent}
-                    onChange={(e) => {
-                        const updatedPart = { ...props.component };
-                        const updatedContent = localisedObjectToMap(updatedPart.content);
-                        updatedContent.set(selectedLanguage, e.target.value);
-                        updatedPart.content = generateLocStrings(updatedContent);
-                        props.onUpdateComponent(updatedPart);
-                    }}
-                />
-            </div>
-
-            <Separator />
-
-            <div className='space-y-1.5'
-                data-no-dnd="true"
-            >
-                <Label
-                    htmlFor={props.component.key + '-css-classes'}
-                >
-                    CSS classes
-                </Label>
-                <Input
-                    id={props.component.key + '-css-classes'}
-                    value={props.component.style?.find(style => style.key === 'className')?.value || ''}
-                    placeholder='add css classes...'
-                    onChange={(e) => {
-                        const updatedComponent = { ...props.component };
-                        const classNameIndex = updatedComponent.style?.findIndex(style => style.key === 'className');
-                        if (updatedComponent.style === undefined) {
-                            updatedComponent.style = [];
-                        }
-                        if (classNameIndex === undefined || classNameIndex === -1) {
-                            updatedComponent.style.push(
-                                {
-                                    key: 'className',
-                                    value: e.target.value,
-                                }
-                            )
-                        } else {
-                            updatedComponent.style![classNameIndex].value = e.target.value;
-                        }
-                        props.onUpdateComponent(updatedComponent);
-                    }}
-                />
-
+                <SimpleTextViewContentEditor
+                    component={props.component}
+                    hideStyling={false}
+                    useTextArea={true}
+                    onChange={(newComp) => {
+                        props.onUpdateComponent(newComp);
+                    }} />
             </div>
         </TabWrapper>
     }
@@ -329,7 +276,7 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                     : null}
             >
 
-                <div className='my-2 overflow-y-scroll overscroll-y-contain max-w-full'>
+                <div className='my-2 overflow-y-auto overscroll-y-contain max-w-full'>
                     <ol className='flex flex-col gap-4 min-w-full'>
                         {topComponents.map((component, index) => {
                             return <ContentItem

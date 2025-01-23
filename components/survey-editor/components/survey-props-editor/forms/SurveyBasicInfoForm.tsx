@@ -16,10 +16,10 @@ import { Separator } from "@/components/ui/separator"
 import { useContext, useEffect } from "react"
 import { SurveyContext } from "../../../surveyContext"
 import { LocalizedString, Survey } from "survey-engine/data_types"
-import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
 import React from "react"
 import { useDebounceCallback } from "usehooks-ts"
 import SurveyLanguageToggle from "../../general/SurveyLanguageToggle"
+import { getLocalizedString, updateLocalizedString } from "@/utils/localizedStrings"
 
 const formSchema = z.object({ "name": z.string().max(255), "description": z.string(), "duration_notice": z.string() })
 

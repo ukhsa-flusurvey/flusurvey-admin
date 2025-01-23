@@ -40,6 +40,7 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
     const currentPlaceholder = localisedObjectToMap(sliderComp.description).get(selectedLanguage) || '';
     const currentMin = sliderComp.properties?.min as ExpressionArg | undefined;
     const currentMax = sliderComp.properties?.max as ExpressionArg | undefined;
+    const currentStep = sliderComp.properties?.stepSize as ExpressionArg | undefined;
 
     const onChange = (newComp: ItemComponent) => {
         const existingComponents = props.surveyItem.components?.items || [];
@@ -119,6 +120,19 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
                 onChange={(argValue) => {
                     const currentData = sliderComp.properties || {};
                     currentData.max = argValue;
+                    sliderComp.properties = {
+                        ...currentData,
+                    }
+                    onChange(sliderComp);
+                }}
+            />
+
+            <ExpArgEditorForNum
+                label='Step size'
+                expArg={currentStep}
+                onChange={(argValue) => {
+                    const currentData = sliderComp.properties || {};
+                    currentData.stepSize = argValue;
                     sliderComp.properties = {
                         ...currentData,
                     }

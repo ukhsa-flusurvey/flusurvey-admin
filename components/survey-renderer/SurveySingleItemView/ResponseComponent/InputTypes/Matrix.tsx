@@ -13,6 +13,21 @@ import { Label } from '@/components/ui/label';
 
 type MatrixProps = CommonResponseComponentProps
 
+export enum MatrixCellType {
+    Text = 'text',
+    TextInput = 'input',
+    NumberInput = 'numberInput',
+    DateInput = 'dateInput',
+    TimeInput = 'timeInput',
+    Dropdown = 'dropDownGroup',
+    Checkbox = 'checkbox',
+}
+
+export enum MatrixRowType {
+    HeaderRow = 'headerRow',
+    ResponseRow = 'responseRow',
+}
+
 
 const Matrix: React.FC<MatrixProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
@@ -110,8 +125,8 @@ const Matrix: React.FC<MatrixProps> = (props) => {
     }
 
     const matrixDef = (props.compDef as ItemGroupComponent);
-    const headerRow = getItemComponentByRole(matrixDef.items, 'headerRow');
 
+    const headerRow = getItemComponentByRole(matrixDef.items, MatrixRowType.HeaderRow);
     const renderResponseRow = (compDef: ItemGroupComponent): React.ReactNode => {
         const rowLabel = getLocaleStringTextByCode(compDef.content, props.languageCode) || '';
         const rowKey = [props.parentKey, compDef.key].join('.');
@@ -136,7 +151,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
 
                     let inputSlot = <p>No input slot found</p>;
                     switch (cell.role) {
-                        case 'dropDownGroup':
+                        case MatrixCellType.Dropdown:
                             inputSlot = <DropDownGroup
                                 compDef={cell}
                                 embedded={true}
@@ -148,7 +163,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />
                             break;
-                        case 'text':
+                        case MatrixCellType.Text:
                             inputSlot = <TextViewComponent
                                 key={cell.key}
                                 compDef={cell}
@@ -157,7 +172,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 className='text-center'
                             />;
                             break;
-                        case 'input':
+                        case MatrixCellType.TextInput:
                             inputSlot = <TextInput
                                 parentKey={props.parentKey}
                                 key={cell.key}
@@ -170,7 +185,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />;
                             break;
-                        case 'numberInput':
+                        case MatrixCellType.NumberInput:
                             inputSlot = <NumberInput
                                 parentKey={props.parentKey}
                                 key={cell.key}
@@ -182,7 +197,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />;
                             break;
-                        case 'timeInput':
+                        case MatrixCellType.TimeInput:
                             inputSlot = <Time
                                 parentKey={props.parentKey}
                                 defaultClassName='justify-center'
@@ -195,7 +210,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />
                             break;
-                        case 'dateInput':
+                        case MatrixCellType.DateInput:
                             inputSlot = <DateInput
                                 parentKey={props.parentKey}
                                 key={cell.key}
@@ -208,7 +223,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                 dateLocales={props.dateLocales}
                             />;
                             break;
-                        case 'checkbox':
+                        case MatrixCellType.Checkbox:
                             inputSlot = <Label className='-my-2 py-2 px-1 flex items-center gap-2 justify-center cursor-pointer hover:bg-black/5 rounded-[--survey-card-border-radius-sm]'>
                                 <Checkbox
                                     className='bg-background size-5'
@@ -241,105 +256,6 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                 })}
             </div>
         </div>
-
-        //
-        // const cells = (compDef as ItemGroupComponent).items.map((cell, cIndex) => {
-        //
-        //     let currentCellContent: React.ReactNode | null;
-        //     const isLast = index === matrixDef.items.length - 1;
-        //     switch (cell.role) {
-        //         case 'label':
-        //             currentCellContent = getLocaleStringTextByCode(cell.content, props.languageCode);
-        //             if (cIndex === 0) {
-        //                 return <th
-        //                     key={cell.key ? cell.key : cIndex.toString()}
-        //                     className={clsx(
-        //                         "px-2 py-1",
-        //                         {
-        //                             "border-b border-gray-200": !isLast
-
-        //                         })}
-        //                 >{currentCellContent}</th>
-        //             }
-        //             break;
-        //         case 'check':
-        //             currentCellContent = <input
-        //                 className="form-checkbox text-primary-600 w-5 h-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
-        //                 type="checkbox"
-        //                 id={cellKey}
-        //                 value={cell.key}
-        //                 aria-label={cell.key}
-        //                 checked={isResponseSet(compDef.key, cell.key)}
-        //                 onChange={checkboxSelectionChanged(compDef.key)}
-        //                 disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-        //             />
-        //             /*
-        //             <Checkbox
-
-        //               inputProps={{ 'aria-label': cell.key }}
-        //               disabled={compDef.disabled !== undefined || cell.disabled !== undefined}
-        //             />;*/
-        //             break
-        //         case 'input':
-        //             currentCellContent = <div
-        //                 className="w-full"
-        //                 style={{
-        //                     minWidth: 120,
-        //                 }}
-        //             >
-        //                 <TextInput
-        //                     parentKey={cellKey}
-        //                     compDef={cell}
-        //                     languageCode={props.languageCode}
-        //                     responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-        //                     prefill={getCellResponse(compDef.key, cell.key)}
-        //                     dateLocales={props.dateLocales}
-        //                 />
-        //             </div>
-        //             break
-        //         case 'numberInput':
-        //             currentCellContent =
-        //                 <NumberInput
-        //                     parentKey={cellKey}
-        //                     embedded={true}
-        //                     compDef={cell}
-        //                     languageCode={props.languageCode}
-        //                     responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-        //                     prefill={getCellResponse(compDef.key, cell.key)}
-        //                     dateLocales={props.dateLocales}
-        //                 />
-        //             break
-        //         case 'dropDownGroup':
-        //             currentCellContent = <DropDownGroup
-        //                 compDef={cell}
-        //                 languageCode={props.languageCode}
-        //                 responseChanged={handleCellResponseChange(compDef.key, cell.key)}
-        //                 prefill={getCellResponse(compDef.key, cell.key)}
-        //                 fullWidth={true}
-        //                 parentKey={cellKey}
-        //                 dateLocales={props.dateLocales}
-        //             />
-        //             break;
-        //         default:
-        //             console.warn('cell role for matrix question unknown: ', cell.role);
-        //             break;
-        //     }
-        //     return <td
-        //         key={cell.key ? cell.key : cIndex.toString()}
-        //         className={clsx(
-        //             "px-2 py-1",
-        //             {
-        //                 "border-b border-gray-200": !isLast
-
-        //             })}
-        //     >{currentCellContent}</td>
-        // }
-
-        // );
-        // return <tr key={compDef.key}
-        // >
-        //     {cells}
-        // </tr>
     }
 
     const renderTableRow = (compDef: ItemGroupComponent): React.ReactNode => {
@@ -350,9 +266,9 @@ const Matrix: React.FC<MatrixProps> = (props) => {
             /*case 'radioRow':
                 return renderRadioRow(compDef, index);
                 */
-            case 'responseRow':
+            case MatrixRowType.ResponseRow:
                 return renderResponseRow(compDef);
-            case 'headerRow':
+            case MatrixRowType.HeaderRow:
                 // header is already rendered separately
                 return null;
             default:
@@ -369,7 +285,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
         const cells = header.items.map((cell, index) => {
             let currentCellContent: React.ReactNode | null;
             switch (cell.role) {
-                case 'text':
+                case MatrixCellType.Text:
                     currentCellContent = getLocaleStringTextByCode(cell.content, props.languageCode);
                     break;
                 default:

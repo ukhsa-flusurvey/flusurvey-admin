@@ -1,6 +1,5 @@
 import Filepicker from '@/components/inputs/Filepicker';
 import React from 'react';
-import { BsExclamationTriangle, BsPencil, BsXLg } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
 import { findAllLocales, removeLocales, renameLocales } from '../utils/localeUtils';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { getSurveyIdentifier } from '../utils/utils';
 import { formatDistance } from 'date-fns';
+import { AlertTriangleIcon, PencilIcon, XIcon } from 'lucide-react';
 
 interface LoadSurveyFromDiskProps {
     isOpen: boolean;
@@ -39,7 +39,7 @@ const LocaleEditor: React.FC<{
                     }
                 }}
             >
-                <BsPencil />
+                <PencilIcon />
             </Button>
             <Button
                 variant='ghost'
@@ -50,7 +50,7 @@ const LocaleEditor: React.FC<{
                     }
                 }}
             >
-                <BsXLg />
+                <XIcon />
             </Button>
         </div>
     )
@@ -198,7 +198,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                                 }
                                             }}
                                         >
-                                            <BsXLg />
+                                            <XIcon />
                                         </Button>
                                     </Card>
                                 )) : null
@@ -233,7 +233,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                 </div>
                 {storedSurvey && <div className={"flex items-center gap-3 p-4 bg-yellow-100 rounded-lg"}>
                     <span className='text-yellow-800 text-xl'>
-                        <BsExclamationTriangle />
+                        <AlertTriangleIcon />
                     </span>
                     <p className="text-yellow-800">
                         This will overwrite the current survey. Are you sure you want to continue?

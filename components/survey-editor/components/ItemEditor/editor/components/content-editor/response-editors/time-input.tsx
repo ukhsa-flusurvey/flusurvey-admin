@@ -1,14 +1,15 @@
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import TextInputContentConfig from './text-input-content-config';
+import { ItemComponentRole } from '@/components/survey-editor/components/types';
+import TimeInputContentConfig from './time-input-content-config';
 
-interface TextInputProps {
+interface TimeInputProps {
     surveyItem: SurveySingleItem;
     onUpdateSurveyItem: (item: SurveySingleItem) => void;
 }
 
-const TextInput: React.FC<TextInputProps> = (props) => {
-    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
+const TimeInput: React.FC<TimeInputProps> = (props) => {
+    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
     }
@@ -17,14 +18,14 @@ const TextInput: React.FC<TextInputProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const textInputCompIndex = rg.items.findIndex(comp => comp.role === 'input' || comp.role === 'multilineTextInput');
-    if (textInputCompIndex === undefined || textInputCompIndex === -1) {
-        return <p>Text input not found</p>;
+    const timeInputCompIndex = rg.items.findIndex(comp => comp.role === ItemComponentRole.TimeInput);
+    if (timeInputCompIndex === undefined || timeInputCompIndex === -1) {
+        return <p>Time input not found</p>;
     }
 
     const onChange = (newComp: ItemComponent) => {
         const existingComponents = props.surveyItem.components?.items || [];
-        (existingComponents[rgIndex] as ItemGroupComponent).items[textInputCompIndex] = newComp;
+        (existingComponents[rgIndex] as ItemGroupComponent).items[timeInputCompIndex] = newComp;
         props.onUpdateSurveyItem({
             ...props.surveyItem,
             components: {
@@ -37,12 +38,11 @@ const TextInput: React.FC<TextInputProps> = (props) => {
     };
 
     return (
-        <TextInputContentConfig
-            component={rg.items[textInputCompIndex]}
+        <TimeInputContentConfig
+            component={rg.items[timeInputCompIndex]}
             onChange={onChange}
-            allowMultipleLines={true}
         />
     );
 };
 
-export default TextInput;
+export default TimeInput;

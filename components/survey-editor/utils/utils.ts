@@ -3,7 +3,7 @@ import {
     Binary, Calendar, CheckCircle2, CheckSquare2, ChevronDownSquare, Clock,
     CornerDownLeft,
     Folder,
-    GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, PenLine, Send, Settings2, SquareStack,
+    GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, Send, Settings2, SquareStack,
     TextCursorInput, UnfoldHorizontal, BotOff,
     Contact
 } from "lucide-react";
@@ -73,7 +73,7 @@ export const determineItemType = (item: SurveySingleItem): string => {
         case 'input':
             return 'textInput';
         case 'multilineTextInput':
-            return 'multilineTextInput';
+            return 'textInput';
         case 'numberInput':
             return 'numericInput';
         case 'dropDownGroup':
@@ -82,8 +82,6 @@ export const determineItemType = (item: SurveySingleItem): string => {
             return 'singleChoice';
         case 'multipleChoiceGroup':
             return 'multipleChoice';
-        case 'responsiveSingleChoiceArray':
-            return 'responsiveSingleChoiceArray';
         case 'responsiveSingleChoiceArray':
             return 'responsiveSingleChoiceArray';
         case 'responsiveBipolarLikertScaleArray':
@@ -177,18 +175,10 @@ export const SurveyItemTypeRegistry = [
     {
         key: 'textInput',
         label: 'Text input',
-        description: 'Allows the participant to enter a text.',
+        description: 'Allows the participant to enter text.',
         className: 'text-sky-700',
         icon: TextCursorInput,
     },
-    {
-        key: 'multilineTextInput',
-        label: 'Multiline text input',
-        description: 'Allows the participant to enter a text with multiple lines.',
-        className: 'text-sky-700',
-        icon: PenLine,
-    },
-
     {
         key: 'numericInput',
         label: 'Numeric input',

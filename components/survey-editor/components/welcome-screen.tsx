@@ -29,9 +29,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = (props) => {
 
     return (
         <div className='flex w-full h-full justify-center items-center'>
-            <Card
-                variant={'opaque'}
-            >
+            <Card>
                 <CardHeader>
                     <CardTitle>
                         Welcome to the survey editor
