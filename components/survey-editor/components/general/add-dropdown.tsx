@@ -17,7 +17,7 @@ const AddDropdown: React.FC<AddDropdownProps> = (props) => {
         return <Button
             variant={'outline'}
             size={'sm'}
-            className='w-60'
+            className=''
             onClick={() => {
                 props.onAddItem(props.options[0].key);
             }}
@@ -29,7 +29,7 @@ const AddDropdown: React.FC<AddDropdownProps> = (props) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant={'outline'} size={'sm'} className='w-60'>
+                <Button variant={'outline'} size={'sm'} className=''>
                     <span><Plus className='size-4 me-2' /></span>Add new
                 </Button>
             </DropdownMenuTrigger>
