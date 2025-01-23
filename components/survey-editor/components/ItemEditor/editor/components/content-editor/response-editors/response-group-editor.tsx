@@ -16,7 +16,7 @@ import ContactForm from './contact-form';
 import ClozeEditor from './cloze-editor';
 import TimeInput from './time-input';
 import Rblsa from './rblsa';
-import MatrixEditor from './matrix-new';
+import MatrixEditor from './matrix';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
