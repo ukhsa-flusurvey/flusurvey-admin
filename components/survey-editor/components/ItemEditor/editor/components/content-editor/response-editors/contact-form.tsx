@@ -15,7 +15,7 @@ interface ContactFormProps {
 }
 
 
-const SimpleFieldConfigs: React.FC<{
+export const SimpleFieldConfigs: React.FC<{
     id: string;
     fieldName: string;
     selectedLanguage: string;
@@ -299,7 +299,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     const contactCompIndex = rg.items.findIndex(comp => comp.role === 'contact');
     if (contactCompIndex === undefined || contactCompIndex === -1) {
-        return <p>Consent not found</p>;
+        return <p>Contact component not found</p>;
     }
 
     const contactComp = rg.items[contactCompIndex] as ItemGroupComponent;
