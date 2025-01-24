@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import React, { Suspense } from 'react';
-import CodeListSection from './code-list-section';
+import CodeListSection, { CodeListSectionLoader } from './code-list-section';
 import AddCodeListEntries from './add-code-list-entries';
 import { Loader2Icon } from 'lucide-react';
 import { getStudyCodeListKeys } from '@/lib/data/studyAPI';
@@ -35,7 +35,10 @@ const CodeListsOverview: React.FC<CodeListsOverviewProps> = async (props) => {
             <>
                 {listKeys.map(listKey => <Suspense
                     key={listKey}
-                    fallback={<div>Loading...</div>}>
+                    fallback={<CodeListSectionLoader
+                        studyKey={props.studyKey}
+                        listKey={listKey}
+                    />}>
                     <CodeListSection
                         studyKey={props.studyKey}
                         listKey={listKey}
