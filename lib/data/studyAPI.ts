@@ -179,6 +179,28 @@ export const getStudyPermissions = async (studyKey: string): Promise<{
     return resp.body;
 }
 
+export const getStudyCodeListKeys = async (studyKey: string): Promise<{
+    error?: string;
+    listKeys?: string[]
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/study-code-list/list-keys`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch study code list keys: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
 export const getStudyRulesVersions = async (studyKey: string): Promise<{
     error?: string,
     versions?: Array<{
