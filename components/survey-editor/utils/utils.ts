@@ -5,7 +5,8 @@ import {
     Folder,
     GanttChart, Grid3X3, Info, LucideIcon, MessageCircleQuestion, Send, Settings2, SquareStack,
     TextCursorInput, UnfoldHorizontal, BotOff,
-    Contact
+    Contact,
+    ShieldIcon
 } from "lucide-react";
 import { ItemGroupComponent, Survey, SurveyGroupItem, SurveyItem, SurveySingleItem, isSurveyGroupItem } from "survey-engine/data_types";
 
@@ -178,6 +179,13 @@ export const SurveyItemTypeRegistry = [
         description: 'Allows the participant to enter text.',
         className: 'text-sky-700',
         icon: TextCursorInput,
+    },
+    {
+        key: 'codeValidator',
+        label: 'Code validator',
+        description: 'Validates a code entered by the participant.',
+        className: 'text-purple-800',
+        icon: ShieldIcon,
     },
     {
         key: 'numericInput',
