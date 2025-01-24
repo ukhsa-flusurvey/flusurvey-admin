@@ -102,7 +102,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                     >
                         <CalendarDaysIcon className="m-1 hidden sm:inline-block size-4" />
                         {selectedDate ? format(selectedDate, "PPP", {
-                            locale: props.dateLocales.find(dl => dl.code === props.languageCode)?.locale
+                            locale: props.dateLocales?.find(dl => dl.code === props.languageCode)?.locale
                         }) : <span className='truncate'>
                             {getLocaleStringTextByCode(props.compDef.description, props.languageCode)}
                         </span>}
@@ -111,7 +111,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                 <PopoverContent className="w-auto p-0">
                     <Calendar
                         mode="single"
-                        locale={props.dateLocales.find(dl => dl.code === props.languageCode)?.locale}
+                        locale={props.dateLocales?.find(dl => dl.code === props.languageCode)?.locale}
                         captionLayout="dropdown-buttons"
                         selected={selectedDate}
                         fromDate={minDate}

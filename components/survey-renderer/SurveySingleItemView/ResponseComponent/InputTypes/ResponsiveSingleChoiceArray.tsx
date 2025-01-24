@@ -6,7 +6,7 @@ import { CommonResponseComponentProps, getClassName } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
 import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
-import { Locale } from 'date-fns';
+
 
 type ResponsiveSingleChoiceArrayProps = CommonResponseComponentProps
 
@@ -19,7 +19,6 @@ interface VerticalModeOptionProps {
     isChecked: boolean;
     languageCode: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    dateLocales: Array<{ code: string, locale: Locale, format: string }>
 }
 
 const VerticalModeOption: React.FC<VerticalModeOptionProps> = (props) => {
@@ -43,7 +42,7 @@ const VerticalModeOption: React.FC<VerticalModeOptionProps> = (props) => {
         />
 
         <span className="form-check-label cursor-pointer grow">
-            {renderFormattedContent(props.optionDef, props.languageCode, 'cursor-pointer', props.dateLocales)}
+            {renderFormattedContent(props.optionDef, props.languageCode, 'cursor-pointer')}
         </span>
     </label >
 }
@@ -203,7 +202,6 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                         isChecked={isResponseSet(item.key, option.key)}
                                         languageCode={props.languageCode}
                                         onChange={radioSelectionChanged(item.key)}
-                                        dateLocales={props.dateLocales}
                                     />
                                 })}
                             </fieldset>

@@ -5,7 +5,7 @@ import { getClassName, getLocaleStringDateByCode, getLocaleStringTextByCode, get
 import { Locale } from 'date-fns';
 
 
-export const renderFormattedContent = (component: ItemComponent, languageCode: string, defaultClassNamePerPart: string | undefined, dateLocales: Array<{ code: string, locale: Locale, format: string }>) => {
+export const renderFormattedContent = (component: ItemComponent, languageCode: string, defaultClassNamePerPart: string | undefined, dateLocales?: Array<{ code: string, locale: Locale, format: string }>) => {
     if (isItemGroupComponent(component)) {
         return <React.Fragment>
             {
