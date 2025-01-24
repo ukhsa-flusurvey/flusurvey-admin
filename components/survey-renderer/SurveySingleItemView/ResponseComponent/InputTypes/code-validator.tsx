@@ -29,7 +29,7 @@ type CodeValidatorDialogProps = {
     codeType: 'linkingCode' | 'studyCode';
     codeKey: string;
     dialog: {
-        triggerBtnLabel: string;
+        triggerBtnLabel: string | React.ReactNode;
         title?: string;
         description?: string;
         resetBtnLabel?: string;
@@ -230,7 +230,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
     const saveBtn = getItemComponentByRole(compDef.items, 'saveBtn');
     const resetBtn = getItemComponentByRole(compDef.items, 'resetBtn');
     const cancelBtn = getItemComponentByRole(compDef.items, 'cancelBtn');
-    const codeValidMsg = getItemComponentByRole(compDef.items, 'codeValidMsg');
     const codeInvalidMsg = getItemComponentByRole(compDef.items, 'codeInvalidMsg');
 
     // Field components:
@@ -252,16 +251,20 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
         return <p>unknown code key</p>
     }
 
+    const previewLabelContent = getLocaleStringTextByCode(previewLabel?.content, props.languageCode) || ''
 
     return (
         <div
             className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'
         >
+            {previewLabelContent && <p className='text-sm mb-1.5'>
+                {previewLabelContent}
+            </p>}
             <CodeValidatorDialog
                 codeType={codeType}
                 codeKey={codeKey}
                 dialog={{
-                    triggerBtnLabel: getLocaleStringTextByCode(btnLabel?.content, props.languageCode) || '',
+                    triggerBtnLabel: response?.value ? <><CheckCircle2Icon className='size-4 text-primary' />{response?.value}</> : (getLocaleStringTextByCode(btnLabel?.content, props.languageCode) || ''),
                     title: getLocaleStringTextByCode(dialog?.content, props.languageCode) || '',
                     description: getLocaleStringTextByCode(dialog?.description, props.languageCode) || '',
                     resetBtnLabel: getLocaleStringTextByCode(resetBtn?.content, props.languageCode) || '',
@@ -298,29 +301,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
                     });
                 }}
             />
-
-            <div className='mt-4 space-y-2'>
-                <p className='text-sm mb-1.5'>
-                    {getLocaleStringTextByCode(previewLabel?.content, props.languageCode) || ''}
-                </p>
-
-                {(response === undefined) && <p className='text-primary'>
-                    {getLocaleStringTextByCode(previewLabel?.description, props.languageCode) || ''}
-                </p>}
-
-                {response?.value && <p className=' font-bold flex gap-2 items-center'>
-                    {response.value}
-                    <span>
-                        <CheckCircle2Icon className='size-4 text-primary' />
-                    </span>
-                    <span className="sr-only">
-                        {getLocaleStringTextByCode(codeValidMsg?.content, props.languageCode) || ''}
-                    </span>
-
-                </p>}
-
-
-            </div>
         </div>
     );
 };

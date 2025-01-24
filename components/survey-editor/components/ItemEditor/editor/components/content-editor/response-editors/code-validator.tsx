@@ -42,7 +42,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
     const saveBtnComp = codeValidatorComp.items.find(item => item.role === 'saveBtn');
     const resetBtnComp = codeValidatorComp.items.find(item => item.role === 'resetBtn');
     const cancelBtnComp = codeValidatorComp.items.find(item => item.role === 'cancelBtn');
-    const codeValidMsg = codeValidatorComp.items.find(item => item.role === 'codeValidMsg');
     const codeInvalidMsg = codeValidatorComp.items.find(item => item.role === 'codeInvalidMsg');
 
     // field config components:
@@ -106,8 +105,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
         return <p>fix missing code type automatically, open item again if this does not disappear</p>
     }
 
-    // TODO: edit field config (codeInput)
-    // TODO: edit lables (dialog, btnLabel, previewLabel, codeValidMsg, codeInvalidMsg)
     return (
         <div className='space-y-4'>
 
@@ -181,26 +178,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
                         onChange(updatedComponent);
                     }}
                     placeholder='e.g. Your code:'
-                />
-            </div>
-
-            <div className='space-y-1.5'>
-                <Label
-                    htmlFor='preview-placeholder'
-                >
-                    Preview placeholder
-                </Label>
-                <Input
-                    id='preview-placeholder'
-                    value={localisedObjectToMap(previewLabelComp?.description).get(selectedLanguage) || ''}
-                    onChange={(e) => {
-                        const updatedComponent = { key: 'previewLabel', role: 'previewLabel', ...previewLabelComp } as ItemComponent;
-                        const updatedContent = localisedObjectToMap(updatedComponent.content);
-                        updatedContent.set(selectedLanguage, e.target.value);
-                        updatedComponent.description = generateLocStrings(updatedContent);
-                        onChange(updatedComponent);
-                    }}
-                    placeholder='e.g. Enter a valid code using the button'
                 />
             </div>
 
@@ -295,25 +272,6 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
                             onChange(updatedComponent);
                         }}
                         placeholder='e.g. Invalid code'
-                    />
-                </Label>
-            </div>
-
-            <div>
-                <Label className='space-y-1.5'>
-                    <span className=''>
-                        Code valid aria label
-                    </span>
-                    <Input
-                        value={localisedObjectToMap(codeValidMsg?.content).get(selectedLanguage) || ''}
-                        onChange={(e) => {
-                            const updatedComponent = { key: 'valid', role: 'codeValidMsg', ...codeValidMsg } as ItemComponent;
-                            const updatedContent = localisedObjectToMap(updatedComponent.content);
-                            updatedContent.set(selectedLanguage, e.target.value);
-                            updatedComponent.content = generateLocStrings(updatedContent);
-                            onChange(updatedComponent);
-                        }}
-                        placeholder='e.g. Code valid'
                     />
                 </Label>
             </div>
