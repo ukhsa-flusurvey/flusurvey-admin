@@ -5,7 +5,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { Expression, isExpression } from 'survey-engine/data_types';
 import { saveStudyRules } from '@/actions/study/studyRules';

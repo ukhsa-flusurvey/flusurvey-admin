@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form"
 import { toast } from 'sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Button } from '@/components/ui/button';
 import { saveStudyNotifications } from '@/actions/study/saveStudyNotifications';
 

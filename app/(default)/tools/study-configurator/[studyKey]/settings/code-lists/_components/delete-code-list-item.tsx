@@ -1,7 +1,7 @@
 'use client'
 
 import { deleteStudyCodeListEntry } from '@/actions/study/studyCodeListEntries';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { XIcon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { toast } from 'sonner';

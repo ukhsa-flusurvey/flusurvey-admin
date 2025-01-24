@@ -1,7 +1,7 @@
 'use client';
 
 import { requestDeletionForParticipantUser } from '@/actions/user-management/participant-users';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

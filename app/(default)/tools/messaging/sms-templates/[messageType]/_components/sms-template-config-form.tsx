@@ -1,7 +1,7 @@
 'use client';
 
 import { uploadSmsTemplate } from '@/actions/messaging/sms-templates';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

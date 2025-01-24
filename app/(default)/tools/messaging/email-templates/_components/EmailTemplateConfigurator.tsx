@@ -13,7 +13,7 @@ import BackButton from '@/components/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EmailContentPreviewAndEditor from './EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 
 
 interface EmailTemplateConfiguratorProps {
