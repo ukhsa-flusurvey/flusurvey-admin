@@ -288,7 +288,12 @@ export const generateNewItemForType = (props: {
             cvQEditor.addExistingResponseComponent({
                 key: 'cv',
                 role: 'codeValidator',
-                items: [],
+                items: [
+                    {
+                        key: 'codeList',
+                        role: 'studyCode',
+                    }
+                ],
             },
                 cvQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
             );

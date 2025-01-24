@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { CommonResponseComponentProps, getItemComponentByRole, getLocaleStringTextByCode } from '../../utils';
 import { AtSign, Building, Mailbox, Pen, Phone, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogClose, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogClose, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '../../../components/ui/dialog';
 
 import { z } from "zod"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { Separator } from '@/components/ui/separator';
 import { ItemGroupComponent, ResponseItem } from 'survey-engine/data_types';
 

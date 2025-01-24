@@ -4,6 +4,7 @@ import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, Loc
 import SurveyLanguageToggle from '../../../../general/SurveyLanguageToggle';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { nl } from 'date-fns/locale';
+import { SurveyContextProvider } from '@/components/survey-renderer/survey-context';
 
 
 interface ItemPreviewProps {
@@ -146,17 +147,21 @@ const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
             </div>
 
             <div className='border border-neutral-200 p-4 bg-white shadow-md rounded-sm'>
-                <SurveySingleItemView
-                    renderItem={dummyResolveItem(props.surveyItem as SurveySingleItem)}
-                    languageCode={selectedLanguage}
-                    responseChanged={() => { }}
-                    invalidWarning={'invalid warning'}
-                    showInvalid={false}
-                    showKeys={false}
-                    dateLocales={[{
-                        code: 'nl', locale: nl, format: 'PPP'
-                    }]}
-                />
+                <SurveyContextProvider
+                    onRunExternalHandler={undefined}
+                >
+                    <SurveySingleItemView
+                        renderItem={dummyResolveItem(props.surveyItem as SurveySingleItem)}
+                        languageCode={selectedLanguage}
+                        responseChanged={() => { }}
+                        invalidWarning={'invalid warning'}
+                        showInvalid={false}
+                        showKeys={false}
+                        dateLocales={[{
+                            code: 'nl', locale: nl, format: 'PPP'
+                        }]}
+                    />
+                </SurveyContextProvider>
             </div>
         </div>
 

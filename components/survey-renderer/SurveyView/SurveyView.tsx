@@ -7,6 +7,7 @@ import SurveyProgress from './SurveyProgress/SurveyProgress';
 import { isFirefox } from 'react-device-detect';
 import { Locale } from 'date-fns';
 import { useWindowSize } from 'usehooks-ts';
+import { HandlerFunction, SurveyContextProvider } from '../survey-context';
 
 interface SurveyViewProps {
     instanceKey?: string;
@@ -27,6 +28,7 @@ interface SurveyViewProps {
     customResponseComponents?: Array<CustomSurveyResponseComponent>;
     dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
     showEngineDebugMsg?: boolean;
+    onRunExternalHandler?: HandlerFunction;
     // init with temporary loaded results
     // save temporary result
 }
@@ -113,19 +115,23 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
     }
 
     return (
-        <div
-            ref={surveyRef}
-            className='focus:outline-none survey'
-            tabIndex={-1}>
-            {surveyPages.length > 1 ?
-                <div className="p-6">
-                    <SurveyProgress
-                        currentIndex={currentPage}
-                        totalCount={surveyPages.length}
-                    />
-                </div> : null}
-            {renderCurrentPage()}
-        </div>
+        <SurveyContextProvider
+            onRunExternalHandler={props.onRunExternalHandler}
+        >
+            <div
+                ref={surveyRef}
+                className='focus:outline-none survey'
+                tabIndex={-1}>
+                {surveyPages.length > 1 ?
+                    <div className="p-6">
+                        <SurveyProgress
+                            currentIndex={currentPage}
+                            totalCount={surveyPages.length}
+                        />
+                    </div> : null}
+                {renderCurrentPage()}
+            </div>
+        </SurveyContextProvider>
     );
 };
 
