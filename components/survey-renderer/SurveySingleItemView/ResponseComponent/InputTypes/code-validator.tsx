@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogClose, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '../../../components/ui/dialog';
 import { Button } from "@/components/ui/button";
-import { CheckCircle2Icon, Pen } from "lucide-react";
+import { AlertTriangleIcon, CheckCircle2Icon, Pen } from "lucide-react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/LoadingButton";
@@ -161,11 +161,11 @@ const CodeValidatorDialog: React.FC<CodeValidatorDialogProps> = (props) => {
                             )}
                         />
 
-                        {showError && <p className='text-destructive'>
-                            {props.dialog.codeInvalidMsg}
+                        {showError && <p className='text-destructive p-4 border border-border rounded-md flex gap-2 items-center'>
+                            <span><AlertTriangleIcon /> </span>{props.dialog.codeInvalidMsg}
                         </p>}
-                        {errorMsg && <p className='text-destructive'>
-                            {errorMsg}
+                        {errorMsg && <p className='text-destructive p-4 border border-border rounded-md flex gap-2 items-center'>
+                            <span><AlertTriangleIcon /> </span>{errorMsg}
                         </p>}
 
                         <DialogFooter

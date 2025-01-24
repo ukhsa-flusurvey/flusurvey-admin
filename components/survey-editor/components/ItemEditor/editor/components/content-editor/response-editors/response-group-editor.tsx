@@ -17,6 +17,7 @@ import ClozeEditor from './cloze-editor';
 import TimeInput from './time-input';
 import Rblsa from './rblsa';
 import MatrixEditor from './matrix';
+import CodeValidator from './code-validator';
 
 interface ResponseGroupEditorProps {
     surveyItem: SurveySingleItem;
@@ -79,6 +80,9 @@ const ResponseGroupEditor: React.FC<ResponseGroupEditorProps> = (props) => {
             break;
         case 'validatedRandomQuestion':
             content = <ValidatedRandomQuestion surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
+            break;
+        case 'codeValidator':
+            content = <CodeValidator surveyItem={props.surveyItem} onUpdateSurveyItem={props.onUpdateSurveyItem} />;
             break;
         default:
             content = (

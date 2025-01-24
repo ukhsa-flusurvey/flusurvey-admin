@@ -105,6 +105,8 @@ export const determineItemType = (item: SurveySingleItem): string => {
             return 'contact';
         case 'validatedRandomQuestion':
             return 'validatedRandomQuestion';
+        case 'codeValidator':
+            return 'codeValidator';
         default:
             console.warn('Unknown response item role: ', mainResponseItem.role);
             return mainResponseItem.role;

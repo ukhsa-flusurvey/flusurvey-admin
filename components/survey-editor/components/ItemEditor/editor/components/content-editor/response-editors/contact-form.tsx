@@ -346,7 +346,6 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                 items: existingComponents,
             }
         });
-
     };
 
     const onRemoveField = (field: string) => {
@@ -646,7 +645,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                     value={localisedObjectToMap(dialogComp?.description).get(selectedLanguage) || ''}
                     onChange={(e) => {
                         const updatedComponent = { key: 'dialog', role: 'dialog', ...dialogComp } as ItemComponent;
-                        const updatedContent = localisedObjectToMap(updatedComponent.content);
+                        const updatedContent = localisedObjectToMap(updatedComponent.description);
                         updatedContent.set(selectedLanguage, e.target.value);
                         updatedComponent.description = generateLocStrings(updatedContent);
                         onChange(updatedComponent);
