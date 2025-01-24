@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Bell, Cog, LucideIcon, Users } from 'lucide-react';
+import { AlertTriangle, Bell, Cog, ListIcon, LucideIcon, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import Link from 'next/link';
@@ -23,6 +23,11 @@ const SettingsNav: React.FC<SettingsNavProps> = (props) => {
             title: 'General',
             href: `/tools/study-configurator/${props.studyKey}/settings`,
             icon: Cog,
+        },
+        {
+            title: 'Code lists',
+            href: `/tools/study-configurator/${props.studyKey}/settings/code-lists`,
+            icon: ListIcon,
         },
         {
             title: 'Notifications',
