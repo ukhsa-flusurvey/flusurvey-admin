@@ -15,7 +15,7 @@ interface ContactFormProps {
 }
 
 
-const SimpleFieldConfigs: React.FC<{
+export const SimpleFieldConfigs: React.FC<{
     id: string;
     fieldName: string;
     selectedLanguage: string;
@@ -299,7 +299,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     const contactCompIndex = rg.items.findIndex(comp => comp.role === 'contact');
     if (contactCompIndex === undefined || contactCompIndex === -1) {
-        return <p>Consent not found</p>;
+        return <p>Contact component not found</p>;
     }
 
     const contactComp = rg.items[contactCompIndex] as ItemGroupComponent;
@@ -346,7 +346,6 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                 items: existingComponents,
             }
         });
-
     };
 
     const onRemoveField = (field: string) => {
@@ -646,7 +645,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                     value={localisedObjectToMap(dialogComp?.description).get(selectedLanguage) || ''}
                     onChange={(e) => {
                         const updatedComponent = { key: 'dialog', role: 'dialog', ...dialogComp } as ItemComponent;
-                        const updatedContent = localisedObjectToMap(updatedComponent.content);
+                        const updatedContent = localisedObjectToMap(updatedComponent.description);
                         updatedContent.set(selectedLanguage, e.target.value);
                         updatedComponent.description = generateLocStrings(updatedContent);
                         onChange(updatedComponent);

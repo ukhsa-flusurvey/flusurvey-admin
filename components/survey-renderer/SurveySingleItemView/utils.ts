@@ -11,7 +11,7 @@ export interface CommonResponseComponentProps {
     showOptionKey?: boolean;
     disabled?: boolean;
     showErrors?: boolean;
-    dateLocales: Array<{ code: string, locale: Locale, format: string }>;
+    dateLocales?: Array<{ code: string, locale: Locale, format: string }>;
 }
 
 export const getItemComponentTranslationByRole = (components: Array<ItemComponent>, role: string, code: string): string | null => {

@@ -273,6 +273,51 @@ export const generateNewItemForType = (props: {
             })
 
             newSurveyItem = vrQEditor.getItem();
+            newSurveyItem.metadata = {
+                editorItemColor: editorItemColor
+            }
+            break;
+        case 'codeValidator':
+            const cvKey = parentKey + '.' + newItemKey;
+            const cvQEditor = new ItemEditor(undefined, { itemKey: cvKey, isGroup: false });
+
+            cvQEditor.setTitleComponent(
+                generateTitleComponent(new Map<string, string>())
+            );
+
+            cvQEditor.addExistingResponseComponent({
+                key: 'ic',
+                role: 'codeValidator',
+                items: [
+                    {
+                        key: 'codeList',
+                        role: 'studyCode',
+                    },
+                    {
+                        key: 'codeInput',
+                        role: 'codeInput',
+                    }
+                ],
+            },
+                cvQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            );
+
+            cvQEditor.addValidation({
+                key: 'v1',
+                type: 'hard',
+                rule: {
+                    name: 'hasResponse',
+                    data: [
+                        { str: cvKey },
+                        { str: 'rg' }
+                    ]
+                }
+            })
+
+            newSurveyItem = cvQEditor.getItem();
+            newSurveyItem.metadata = {
+                editorItemColor: editorItemColor
+            }
             break;
         case 'dropdown':
             newSurveyItem = SurveyItems.dropDown({

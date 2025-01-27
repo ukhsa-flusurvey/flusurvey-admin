@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { createNewSurvey } from '../../../../../../../../actions/study/surveys';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { PenSquare, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';

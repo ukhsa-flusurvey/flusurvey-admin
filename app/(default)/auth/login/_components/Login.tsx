@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
 import { ShieldCheck } from 'lucide-react';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 
 
 const Login: React.FC = () => {

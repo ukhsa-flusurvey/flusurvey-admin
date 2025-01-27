@@ -5,7 +5,7 @@ import ErrorAlert from '@/components/ErrorAlert';
 import { Card } from '@/components/ui/card';
 import { getParticipantById } from '@/lib/data/participants';
 import { shortenID } from '@/utils/shortenID';
-import { Activity, ArrowDownLeft, AsteriskSquare, Bookmark, FileStack, Mail } from 'lucide-react';
+import { Activity, ArrowDownLeft, AsteriskSquare, Bookmark, FileStack, LinkIcon, Mail } from 'lucide-react';
 import React from 'react';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { cn } from '@/lib/utils';
@@ -123,6 +123,32 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
             )
             }
             {flags.map(([key, value]) => (
+                <TableRow key={key}
+                    className='font-mono'
+                >
+                    <TableCell className='text-muted-foreground'>{key}</TableCell>
+                    <TableCell>{value}</TableCell>
+                </TableRow>
+            ))}
+        </TableBody>
+    </Table>
+
+    const linkingCodes = participant.linkingCodes ? Object.entries(participant.linkingCodes) : [];
+    const linkingCodesTable = <Table>
+        <TableHeader >
+            <TableRow>
+                <TableHead className='font-bold'>KEY</TableHead>
+                <TableHead className='font-bold'>VALUE</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            {linkingCodes.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={2}>No linking codes</TableCell>
+                </TableRow>
+            )
+            }
+            {linkingCodes.map(([key, value]) => (
                 <TableRow key={key}
                     className='font-mono'
                 >
@@ -260,6 +286,18 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
                         Flags
                     </h4>
                     {flagsTable}
+                </Card>
+            </div>
+
+            {separator}
+
+            <div className='flex w-full'>
+                <Card className='p-4'>
+                    <h4 className='font-bold mb-2 flex items-center gap-2'>
+                        <span className='text-neutral-400'><LinkIcon /></span>
+                        Linking codes
+                    </h4>
+                    {linkingCodesTable}
                 </Card>
             </div>
 

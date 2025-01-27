@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import ParticipantListItem from './ParticipantListItem';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import { Separator } from '@/components/ui/separator';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { getParticipants } from '@/lib/data/participants';
 import { toast } from 'sonner';
 

@@ -27,6 +27,7 @@ import ValidatedRandomQuestion from './InputTypes/validated-random-question';
 import ContactForm from './InputTypes/contact-form';
 import { Locale } from 'date-fns';
 import ResponsiveMatrix from './InputTypes/ResponsiveMatrix';
+import CodeValidator from './InputTypes/code-validator';
 
 
 interface ResponseComponentProps {
@@ -354,6 +355,15 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         prefill={getPrefillForItem(respComp)}
                         responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
                         dateLocales={props.dateLocales}
+                    />
+                case 'codeValidator':
+                    return <CodeValidator
+                        parentKey={currentKeyPath}
+                        key={respComp.key}
+                        languageCode={props.languageCode}
+                        compDef={respComp}
+                        prefill={getPrefillForItem(respComp)}
+                        responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
                     />
                 default:
                     const customCompDef = props.customResponseComponents?.find(customRespComp => customRespComp.name === respComp.role);

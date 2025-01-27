@@ -1,7 +1,7 @@
 'use client';
 
 import ErrorAlert from '@/components/ErrorAlert';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Progress } from '@/components/ui/progress';
 import { Task, getTaskProgress } from '@/lib/data/tasks';
 import { Download, FileCheck2 } from 'lucide-react';

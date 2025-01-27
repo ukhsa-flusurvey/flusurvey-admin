@@ -3,7 +3,7 @@ import React, { useEffect, useContext } from 'react';
 import { SurveyContext } from '../surveyContext';
 import { toast } from 'sonner';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';

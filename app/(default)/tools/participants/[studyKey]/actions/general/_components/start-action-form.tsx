@@ -4,7 +4,7 @@ import { Info, Play } from 'lucide-react';
 import React from 'react';
 import ActionExpressionPicker from '../../_components/action-expression-picker';
 import { Expression } from 'survey-engine/data_types';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';

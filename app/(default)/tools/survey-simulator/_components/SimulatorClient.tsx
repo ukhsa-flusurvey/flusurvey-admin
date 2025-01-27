@@ -2,6 +2,7 @@
 
 import { SimulatorConfig } from '@/components/survey-editor/components/SurveySimulator';
 import SurveyView from '@/components/survey-renderer/SurveyView/SurveyView';
+import { HandlerFuncArgType } from '@/components/survey-renderer/survey-context';
 import { LoaderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 
@@ -51,6 +52,23 @@ const SimulatorClient: React.FC = () => {
     }
 
 
+    const onRunExternalHandler = async (handlerId: string, args?: HandlerFuncArgType[]): Promise<{ error?: string, result?: HandlerFuncArgType }> => {
+        console.log('onRunExternalHandler', handlerId, args);
+        switch (handlerId) {
+            case 'isStudyCodePresent':
+                if (Math.random() < 0.5) {
+                    return { result: true };
+                }
+                return { result: false };
+            case 'hasLinkingCode':
+                if (Math.random() < 0.5) {
+                    return { result: true };
+                }
+                return { result: false };
+            default:
+                return { error: 'Unknown handler' };
+        }
+    }
 
     return (
         <div className='pt-6 pb-12 px-6  h-auto flex justify-center'>
@@ -80,6 +98,7 @@ const SimulatorClient: React.FC = () => {
                     onSubmit={(responses, version) => {
                         console.log('submit', responses, version);
                     }}
+                    onRunExternalHandler={onRunExternalHandler}
                 />
 
             </div>

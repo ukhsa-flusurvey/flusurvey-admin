@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, Play } from 'lucide-react';
 import { useRouter } from 'next/navigation';

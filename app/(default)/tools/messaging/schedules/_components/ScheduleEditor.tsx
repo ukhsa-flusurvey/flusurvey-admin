@@ -12,7 +12,7 @@ import BackButton from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
 import EmailContentPreviewAndEditor from '../../email-templates/_components/EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';

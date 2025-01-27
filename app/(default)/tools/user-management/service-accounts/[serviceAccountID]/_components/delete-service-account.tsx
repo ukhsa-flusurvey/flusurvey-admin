@@ -1,6 +1,6 @@
 'use client'
 
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { deleteServiceAccount } from '@/lib/data/service-accounts';
 import { AlertTriangle } from 'lucide-react';

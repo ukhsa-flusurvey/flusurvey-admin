@@ -1,7 +1,7 @@
 'use client'
 
 import { deleteManagementUser } from '@/actions/user-management/management-users';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
 import { redirect } from 'next/navigation';

@@ -23,7 +23,7 @@ import Link from "next/link";
 import { createServiceAccount } from "@/lib/data/service-accounts";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import LoadingButton from "@/components/LoadingButton";
+import LoadingButton from "@/components/loading-button";
 
 const newServiceAccountFormSchema = z.object({
     label: z.string().min(2),

@@ -11,7 +11,7 @@ import { addDays } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import FormDatepicker from '@/components/FormDatepicker';
 
 import { Separator } from '@/components/ui/separator';
