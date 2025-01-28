@@ -47,7 +47,7 @@ const ConsentDialog: React.FC<ConsentDialogProps> = (props) => {
             }}
         >
 
-            <AlertDialogContent className='overflow-y-scroll max-h-svh pb-12 sm:pb-6 max-w-2xl'>
+            <AlertDialogContent className='overflow-y-scroll max-h-svh pb-12 @md:pb-6 max-w-2xl'>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
                         {props.title}

@@ -81,7 +81,7 @@ const ValidatedRandomQuestion: React.FC<ValidatedRandomQuestionProps> = (props) 
         <div
             className={clsx(
                 'flex flex-col',
-                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]',
+                'px-[--survey-card-px-sm] @md:px-[--survey-card-px]',
             )}
         >
             <Label

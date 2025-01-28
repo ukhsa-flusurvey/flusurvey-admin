@@ -333,12 +333,12 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                                 )}
                             />
 
-                            <div className='flex flex-col sm:flex-row gap-4 w-full'>
+                            <div className='flex flex-col @md:flex-row gap-4 w-full'>
                                 <FormField
                                     control={form.control}
                                     name="address.postalCode"
                                     render={({ field }) => (
-                                        <FormItem className='w-auto sm:w-40'>
+                                        <FormItem className='w-auto @md:w-40'>
                                             <FormLabel>
                                                 {props.fieldConfig.address?.postalCode.label}
                                             </FormLabel>
@@ -513,7 +513,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     return (
         <div
-            className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'
+            className='px-[--survey-card-px-sm] @md:px-[--survey-card-px]'
         >
             <div className='mb-4 space-y-2'>
                 <p className='text-sm mb-1.5'>

@@ -102,7 +102,7 @@ const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
 
     return (
         <div
-            className="flex flex-col sm:flex-row gap-3"
+            className="flex flex-col @md:flex-row gap-3"
         >
             <div className="">
                 {yearSelector}

@@ -100,7 +100,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                             !selectedDate && "text-muted-foreground"
                         )}
                     >
-                        <CalendarDaysIcon className="m-1 hidden sm:inline-block size-4" />
+                        <CalendarDaysIcon className="m-1 hidden @md:inline-block size-4" />
                         {selectedDate ? format(selectedDate, "PPP", {
                             locale: props.dateLocales?.find(dl => dl.code === props.languageCode)?.locale
                         }) : <span className='truncate'>
@@ -140,7 +140,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
             props.defaultClassName,
             "flex items-center gap-2 grow flex-wrap md:flex-nowrap",
             {
-                'px-[--survey-card-px-sm] sm:px-[--survey-card-px]': !props.embedded,
+                'px-[--survey-card-px-sm] @md:px-[--survey-card-px]': !props.embedded,
             },
             getClassName(props.compDef.style),
         )}>

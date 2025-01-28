@@ -4,8 +4,8 @@ import { isItemGroupComponent, ItemComponent, ItemGroupComponent, ResponseItem }
 import { renderFormattedContent } from '../../renderUtils';
 import { CommonResponseComponentProps, getClassName } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
-import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
+import { useSurveyItemCtx } from '../../survey-item-context';
 
 
 type ResponsiveSingleChoiceArrayProps = CommonResponseComponentProps
@@ -25,7 +25,7 @@ const VerticalModeOption: React.FC<VerticalModeOptionProps> = (props) => {
     const optionFullKey = props.slotFullKey + '.' + props.optionKey;
     // console.log(optionFullKey)
     return <label className={clsx(
-        "form-check flex items-center gap-2 hover:bg-black/5 py-1 px-[--survey-card-px-sm] sm:px-[--survey-card-px] ",
+        "form-check flex items-center gap-2 hover:bg-black/5 py-1 px-[--survey-card-px-sm] @md:px-[--survey-card-px] ",
         props.className,
     )}
         htmlFor={optionFullKey}
@@ -51,10 +51,9 @@ const VerticalModeOption: React.FC<VerticalModeOptionProps> = (props) => {
 const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-    const { width = 0 } = useWindowSize()
+    const { width } = useSurveyItemCtx();
     const [options, setOptions] = useState<ItemGroupComponent | undefined>();
     const [errorHint, setErrorHint] = useState<ItemComponent | undefined>(undefined);
-
 
     useEffect(() => {
         if (!isItemGroupComponent(props.compDef)) {
@@ -179,7 +178,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                             <p
                                 id={rowKey + 'label'}
                                 className={clsx(
-                                    'font-bold mb-2 px-[--survey-card-px-sm] sm:px-[--survey-card-px] '
+                                    'font-bold mb-2 px-[--survey-card-px-sm] @md:px-[--survey-card-px] '
                                 )}
                             >
                                 {renderFormattedContent(item, props.languageCode, undefined, props.dateLocales)}
@@ -206,7 +205,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                                 })}
                             </fieldset>
                             {(errorHint && props.showErrors && !rowHasResponse(item.key)) && <div
-                                className='text-[--survey-error-text-color] text-sm font-bold mt-1 px-[--survey-card-px-sm] sm:px-[--survey-card-px]'
+                                className='text-[--survey-error-text-color] text-sm font-bold mt-1 px-[--survey-card-px-sm] @md:px-[--survey-card-px]'
                                 role='alert'
                             >
                                 {renderFormattedContent(errorHint, props.languageCode, undefined, props.dateLocales)}
@@ -251,7 +250,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                 id={htmlKey}
                 name={htmlKey}
                 className={clsx(
-                    "flex text-xs sm:text-base font-medium sm:font-normal",
+                    "flex text-xs @md:text-base font-medium @md:font-normal",
                     {
                         'bg-[--survey-card-invalid-bg] rounded-sm': props.showErrors && !rowHasResponse(rowKey)
                     },
@@ -330,7 +329,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
 
         const rows = props.compDef.items;
 
-        return <ul className='px-[--survey-card-px-sm] sm:px-[--survey-card-px] divide-y divide-[--survey-card-table-border-color]'>
+        return <ul className='px-[--survey-card-px-sm] @md:px-[--survey-card-px] divide-y divide-[--survey-card-table-border-color]'>
             {rows.map((item, index) => {
                 if (item.displayCondition === false) {
                     return null;
@@ -357,7 +356,7 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
             return <p>No options found.</p>;
         }
 
-        return <div className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'>
+        return <div className='px-[--survey-card-px-sm] @md:px-[--survey-card-px]'>
             <table className={"table m-0 "}>
                 <thead>
                     <tr>

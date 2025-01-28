@@ -3,18 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { isItemGroupComponent, ItemComponent, ItemGroupComponent, ResponseItem } from 'survey-engine/data_types';
 import { renderFormattedContent } from '../../renderUtils';
 import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode, getStyleValueByKey } from '../../utils';
-import { useWindowSize } from 'usehooks-ts';
 import { getBreakpointValue } from './responsiveUtils';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DotIcon } from 'lucide-react';
+import { useSurveyItemCtx } from '../../survey-item-context';
 
 type ResponsiveMatrixProps = CommonResponseComponentProps
 
 const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-    const { width = 0 } = useWindowSize()
+    const { width = 0 } = useSurveyItemCtx();
 
     useEffect(() => {
         if (touched) {
@@ -297,7 +297,7 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
     } else {
         content = renderLargeView();
     }
-    return <div className={cn('px-[--survey-card-px-sm] sm:px-[--survey-card-px]', className)}>
+    return <div className={cn('px-[--survey-card-px-sm] @md:px-[--survey-card-px]', className)}>
         {content}
     </div>
 };

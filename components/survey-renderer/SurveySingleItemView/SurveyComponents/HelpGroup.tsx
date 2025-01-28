@@ -38,7 +38,7 @@ const HelpGroup: React.FC<HelpGroupProps> = (props) => {
                     <CircleHelp className="h-6 w-6 text-primary" aria-hidden="true" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className='w-60 sm:w-96'
+            <PopoverContent className='w-60 @md:w-96'
                 align='end'
 
             >

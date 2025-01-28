@@ -255,7 +255,7 @@ const CodeValidator: React.FC<CodeValidatorProps> = (props) => {
 
     return (
         <div
-            className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'
+            className='px-[--survey-card-px-sm] @md:px-[--survey-card-px]'
         >
             {previewLabelContent && <p className='text-sm mb-1.5'>
                 {previewLabelContent}

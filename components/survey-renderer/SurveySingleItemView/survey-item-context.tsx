@@ -1,9 +1,10 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 
 interface SurveyItemContextValue {
     itemKey: string;
     headerId: string;
+    width: number;
 }
 
 
@@ -19,13 +20,43 @@ export const SurveyItemContextProvider: React.FC<SurveyItemContextProviderProps>
     children,
     itemKey,
 }) => {
+    const [width, setWidth] = useState<number | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const updateWidth = () => {
+            setWidth(containerRef.current?.offsetWidth ?? null);
+        };
+
+        // Set initial width
+        updateWidth();
+
+        // Create ResizeObserver to track width changes
+        const resizeObserver = new ResizeObserver(updateWidth);
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            if (containerRef.current) {
+                resizeObserver.unobserve(containerRef.current);
+            }
+        };
+    }, []);
+
     const contextValue: SurveyItemContextValue = {
         itemKey,
         headerId: `${itemKey}-header`,
+        width: width || 0,
     };
 
     return <SurveyItemContext.Provider value={contextValue}>
-        {children}
+        <div
+            className='@container'
+            ref={containerRef}
+        >
+            {children}
+        </div>
     </SurveyItemContext.Provider>
 }
 

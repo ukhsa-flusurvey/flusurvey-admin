@@ -193,7 +193,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
                     compDef={option}
                     languageCode={props.languageCode}
                     embedded={true}
-                    className='px-[--survey-card-px-sm] sm:px-[--survey-card-px] mt-2'
+                    className='px-[--survey-card-px-sm] @md:px-[--survey-card-px] mt-2'
                 />;
             case ChoiceResponseOptionType.SimpleText:
                 labelComponent = <span className={clsx("w-full")}>
@@ -313,8 +313,8 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return (<Label
             htmlFor={optionKey + keySuffix}
             className={clsx(
-                "flex items-center font-normal gap-2 sm:gap-3 text-base",
-                'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-1.5',
+                "flex items-center font-normal gap-2 @md:gap-3 text-base",
+                'px-[--survey-card-px-sm] @md:px-[--survey-card-px] py-1.5',
                 'hover:bg-black/5',
                 {
                     'cursor-not-allowed opacity-50': isDisabled(option),

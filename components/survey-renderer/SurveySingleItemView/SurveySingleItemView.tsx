@@ -149,9 +149,9 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
         return <>
             {/* Top components: */}
             {topComponents.length > 0 && <div className={cn(
-                'py-2 sm:py-4',
+                'py-2 @md:py-4',
                 {
-                    'pb-0 sm:pb-0': responseComponents.length > 0
+                    'pb-0 @md:pb-0': responseComponents.length > 0
                 }
             )}>
                 {topComponents.map((comp, index) => <ItemBodyComponent
@@ -174,9 +174,9 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
             {/* Response components: */}
             {responseComponents.length > 0 && <div
                 className={cn(
-                    'py-2 sm:py-4',
+                    'py-2 @md:py-4',
                     {
-                        'pt-0 sm:pt-0': topComponents.length > 0
+                        'pt-0 @md:pt-0': topComponents.length > 0
                     }
                 )}
             >
@@ -200,7 +200,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
             {/* Bottom components: */}
             {bottomComponents.length > 0 && <div
                 className={cn(
-                    'pb-2 sm:pb-4',
+                    'pb-2 @md:pb-4',
                 )}
             >
                 {bottomComponents.map((comp, index) => <ItemBodyComponent
@@ -247,8 +247,8 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 className={
                     clsx(
                         'flex items-center w-full',
-                        'rounded-t-[--survey-card-border-radius-sm] sm:rounded-t-[--survey-card-border-radius]',
-                        'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
+                        'rounded-t-[--survey-card-border-radius-sm] @md:rounded-t-[--survey-card-border-radius]',
+                        'px-[--survey-card-px-sm] @md:px-[--survey-card-px] py-2 @md:py-4',
                         'bg-[--survey-card-header-bg]',
                         getClassName(titleComp.style),
                         {
@@ -257,7 +257,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                     )}
             >
                 <div className="grow">
-                    <span className="m-0 font-bold text-lg sm:text-xl">
+                    <span className="m-0 font-bold text-lg @md:text-xl">
                         {titleContent}
                         {requiredItem ?
                             <span
@@ -307,7 +307,9 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
         <SurveyItemContextProvider itemKey={props.renderItem.key}>
             <div
                 role='group'
-                className={cn('bg-[--survey-card-bg] rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius] relative',
+                className={cn(
+
+                    'bg-[--survey-card-bg] rounded-[--survey-card-border-radius-sm] @md:rounded-[--survey-card-border-radius] relative',
                     {
                         'mt-2': props.showKeys,
                     }
@@ -320,18 +322,15 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
                 >
                     {renderItemHeader()}
 
-                    <div className={clsx(
-                        //'px-4 sm:px-6 py-4',
-                    )}
-                    >
+                    <div>
                         {renderBodyComponents()}
                     </div>
 
                     {props.showInvalid ?
                         <p className={clsx(
-                            'font-bold text-base sm:text-lg',
-                            'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
-                            'rounded-b-[--survey-card-border-radius-sm] sm:rounded-b-[--survey-card-border-radius]',
+                            'font-bold text-base @md:text-lg',
+                            'px-[--survey-card-px-sm] @md:px-[--survey-card-px] py-2 @md:py-4',
+                            'rounded-b-[--survey-card-border-radius-sm] @md:rounded-b-[--survey-card-border-radius]',
                             'bg-[--survey-card-invalid-bg]  m-0 text-[--survey-error-text-color]'
                         )}
                             role="alert"
@@ -343,6 +342,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
             </div>
 
             {renderFootnote()}
+
         </SurveyItemContextProvider>
     );
 };

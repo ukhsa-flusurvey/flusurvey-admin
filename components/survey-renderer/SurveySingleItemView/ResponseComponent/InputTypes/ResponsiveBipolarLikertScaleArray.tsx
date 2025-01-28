@@ -4,17 +4,17 @@ import { isItemGroupComponent, ItemComponent, ItemGroupComponent, ResponseItem }
 import { renderFormattedContent } from '../../renderUtils';
 import { CommonResponseComponentProps } from '../../utils';
 import { getResponsiveModes, Variant } from './responsiveUtils';
-import { useWindowSize } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { useSurveyItemCtx } from '../../survey-item-context';
 
 type ResponsiveBipolarLikertScaleArrayProps = CommonResponseComponentProps
 
 const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleArrayProps> = (props) => {
     const [response, setResponse] = useState<ResponseItem | undefined>(props.prefill);
     const [touched, setTouched] = useState(false);
-    const { width = 0 } = useWindowSize()
+    const { width } = useSurveyItemCtx();
 
     const [options, setOptions] = useState<ItemGroupComponent | undefined>();
 
@@ -468,7 +468,7 @@ const ResponsiveBipolarLikertScaleArray: React.FC<ResponsiveBipolarLikertScaleAr
     }
 
     return (
-        <div className='px-[--survey-card-px-sm] sm:px-[--survey-card-px]'>
+        <div className='px-[--survey-card-px-sm] @md:px-[--survey-card-px]'>
             {getResponsiveModes(width, renderMode, props.compDef.style)}
         </div>
     );

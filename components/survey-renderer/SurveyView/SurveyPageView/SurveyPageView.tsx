@@ -123,12 +123,12 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
         return <div
             className={cn(
                 "bg-[--survey-card-bg]",
-                'px-[--survey-card-px-sm] sm:px-[--survey-card-px] py-2 sm:py-4',
-                "rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius]"
+                'px-[--survey-card-px-sm] @md:px-[--survey-card-px] py-2 @md:py-4',
+                "rounded-[--survey-card-border-radius-sm] @md:rounded-[--survey-card-border-radius]"
             )}
         >
             {titleComp ? <h5 className="text-primary text-xl font-bold mb-4">{getLocaleStringTextByCode(titleComp.content, props.selectedLanguage)}</h5> : null}
-            <div className='flex gap-2 sm:gap-4'>
+            <div className='flex gap-2 @md:gap-4'>
                 {props.showBackButton ?
                     <Button
                         color='primary'

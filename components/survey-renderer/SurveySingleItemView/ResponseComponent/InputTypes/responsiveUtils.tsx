@@ -78,11 +78,11 @@ export const getResponsiveModes = (width: number, renderMode: (variant: Variant,
 }
 
 const breakpoints = {
-    sm: 649,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    xxl: 1440,
+    sm: 448,
+    md: 512,
+    lg: 768,
+    xl: 896,
+    xxl: 1024,
 }
 
 
