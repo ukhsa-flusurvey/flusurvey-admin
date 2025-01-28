@@ -59,7 +59,7 @@ const KeyPreviewAndEditor: React.FC<KeyPreviewAndEditorProps> = (props) => {
 
     if (!editMode) {
         return (
-            <div className='grow'>
+            <div className=''>
                 <p className='text-xs font-mono'>
                     {props.parentKey}
                 </p>
@@ -103,7 +103,7 @@ const KeyPreviewAndEditor: React.FC<KeyPreviewAndEditorProps> = (props) => {
     }
 
     return (
-        <div className='grow flex gap-3 items-center relative'>
+        <div className='flex gap-3 items-center relative'>
             <div className='grow'>
                 <p className='text-xs font-mono'>
                     {props.parentKey}

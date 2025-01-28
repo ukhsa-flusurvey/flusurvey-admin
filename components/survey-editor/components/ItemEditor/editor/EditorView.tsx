@@ -60,6 +60,18 @@ const EditorView: React.FC<EditorViewProps> = (props) => {
                 }}
                 onMoveItem={props.onMoveItem}
                 onChangeKey={props.onChangeKey}
+                onChangeItemLabel={(newLabel: string) => {
+                    if (props.surveyItem) {
+                        const newSurveyItem = {
+                            ...props.surveyItem,
+                            metadata: {
+                                ...props.surveyItem.metadata,
+                                itemLabel: newLabel
+                            }
+                        };
+                        props.onUpdateSurveyItem(newSurveyItem);
+                    }
+                }}
             />
 
 

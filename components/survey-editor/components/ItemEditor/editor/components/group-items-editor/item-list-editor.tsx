@@ -42,6 +42,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
         const itemKey = surveyItem.key?.split('.').pop();
         const isPathActive = false;
         const itemColor = getItemColor(surveyItem);
+        const itemLabel = surveyItem.metadata?.itemLabel;
 
         return {
             id: surveyItem.key,
@@ -51,7 +52,8 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
             isActive,
             isPathActive,
             isGroup,
-            label: isPageBreak ? 'Page break' : itemKey,
+            itemKey: isPageBreak ? '' : itemKey,
+            label: isPageBreak ? 'Page break' : itemLabel,
             isConfidential: (surveyItem as SurveySingleItem).confidentialMode !== undefined,
         }
     })
@@ -148,7 +150,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                 dragOverlayItem={(draggedId && draggedItem) ?
                     <div
                         className={cn(
-                            'flex w-full gap-2 py-3 h-auto px-3 text-start bg-slate-50 rounded-lg border',
+                            'flex w-full gap-2 py-3 h-auto px-3 text-sm text-start bg-slate-50 rounded-lg border',
                             draggedItem.className,
                             {
                                 'font-bold': draggedItem.isPathActive,
@@ -164,8 +166,21 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                             <draggedItem.icon className='size-5' />
                         </div>
                         <span className={cn(
-                            'grow',
-                        )}>{draggedItem.label}</span>
+                            'grow space-x-2',
+                        )}>
+                            {draggedItem.itemKey &&
+                                <span className={cn(
+                                    'font-mono',
+                                    {
+                                        'py-1 px-2 text-xs border rounded-full': draggedItem.label,
+                                    }
+                                )}
+                                    style={{
+                                        borderColor: draggedItem.textColor,
+                                    }}
+                                >{draggedItem.itemKey}</span>}
+                            <span className='font-semibold'>{draggedItem.label}</span>
+                        </span>
 
                     </div>
                     : null}
@@ -201,8 +216,21 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                                             <item.icon className='size-5' />
                                         </div>
                                         <span className={cn(
-                                            'grow',
-                                        )}>{item.label}</span>
+                                            'grow space-x-2',
+                                        )}>
+                                            {item.itemKey &&
+                                                <span className={cn(
+                                                    'font-mono',
+                                                    {
+                                                        'py-1 px-2 text-xs border rounded-full': item.label,
+                                                    }
+                                                )}
+                                                    style={{
+                                                        borderColor: item.textColor,
+                                                    }}
+                                                >{item.itemKey}</span>}
+                                            <span className='font-semibold'>{item.label}</span>
+                                        </span>
                                         {item.isConfidential && <span className='p-1 bg-neutral-600/90 rounded-full text-white'>
                                             <Shield className='size-4' />
                                         </span>}

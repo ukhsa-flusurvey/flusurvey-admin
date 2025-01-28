@@ -11,7 +11,10 @@ interface CompactExplorerNavItemProps {
     icon: LucideIcon;
     isActive?: boolean;
     isDragged?: boolean;
-    tooltip?: string;
+    tooltip?: {
+        key?: string;
+        label?: string;
+    };
     style?: React.CSSProperties;
     isConfidential?: boolean;
     onClick?: () => void;
@@ -45,10 +48,13 @@ const CompactExplorerNavItem: React.FC<CompactExplorerNavItemProps> & { EmptyLis
                     <props.icon className='size-6' />
                 </Button>
             </TooltipTrigger>
-            <TooltipContent side="right" className="flex items-center gap-4">
-                <p className='text-sm'>
-                    {props.tooltip}
-                </p>
+            <TooltipContent side="right" className="space-y-1">
+                {props.tooltip?.key && <p className='text-xs w-fit font-mono font-semibold '>
+                    {props.tooltip?.key}
+                </p>}
+                {props.tooltip?.label && <p>
+                    {props.tooltip?.label}
+                </p>}
             </TooltipContent>
         </Tooltip>
     );
