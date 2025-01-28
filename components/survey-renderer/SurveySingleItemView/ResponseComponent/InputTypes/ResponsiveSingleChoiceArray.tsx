@@ -251,9 +251,9 @@ const ResponsiveSingleChoiceArray: React.FC<ResponsiveSingleChoiceArrayProps> = 
                 id={htmlKey}
                 name={htmlKey}
                 className={clsx(
-                    "flex",
+                    "flex text-xs sm:text-base font-medium sm:font-normal",
                     {
-                        'bg-[--survey-card-invalid-bg]  rounded-sm': props.showErrors && !rowHasResponse(rowKey)
+                        'bg-[--survey-card-invalid-bg] rounded-sm': props.showErrors && !rowHasResponse(rowKey)
                     },
                 )}
                 aria-describedby={htmlLabelKey}
