@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import DateInput from '../DateInput/DateInput';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useSurveyItemCtx } from '../../survey-item-context';
 
 
 interface MultipleChoiceGroupProps extends CommonResponseComponentProps {
@@ -37,6 +38,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
     const [subResponseCache, setSubResponseCache] = useState<Array<ResponseItem>>(
         (props.prefill && props.prefill.items) ? [...props.prefill.items] : []
     );
+    const surveyItemContext = useSurveyItemCtx();
 
     useEffect(() => {
         if (touched) {
@@ -358,7 +360,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return (
             <RadioGroup
                 id={props.parentKey}
-                aria-label="single choice options"
+                aria-labelledby={surveyItemContext.headerId}
                 className=' flex flex-col gap-0'
                 value={getSelectedKey()}
                 onValueChange={(value) => { handleSelectionChange(value, true) }}
@@ -374,6 +376,7 @@ const MultipleChoiceGroup: React.FC<MultipleChoiceGroupProps> = (props) => {
         return (
             <div
                 id={props.parentKey}
+                aria-labelledby={surveyItemContext.headerId}
                 aria-label="multiple choice options"
                 className='flex flex-col'
             >
