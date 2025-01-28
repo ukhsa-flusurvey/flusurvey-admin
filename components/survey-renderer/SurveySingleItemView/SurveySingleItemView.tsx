@@ -12,6 +12,7 @@ import MarkdownComponent from './SurveyComponents/MarkdownComponent';
 import { renderFormattedContent } from './renderUtils';
 import { cn } from '@/lib/utils';
 import { Locale } from 'date-fns';
+import { SurveyItemContextProvider } from './survey-item-context';
 
 interface SurveySingleItemViewProps {
     renderItem: SurveySingleItem;
@@ -242,6 +243,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
 
         return (
             <legend
+                id={`${props.renderItem.key}-header`}
                 className={
                     clsx(
                         'flex items-center w-full',
@@ -302,7 +304,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
     }
 
     return (
-        <React.Fragment>
+        <SurveyItemContextProvider itemKey={props.renderItem.key}>
             <div
                 role='group'
                 className={cn('bg-[--survey-card-bg] rounded-[--survey-card-border-radius-sm] sm:rounded-[--survey-card-border-radius] relative',
@@ -341,7 +343,7 @@ const SurveySingleItemView: React.FC<SurveySingleItemViewProps> = (props) => {
             </div>
 
             {renderFootnote()}
-        </React.Fragment>
+        </SurveyItemContextProvider>
     );
 };
 
