@@ -5,11 +5,13 @@ import SurveyView from '@/components/survey-renderer/SurveyView/SurveyView';
 import { HandlerFuncArgType } from '@/components/survey-renderer/survey-context';
 import { LoaderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { useWindowSize } from 'usehooks-ts';
 
 
 const SimulatorClient: React.FC = () => {
     const [isMounted, setIsMounted] = React.useState(false);
     const [counter, setCounter] = React.useState(0);
+    const { width } = useWindowSize();
 
     const [simulatorConfig, setSimulatorConfig] = React.useState<SimulatorConfig | null>(null);
 
@@ -71,7 +73,10 @@ const SimulatorClient: React.FC = () => {
     }
 
     return (
-        <div className='pt-6 pb-12 px-6  h-auto flex justify-center'>
+        <div className='pt-6 pb-12 px-6 h-auto flex justify-center relative'>
+            <div className='absolute top-0 right-0 text-xs p-1 bg-muted text-muted-foreground'>
+                {`${width}px`}
+            </div>
             <div className='max-w-[800px] w-full'>
                 <SurveyView
                     key={counter.toString()}
