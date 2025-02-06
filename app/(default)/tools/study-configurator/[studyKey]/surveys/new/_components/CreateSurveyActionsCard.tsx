@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { createNewSurvey } from '../../../../../../../../actions/study/surveys';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { PenSquare, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -40,9 +40,9 @@ const CreateSurveyActionsCard: React.FC<CreateSurveyActionsCardProps> = (props) 
                     toast.success('Survey uploaded successfully');
                     router.push(`/tools/study-configurator/${props.studyKey}/surveys/${newSurvey.surveyDefinition.key}`);
                 }
-                catch (e: any) {
-                    toast.error('Error uploading survey');
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    toast.error('Error uploading survey', { description: (e as Error).message });
+                    setErrorMsg((e as Error).message);
                 }
             })
         };

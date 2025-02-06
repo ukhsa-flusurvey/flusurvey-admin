@@ -13,7 +13,7 @@ import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-gener
 import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from 'lucide-react';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
-import { TabWrapper } from './multiple-choice';
+import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { Separator } from '@/components/ui/separator';
 
 interface RscaProps {
@@ -215,7 +215,7 @@ const OptionsEditor = (props: {
             dragOverlayItem={(draggedId && draggedItem) ?
                 <OptionEditor
                     option={draggedItem}
-                    onChange={(newOption) => { }}
+                    onChange={() => { }}
                     onDelete={() => { }}
                 />
                 : null}
@@ -337,7 +337,7 @@ const RowEditor = (props: {
                                         const value = e.target.value;
                                         const updatedComponent = { ...props.row };
                                         const updatedContent = localisedObjectToMap(updatedComponent.content);
-                                        updatedContent.set(selectedLanguage, e.target.value);
+                                        updatedContent.set(selectedLanguage, value);
                                         updatedComponent.content = generateLocStrings(updatedContent);
                                         props.onChange(updatedComponent);
                                     }}
@@ -523,7 +523,7 @@ const RowsEditor = (props: {
             dragOverlayItem={(draggedId && draggedItem) ?
                 <RowEditor
                     row={draggedItem}
-                    onChange={(newRow) => { }}
+                    onChange={() => { }}
                     onDelete={() => { }}
                 />
                 : null}

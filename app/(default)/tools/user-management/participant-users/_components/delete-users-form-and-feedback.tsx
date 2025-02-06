@@ -1,7 +1,7 @@
 'use client';
 
 import { requestDeletionForParticipantUser } from '@/actions/user-management/participant-users';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,8 +9,6 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 
-interface DeleteUsersFormAndFeedbackProps {
-}
 
 interface DeletionTask {
     email: string;
@@ -19,7 +17,7 @@ interface DeletionTask {
     ready?: boolean;
 }
 
-const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (props) => {
+const DeleteUsersFormAndFeedback: React.FC = () => {
     const [isPending, startTransition] = React.useTransition();
     const [inputValue, setInputValue] = React.useState<string>('');
 
@@ -63,9 +61,9 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
             }
         }
 
-        onDeletion(deletionTasks[jobToStart], jobToStart);
-
-
+        startTransition(async () => {
+            onDeletion(deletionTasks[jobToStart], jobToStart);
+        })
     }, [deletionTasks])
 
     const hasAnyTaskInProgress = deletionTasks.some(task => task.inProgress);
@@ -136,7 +134,7 @@ const DeleteUsersFormAndFeedback: React.FC<DeleteUsersFormAndFeedbackProps> = (p
                     {!deletionTasks.length && <p className='text-sm text-muted-foreground'>
                         Use the form on the left to start deleting users.
                     </p>}
-                    {deletionTasks.map((task, index) => {
+                    {deletionTasks.map((task) => {
                         if (!task || !task.email) {
                             return
                         }

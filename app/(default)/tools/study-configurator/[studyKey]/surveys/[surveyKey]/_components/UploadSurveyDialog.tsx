@@ -7,7 +7,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 
 interface UploadSurveyDialogProps {
@@ -47,8 +47,8 @@ const UploadSurveyDialog: React.FC<UploadSurveyDialogProps> = ({
                         dialogCloseRef.current.click();
                     }
                 }
-                catch (e: any) {
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    setErrorMsg((e as Error).message);
                     console.error(e);
                 }
             })

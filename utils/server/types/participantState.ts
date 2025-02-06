@@ -20,6 +20,7 @@ export interface ParticipantState {
     enteredAt: number;
     currentStudySession?: string;
     flags: { [key: string]: string };
+    linkingCodes?: { [key: string]: string };
     lastSubmissions: { [key: string]: number };
     assignedSurveys: AssignedSurvey[];
     messages: ParticipantMessage[];

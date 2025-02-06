@@ -1,4 +1,4 @@
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import DocSidebar from "./_components/doc-sidebar";
 
 export default function Layout({

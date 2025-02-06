@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import ParticipantListItem from './ParticipantListItem';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import { Separator } from '@/components/ui/separator';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { getParticipants } from '@/lib/data/participants';
 import { toast } from 'sonner';
 
@@ -59,7 +59,7 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
             className="h-full w-full overflow-y-auto pt-8 "
         >
             <ul className="divide-y p-1 w-full">
-                {participants.map((participant, index) => (
+                {participants.map((participant) => (
                     <ParticipantListItem
                         key={participant.participantId}
                         participant={participant}

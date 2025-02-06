@@ -1,7 +1,8 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { BoxSelect, LucideIcon, Shield } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { BoxSelectIcon, LucideIcon, Shield } from 'lucide-react';
 
 
 interface CompactExplorerNavItemProps {
@@ -10,7 +11,10 @@ interface CompactExplorerNavItemProps {
     icon: LucideIcon;
     isActive?: boolean;
     isDragged?: boolean;
-    tooltip?: string;
+    tooltip?: {
+        key?: string;
+        label?: string;
+    };
     style?: React.CSSProperties;
     isConfidential?: boolean;
     onClick?: () => void;
@@ -33,21 +37,24 @@ const CompactExplorerNavItem: React.FC<CompactExplorerNavItemProps> & { EmptyLis
                 <Button
                     size={'icon'}
                     variant={variant as 'ghost' | 'link' | 'default' | 'secondary' | 'destructive' | 'outline' | null | undefined}
-                    className={props.className}
+                    className={cn(props.className)}
                     onDoubleClick={props.onDoubleClick}
                     onClick={props.onClick}
                     style={props.style}
                 >
-                    {props.isConfidential && <span className='p-1 absolute -top-1 -right-1 bg-neutral-600/90 rounded-full text-white'>
-                        <Shield className='size-2' />
-                    </span>}
-                    <props.icon className='size-6' />
+                    {props.isConfidential && <div className='p-1 absolute -top-1 -right-1 bg-neutral-600/90 rounded-full text-white'>
+                        <Shield className='!size-2' />
+                    </div>}
+                    <props.icon className='!size-6' />
                 </Button>
             </TooltipTrigger>
-            <TooltipContent side="right" className="flex items-center gap-4">
-                <p className='text-sm'>
-                    {props.tooltip}
-                </p>
+            <TooltipContent side="right" className="space-y-1">
+                {props.tooltip?.key && <p className='text-xs w-fit font-mono font-semibold '>
+                    {props.tooltip?.key}
+                </p>}
+                {props.tooltip?.label && <p>
+                    {props.tooltip?.label}
+                </p>}
             </TooltipContent>
         </Tooltip>
     );
@@ -68,7 +75,7 @@ const EmptyList: React.FC = () => {
                 <div
                     className='text-gray-500 py-2 '
                 >
-                    <BoxSelect />
+                    <BoxSelectIcon />
                 </div>
             </TooltipTrigger>
             <TooltipContent side="right" className="flex items-center gap-4">

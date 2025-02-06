@@ -9,8 +9,6 @@ import { filterStudiesWithPermissions } from "@/lib/permission-utils";
 import { Study } from "@/utils/server/types/studyInfos";
 import { BsJournalMedical } from "react-icons/bs";
 
-interface StudyListProps {
-}
 
 const StudyListCardWrapper: React.FC<{
     isLoading: boolean;
@@ -33,7 +31,7 @@ const StudyListCardWrapper: React.FC<{
 }
 
 
-const StudyList: React.FC<StudyListProps> = async (props) => {
+const StudyList: React.FC = async () => {
     const resp = await getStudies();
     const currentUserPermissions = await getPermissionsForCurrentUser();
 

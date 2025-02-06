@@ -1,12 +1,12 @@
 import React from 'react';
 import { SurveyContext } from '../surveyContext';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { BsExclamationTriangle } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { StoredSurvey } from '../utils/SurveyStorage';
 import { getSurveyIdentifier } from '../utils/utils';
+import { AlertTriangleIcon } from 'lucide-react';
 
 
 interface InitNewSurveyDialogProps {
@@ -21,7 +21,7 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
 
     const onCreateNewSurvey = () => {
         if (!surveyKey) return;
-        let newSurvey = {
+        const newSurvey = {
             availableFor: 'active_participants',
             surveyDefinition: {
                 key: surveyKey,
@@ -50,7 +50,7 @@ const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
                 <div>
                     {storedSurvey && <div className='flex items-center gap-3 p-4 bg-yellow-100 rounded-lg mb-3'>
                         <span className='text-yellow-800 text-xl'>
-                            <BsExclamationTriangle />
+                            <AlertTriangleIcon />
                         </span>
                         <p className='text-yellow-800'>
                             This will overwrite the current survey. Are you sure you want to continue?

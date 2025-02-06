@@ -67,8 +67,8 @@ const UserPermissions = (props: UserPermissionsProps) => {
                 }
                 toast.success('Permissions removed');
 
-            } catch (e) {
-                toast.error('Failed to remove permissions');
+            } catch (e: unknown) {
+                toast.error('Failed to remove permissions', { description: (e as Error).message });
             }
         });
     }
@@ -88,9 +88,8 @@ const UserPermissions = (props: UserPermissionsProps) => {
                 }
 
                 toast.success('Permission removed');
-
-            } catch (e) {
-                toast.error('Failed to remove permission');
+            } catch (e: unknown) {
+                toast.error('Failed to remove permission', { description: (e as Error).message });
             }
         });
     }

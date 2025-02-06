@@ -4,11 +4,8 @@ import CardWrapper from './CardWrapper';
 import ListItem, { ManagementUser } from './ListItem';
 import { getManagementUsers } from '@/lib/data/userManagementAPI';
 
-interface ManagementUsersProps {
-}
 
-
-const ManagementUsers: React.FC<ManagementUsersProps> = async (props) => {
+const ManagementUsers: React.FC = async () => {
     const response = await getManagementUsers();
 
     const error = response.error;
@@ -34,7 +31,7 @@ const ManagementUsers: React.FC<ManagementUsersProps> = async (props) => {
         );
     }
 
-    const users = response.users.map((user: any): ManagementUser => {
+    const users = response.users.map((user: ManagementUser): ManagementUser => {
         return {
             ...user,
             lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : undefined,
@@ -47,7 +44,7 @@ const ManagementUsers: React.FC<ManagementUsersProps> = async (props) => {
             <ul
                 className='divide-y divide-black/10'
             >
-                {users.map((user: any) => (
+                {users.map((user: ManagementUser) => (
                     <ListItem key={user.id} user={user} />
                 ))}
             </ul>

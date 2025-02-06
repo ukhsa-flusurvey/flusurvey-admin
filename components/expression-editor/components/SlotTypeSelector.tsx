@@ -4,11 +4,10 @@ import React, { useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
 import { Button } from '../../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../../ui/command';
-import { BsPlusCircleDotted } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import ExpressionIcon from './ExpressionIcon';
 import { SlotTypeGroup } from '../utils';
-import { Clipboard } from 'lucide-react';
+import { Clipboard, PlusCircle } from 'lucide-react';
 import { useClipboardValue } from '@/hooks/useClipboardValue';
 
 
@@ -49,7 +48,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                     return;
                 }
                 setHasClipboardData(true)
-            } catch (error) {
+            } catch {
                 setHasClipboardData(false)
             }
         }
@@ -70,7 +69,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                 >
                     <>
                         <span className='me-2 text-slate-500'>
-                            <BsPlusCircleDotted />
+                            <PlusCircle />
                         </span>
                         add value
                     </>
@@ -100,7 +99,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                                             group.slotTypes.map((slotType) => {
                                                 return (
                                                     <CommandItem key={slotType.id}
-                                                        onSelect={(currentValue) => {
+                                                        onSelect={() => {
                                                             props.onSelect(slotType.id);
                                                             setOpen(false)
                                                         }}

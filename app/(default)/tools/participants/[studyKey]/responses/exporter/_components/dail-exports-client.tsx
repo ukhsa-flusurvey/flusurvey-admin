@@ -1,7 +1,6 @@
 'use client';
 
-import LoadingButton from '@/components/LoadingButton';
-import { Button } from '@/components/ui/button';
+import LoadingButton from '@/components/loading-button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -123,7 +122,6 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                                 <TableCell className='flex items-center'>
                                     <Checkbox
                                         checked={selectedFiles.includes(file.id)}
-                                        onCheckedChange={() => handleSelectFile(file.id)}
                                         aria-label={`Select file ${file.surveyKey}`}
                                     />
                                 </TableCell>

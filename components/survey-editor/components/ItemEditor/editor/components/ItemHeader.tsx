@@ -13,6 +13,7 @@ import { useCopyToClipboard } from 'usehooks-ts';
 import { toast } from 'sonner';
 import MoveItemDialog from './MoveItemDialog';
 import KeyPreviewAndEditor from './KeyPreviewAndEditor';
+import ItemLabelPreviewAndEditor from './item-label-preview-and-editor';
 
 interface ItemHeaderProps {
     surveyItem: SurveyItem;
@@ -23,11 +24,12 @@ interface ItemHeaderProps {
     onMoveItem: (newParentKey: string, oldItemKey: string) => void;
     onDeleteItem: () => void;
     onChangeKey: (oldKey: string, newKey: string) => void;
+    onChangeItemLabel: (newLabel: string) => void;
 }
 
 const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
-    const [copiedText, copy] = useCopyToClipboard()
+    const [, copy] = useCopyToClipboard()
     const [moveItemDialogOpen, setMoveItemDialogOpen] = React.useState(false);
 
     const item = {
@@ -201,6 +203,8 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
         />
     )
 
+    const itemLabel = props.surveyItem.metadata?.itemLabel;
+
     return (
         <TooltipProvider>
             <div className='px-3 py-2 flex gap-3 items-center bg-secondary'>
@@ -225,14 +229,25 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                     </TooltipContent>
                 </Tooltip>
 
-                <KeyPreviewAndEditor
-                    parentKey={item.parentKey}
-                    itemKey={item.itemKey}
-                    surveyItemList={props.surveyItemList}
-                    onChangeKey={(newKey: string) => {
-                        props.onChangeKey(props.surveyItem.key, newKey);
-                    }}
-                />
+                <div className=''>
+                    <KeyPreviewAndEditor
+                        parentKey={item.parentKey}
+                        itemKey={item.itemKey}
+                        surveyItemList={props.surveyItemList}
+                        onChangeKey={(newKey: string) => {
+                            props.onChangeKey(props.surveyItem.key, newKey);
+                        }}
+                    />
+                </div>
+                <div className='grow flex justify-center'>
+                    <ItemLabelPreviewAndEditor
+                        key={props.surveyItem.key}
+                        itemLabel={itemLabel || ''}
+                        onChangeItemLabel={(newLabel: string) => {
+                            props.onChangeItemLabel(newLabel);
+                        }}
+                    />
+                </div>
 
                 {confidentialSymbol()}
                 {colorPicker}

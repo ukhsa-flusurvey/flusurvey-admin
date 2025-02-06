@@ -1,5 +1,6 @@
 'use server';
 
+import { ManagementUser } from "@/app/(default)/tools/user-management/management-users/_components/ListItem";
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 
@@ -54,7 +55,9 @@ export const getManagementUsers = async () => {
     return resp.body;
 }
 
-export const getManagementUser = async (userId: string) => {
+export const getManagementUser = async (userId: string): Promise<
+    { error?: string, user?: ManagementUser }
+> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };

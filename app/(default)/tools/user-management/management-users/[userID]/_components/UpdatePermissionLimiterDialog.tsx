@@ -7,15 +7,16 @@ import { z } from 'zod';
 import { permissionInfos } from './AddPermissionDialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Badge } from '@/components/ui/badge';
+import { ManagementUserPermission } from '@/lib/data/userManagementAPI';
 
 
 interface UpdatePermissionLimiterDialogProps {
     userID: string;
-    permission: any;
+    permission: ManagementUserPermission;
     children: React.ReactNode;
 }
 
@@ -27,7 +28,8 @@ const formSchema = z.object({
         try {
             JSON.parse(value);
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
+            console.error(error);
             return false;
         }
     })

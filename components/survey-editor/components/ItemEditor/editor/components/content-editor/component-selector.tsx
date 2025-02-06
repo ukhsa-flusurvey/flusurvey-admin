@@ -155,7 +155,7 @@ const ComponentSelector: React.FC<ComponentSelectorProps> = (props) => {
                 <div>
                     <h3 className='font-semibold text-base'>Edit content</h3>
                     <p className='text-sm text-neutral-600'>Select the area you want to edit</p>
-                    <div className='mt-4 mb-6 p-4 rounded-md border border-l-4  border-l-[--survey-card-header-bg]'>
+                    <div className='mt-4 mb-6 p-4 rounded-md border border-l-4  border-l-border'>
 
                         <h4 className='text-xs tracking-widest font-semibold'>
                             Header
@@ -179,7 +179,7 @@ const ComponentSelector: React.FC<ComponentSelectorProps> = (props) => {
                         </ul>
                     </div>
 
-                    <div className='mb-6 p-2 rounded-md border border-l-4  border-[--survey-card-bg]'>
+                    <div className='mb-6 p-2 rounded-md border border-l-4  border-border'>
                         <h4 className='text-xs tracking-widest font-semibold'>
                             Body
                         </h4>

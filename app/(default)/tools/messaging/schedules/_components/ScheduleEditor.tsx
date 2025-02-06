@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { deleteMessageSchedule, saveMessageSchedule } from '../../../../../../actions/messaging/schedules';
 import NotImplemented from '@/components/NotImplemented';
-import { addHours, addMonths, addWeeks, format, set } from 'date-fns';
+import { addHours, addMonths, addWeeks, format } from 'date-fns';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BackButton from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
 import EmailContentPreviewAndEditor from '../../email-templates/_components/EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
@@ -74,9 +74,9 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 }
                 toast.success('Schedule saved');
                 router.replace('/tools/messaging/schedules');
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: error.message });
+                toast.error('Something went wrong', { description: (error as Error).message });
             }
 
         })
@@ -91,9 +91,9 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     await deleteMessageSchedule(schedule.id);
                     router.refresh();
                     router.replace('/tools/messaging/schedules');
-                } catch (error: any) {
+                } catch (error: unknown) {
                     console.error(error);
-                    toast.error('Something went wrong', { description: error.message });
+                    toast.error('Something went wrong', { description: (error as Error).message });
                 }
             })
         }

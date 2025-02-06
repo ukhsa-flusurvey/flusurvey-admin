@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { addStudyPermission } from '@/actions/study/permissions';
 
@@ -78,8 +78,8 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                 toast.success('Permission added successfully');
                 form.reset()
                 setEditorOpen(false)
-            } catch (error) {
-                toast.error('Failed to add permission');
+            } catch (error: unknown) {
+                toast.error('Failed to add permission', { description: (error as Error).message });
             }
         });
     }

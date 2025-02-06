@@ -16,17 +16,17 @@ interface UserDetailsProps {
 
 
 const UserDetails: React.FC<UserDetailsProps> = async (props) => {
-    const resp = await getManagementUser(props.userId) as any;
+    const resp = await getManagementUser(props.userId);
     const error = resp.error;
 
-    if (error) {
+    if (error || !resp.user) {
         redirect('/tools/user-management/management-users');
     }
 
     const user = {
         ...resp.user,
-        createdAt: new Date(resp.user.createdAt),
-        lastLoginAt: new Date(resp.user.lastLoginAt),
+        createdAt: resp.user.createdAt ? new Date(resp.user.createdAt) : undefined,
+        lastLoginAt: resp.user.lastLoginAt ? new Date(resp.user.lastLoginAt) : undefined,
     };
 
     return (

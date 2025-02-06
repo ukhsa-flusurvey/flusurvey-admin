@@ -15,6 +15,7 @@ const SurveyEditorClientHandler: React.FC<SurveyEditorClientHandlerProps> = (pro
     const router = useRouter();
     return (
         <SurveyEditor
+            simulatorUrl="/tools/survey-simulator"
             initialSurvey={props.surveyDefinition}
             notLatestVersion={props.notLatestVersion}
             embedded={true}

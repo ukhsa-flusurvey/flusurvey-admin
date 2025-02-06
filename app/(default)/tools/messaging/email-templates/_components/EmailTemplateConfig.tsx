@@ -26,7 +26,10 @@ const EmailTemplateConfig: React.FC<EmailTemplateConfigProps> = async (props) =>
         );
     }
 
-    let resp: any;
+    let resp: {
+        template?: EmailTemplate;
+        error?: string;
+    };
     if (props.studyKey) {
         resp = await getStudyMessageTemplate(props.messageType, props.studyKey);
     } else {

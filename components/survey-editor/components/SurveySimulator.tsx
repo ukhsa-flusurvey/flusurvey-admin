@@ -7,16 +7,11 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-import { Eraser, Pencil, Plus, Trash2 } from 'lucide-react';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Eraser, Pencil } from 'lucide-react';
 import SurveyLanguageToggle from './general/SurveyLanguageToggle';
 import { SurveyContextTable } from './SurveyContextTable';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SurveyContextEditorDialog } from './simulator/SimulatorContextEditorDialog';
 
-
-interface SurveySimulatorProps {
-}
 
 interface SurveyTexts {
     nextBtnText?: string;
@@ -33,7 +28,7 @@ export interface SimulatorConfig {
     surveyContext?: ContextValues;
 }
 
-const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement>, config: SimulatorConfig) => {
+const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement | null>, config: SimulatorConfig) => {
     console.log('sending simulator config')
     const message = {
         type: 'simulatorConfig',
@@ -45,7 +40,9 @@ const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement>, config: Si
     }
 };
 
-const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
+const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
+    simulatorUrl,
+}) => {
     const { survey, selectedLanguage } = useContext(SurveyContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -130,7 +127,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                 >
                     <iframe
                         ref={iframeRef}
-                        src={`/tools/survey-simulator`}
+                        src={simulatorUrl}
                         height={'100%'}
                         className="relative w-full bg-background"
                     />

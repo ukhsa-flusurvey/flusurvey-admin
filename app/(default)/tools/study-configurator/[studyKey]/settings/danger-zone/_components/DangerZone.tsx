@@ -10,7 +10,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 
 
 interface DangerZoneProps {
@@ -30,8 +30,8 @@ const StudyDeletionDialog = ({ studyKey }: { studyKey: string }) => {
                 await deleteStudyAction(studyKey);
                 router.refresh();
                 router.replace('/tools/study-configurator');
-            } catch (error: any) {
-                setError(`failed to delete study: ${error.message}`);
+            } catch (error: unknown) {
+                setError(`failed to delete study: ${(error as Error).message}`);
                 console.error(error);
             }
         })

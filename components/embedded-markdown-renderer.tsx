@@ -16,7 +16,7 @@ const EmbeddedMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
         <ReactMarkdown
             className={props.className}
             components={{
-                a: ({ node, ...props }) => {
+                a: ({ ...props }) => {
                     return <ContentLink
                         prefetch={false}
                         href={props.href as string}

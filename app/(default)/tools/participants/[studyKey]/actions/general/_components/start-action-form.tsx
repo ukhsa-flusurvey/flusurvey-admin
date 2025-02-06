@@ -4,7 +4,7 @@ import { Info, Play } from 'lucide-react';
 import React from 'react';
 import ActionExpressionPicker from '../../_components/action-expression-picker';
 import { Expression } from 'survey-engine/data_types';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
@@ -36,8 +36,8 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                     return;
                 }
                 toast.success('Action performed successfully');
-            } catch (error) {
-                toast.error('Failed to start action');
+            } catch (error: unknown) {
+                toast.error('Failed to start action', { description: (error as Error).message });
             }
         });
     }
@@ -55,8 +55,8 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                 }
                 toast.success('Action started successfully');
                 router.push(`/tools/participants/${props.studyKey}/actions/general/${resp.task.id}`);
-            } catch (error) {
-                toast.error('Failed to start action');
+            } catch (error: unknown) {
+                toast.error('Failed to start action', { description: (error as Error).message });
             }
         });
     }

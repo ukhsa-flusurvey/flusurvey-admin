@@ -7,7 +7,7 @@ import { Survey } from 'survey-engine/data_types';
 import { EditorMode } from './components/types';
 import { Toaster } from 'sonner';
 import { SurveyContext } from './surveyContext';
-import SurveyProperties from './components/SurveyProperties';
+import SurveyProperties from './components/survey-props-editor/survey-props-editor';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
 import SurveySimulator from './components/SurveySimulator';
@@ -21,6 +21,7 @@ interface SurveyEditorProps {
     initialSurvey?: Survey;
     notLatestVersion?: boolean;
     embedded?: boolean;
+    simulatorUrl: string;
     onUploadNewVersion?: (survey?: Survey) => void;
     onExit?: () => void;
 }
@@ -35,20 +36,20 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     const runDebounced = useDebounceCallback((f) => f(), 1000);
 
     //  Main State
-    const [surveyStorage, setSurveyStorage, removeSurveyStorage] = useLocalStorage('SurveyStorage', new SurveyStorage(), { serializer: (storage) => JSON.stringify(storage.asObject()), deserializer: (s) => new SurveyStorage(s) });
+    const [surveyStorage, setSurveyStorage] = useLocalStorage('SurveyStorage', new SurveyStorage(), { serializer: (storage) => JSON.stringify(storage.asObject()), deserializer: (s) => new SurveyStorage(s) });
 
     //  Associated State
     const [storedSurvey, setStoredSurvey] = React.useState<StoredSurvey | undefined>(props.initialSurvey ? new StoredSurvey(getSurveyIdentifier(props.initialSurvey), props.initialSurvey, new Date()) : undefined);
 
     //  Derived state
-    let survey = storedSurvey?.survey;
-    let setSurvey = (s: Survey) => {
+    const survey = storedSurvey?.survey;
+    const setSurvey = (s: Survey) => {
         setStoredSurvey(new StoredSurvey(storedSurvey?.id ?? getSurveyIdentifier(s), s, new Date()));
     };
 
     //  Update associated state if survey storage changes. Usually external changes trigger this.
     useEffect(() => {
-        let updatedStoredSurvey = surveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
+        const updatedStoredSurvey = surveyStorage.storedSurveys.find(s => s.id === storedSurvey?.id);
         if (updatedStoredSurvey && JSON.stringify(updatedStoredSurvey?.survey) !== JSON.stringify(storedSurvey?.survey)) {
             setStoredSurvey(updatedStoredSurvey);
         }
@@ -84,10 +85,6 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                         setMode(EditorMode.ItemEditor);
                         break;
                     case '3':
-                        event.preventDefault();
-                        setMode(EditorMode.Advanced);
-                        break;
-                    case '4':
                         event.preventDefault();
                         setMode(EditorMode.Simulator);
                         break;
@@ -127,11 +124,10 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 className='grow'
             />;
             break;
-        case EditorMode.Advanced:
-            mainContent = <div>Advanced</div>;
-            break;
         case EditorMode.Simulator:
-            mainContent = <SurveySimulator />
+            mainContent = <SurveySimulator
+                simulatorUrl={props.simulatorUrl}
+            />
             break;
     }
 
@@ -162,8 +158,8 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     onSave={() => setOpenSaveDialog(true)}
                     onOpen={() => setOpenLoadDialog(true)}
                     onNew={() => setOpenNewDialog(true)}
-                    onExit={() => { props.onExit && props.onExit() }}
-                    onUploadNewVersion={() => { props.onUploadNewVersion && props.onUploadNewVersion(survey) }}
+                    onExit={() => { props.onExit?.() }}
+                    onUploadNewVersion={() => { props.onUploadNewVersion?.(survey) }}
                     notLatestVersion={props.notLatestVersion}
                 />
 

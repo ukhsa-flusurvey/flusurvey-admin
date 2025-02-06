@@ -1,17 +1,17 @@
 'use client';
 
 import { SimulatorConfig } from '@/components/survey-editor/components/SurveySimulator';
-import SurveyView from '@/components/survey-viewer/survey-renderer/SurveyView/SurveyView';
+import SurveyView from '@/components/survey-renderer/SurveyView/SurveyView';
+import { HandlerFuncArgType } from '@/components/survey-renderer/survey-context';
 import { LoaderIcon } from 'lucide-react';
-import React, { Suspense, useEffect } from 'react';
-
-interface SimulatorClientProps {
-}
+import React, { useEffect } from 'react';
+import { useWindowSize } from 'usehooks-ts';
 
 
-const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
+const SimulatorClient: React.FC = () => {
     const [isMounted, setIsMounted] = React.useState(false);
     const [counter, setCounter] = React.useState(0);
+    const { width } = useWindowSize();
 
     const [simulatorConfig, setSimulatorConfig] = React.useState<SimulatorConfig | null>(null);
 
@@ -54,9 +54,29 @@ const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
     }
 
 
+    const onRunExternalHandler = async (handlerId: string, args?: HandlerFuncArgType[]): Promise<{ error?: string, result?: HandlerFuncArgType }> => {
+        console.log('onRunExternalHandler', handlerId, args);
+        switch (handlerId) {
+            case 'isStudyCodePresent':
+                if (Math.random() < 0.5) {
+                    return { result: true };
+                }
+                return { result: false };
+            case 'hasLinkingCode':
+                if (Math.random() < 0.5) {
+                    return { result: true };
+                }
+                return { result: false };
+            default:
+                return { error: 'Unknown handler' };
+        }
+    }
 
     return (
-        <div className='pt-6 pb-12 px-6  h-auto flex justify-center'>
+        <div className='pt-6 pb-12 px-6 h-auto flex justify-center relative'>
+            <div className='absolute top-0 right-0 text-xs p-1 bg-muted text-muted-foreground'>
+                {`${width}px`}
+            </div>
             <div className='max-w-[800px] w-full'>
                 <SurveyView
                     key={counter.toString()}
@@ -76,13 +96,14 @@ const SimulatorClient: React.FC<SimulatorClientProps> = (props) => {
                     dateLocales={[]}
                     loading={false}
                     onResponsesChanged={(responses, version, surveyEngine) => {
-                        //console.log('responses changed', responses, version, surveyEngine);
+                        console.log('responses changed', responses, version, surveyEngine);
                         window.parent.postMessage({ type: 'response', data: JSON.stringify(responses) }, '*');
 
                     }}
                     onSubmit={(responses, version) => {
                         console.log('submit', responses, version);
                     }}
+                    onRunExternalHandler={onRunExternalHandler}
                 />
 
             </div>

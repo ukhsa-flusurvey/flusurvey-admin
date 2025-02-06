@@ -5,7 +5,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import ItemPreview from './ItemPreview';
 import { useDebounceCallback } from 'usehooks-ts';
 import ItemTypeEditorSelector from './ItemTypeEditorSelector';
-import { AlertTriangle, Eye, Info, Pencil } from 'lucide-react';
+import { AlertTriangle, Eye, Pencil } from 'lucide-react';
 
 
 interface ContentEditorProps {

@@ -1,8 +1,6 @@
 import QueryFilterInput from "@/components/QueryFilterInput";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 import { Suspense } from "react";
 import ParticipantFiles, { ParticipantFilesSkeleton } from "./_components/ParticipantFiles";
 import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";

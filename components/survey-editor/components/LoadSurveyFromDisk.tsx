@@ -1,6 +1,5 @@
 import Filepicker from '@/components/inputs/Filepicker';
 import React from 'react';
-import { BsExclamationTriangle, BsPencil, BsXLg } from 'react-icons/bs';
 import { Survey } from 'survey-engine/data_types';
 import { findAllLocales, removeLocales, renameLocales } from '../utils/localeUtils';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { getSurveyIdentifier } from '../utils/utils';
 import { formatDistance } from 'date-fns';
+import { AlertTriangleIcon, PencilIcon, XIcon } from 'lucide-react';
 
 interface LoadSurveyFromDiskProps {
     isOpen: boolean;
@@ -39,7 +39,7 @@ const LocaleEditor: React.FC<{
                     }
                 }}
             >
-                <BsPencil />
+                <PencilIcon />
             </Button>
             <Button
                 variant='ghost'
@@ -50,7 +50,7 @@ const LocaleEditor: React.FC<{
                     }
                 }}
             >
-                <BsXLg />
+                <XIcon />
             </Button>
         </div>
     )
@@ -79,7 +79,9 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     const onLoadClick = () => {
         if (storedSurveySelectionId) {
             const storedSurvey = storedSurveys.find(ss => ss.id === storedSurveySelectionId);
-            storedSurvey && setStoredSurvey(storedSurvey);
+            if (storedSurvey) {
+                setStoredSurvey(storedSurvey);
+            }
         } else {
             console.log('load survey from file contents', surveyFileContent);
             if (!surveyFileContent) return;
@@ -157,13 +159,25 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                         <p className='mb-2'>From recently opened surveys:</p>
                         <div className='flex flex-col gap-2'>
                             {
-                                storedSurveys ? storedSurveys.map((ss, i) => (
+                                storedSurveys ? storedSurveys.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime()).map((ss, i) => (
                                     <Card key={i} className={cn('flex items-center justify-between', storedSurveySelectionId == ss.id ? "bg-slate-200" : "")}>
                                         <Button
                                             variant='ghost'
                                             className='grow pre'
                                             onClick={() => {
-                                                storedSurveySelectionId == ss.id ? setStoredSurveySelectionId(undefined) : setStoredSurveySelectionId(ss.id);
+                                                if (storedSurveySelectionId == ss.id) {
+                                                    setStoredSurveySelectionId(undefined);
+                                                } else {
+                                                    setStoredSurveySelectionId(ss.id);
+                                                }
+                                            }}
+                                            onDoubleClick={() => {
+                                                const storedSurvey = storedSurveys.find(item => ss.id === item.id);
+                                                if (storedSurvey) {
+                                                    setStoredSurvey(storedSurvey);
+                                                }
+                                                toast.success('Survey loaded successfully');
+                                                onClose();
                                             }}
                                         >
                                             <>{ss.id}&nbsp;{"("}{formatDistance(ss.lastUpdated, new Date())}{" ago)"}</>
@@ -173,7 +187,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                             size='icon'
                                             onClick={() => {
                                                 if (confirm(`Are you sure you want to delete survey ${"\"" + ss.id + "\""} from memory?`)) {
-                                                    let deletedSurvey = storedSurveys.find(s => s.id === ss.id);
+                                                    const deletedSurvey = storedSurveys.find(s => s.id === ss.id);
                                                     if (deletedSurvey) {
                                                         surveyStorage.removeSurvey(deletedSurvey);
                                                         setSurveyStorage(surveyStorage);
@@ -184,7 +198,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                                                 }
                                             }}
                                         >
-                                            <BsXLg />
+                                            <XIcon />
                                         </Button>
                                     </Card>
                                 )) : null
@@ -219,7 +233,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
                 </div>
                 {storedSurvey && <div className={"flex items-center gap-3 p-4 bg-yellow-100 rounded-lg"}>
                     <span className='text-yellow-800 text-xl'>
-                        <BsExclamationTriangle />
+                        <AlertTriangleIcon />
                     </span>
                     <p className="text-yellow-800">
                         This will overwrite the current survey. Are you sure you want to continue?

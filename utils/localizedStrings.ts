@@ -10,7 +10,7 @@ export const getLocalizedString = (translations: LocalizedObject[] | undefined, 
 }
 
 export const updateLocalizedString = (localizedString: LocalizedString[], langCode: string, value: string | string[]): LocalizedString[] => {
-    let lStringItem = Array.isArray(value) ? { code: langCode, parts: value.map(v => ({ str: v })) } : { code: langCode, parts: [{ str: value }] };
+    const lStringItem = Array.isArray(value) ? { code: langCode, parts: value.map(v => ({ str: v })) } : { code: langCode, parts: [{ str: value }] };
     if (localizedString == undefined) return [lStringItem];
     const updated = [...localizedString];
     const existing = updated.find(ls => ls.code === langCode);

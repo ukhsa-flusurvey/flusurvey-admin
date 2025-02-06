@@ -64,6 +64,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
             icon: icon,
             className: isActive ? undefined : defaultItemClassName,
             isActive,
+            label: surveyItem.metadata?.itemLabel || '',
             isGroup,
             textColor: isActive ? undefined : itemColor,
             isConfidential: (surveyItem as SurveySingleItem).confidentialMode !== undefined
@@ -79,7 +80,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                 {isAtRoot ? <>
                     <CompactExplorerNavItem
                         icon={Home}
-                        tooltip='Open root group'
+                        tooltip={{ label: 'Open root group' }}
                         onClick={() => {
                             props.onSelectItem(currentGroup.key);
                         }}
@@ -89,7 +90,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                     />
                 </> : <><CompactExplorerNavItem
                     icon={ArrowLeft}
-                    tooltip='Go back'
+                    tooltip={{ label: 'Go back' }}
                     onClick={() => {
                         const newPath = props.currentPath ? props.currentPath.split('.').slice(0, -1).join('.') : '';
                         props.onChangePath(newPath);
@@ -125,7 +126,6 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                             sortableID={draggedItem.id}
                             icon={draggedItem.icon}
                             isActive={draggedItem.isActive}
-                            tooltip={draggedItem.id}
                             className={draggedItem.className}
                             style={{
                                 color: draggedItem.textColor,
@@ -148,7 +148,10 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                                 icon={item.icon}
                                 isActive={item.isActive}
                                 isDragged={draggedId === item.id}
-                                tooltip={item.id}
+                                tooltip={{
+                                    key: item.id,
+                                    label: item.label,
+                                }}
                                 className={item.className}
                                 isConfidential={item.isConfidential}
                                 onClick={() => {
@@ -180,7 +183,7 @@ const CompactExplorer: React.FC<CompactExplorerProps> = (props) => {
                         <CompactExplorerNavItem
                             icon={Plus}
                             className='text-gray-600'
-                            tooltip={'Add a new item'}
+                            tooltip={{ label: 'Add a new item' }}
                         />
                     </div>
                     }

@@ -1,6 +1,5 @@
 import React from 'react';
 import WrapperCard from '../../_components/WrapperCard';
-import { error } from 'console';
 import ErrorAlert from '@/components/ErrorAlert';
 import { getStudyNotificationSubscriptions } from '@/lib/data/studyAPI';
 import NewNotificationSubDialog from './NewNotificationSubDialog';

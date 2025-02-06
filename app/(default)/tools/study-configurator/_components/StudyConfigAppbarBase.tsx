@@ -2,10 +2,8 @@ import AppbarBaseForTools from '@/components/navbar/AppbarBaseForTools';
 import StudyConfigIcon from '@/components/tool-icons/StudyConfigIcon';
 import React from 'react';
 
-interface StudyConfigAppbarBaseProps {
-}
 
-const StudyConfigAppbarBase: React.FC<StudyConfigAppbarBaseProps> = (props) => {
+const StudyConfigAppbarBase: React.FC = () => {
     return (
         <AppbarBaseForTools
             toolName='Study Configurator'

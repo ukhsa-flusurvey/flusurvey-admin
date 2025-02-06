@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail, MoveUpRight } from 'lucide-react';
+import { Mail, MoveUpRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 

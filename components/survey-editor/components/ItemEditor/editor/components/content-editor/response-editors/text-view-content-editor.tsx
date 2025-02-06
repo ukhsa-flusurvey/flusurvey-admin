@@ -3,66 +3,89 @@ import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUti
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import React, { useContext } from 'react';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 import FormattedTextListEditor from '../formatted-text-list-editor';
+import { Textarea } from '@/components/ui/textarea';
 
 interface TextViewContentEditorProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
     hideToggle?: boolean;
+    // only works in simple mode
+    hideStyling?: boolean;
     useAdvancedMode?: boolean;
+    label?: string;
 }
 
 const determineAdvancedMode = (component: ItemComponent) => {
     return (component as ItemGroupComponent).items !== undefined && (component as ItemGroupComponent).content === undefined;
 }
 
-const SimpleModeEditor: React.FC<{
+interface SimpleTextViewContentEditorProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
-}> = (props) => {
+    hideStyling?: boolean;
+    label?: string;
+    useTextArea?: boolean;
+}
+
+export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorProps> = ({
+    component,
+    onChange,
+    hideStyling = true,
+    label = 'Content',
+    useTextArea: big = false,
+}) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
+    const classNameIndex = component.style?.findIndex(style => style.key === 'className');
+    const className = (component.style !== undefined && classNameIndex !== undefined && classNameIndex > -1) ? component.style[classNameIndex].value : '';
+    const contentMap = localisedObjectToMap(component.content);
 
-    const classNameIndex = props.component.style?.findIndex(style => style.key === 'className');
-    const className = (props.component.style !== undefined && classNameIndex !== undefined && classNameIndex > -1) ? props.component.style[classNameIndex].value : '';
-
-    const contentMap = localisedObjectToMap(props.component.content);
-
-    return <div>
+    return <div data-no-dnd="true">
         <div className='space-y-1.5'>
             <Label
-                htmlFor={props.component.key}
+                htmlFor={component.key}
             >
-                Content
+                {label}
             </Label>
-            <Input
-                id={props.component.key}
+            {big ? <Textarea
+                id={component.key}
                 value={contentMap.get(selectedLanguage) || ''}
                 onChange={(e) => {
                     contentMap.set(selectedLanguage, e.target.value);
-                    props.onChange({
-                        ...props.component,
+                    onChange({
+                        ...component,
                         content: generateLocStrings(contentMap),
                     })
                 }}
                 placeholder='Enter content here for the selected language...'
-            />
+            /> : <Input
+                id={component.key}
+                value={contentMap.get(selectedLanguage) || ''}
+                onChange={(e) => {
+                    contentMap.set(selectedLanguage, e.target.value);
+                    onChange({
+                        ...component,
+                        content: generateLocStrings(contentMap),
+                    })
+                }}
+                placeholder='Enter content here for the selected language...'
+            />}
         </div>
-        <div className='space-y-1.5 mt-4'>
+        {!hideStyling && <div className='space-y-1.5 mt-4'>
             <Label
-                htmlFor={props.component.key + 'className'}
+                htmlFor={component.key + 'className'}
             >
                 CSS classes
             </Label>
             <Input
-                id={props.component.key + 'className'}
+                id={component.key + 'className'}
                 value={className}
                 onChange={(e) => {
-                    const newStyle = [...props.component.style || []];
+                    const newStyle = [...component.style || []];
                     const index = newStyle.findIndex(s => s.key === 'className');
                     if (index > -1) {
                         newStyle[index] = { key: 'className', value: e.target.value };
@@ -70,19 +93,18 @@ const SimpleModeEditor: React.FC<{
                         newStyle.push({ key: 'className', value: e.target.value });
                     }
 
-                    props.onChange({
-                        ...props.component,
+                    onChange({
+                        ...component,
                         style: newStyle,
                     })
                 }}
                 placeholder='Enter optional CSS classes...'
             />
-        </div>
-
+        </div>}
     </div>
 }
 
-const AdvancedMode: React.FC<{
+const AdvancedTextViewContentEditor: React.FC<{
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
 }> = (props) => {
@@ -107,8 +129,7 @@ const AdvancedMode: React.FC<{
 
 
 const TextViewContentEditor: React.FC<TextViewContentEditorProps> = (props) => {
-    const isAdvancedMode = determineAdvancedMode(props.component);
-
+    const isAdvancedMode = props.useAdvancedMode ?? determineAdvancedMode(props.component);
 
     const onToggleAdvanceMode = (checked: boolean) => {
         if (!confirm('Are you sure you want to switch the editor mode? You will loose the current content.')) {
@@ -148,14 +169,16 @@ const TextViewContentEditor: React.FC<TextViewContentEditorProps> = (props) => {
                 </div>)}
 
             {isAdvancedMode ? (
-                <AdvancedMode
+                <AdvancedTextViewContentEditor
                     component={props.component}
                     onChange={props.onChange}
                 />
             ) : (
-                <SimpleModeEditor
+                <SimpleTextViewContentEditor
                     component={props.component}
                     onChange={props.onChange}
+                    hideStyling={props.hideStyling}
+                    label={props.label}
                 />
             )}
         </div>

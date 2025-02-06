@@ -1,9 +1,10 @@
-import SurveySingleItemView from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/SurveySingleItemView';
+import SurveySingleItemView from '@/components/survey-renderer/SurveySingleItemView/SurveySingleItemView';
 import React, { useContext } from 'react';
 import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, LocalizedObject, LocalizedString, SurveyItem, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
 import SurveyLanguageToggle from '../../../../general/SurveyLanguageToggle';
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { nl } from 'date-fns/locale';
+import { SurveyContextProvider } from '@/components/survey-renderer/survey-context';
 
 
 interface ItemPreviewProps {
@@ -100,36 +101,39 @@ const resolveComponentProperties = (props: ComponentProperties | undefined): Com
     const resolvedProps = { ...props };
     if (resolvedProps.min) {
         const arg = expressionArgParser(resolvedProps.min as ExpressionArg);
-        resolvedProps.min = isExpression(arg) ? undefined : arg;
+        resolvedProps.min = isExpression(arg) ? undefined : arg as number;
     } if (resolvedProps.max) {
         const arg = expressionArgParser(resolvedProps.max as ExpressionArg);
-        resolvedProps.max = isExpression(arg) ? undefined : arg;
+        resolvedProps.max = isExpression(arg) ? undefined : arg as number;
     }
     if (resolvedProps.stepSize) {
         const arg = expressionArgParser(resolvedProps.stepSize as ExpressionArg);
-        resolvedProps.stepSize = isExpression(arg) ? undefined : arg;
+        resolvedProps.stepSize = isExpression(arg) ? undefined : arg as number;
     }
     if (resolvedProps.dateInputMode) {
         const arg = expressionArgParser(resolvedProps.dateInputMode as ExpressionArg);
-        resolvedProps.dateInputMode = isExpression(arg) ? 'exp' : arg;
+        resolvedProps.dateInputMode = isExpression(arg) ? 'exp' : arg as string;
     }
     return resolvedProps;
 }
 
-const isExpression = (value: Expression | any): value is Expression => {
+const isExpression = (value: unknown): value is Expression => {
     return typeof (value) === 'object' && (value as Expression).name !== undefined && (value as Expression).name.length > 0;
 }
 
-export const expressionArgParser = (arg: ExpressionArg): any => {
+export const expressionArgParser = (arg: ExpressionArg): number | string | Expression => {
     switch (arg.dtype) {
         case 'num':
-            return arg.num;
+            return arg.num !== undefined ? arg.num : 0;
         case 'str':
-            return arg.str;
+            return arg.str || '';
         case 'exp':
-            return arg.exp;
+            return arg.exp || {
+                name: 'unknown',
+                data: []
+            };
         default:
-            return arg.str;
+            return arg.str || '';
     }
 }
 
@@ -137,23 +141,27 @@ const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
     const { selectedLanguage } = useContext(SurveyContext);
 
     return (
-        <div className='max-w-[832px] mx-auto py-4 space-y-4'>
+        <div className='max-w-[832px] mx-auto py-4 space-y-4 survey'>
             <div className='flex justify-end'>
                 <SurveyLanguageToggle />
             </div>
 
             <div className='border border-neutral-200 p-4 bg-white shadow-md rounded-sm'>
-                <SurveySingleItemView
-                    renderItem={dummyResolveItem(props.surveyItem as any)}
-                    languageCode={selectedLanguage}
-                    responseChanged={() => { }}
-                    invalidWarning={'invalid warning'}
-                    showInvalid={false}
-                    showKeys={false}
-                    dateLocales={[{
-                        code: 'nl', locale: nl, format: 'PPP'
-                    }]}
-                />
+                <SurveyContextProvider
+                    onRunExternalHandler={undefined}
+                >
+                    <SurveySingleItemView
+                        renderItem={dummyResolveItem(props.surveyItem as SurveySingleItem)}
+                        languageCode={selectedLanguage}
+                        responseChanged={() => { }}
+                        invalidWarning={'invalid warning'}
+                        showInvalid={false}
+                        showKeys={false}
+                        dateLocales={[{
+                            code: 'nl', locale: nl, format: 'PPP'
+                        }]}
+                    />
+                </SurveyContextProvider>
             </div>
         </div>
 

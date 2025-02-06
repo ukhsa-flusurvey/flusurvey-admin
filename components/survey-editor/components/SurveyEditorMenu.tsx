@@ -87,20 +87,13 @@ const SurveyEditorMenu: React.FC<SurveyEditorMenuProps> = (props) => {
                             >
                                 Item Editor <MenubarShortcut>⌘ + 2</MenubarShortcut>
                             </MenubarRadioItem>
-                            <MenubarRadioItem
-                                disabled={props.noSurveyOpen}
-                                value={EditorMode.Advanced}
-                                onClick={() => props.onChangeMode(EditorMode.Advanced)}
-                            >
-                                Advanced <MenubarShortcut>⌘ + 3</MenubarShortcut>
-                            </MenubarRadioItem>
                             <MenubarSeparator />
                             <MenubarRadioItem
                                 disabled={props.noSurveyOpen}
                                 value={EditorMode.Simulator}
                                 onClick={() => props.onChangeMode(EditorMode.Simulator)}
                             >
-                                Simulator <MenubarShortcut>⌘ + 4</MenubarShortcut>
+                                Simulator <MenubarShortcut>⌘ + 3</MenubarShortcut>
                             </MenubarRadioItem>
                         </MenubarRadioGroup>
                     </MenubarContent>

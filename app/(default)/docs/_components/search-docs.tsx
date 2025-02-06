@@ -1,17 +1,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { Loader2Icon, SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useDebounceValue } from 'usehooks-ts';
-import { getCategoryPathBySlug, parseForNav } from './utils';
-import { docs } from '@/.velite';
-import Link from 'next/link';
-import { NavGroupDef, NavItemDef } from './navgroup';
+import { getCategoryPathBySlug } from './utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { SearchResult } from '@/app/api/docs/search/route';
+
 
 
 const SearchDocs: React.FC = () => {
@@ -48,7 +45,7 @@ const SearchDocs: React.FC = () => {
                         next: { revalidate: 0 }
                     })
                     const data = await resp.json()
-                    setSearchResults(data.results.map((result: any) => result.item))
+                    setSearchResults(data.results.map((result: SearchResult) => result.item))
 
                 } catch (e) {
                     console.error(e)

@@ -10,14 +10,10 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { createStudy } from '@/actions/study/create';
 import { useRouter } from 'next/navigation';
-
-
-interface CreateStudyFormProps {
-}
 
 
 
@@ -31,7 +27,7 @@ export const newStudySchema = z.object({
     isSystemDefaultStudy: z.boolean()
 })
 
-const CreateStudyForm: React.FC<CreateStudyFormProps> = (props) => {
+const CreateStudyForm: React.FC = () => {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 

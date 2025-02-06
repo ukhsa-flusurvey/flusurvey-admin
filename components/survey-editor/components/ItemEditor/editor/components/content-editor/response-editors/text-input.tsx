@@ -17,7 +17,7 @@ const TextInput: React.FC<TextInputProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const textInputCompIndex = rg.items.findIndex(comp => comp.role === 'input');
+    const textInputCompIndex = rg.items.findIndex(comp => comp.role === 'input' || comp.role === 'multilineTextInput');
     if (textInputCompIndex === undefined || textInputCompIndex === -1) {
         return <p>Text input not found</p>;
     }
@@ -40,6 +40,7 @@ const TextInput: React.FC<TextInputProps> = (props) => {
         <TextInputContentConfig
             component={rg.items[textInputCompIndex]}
             onChange={onChange}
+            allowMultipleLines={true}
         />
     );
 };

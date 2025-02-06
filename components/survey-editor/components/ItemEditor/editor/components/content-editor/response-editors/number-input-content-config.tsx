@@ -1,6 +1,6 @@
 import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { getInputMaxWidth, getLabelPlacementStyle } from '@/components/survey-viewer/survey-renderer/SurveySingleItemView/utils';
+import { getInputMaxWidth, getLabelPlacementStyle } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';

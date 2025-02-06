@@ -5,13 +5,10 @@ import { useSearchParams } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
 import { ShieldCheck } from 'lucide-react';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 
 
-interface LoginProps {
-}
-
-const Login: React.FC<LoginProps> = (props) => {
+const Login: React.FC = () => {
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 

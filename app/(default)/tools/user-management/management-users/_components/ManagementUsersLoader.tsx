@@ -4,10 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronRight } from 'lucide-react';
 
 
-interface ManagementUsersLoaderProps {
-}
-
-const ManagementUsersLoader: React.FC<ManagementUsersLoaderProps> = (props) => {
+const ManagementUsersLoader: React.FC = () => {
     return (
         <CardWrapper>
             <p className='sr-only'>Loading...</p>

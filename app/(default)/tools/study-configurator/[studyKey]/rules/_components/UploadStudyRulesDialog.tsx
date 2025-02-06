@@ -5,7 +5,7 @@ import Filepicker from '@/components/inputs/Filepicker';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { Expression, isExpression } from 'survey-engine/data_types';
 import { saveStudyRules } from '@/actions/study/studyRules';
@@ -14,7 +14,7 @@ interface UploadStudyRulesDialogProps {
     studyKey: string;
 }
 
-const checkIfValidStudyRule = (rules: any): boolean => {
+const checkIfValidStudyRule = (rules: unknown): boolean => {
     // check if an array and if all items are expressions
     if (!Array.isArray(rules)) {
         return false;
@@ -65,8 +65,8 @@ const UploadStudyRulesDialog: React.FC<UploadStudyRulesDialogProps> = (props) =>
                         dialogCloseRef.current.click();
                     }
                 }
-                catch (e: any) {
-                    setErrorMsg(e.message);
+                catch (e: unknown) {
+                    setErrorMsg((e as Error).message);
                     console.error(e);
                 }
             })

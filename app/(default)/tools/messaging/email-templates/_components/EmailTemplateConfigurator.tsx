@@ -13,7 +13,7 @@ import BackButton from '@/components/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EmailContentPreviewAndEditor from './EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 
 
 interface EmailTemplateConfiguratorProps {
@@ -64,9 +64,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     toast.success('Message template deleted');
                     router.back();
 
-                } catch (error: any) {
+                } catch (error: unknown) {
                     console.error(error);
-                    toast.error('Something went wrong', { description: error.message });
+                    toast.error('Something went wrong', { description: (error as Error).message });
                 }
             })
         }
@@ -89,9 +89,9 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                     }
                 }
                 setIsDirty(false);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: error.message });
+                toast.error('Something went wrong', { description: (error as Error).message });
             }
 
         })

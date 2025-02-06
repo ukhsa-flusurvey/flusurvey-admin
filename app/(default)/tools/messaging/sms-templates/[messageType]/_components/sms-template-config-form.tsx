@@ -1,7 +1,7 @@
 'use client';
 
 import { uploadSmsTemplate } from '@/actions/messaging/sms-templates';
-import LoadingButton from '@/components/LoadingButton';
+import LoadingButton from '@/components/loading-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,9 +52,9 @@ const SmsTemplateConfigForm: React.FC<SmsTemplateConfigFormProps> = (props) => {
                 toast.success('SMS template saved');
                 router.refresh();
                 setIsDirty(false);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: error.message });
+                toast.error('Something went wrong', { description: (error as Error).message });
             }
 
         })

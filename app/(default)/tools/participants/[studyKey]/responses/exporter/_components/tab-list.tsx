@@ -4,10 +4,8 @@ import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
-interface TabListProps {
-}
 
-const TabList: React.FC<TabListProps> = (props) => {
+const TabList: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
     console.log(pathname);

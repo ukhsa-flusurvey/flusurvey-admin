@@ -6,6 +6,7 @@ import ItemListEditor from './item-list-editor';
 interface GroupItemsEditorProps {
     surveyItem: SurveyItem;
     onUpdateSurveyItem: (item: SurveyItem) => void;
+    onDeleteItem: (itemKey: string) => void;
 }
 
 const GroupItemsEditor: React.FC<GroupItemsEditorProps> = (props) => {
@@ -15,6 +16,7 @@ const GroupItemsEditor: React.FC<GroupItemsEditorProps> = (props) => {
                 <ItemListEditor
                     surveyItem={props.surveyItem}
                     onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    onDeleteItem={props.onDeleteItem}
                 />
 
                 <ItemSelectionMethodEditor
