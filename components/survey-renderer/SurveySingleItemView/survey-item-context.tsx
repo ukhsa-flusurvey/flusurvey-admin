@@ -35,11 +35,12 @@ export const SurveyItemContextProvider: React.FC<SurveyItemContextProviderProps>
 
         // Create ResizeObserver to track width changes
         const resizeObserver = new ResizeObserver(updateWidth);
-        resizeObserver.observe(containerRef.current);
+        const currentContRef = containerRef.current;
+        resizeObserver.observe(currentContRef);
 
         return () => {
-            if (containerRef.current) {
-                resizeObserver.unobserve(containerRef.current);
+            if (currentContRef) {
+                resizeObserver.unobserve(currentContRef);
             }
         };
     }, []);
