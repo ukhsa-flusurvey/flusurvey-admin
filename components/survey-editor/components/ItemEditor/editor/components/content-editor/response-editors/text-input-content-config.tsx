@@ -22,8 +22,7 @@ const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) =>
     const currentPlaceholder = localisedObjectToMap(props.component.description).get(selectedLanguage) || '';
     const inputMaxWidth = getInputMaxWidth(props.component.style);
     const maxLengthValue = getStyleValueByKey(props.component.style, 'maxLength');
-    const rowsValue = getStyleValueByKey(props.component.style, 'rows');
-    const isMultiline = rowsValue && parseInt(rowsValue) != 1;
+    const isMultiline = props.component.role === 'multilineTextInput';
 
     return (
         <div className='space-y-4'
@@ -95,38 +94,25 @@ const TextInputContentConfig: React.FC<TextInputContentConfigProps> = (props) =>
                 />
             </div>
 
-            {props.allowMultipleLines && <div className='space-y-1.5'>
+            {props.allowMultipleLines &&
                 <Label
-                    htmlFor={props.component.key + 'rows'}
+                    className='flex gap-2 items-center'
                 >
-                    Text rows (visible lines)
+
+                    <Switch
+
+                        checked={isMultiline}
+                        onCheckedChange={(checked) => {
+                            const updatedComponent = { ...props.component };
+                            updatedComponent.role = checked ? 'multilineTextInput' : 'input';
+                            props.onChange(updatedComponent);
+                        }} />
+
+                    <span>
+                        Use multiline text input
+                    </span>
                 </Label>
-                <Input
-                    id={props.component.key + 'rows'}
-                    value={rowsValue || '1'}
-                    type='number'
-                    min={1}
-                    max={25}
-                    step={1}
-                    onChange={(e) => {
-                        const updatedComponent = { ...props.component };
-                        const updatedStyle = [...updatedComponent.style || []];
-                        const index = updatedStyle.findIndex(s => s.key === 'rows');
-                        if (index > -1) {
-                            updatedStyle[index] = { key: 'rows', value: e.target.value };
-                        } else {
-                            updatedStyle.push({ key: 'rows', value: e.target.value });
-                        }
-                        updatedComponent.style = updatedStyle;
-                        if (e.target.value == '1') {
-                            updatedComponent.role = 'input';
-                        } else {
-                            updatedComponent.role = 'multilineTextInput';
-                        }
-                        props.onChange(updatedComponent);
-                    }}
-                />
-            </div>}
+            }
 
             {!isMultiline && <div className='space-y-1.5'>
                 <Label
