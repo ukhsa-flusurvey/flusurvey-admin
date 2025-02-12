@@ -12,11 +12,25 @@ export interface DailyExport {
     filename: string;
     surveyKey: string;
     date: string;
+    type: string;
 }
 
 interface DailExportsClientProps {
     studyKey: string;
     dailyExports: Array<DailyExport>;
+}
+
+const mapExportFormat = (type: string) => {
+    switch (type) {
+        case 'wide':
+            return 'CSV (wide)';
+        case 'long':
+            return 'CSV (long)';
+        case 'json':
+            return 'JSON';
+        default:
+            return type;
+    }
 }
 
 const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
@@ -108,6 +122,7 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                             </TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Survey Key</TableHead>
+                            <TableHead>Export format</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -127,6 +142,11 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                                 </TableCell>
                                 <TableCell>{file.date}</TableCell>
                                 <TableCell>{file.surveyKey}</TableCell>
+                                <TableCell>
+                                    <span className='text-xs text-muted-foreground uppercase'>
+                                        {mapExportFormat(file.type)}
+                                    </span>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

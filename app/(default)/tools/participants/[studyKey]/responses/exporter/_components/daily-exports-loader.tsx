@@ -27,7 +27,7 @@ const DailyExportsLoader: React.FC<DailyExportsLoaderProps> = async (props) => {
             const dailyExport = dailyExports.dailyExports[i];
             const parts = dailyExport.split('##');
 
-            if (parts.length < 3) {
+            if (parts.length < 4) {
                 continue;
             }
 
@@ -36,6 +36,7 @@ const DailyExportsLoader: React.FC<DailyExportsLoaderProps> = async (props) => {
                 filename: dailyExport,
                 surveyKey: parts[2],
                 date: parts[0],
+                type: parts[3].split('.')[0],
             })
         }
     }
