@@ -3,7 +3,9 @@
 import LoadingButton from '@/components/loading-button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -37,6 +39,10 @@ const mapExportFormat = (type: string) => {
 const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
     const [selectedFiles, setSelectedFiles] = useState<number[]>([])
     const [isPending, startTransition] = React.useTransition();
+
+    const [selectedSurveyKey, setSelectedSurveyKey] = useState<string>("all")
+    const [selectedFormat, setSelectedFormat] = useState<string>("all")
+    const [dateRange, setDateRange] = useState<string>("all")
 
     const handleSelectFile = (id: number) => {
         setSelectedFiles(prev =>
@@ -95,26 +101,47 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
         });
     }
 
+    const allFiles = props.dailyExports;
+
+    const uniqueSurveyKeys = Array.from(new Set(allFiles.map((item) => item.surveyKey)))
+    const uniqueFormats = Array.from(new Set(allFiles.map((item) => item.type)))
+
+    const filterData = () => {
+        return allFiles.filter((item) => {
+            const surveyKeyMatch = selectedSurveyKey === "all" || item.surveyKey === selectedSurveyKey
+            const formatMatch = selectedFormat === "all" || item.type === selectedFormat
+
+            if (dateRange === "all") return surveyKeyMatch && formatMatch
+
+            const itemDate = new Date(item.date)
+            const today = new Date()
+            const diffTime = Math.abs(today.getTime() - itemDate.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+            let dateMatch = true
+            if (dateRange === "2") dateMatch = diffDays <= 2
+            if (dateRange === "7") dateMatch = diffDays <= 7
+            if (dateRange === "30") dateMatch = diffDays <= 30
+
+            return surveyKeyMatch && formatMatch && dateMatch
+        })
+    }
+
+    const filteredData = filterData()
+
     let content = null;
-    if (props.dailyExports.length === 0) {
+    if (filteredData.length === 0) {
         content = <div>
-            <p className=''>No daily exports available</p>
+            <p className=''>No file exports available for the current selection</p>
             <p className='text-xs text-muted-foreground'>
-                Either the study has no daily exports configured or there is no data for the configured survey within the retention period.
+                Either the study has no file exports configured or there is no data for the configured filter within the retention period.
             </p>
         </div>;
     } else {
         content = (
             <div>
-                <div className="mb-4">
-                    <LoadingButton
-                        onClick={handleDownload}
-                        disabled={selectedFiles.length === 0}
-                        isLoading={isPending}
-                    >
-                        Download Selected ({selectedFiles.length})
-                    </LoadingButton>
-                </div>
+
+
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -131,7 +158,7 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {props.dailyExports.map((file) => (
+                        {filteredData.map((file) => (
                             <TableRow key={file.id}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -160,7 +187,65 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
         );
     }
     return (
-        <Card className='p-4'>
+        <Card className='p-4 relative'>
+            <div className="flex gap-4 mb-4 justify-end">
+                <div
+                    className={cn("grow",
+                        { "hidden": selectedFiles.length === 0 },
+
+                    )}>
+                    <LoadingButton
+                        onClick={handleDownload}
+                        disabled={selectedFiles.length === 0}
+                        isLoading={isPending}
+                    >
+                        Download Selected ({selectedFiles.length})
+                    </LoadingButton>
+                </div>
+
+                {props.type !== 'confidential-responses' && <>
+
+                    <Select value={selectedSurveyKey} onValueChange={setSelectedSurveyKey}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Survey Key" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Survey Keys</SelectItem>
+                            {uniqueSurveyKeys.map((key) => (
+                                <SelectItem key={key} value={key}>
+                                    {key}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={selectedFormat} onValueChange={setSelectedFormat}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Formats</SelectItem>
+                            {uniqueFormats.map((format) => (
+                                <SelectItem key={format} value={format}>
+                                    {format}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={dateRange} onValueChange={setDateRange}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Date Range" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Dates</SelectItem>
+                            <SelectItem value="2">Last 2 Days</SelectItem>
+                            <SelectItem value="7">Last 7 Days</SelectItem>
+                            <SelectItem value="30">Last 30 Days</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </>}
+            </div>
             {content}
         </Card>
     );
