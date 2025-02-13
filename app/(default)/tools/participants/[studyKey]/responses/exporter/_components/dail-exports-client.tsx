@@ -17,6 +17,7 @@ export interface DailyExport {
 
 interface DailExportsClientProps {
     studyKey: string;
+    type: string;
     dailyExports: Array<DailyExport>;
 }
 
@@ -60,7 +61,11 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                 }
                 const encodedFilename = btoa(filename);
                 try {
-                    const resp = await fetch(`/api/case-management-api/v1/studies/${props.studyKey}/data-exporter/responses/daily-exports/${encodedFilename}`, {
+                    let baseUrl = `/api/case-management-api/v1/studies/${props.studyKey}/data-exporter/responses/daily-exports/${encodedFilename}`;
+                    if (props.type === 'confidential-responses') {
+                        baseUrl = `/api/case-management-api/v1/studies/${props.studyKey}/data-exporter/confidential-responses/${encodedFilename}`;
+                    }
+                    const resp = await fetch(baseUrl, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',

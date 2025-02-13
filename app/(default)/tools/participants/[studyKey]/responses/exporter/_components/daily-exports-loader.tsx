@@ -1,37 +1,39 @@
 import ErrorAlert from '@/components/ErrorAlert';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getDailyResponseExports } from '@/lib/data/responses';
+import { getAvailableConfidentialResponseExports, getDailyResponseExports } from '@/lib/data/responses';
 import React from 'react';
 import DailExportsClient, { DailyExport } from './dail-exports-client';
 
 interface DailyExportsLoaderProps {
     studyKey: string;
+    type: 'responses' | 'confidential-responses';
 }
 
 const DailyExportsLoader: React.FC<DailyExportsLoaderProps> = async (props) => {
-    const dailyExports = await getDailyResponseExports(props.studyKey);
+    const response = props.type === 'responses' ? await getDailyResponseExports(props.studyKey) : await getAvailableConfidentialResponseExports(props.studyKey);
 
-    if (dailyExports.error) {
+    if (response.error) {
         return (<ErrorAlert
-            title='Error loading daily exports'
-            error={dailyExports.error}
+            title='Error loading available exports'
+            error={response.error}
         />
         )
     }
 
 
-    const availableDailyExports: Array<DailyExport> = [];
-    if (dailyExports.dailyExports) {
-        for (let i = 0; i < dailyExports.dailyExports.length; i++) {
-            const dailyExport = dailyExports.dailyExports[i];
+
+    const availableFiles: Array<DailyExport> = [];
+    if (response.availableFiles) {
+        for (let i = 0; i < response.availableFiles.length; i++) {
+            const dailyExport = response.availableFiles[i];
             const parts = dailyExport.split('##');
 
             if (parts.length < 4) {
                 continue;
             }
 
-            availableDailyExports.push({
+            availableFiles.push({
                 id: i,
                 filename: dailyExport,
                 surveyKey: parts[2],
@@ -41,7 +43,7 @@ const DailyExportsLoader: React.FC<DailyExportsLoaderProps> = async (props) => {
         }
     }
 
-    availableDailyExports.sort((a, b) => {
+    availableFiles.sort((a, b) => {
         return b.date.localeCompare(a.date);
     });
 
@@ -49,7 +51,8 @@ const DailyExportsLoader: React.FC<DailyExportsLoaderProps> = async (props) => {
     return (
         <DailExportsClient
             studyKey={props.studyKey}
-            dailyExports={availableDailyExports}
+            dailyExports={availableFiles}
+            type={props.type}
         />
     );
 };
