@@ -49,14 +49,23 @@ const ExporterTabs: React.FC<ExporterTabsProps> = (props) => {
                             />
                         </TabsContent>
                         <TabsContent value="confidentialResponses">
-                            <ConfidentialResponseDownloader
-                                studyKey={props.studyKey}
-                            />
+                            <div className='space-y-4'>
+                                <ConfidentialResponseDownloader
+                                    studyKey={props.studyKey}
+                                />
+                                <Suspense fallback={<DailyExportsLoaderSkeleton />}>
+                                    <DailyExportsLoader
+                                        studyKey={props.studyKey}
+                                        type='confidential-responses'
+                                    />
+                                </Suspense>
+                            </div>
                         </TabsContent>
                         <TabsContent value="dailyResponses">
                             <Suspense fallback={<DailyExportsLoaderSkeleton />}>
                                 <DailyExportsLoader
                                     studyKey={props.studyKey}
+                                    type='responses'
                                 />
                             </Suspense>
                         </TabsContent>

@@ -207,7 +207,7 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
     }
 
     return (
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 '>
             {
                 props.surveyItems.map((surveyItem, index) =>
                     <div
@@ -216,7 +216,9 @@ const SurveyPageView: React.FC<SurveyPageViewProps> = (props) => {
                     </div>
                 )
             }
-            {buttonGroup()}
+            <div className='@container'>
+                {buttonGroup()}
+            </div>
         </div>
     );
 };
