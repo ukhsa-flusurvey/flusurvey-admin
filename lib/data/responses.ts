@@ -111,7 +111,7 @@ export const getDailyResponseExports = async (
     studyKey: string
 ): Promise<{
     error?: string,
-    dailyExports?: string[]
+    availableFiles?: string[]
 }> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
@@ -131,6 +131,34 @@ export const getDailyResponseExports = async (
     );
     if (resp.status !== 200) {
         return { error: `Failed to fetch daily response exports: ${resp.status} - ${resp.body.error}` };
+    }
+    return {
+        availableFiles: resp.body.dailyExports
+    };
+}
+
+export const getAvailableConfidentialResponseExports = async (
+    studyKey: string
+): Promise<{
+    error?: string,
+    availableFiles?: string[]
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+
+    const url = `/v1/studies/${studyKey}/data-exporter/confidential-responses`;
+
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch confidential response exports: ${resp.status} - ${resp.body.error}` };
     }
     return resp.body;
 }
