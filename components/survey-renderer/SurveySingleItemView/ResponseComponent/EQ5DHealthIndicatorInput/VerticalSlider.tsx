@@ -86,7 +86,7 @@ const VerticalSlider: React.FC<VerticalSliderProps> = (props) => {
                     top: `calc(${100 - props.value}*${tickDistance}px + 15px + ${tickDistance - tickHeight}px - ${handlerRadius}px)`
                 }}
             >
-                <div className="bg-primary-600 rounded-full"
+                <div className="bg-primary rounded-full"
                     style={{
                         height: handlerRadius * 2,
                         width: handlerRadius * 2,
@@ -129,7 +129,7 @@ const VerticalSlider: React.FC<VerticalSliderProps> = (props) => {
     }
 
     return (
-        <div className="focus-within:outline-none rounded focus-within:ring-2 focus-within:ring-primary-600/50">
+        <div className="focus-within:outline-none rounded focus-within:ring-2 focus-within:ring-primary/50">
             {props.maxValueText ?
                 <p className="m-0 font-bold select-none">
                     {props.maxValueText}
