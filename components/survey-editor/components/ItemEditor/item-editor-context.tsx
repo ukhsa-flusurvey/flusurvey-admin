@@ -16,11 +16,7 @@ export const ItemEditorContext = createContext<ItemEditorContextValue>({
 
 
 interface ItemEditorContextProviderProps extends ItemEditorContextValue {
-    children: React.ReactNode;
-    selectedItemKey: string | null,
-    setSelectedItemKey: (key: string | null) => void,
-    currentPath: string | null,
-    setCurrentPath: (path: string | null) => void,
+    children?: React.ReactNode;
 }
 
 export const ItemEditorContextProvider: React.FC<ItemEditorContextProviderProps> = ({ children, ...props }) => {

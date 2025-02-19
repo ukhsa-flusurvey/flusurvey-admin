@@ -1,5 +1,5 @@
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { CircleHelp, X } from 'lucide-react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
 interface ValidatedRandomQuestionProps {
@@ -16,7 +16,7 @@ interface ValidatedRandomQuestionProps {
 }
 
 const ValidatedRandomQuestion: React.FC<ValidatedRandomQuestionProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {

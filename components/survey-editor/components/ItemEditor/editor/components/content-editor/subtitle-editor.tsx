@@ -1,5 +1,4 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import EditorWrapper from './editor-wrapper';
 import { Label } from '@/components/ui/label';
@@ -10,6 +9,7 @@ import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-gener
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import { Textarea } from '@/components/ui/textarea';
 import FormattedTextListEditor from './formatted-text-list-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface SubtitleEditorProps {
     surveyItem: SurveySingleItem;
@@ -17,7 +17,7 @@ interface SubtitleEditorProps {
 }
 
 const SimpleSubtitleEditor: React.FC<SubtitleEditorProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     let subtitleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'subtitle');
     if (subtitleComponentIndex === undefined || subtitleComponentIndex === -1) {

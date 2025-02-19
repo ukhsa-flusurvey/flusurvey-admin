@@ -1,4 +1,4 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 
 interface ContactFormProps {
@@ -286,7 +286,7 @@ export const SimpleFieldConfigs: React.FC<{
 }
 
 const ContactForm: React.FC<ContactFormProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {

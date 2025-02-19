@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import React, { useEffect, useContext } from 'react';
-import { SurveyContext } from '../surveyContext';
+import { SurveyEditorContext } from '../surveyEditorContext';
 import { toast } from 'sonner';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import LoadingButton from '@/components/loading-button';
@@ -18,7 +18,7 @@ const SaveSurveyToDiskDialog: React.FC<SaveSurveyToDiskDialogProps> = ({
     isOpen,
     onClose,
 }) => {
-    const { survey } = useContext(SurveyContext);
+    const { survey } = useContext(SurveyEditorContext);
     const [fileName, setFileName] = React.useState<string>('');
     const [useIndentation, setUseIndentation] = React.useState<boolean>(true);
     const [isPending, startTransition] = React.useTransition();

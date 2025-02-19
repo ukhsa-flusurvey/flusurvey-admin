@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { SurveyContext } from '../surveyContext';
+import { SurveyEditorContext } from '../surveyEditorContext';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
 import { Survey, SurveyContext as ContextValues, SurveySingleItemResponse } from 'survey-engine/data_types';
@@ -43,7 +43,7 @@ const sendSimulatorConfig = (ref: React.RefObject<HTMLIFrameElement | null>, con
 const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
     simulatorUrl,
 }) => {
-    const { survey, selectedLanguage } = useContext(SurveyContext);
+    const { survey, selectedLanguage } = useContext(SurveyEditorContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     const [showKeys, setShowKeys] = React.useState<boolean>(false);

@@ -1,13 +1,13 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 
 const MaxItemsPerPage: React.FC = () => {
-    const { survey, setSurvey } = useContext(SurveyContext);
+    const { survey, setSurvey } = useSurveyEditorCtx();
 
     const useMaxItemsPerPage = survey?.maxItemsPerPage !== undefined;
 

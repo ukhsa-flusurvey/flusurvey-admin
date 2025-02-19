@@ -1,11 +1,11 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import MarkdownContentEditor from '../markdown-content-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface ConsentProps {
     surveyItem: SurveySingleItem;
@@ -13,7 +13,7 @@ interface ConsentProps {
 }
 
 const Consent: React.FC<ConsentProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {

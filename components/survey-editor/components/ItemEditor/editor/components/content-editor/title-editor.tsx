@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import EditorWrapper from './editor-wrapper';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Textarea } from '@/components/ui/textarea';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
@@ -11,6 +10,7 @@ import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUti
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import FormattedTextListEditor from './formatted-text-list-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 
 interface TitleEditorProps {
@@ -20,7 +20,7 @@ interface TitleEditorProps {
 
 
 const SimpleTitleEditor: React.FC<TitleEditorProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const titleComponentIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'title');
     if (titleComponentIndex === undefined || titleComponentIndex === -1) {

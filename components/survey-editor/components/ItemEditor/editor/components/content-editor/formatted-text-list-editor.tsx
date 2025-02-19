@@ -5,7 +5,6 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,9 +12,10 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Calendar, GripHorizontal, Info, Type, X } from 'lucide-react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, LocalizedString } from 'survey-engine/data_types';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface FormattedTextListEditorProps {
     sortableID: string;
@@ -243,7 +243,7 @@ const FormattedPartEditor: React.FC<{
 }
 
 const FormattedTextListEditor: React.FC<FormattedTextListEditorProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
     const onAddItem = (type: string) => {

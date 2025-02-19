@@ -3,7 +3,7 @@ import React from 'react';
 import { Survey } from 'survey-engine/data_types';
 import { findAllLocales, removeLocales, renameLocales } from '../utils/localeUtils';
 import { Button } from '@/components/ui/button';
-import { SurveyContext } from '../surveyContext';
+import { SurveyEditorContext } from '../surveyEditorContext';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { StoredSurvey, SurveyStorage } from '../utils/SurveyStorage';
@@ -63,7 +63,7 @@ const LoadSurveyFromDisk: React.FC<LoadSurveyFromDiskProps> = ({
     surveyStorage,
     setSurveyStorage
 }) => {
-    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyContext);
+    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyEditorContext);
     const [surveyFileContent, setSurveyFileContent] = React.useState<Survey | undefined>(undefined);
     const [storedSurveySelectionId, setStoredSurveySelectionId] = React.useState<string | undefined>(undefined);
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);

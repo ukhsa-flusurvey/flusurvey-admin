@@ -9,7 +9,7 @@ import EditorView from './editor/EditorView';
 import { getParentKeyFromFullKey, getSurveyItemsAsFlatList, isValidSurveyItemGroup } from '../../utils/utils';
 import { toast } from 'sonner';
 import { generateNewItemForType } from '../../utils/new-item-init';
-import { SurveyContext } from '../../surveyContext';
+import { SurveyEditorContext } from '../../surveyEditorContext';
 import { ItemEditorContextProvider } from './item-editor-context';
 
 interface ItemEditorProps {
@@ -21,7 +21,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
     const {
         survey,
         setSurvey,
-    } = useContext(SurveyContext);
+    } = useContext(SurveyEditorContext);
     const [isCollapsed, setIsCollapsed] = React.useState(true);
     const [editorInstance, setEditorInstance] = React.useState<EditorInstance | undefined>(survey ? new EditorInstance(survey) : undefined);
     const [selectedItemKey, setSelectedItemKey] = React.useState<string | null>(survey?.surveyDefinition.key || null);

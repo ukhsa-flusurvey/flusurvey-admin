@@ -1,5 +1,4 @@
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
-import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { getLocalizedString } from '@/utils/localizedStrings';
 import { getUniqueRandomKey } from "@/components/survey-editor/utils/new-item-init";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, Plus, SquareChevronDown, TextCursorInput, Type, X, XCircle } from "lucide-react";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
@@ -22,6 +21,7 @@ import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { cn } from "@/lib/utils";
 import { ContextMenu, ContextMenuContent, ContextMenuSubContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuSub, ContextMenuSubTrigger, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useCopyToClipboard } from "usehooks-ts";
+import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 
 
 interface MatrixProps {
@@ -40,7 +40,7 @@ const OverviewMatrixCellContent: React.FC<{
     context: 'header' | 'row' | 'cell',
     onAction: (action: MatrixAction) => void,
 }> = ({ cell, isSelected, hideKey, highlightKey, hideIcon, context, onAction }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
             case MatrixCellType.Dropdown:

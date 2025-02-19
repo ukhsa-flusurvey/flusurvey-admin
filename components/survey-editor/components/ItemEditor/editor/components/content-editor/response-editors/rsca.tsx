@@ -2,7 +2,6 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import TabCard from '@/components/survey-editor/components/general/tab-card';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,10 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from 'lucide-react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { Separator } from '@/components/ui/separator';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface RscaProps {
     surveyItem: SurveySingleItem;
@@ -112,7 +112,7 @@ const OptionEditor = (props: {
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
 
@@ -273,7 +273,7 @@ const RowEditor = (props: {
     onChange: (newRow: ItemComponent) => void;
     onDelete: () => void;
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const rowLabel = localisedObjectToMap(props.row.content).get(selectedLanguage) || '';
 
@@ -578,7 +578,7 @@ const RowsEditor = (props: {
 }
 
 const Rsca: React.FC<RscaProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
     if (rgIndex === undefined || rgIndex === -1) {

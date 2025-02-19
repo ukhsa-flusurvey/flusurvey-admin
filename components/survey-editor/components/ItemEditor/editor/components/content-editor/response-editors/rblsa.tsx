@@ -3,7 +3,6 @@ import SortableWrapper from "@/components/survey-editor/components/general/Sorta
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
 import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
-import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
 import { updateLocalizedString } from '@/utils/localizedStrings';
 import { Button } from "@/components/ui/button";
@@ -15,9 +14,9 @@ import { ResponsiveBipolarLikertArrayVariant } from "case-editor-tools/surveys/t
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
 import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from "lucide-react";
 import React from "react";
-import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
+import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -141,7 +140,7 @@ const OptionEditor = (props: {
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
 
     return <SortableItem
@@ -180,7 +179,7 @@ const OptionEditor = (props: {
             <div
                 data-no-dnd="true"
                 // incase we want to allow for different label than the key, remove hidden?
-                className='flex gap-2 items-center hidden' >
+                className='gap-2 items-center hidden' >
                 <Label htmlFor={'option-key-' + props.option.key}>
                     Label
                 </Label>
@@ -299,7 +298,7 @@ const RowEditor = (props: {
     onChange: (newRow: ItemGroupComponent) => void;
     onDelete: () => void;
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
     const rowStartLabel = localisedObjectToMap(rowStartLabelItem?.content).get(selectedLanguage) || '';
     const rowEndLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.EndLabel);

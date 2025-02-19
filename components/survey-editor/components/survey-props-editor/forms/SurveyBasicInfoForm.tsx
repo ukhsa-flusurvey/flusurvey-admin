@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useContext, useEffect } from "react"
-import { SurveyContext } from "../../../surveyContext"
+import { SurveyEditorContext } from "../../../surveyEditorContext"
 import { LocalizedString, Survey } from "survey-engine/data_types"
 import React from "react"
 import { useDebounceCallback } from "usehooks-ts"
@@ -31,7 +31,7 @@ const initialValues = (survey: Survey | undefined, selectedLanguage: string) => 
 
 export function SurveyBasicInfoForm() {
     const runDebounced = useDebounceCallback((f) => f(), 500);
-    const { survey, setSurvey, selectedLanguage } = useContext(SurveyContext);
+    const { survey, setSurvey, selectedLanguage } = useContext(SurveyEditorContext);
     const form = useForm<z.infer<typeof formSchema>>({
         mode: 'onSubmit',
         resolver: zodResolver(formSchema),
