@@ -1,13 +1,13 @@
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import React, { useContext } from 'react';
+import React from 'react';
 import MarkdownContentEditor from './markdown-content-editor';
 import { ExpressionArg, ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from 'survey-engine/data_types';
 import { getItemComponentByRole } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import { getLocStringLocales, localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import EditorWrapper from './editor-wrapper';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface HelpPopupEditorProps {
     surveyItem: SurveySingleItem;
@@ -15,7 +15,7 @@ interface HelpPopupEditorProps {
 }
 
 const HelpPopupEditor: React.FC<HelpPopupEditorProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const updateHelpGroup = (helpGroupContent?: ItemComponent): SurveySingleItem => {
         if (!helpGroupContent) {

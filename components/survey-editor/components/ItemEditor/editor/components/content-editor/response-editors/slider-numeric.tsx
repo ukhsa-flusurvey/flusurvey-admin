@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { ExpressionArg, ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Label } from '@radix-ui/react-label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Input } from '@/components/ui/input';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface SliderNumericProps {
     surveyItem: SurveySingleItem;
@@ -13,7 +13,7 @@ interface SliderNumericProps {
 }
 
 const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
 
     const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');

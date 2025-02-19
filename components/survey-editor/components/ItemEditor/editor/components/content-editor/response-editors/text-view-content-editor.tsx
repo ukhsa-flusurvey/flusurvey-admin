@@ -1,13 +1,13 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 import FormattedTextListEditor from '../formatted-text-list-editor';
 import { Textarea } from '@/components/ui/textarea';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface TextViewContentEditorProps {
     component: ItemComponent;
@@ -38,7 +38,7 @@ export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorPr
     label = 'Content',
     useTextArea: big = false,
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const classNameIndex = component.style?.findIndex(style => style.key === 'className');
     const className = (component.style !== undefined && classNameIndex !== undefined && classNameIndex > -1) ? component.style[classNameIndex].value : '';

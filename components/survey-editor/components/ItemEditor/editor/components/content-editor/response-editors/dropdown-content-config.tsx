@@ -3,14 +3,14 @@
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Circle, X } from 'lucide-react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { toast } from 'sonner';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
 
@@ -29,7 +29,7 @@ const DropdownOptionItem = (props: {
     usedKeys?: string[];
 
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const currentContent = localisedObjectToMap(props.optionComp.content).get(selectedLanguage) || '';
 
     return (
@@ -95,7 +95,7 @@ const DropdownOptionItem = (props: {
 }
 
 const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
 
     const currentLabel = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';

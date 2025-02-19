@@ -1,4 +1,3 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { getInputMaxWidth, getLabelPlacementStyle } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import { Input } from '@/components/ui/input';
@@ -7,9 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface NumberInputContentConfigProps {
     component: ItemComponent;
@@ -17,7 +17,7 @@ interface NumberInputContentConfigProps {
 }
 
 const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
 
     const currentLabel = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';

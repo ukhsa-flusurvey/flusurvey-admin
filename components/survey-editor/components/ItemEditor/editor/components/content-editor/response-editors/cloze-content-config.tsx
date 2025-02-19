@@ -1,6 +1,5 @@
 import SortableWrapper from "@/components/survey-editor/components/general/SortableWrapper";
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
-import { SurveyContext } from "@/components/survey-editor/surveyContext";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -9,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
 import { Binary, Calendar, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripVertical, Heading, Languages, SquareChevronDown, ToggleLeft } from "lucide-react";
 import React from "react";
-import { useContext } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
@@ -24,6 +22,7 @@ import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView
 import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
+import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -74,7 +73,7 @@ export const ContentItem = (props: {
     existingKeys?: string[]
 
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
 
     const clozeItemType = getClozeItemType(props.component);

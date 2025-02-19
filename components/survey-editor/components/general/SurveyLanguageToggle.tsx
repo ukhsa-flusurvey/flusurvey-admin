@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import React, { useContext } from 'react';
-import { SurveyContext } from '../../surveyContext';
+import { SurveyEditorContext } from '../../surveyEditorContext';
 import { Globe } from 'lucide-react';
 import NotificationBadge from '@/components/NotificationBadge';
 
@@ -14,7 +14,7 @@ export const hasOnlySingleLanguage = supportedLanguages.length < 2;
 
 
 const SurveyLanguageToggle: React.FC<SurveyLanguageToggleProps> = (props) => {
-    const { selectedLanguage, setSelectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage, setSelectedLanguage } = useContext(SurveyEditorContext);
 
     const languages = supportedLanguages;
 

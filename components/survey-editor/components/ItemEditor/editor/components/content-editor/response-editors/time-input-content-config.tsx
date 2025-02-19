@@ -1,11 +1,11 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface TimeInputContentConfigProps {
     component: ItemComponent;
@@ -13,7 +13,7 @@ interface TimeInputContentConfigProps {
 }
 
 const TimeInputContentConfig: React.FC<TimeInputContentConfigProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const currentLabel = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
     const currentMin = props.component.style?.find((style) => style.key === 'minTime')?.value as string | undefined;

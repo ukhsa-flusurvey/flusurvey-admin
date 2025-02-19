@@ -1,5 +1,5 @@
 import React from 'react';
-import { SurveyContext } from '../surveyContext';
+import { SurveyEditorContext } from '../surveyEditorContext';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,7 @@ interface InitNewSurveyDialogProps {
 }
 
 const InitNewSurveyDialog: React.FC<InitNewSurveyDialogProps> = (props) => {
-    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyContext);
+    const { storedSurvey, setStoredSurvey } = React.useContext(SurveyEditorContext);
 
     const [surveyKey, setSurveyKey] = React.useState<string>('');
 

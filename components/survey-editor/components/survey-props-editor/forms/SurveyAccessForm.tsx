@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { SurveyContext } from "../../../surveyContext"
+import { SurveyEditorContext } from "../../../surveyEditorContext"
 import { useContext, useEffect } from "react"
 import { Survey } from "survey-engine/data_types"
 import { useDebounceCallback } from "usehooks-ts"
@@ -36,7 +36,7 @@ const initialValues = (survey: Survey | undefined) => ({
 
 export function SurveyAccessForm() {
     const runDebounced = useDebounceCallback((f) => f(), 500);
-    const { survey, setSurvey } = useContext(SurveyContext);
+    const { survey, setSurvey } = useContext(SurveyEditorContext);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: initialValues(survey)

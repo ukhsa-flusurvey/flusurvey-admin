@@ -1,12 +1,12 @@
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForDate from './exp-arg-editor-for-date';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface DateInputContentConfigProps {
     component: ItemComponent;
@@ -14,7 +14,7 @@ interface DateInputContentConfigProps {
 }
 
 const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const currentLabel = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
     const currentPlaceholder = localisedObjectToMap(props.component.description).get(selectedLanguage) || '';

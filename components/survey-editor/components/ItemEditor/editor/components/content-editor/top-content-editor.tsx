@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import EditorWrapper from './editor-wrapper';
 import { ItemComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TabCard from '@/components/survey-editor/components/general/tab-card';
@@ -9,7 +9,6 @@ import AddDropdown from '@/components/survey-editor/components/general/add-dropd
 import { filterForBodyComponents, findTopComponents } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,6 +18,7 @@ import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUti
 import MarkdownContentEditor from './markdown-content-editor';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 
 interface TopContentEditorProps {
@@ -32,7 +32,7 @@ export const ContentItem = (props: {
     onDeleteComponent: () => void
 
 }) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
     const [currentKey, setCurrentKey] = React.useState(props.component.key);
 
     const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
@@ -165,7 +165,7 @@ export const ContentItem = (props: {
 
 const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const allItemComponents = props.surveyItem.components?.items || [];
     const relevantBodyComponents = filterForBodyComponents(allItemComponents);

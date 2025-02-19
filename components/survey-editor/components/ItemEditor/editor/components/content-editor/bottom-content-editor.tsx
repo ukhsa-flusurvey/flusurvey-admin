@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import EditorWrapper from './editor-wrapper';
 import { ItemComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { AlertCircle, AlertTriangle, Type } from 'lucide-react';
@@ -7,9 +7,9 @@ import SortableWrapper from '@/components/survey-editor/components/general/Sorta
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { filterForBodyComponents, findBottomComponents } from '@/components/survey-renderer/SurveySingleItemView/utils';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';
 import { ContentItem } from './top-content-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 interface BottomContentEditorProps {
     surveyItem: SurveySingleItem;
@@ -19,7 +19,7 @@ interface BottomContentEditorProps {
 
 const BottomContentEditor: React.FC<BottomContentEditorProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     const allItemComponents = props.surveyItem.components?.items || [];
     const relevantBodyComponents = filterForBodyComponents(allItemComponents);

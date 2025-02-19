@@ -9,8 +9,8 @@ import EditorView from './editor/EditorView';
 import { getParentKeyFromFullKey, getSurveyItemsAsFlatList, isValidSurveyItemGroup } from '../../utils/utils';
 import { toast } from 'sonner';
 import { generateNewItemForType } from '../../utils/new-item-init';
-import { SurveyContext } from '../../surveyContext';
-import { ItemEditorContext } from './item-editor-context';
+import { SurveyEditorContext } from '../../surveyEditorContext';
+import { ItemEditorContextProvider } from './item-editor-context';
 
 interface ItemEditorProps {
     className?: string;
@@ -21,7 +21,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
     const {
         survey,
         setSurvey,
-    } = useContext(SurveyContext);
+    } = useContext(SurveyEditorContext);
     const [isCollapsed, setIsCollapsed] = React.useState(true);
     const [editorInstance, setEditorInstance] = React.useState<EditorInstance | undefined>(survey ? new EditorInstance(survey) : undefined);
     const [selectedItemKey, setSelectedItemKey] = React.useState<string | null>(survey?.surveyDefinition.key || null);
@@ -128,7 +128,12 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
     }
 
     return (
-        <ItemEditorContext.Provider value={{ selectedItemKey, setSelectedItemKey, currentPath, setCurrentPath }}>
+        <ItemEditorContextProvider
+            selectedItemKey={selectedItemKey}
+            setSelectedItemKey={setSelectedItemKey}
+            currentPath={currentPath}
+            setCurrentPath={setCurrentPath}
+        >
             <div
                 className={cn('overflow-hidden', props.className)}
             >
@@ -229,7 +234,14 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     if (selectedItemKey === itemKey) {
                                         setSelectedItemKey(parentItem.key);
                                     }
-                                    setSurvey(editorInstance.getSurvey());
+                                    const updatedSurvey = editorInstance.getSurvey();
+                                    updatedSurvey.prefillRules = updatedSurvey.prefillRules?.filter(rule => {
+                                        if (!rule.data || rule.data.length < 1) {
+                                            return false;
+                                        }
+                                        return rule.data[0].str !== itemKey;
+                                    })
+                                    setSurvey(updatedSurvey);
                                     toast(`Item "${itemKey}" deleted`);
                                 }}
                                 onMoveItem={(newParentKey, oldItemKey) => {
@@ -273,6 +285,16 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     toast(`Move successful. New item key: "${newItemKey}"`, {
                                         description: 'References to the item are not updated. Please update them manually.'
                                     });
+                                    const updatedSurvey = editorInstance.getSurvey();
+                                    updatedSurvey.prefillRules = updatedSurvey.prefillRules?.map(rule => {
+                                        if (!rule.data || rule.data.length < 1) {
+                                            return rule;
+                                        }
+                                        if (rule.data[0].str === oldItemKey) {
+                                            rule.data[0].str = newItemKey;
+                                        }
+                                        return rule;
+                                    })
                                     setSurvey(editorInstance.getSurvey());
                                 }}
                                 onChangeKey={(oldKey, newKey) => {
@@ -307,7 +329,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
                 </ResizablePanelGroup>
             </div>
-        </ItemEditorContext.Provider>
+        </ItemEditorContextProvider>
     );
 };
 

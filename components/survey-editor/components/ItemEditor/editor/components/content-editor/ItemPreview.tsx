@@ -1,10 +1,10 @@
 import SurveySingleItemView from '@/components/survey-renderer/SurveySingleItemView/SurveySingleItemView';
-import React, { useContext } from 'react';
+import React from 'react';
 import { ComponentProperties, Expression, ExpressionArg, ItemGroupComponent, LocalizedObject, LocalizedString, SurveyItem, SurveySingleItem, isItemGroupComponent } from 'survey-engine/data_types';
 import SurveyLanguageToggle from '../../../../general/SurveyLanguageToggle';
-import { SurveyContext } from '@/components/survey-editor/surveyContext';
 import { nl } from 'date-fns/locale';
 import { SurveyContextProvider } from '@/components/survey-renderer/survey-context';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
 
 interface ItemPreviewProps {
@@ -138,7 +138,7 @@ export const expressionArgParser = (arg: ExpressionArg): number | string | Expre
 }
 
 const ItemPreview: React.FC<ItemPreviewProps> = (props) => {
-    const { selectedLanguage } = useContext(SurveyContext);
+    const { selectedLanguage } = useSurveyEditorCtx();
 
     return (
         <div className='max-w-[832px] mx-auto py-4 space-y-4 survey'>

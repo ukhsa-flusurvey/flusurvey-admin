@@ -6,7 +6,7 @@ import ItemEditor from './components/ItemEditor/ItemEditor';
 import { Survey } from 'survey-engine/data_types';
 import { EditorMode } from './components/types';
 import { Toaster } from 'sonner';
-import { SurveyContext } from './surveyContext';
+import { SurveyEditorContextProvider } from './surveyEditorContext';
 import SurveyProperties from './components/survey-props-editor/survey-props-editor';
 import SaveSurveyToDiskDialog from './components/SaveSurveyToDiskDialog';
 import LoadSurveyFromDisk from './components/LoadSurveyFromDisk';
@@ -148,7 +148,14 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
     }
 
     return (
-        <SurveyContext.Provider value={{ storedSurvey: storedSurvey, setStoredSurvey: setStoredSurvey, survey: survey, setSurvey: setSurvey, selectedLanguage: selectedLanguage, setSelectedLanguage: setSelectedLanguage }}>
+        <SurveyEditorContextProvider
+            survey={survey}
+            setSurvey={setSurvey}
+            storedSurvey={storedSurvey}
+            setStoredSurvey={setStoredSurvey}
+            selectedLanguage={selectedLanguage}
+            setSelectedLanguage={setSelectedLanguage}
+        >
             <div className='bg-center bg-cover bg-[url(/images/sailing-ship.png)] h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
                 <SurveyEditorMenu
                     currentEditorMode={mode}
@@ -182,7 +189,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                 />
                 <Toaster />
             </div >
-        </SurveyContext.Provider>
+        </SurveyEditorContextProvider>
     );
 };
 
