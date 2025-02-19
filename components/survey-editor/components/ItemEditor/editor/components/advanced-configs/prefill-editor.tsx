@@ -49,60 +49,71 @@ const PrefillRuleItem: React.FC<PrefillRuleItemProps> = (props) => {
                 }
 
                 return <div className='flex gap-2 items-center w-full'>
-                    <Input
-                        placeholder='Slot key (e.g. rg.mcg.1)'
-                        defaultValue={slotKey}
-                        onChange={(e) => {
-                            const val = e.target.value;
+                    <Label className='grow space-y-1.5 font-medium text-xs'>
+                        <span>
+                            Slot key
+                        </span>
+                        <Input
+                            placeholder='Slot key (e.g. rg.mcg.1)'
+                            defaultValue={slotKey}
+                            onChange={(e) => {
+                                const val = e.target.value;
 
-                            if (!props.rule.data || props.rule.data.length < 1) {
-                                return;
-                            }
+                                if (!props.rule.data || props.rule.data.length < 1) {
+                                    return;
+                                }
 
-                            if (props.rule.data.length < 2) {
-                                props.rule.data.push({
+                                if (props.rule.data.length < 2) {
+                                    props.rule.data.push({
+                                        dtype: 'str',
+                                        str: val,
+                                    });
+                                } else {
+                                    props.rule.data[1].str = val;
+                                }
+                                props.onChange(props.rule);
+                            }}
+                        />
+                    </Label>
+
+                    <Label className='grow space-y-1.5 font-medium text-xs'>
+                        <span>
+                            Optional value
+                        </span>
+                        <Input
+                            placeholder='Optional value'
+                            defaultValue={slotValue}
+                            type={useNumericValue ? 'number' : 'text'}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (!props.rule.data || props.rule.data.length < 1) {
+                                    return;
+                                }
+
+                                if (props.rule.data.length < 2) {
+                                    props.rule.data.push({
+                                        dtype: 'str',
+                                        str: '',
+                                    });
+                                }
+
+                                const val: ExpressionArg = useNumericValue ? {
+                                    dtype: 'num',
+                                    num: parseInt(value),
+                                } : {
                                     dtype: 'str',
-                                    str: val,
-                                });
-                            } else {
-                                props.rule.data[1].str = val;
-                            }
-                            props.onChange(props.rule);
-                        }}
-                    />
+                                    str: value,
+                                }
+                                if (props.rule.data.length < 3) {
+                                    props.rule.data.push(val);
+                                } else {
+                                    props.rule.data[2] = val;
+                                }
+                                props.onChange(props.rule);
+                            }}
+                        />
+                    </Label>
 
-                    <Input
-                        placeholder='Optional value'
-                        defaultValue={slotValue}
-                        type={useNumericValue ? 'number' : 'text'}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            if (!props.rule.data || props.rule.data.length < 1) {
-                                return;
-                            }
-
-                            if (props.rule.data.length < 2) {
-                                props.rule.data.push({
-                                    dtype: 'str',
-                                    str: '',
-                                });
-                            }
-
-                            const val: ExpressionArg = useNumericValue ? {
-                                dtype: 'num',
-                                num: parseInt(value),
-                            } : {
-                                dtype: 'str',
-                                str: value,
-                            }
-                            if (props.rule.data.length < 3) {
-                                props.rule.data.push(val);
-                            } else {
-                                props.rule.data[2] = val;
-                            }
-                            props.onChange(props.rule);
-                        }}
-                    />
 
                     <Label className='flex flex-col gap-1'>
                         <span className='text-xs text-nowrap'>
@@ -140,19 +151,31 @@ const PrefillRuleItem: React.FC<PrefillRuleItemProps> = (props) => {
                     </Label>
                 </div>
             case 'PREFILL_ITEM_WITH_LAST_RESPONSE':
+                let currentDateFilter: ExpressionArg | undefined;
+                if (props.rule.data && props.rule.data.length > 1) {
+                    currentDateFilter = props.rule.data[1];
+                }
+
                 return <ExpArgEditorForDate
                     label='Optional date filter'
-                    expArg={undefined}
+                    expArg={currentDateFilter}
                     onChange={(argValue) => {
-                        /*const currentData = props.component.properties || {};
-                        currentData.min = argValue;
-                        props.onChange({
-                            ...props.component,
-                            properties: {
-                                ...currentData,
+                        if (!props.rule.data || props.rule.data.length < 1) {
+                            console.warn('rule.data is empty')
+                            return
+                        }
+                        if (argValue === undefined) {
+                            props.rule.data.splice(1, 1);
+                            props.onChange(props.rule);
+                            return
+                        } else {
+                            if (props.rule.data.length > 1) {
+                                props.rule.data[1] = argValue;
+                            } else {
+                                props.rule.data.push(argValue);
                             }
-                        })*/
-
+                            props.onChange(props.rule);
+                        }
                     }}
                 />
 
@@ -163,7 +186,7 @@ const PrefillRuleItem: React.FC<PrefillRuleItemProps> = (props) => {
     return (
         <div className='flex items-start gap-2 px-3 py-2 border border-border rounded-md justify-between bg-secondary'>
             <div className=' space-y-2 items-center grow'>
-                <p className='text-sm uppercase font-medium text-nowrap'>
+                <p className='text-sm uppercase font-bold text-nowrap'>
                     {name()}
                 </p>
                 <div className=''>
@@ -243,7 +266,6 @@ const PrefillEditor: React.FC = () => {
             });
         }
     })
-    console.log('prefillRulesForItem', prefillRulesForItem);
 
     return (
         <>
