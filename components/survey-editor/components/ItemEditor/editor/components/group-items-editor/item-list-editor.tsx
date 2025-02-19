@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from '../../../explorer/ItemCreator';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { generateNewItemForType } from '@/components/survey-editor/utils/new-item-init';
 import { toast } from 'sonner';
-import { ItemEditorContext } from '../../../item-editor-context';
 import {
     ContextMenu,
     ContextMenuContent,
@@ -19,6 +18,7 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useCopyToClipboard } from 'usehooks-ts';
+import { useItemEditorCtx } from '../../../item-editor-context';
 
 interface ItemListEditorProps {
     surveyItem: SurveyItem;
@@ -27,7 +27,7 @@ interface ItemListEditorProps {
 }
 
 const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
-    const { setSelectedItemKey, setCurrentPath } = useContext(ItemEditorContext);
+    const { setSelectedItemKey, setCurrentPath } = useItemEditorCtx();
 
     const groupItem = props.surveyItem as SurveyGroupItem;
     const [draggedId, setDraggedId] = React.useState<string | null>(null);

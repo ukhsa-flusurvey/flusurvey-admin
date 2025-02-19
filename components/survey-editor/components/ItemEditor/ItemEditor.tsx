@@ -10,7 +10,7 @@ import { getParentKeyFromFullKey, getSurveyItemsAsFlatList, isValidSurveyItemGro
 import { toast } from 'sonner';
 import { generateNewItemForType } from '../../utils/new-item-init';
 import { SurveyContext } from '../../surveyContext';
-import { ItemEditorContext } from './item-editor-context';
+import { ItemEditorContextProvider } from './item-editor-context';
 
 interface ItemEditorProps {
     className?: string;
@@ -128,7 +128,12 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
     }
 
     return (
-        <ItemEditorContext.Provider value={{ selectedItemKey, setSelectedItemKey, currentPath, setCurrentPath }}>
+        <ItemEditorContextProvider
+            selectedItemKey={selectedItemKey}
+            setSelectedItemKey={setSelectedItemKey}
+            currentPath={currentPath}
+            setCurrentPath={setCurrentPath}
+        >
             <div
                 className={cn('overflow-hidden', props.className)}
             >
@@ -307,7 +312,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
                 </ResizablePanelGroup>
             </div>
-        </ItemEditorContext.Provider>
+        </ItemEditorContextProvider>
     );
 };
 
