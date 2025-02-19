@@ -234,7 +234,14 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     if (selectedItemKey === itemKey) {
                                         setSelectedItemKey(parentItem.key);
                                     }
-                                    setSurvey(editorInstance.getSurvey());
+                                    const updatedSurvey = editorInstance.getSurvey();
+                                    updatedSurvey.prefillRules = updatedSurvey.prefillRules?.filter(rule => {
+                                        if (!rule.data || rule.data.length < 1) {
+                                            return false;
+                                        }
+                                        return rule.data[0].str !== itemKey;
+                                    })
+                                    setSurvey(updatedSurvey);
                                     toast(`Item "${itemKey}" deleted`);
                                 }}
                                 onMoveItem={(newParentKey, oldItemKey) => {
@@ -278,6 +285,16 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     toast(`Move successful. New item key: "${newItemKey}"`, {
                                         description: 'References to the item are not updated. Please update them manually.'
                                     });
+                                    const updatedSurvey = editorInstance.getSurvey();
+                                    updatedSurvey.prefillRules = updatedSurvey.prefillRules?.map(rule => {
+                                        if (!rule.data || rule.data.length < 1) {
+                                            return rule;
+                                        }
+                                        if (rule.data[0].str === oldItemKey) {
+                                            rule.data[0].str = newItemKey;
+                                        }
+                                        return rule;
+                                    })
                                     setSurvey(editorInstance.getSurvey());
                                 }}
                                 onChangeKey={(oldKey, newKey) => {
