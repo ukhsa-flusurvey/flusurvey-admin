@@ -16,13 +16,14 @@ import { z } from "zod"
 import TaskRunner from './task-runner';
 import { StudyEngine } from 'case-editor-tools/expression-utils/studyEngineExpressions';
 import ParticipantInfoUploader, { participantInfoSchema } from './participant-info-uploader';
-
+import { Switch } from '@/components/ui/switch';
 
 
 const scheduleMessageActionSchema = z.object({
     studyKey: z.string().min(2).max(50),
     messageType: z.string().min(2, 'template type is required').max(50),
     scheduledFor: z.date(),
+    useAsLinkingCode: z.boolean(),
     participantInfos: participantInfoSchema
 })
 
@@ -52,6 +53,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             messageType: "",
             scheduledFor: new Date(),
             studyKey: props.studyKey,
+            useAsLinkingCode: false,
             participantInfos: [],
         },
     })
@@ -82,15 +84,25 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                     if (key === 'participantID') {
                         continue;
                     }
-                    if (!pInfos[key]) {
-                        continue;
+                    const pInfoVal = pInfos[key];
+                    let updateExpression: Expression;
+                    if (values.useAsLinkingCode) {
+                        if (!pInfoVal) {
+                            updateExpression = StudyEngine.participantActions.linkingCodes.delete(key);
+                        } else {
+                            updateExpression = StudyEngine.participantActions.linkingCodes.set(key, pInfoVal);
+                        }
+                    } else {
+                        if (!pInfoVal) {
+                            updateExpression = StudyEngine.participantActions.removeFlag(key)
+                        } else {
+                            updateExpression = StudyEngine.participantActions.updateFlag(
+                                key,
+                                pInfoVal
+                            )
+                        }
                     }
-                    rules.push(
-                        StudyEngine.participantActions.updateFlag(
-                            key,
-                            pInfos[key]
-                        )
-                    );
+                    rules.push(updateExpression);
                 }
 
                 newTasks.push({
@@ -112,7 +124,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             <Alert className="">
                 <Info className="size-4" />
                 <AlertDescription>
-                    {'Use this form to schedule a message to be sent to the participants. Use the CSV file to upload the participant IDs and their information. The CSV file should have a header row with the column names. One of the columns must be "participantID". All other columns will be added as flags to the participant.'}
+                    {'Use this form to schedule a message to be sent to the participants. Use the CSV file to upload the participant IDs and their information. The CSV file should have a header row with the column names. One of the columns must be "participantID". All other columns will be added as flags or linking codes to the participant. Empty cells will remove the participant\'s flag or linking code for the given key'}
 
                 </AlertDescription>
             </Alert>
@@ -177,6 +189,34 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
 
                     <FormField
                         control={form.control}
+                        name="useAsLinkingCode"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className='cursor-pointer'>
+                                    Info target mode
+                                </FormLabel>
+                                <div className='flex items-center gap-2'>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+
+                                    </FormControl>
+                                    <FormLabel className='cursor-pointer font-normal'>
+                                        Use participant infos as {field.value ? 'linking code' : 'participant flags'}
+                                    </FormLabel>
+                                </div>
+                                <FormDescription>
+                                    Toggle if the additional columns should be used as linking code or participant flags.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
                         name="participantInfos"
                         render={({ field }) => (
                             <FormItem>
@@ -190,6 +230,8 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                             </FormItem>
                         )}
                     />
+
+
 
                     <LoadingButton
                         type="submit"
