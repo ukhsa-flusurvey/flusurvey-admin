@@ -13,6 +13,7 @@ import TaskRunner from '../../schedule-message/_components/task-runner';
 import { StudyEngine } from 'case-editor-tools/expression-utils/studyEngineExpressions';
 import ParticipantInfoUploader, { participantInfoSchema } from '../../schedule-message/_components/participant-info-uploader';
 import { Switch } from '@/components/ui/switch';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const updateParticipantInfoActionSchema = z.object({
@@ -33,6 +34,7 @@ const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) =>
         rules: Expression[];
         studyKey: string;
         useAsLinkingCode: boolean;
+        taskID: string;
     }[]>([])
 
     const form = useForm<z.infer<typeof updateParticipantInfoActionSchema>>({
@@ -52,6 +54,7 @@ const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) =>
                 rules: Expression[];
                 studyKey: string;
                 useAsLinkingCode: boolean;
+                taskID: string;
             }> = [];
             for (const pInfos of values.participantInfos) {
                 const participantID = pInfos['participantID'];
@@ -91,10 +94,11 @@ const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) =>
                     rules,
                     studyKey: values.studyKey,
                     useAsLinkingCode: values.useAsLinkingCode,
+                    taskID: uuidv4(),
                 })
             }
             setTaskToRun(prev => {
-                return [...prev, ...newTasks]
+                return [...newTasks, ...prev]
             })
         })
     }
@@ -175,10 +179,10 @@ const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) =>
                 <h3 className='text-lg font-semibold mb-4'>Task runner</h3>
                 <ul className='space-y-2'>
                     {taskToRun.map((task, index) => (
-                        <li key={task.participantID + index.toFixed()}
+                        <li key={task.taskID}
                             className='flex gap-2 border border-border p-2 rounded-md'
                         >
-                            {index + 1}
+                            {taskToRun.length - index}
                             <TaskRunner
                                 messageType={task.useAsLinkingCode ? 'Update linking codes' : 'Update participant flags'}
                                 participantID={task.participantID}

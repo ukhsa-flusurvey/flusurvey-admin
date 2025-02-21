@@ -14,10 +14,17 @@ interface TaskRunnerProps {
 
 const TaskRunner: React.FC<TaskRunnerProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
+    const [hasStarted, setHasStarted] = React.useState(false);
     const [error, setError] = React.useState<string | undefined>(undefined);
+
     useEffect(() => {
+        if (hasStarted) {
+            return;
+        }
+
         startTransition(async () => {
             try {
+                setHasStarted(true);
                 const resp = await runStudyActionForParticipant(
                     props.studyKey,
                     props.rules,
@@ -31,7 +38,7 @@ const TaskRunner: React.FC<TaskRunnerProps> = (props) => {
                 setError((error as Error).message);
             }
         });
-    }, [props.participantID, props.rules, props.studyKey])
+    }, [props.participantID, props.rules, props.studyKey, hasStarted])
 
     return (
         <div className='flex gap-4 w-full items-center'>
