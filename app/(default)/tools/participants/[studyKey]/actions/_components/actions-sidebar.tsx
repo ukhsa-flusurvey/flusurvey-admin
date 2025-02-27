@@ -29,7 +29,11 @@ const ActionsSidebar: React.FC<ActionsSidebarProps> = (props) => {
         {
             label: 'Participant info updater',
             href: `/tools/participants/${props.studyKey}/actions/participant-info-updater`,
-        }
+        },
+        {
+            label: 'Add reports',
+            href: `/tools/participants/${props.studyKey}/actions/add-reports`,
+        },
     ];
 
 
