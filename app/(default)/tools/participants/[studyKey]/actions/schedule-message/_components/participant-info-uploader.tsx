@@ -24,6 +24,11 @@ const detectDelimiter = (text: string): string => {
     )
 }
 
+const parseCSVLine = (line: string, delimiter: string): string[] => {
+    const regex = new RegExp(`\\s*${delimiter}\\s*(?=(?:[^"]*"[^"]*")*[^"]*$)`);
+    return line.split(regex).map(field => field.replace(/^"|"$/g, '').trim());
+}
+
 const ParticipantInfoUploader: React.FC<ParticipantInfoUploaderProps> = (props) => {
     return (
         <div>
@@ -46,9 +51,9 @@ const ParticipantInfoUploader: React.FC<ParticipantInfoUploaderProps> = (props) 
                                 return;
                             }
                             const delimiter = detectDelimiter(text);
-                            const keys = lines[0].split(delimiter).map(k => k.trim()).filter(k => k.length > 0);
+                            const keys = parseCSVLine(lines[0], delimiter);
                             const data = lines.filter(l => l.length > 0).slice(1).map(line => {
-                                const values = line.split(delimiter).map(v => v.trim());
+                                const values = parseCSVLine(line, delimiter);
                                 if (values.length !== keys.length) {
                                     return null;
                                 }
