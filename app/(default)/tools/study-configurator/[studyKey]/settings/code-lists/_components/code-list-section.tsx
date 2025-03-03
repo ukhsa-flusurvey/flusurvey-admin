@@ -4,6 +4,7 @@ import { Loader2Icon } from 'lucide-react';
 import { getStudyCodeListEntries } from '@/lib/data/studyAPI';
 import ErrorAlert from '@/components/ErrorAlert';
 import { Separator } from '@/components/ui/separator';
+import DeleteWholeCodeList from './delete-whole-code-list';
 
 interface CodeListSectionProps {
     studyKey: string;
@@ -57,7 +58,15 @@ const CodeListSection: React.FC<CodeListSectionProps> = async (props) => {
     // load code list items for list key
     return (
         <section className='border border-border rounded-md overflow-hidden'>
-            <h3 className='px-4 py-2 font-semibold bg-slate-50'>{props.listKey} <span className='text-muted-foreground'>({codeList?.length || 0})</span></h3>
+            <h3 className='px-4 py-2 font-semibold bg-slate-50 flex items-center justify-between'>
+                <span>
+                    {props.listKey} <span className='text-muted-foreground'>({codeList?.length || 0})</span>
+                </span>
+                <DeleteWholeCodeList
+                    studyKey={props.studyKey}
+                    listKey={props.listKey}
+                />
+            </h3>
             <Separator />
             {content}
         </section>
