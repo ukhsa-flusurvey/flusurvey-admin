@@ -30,13 +30,13 @@ export const addStudyCodeListEntries = async (studyKey: string, listKey: string,
     return resp.body;
 }
 
-export const deleteStudyCodeListEntry = async (studyKey: string, listKey: string, code: string) => {
+export const deleteStudyCodeListEntry = async (studyKey: string, listKey: string, code?: string) => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
         return { status: 401, error: 'Unauthorized' };
     }
-
-    const url = `/v1/studies/${studyKey}/study-code-list/codes?listKey=${listKey}&code=${code}`;
+    const codeQuery = code ? `&code=${code}` : '';
+    const url = `/v1/studies/${studyKey}/study-code-list/codes?listKey=${listKey}${codeQuery}`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
