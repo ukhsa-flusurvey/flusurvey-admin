@@ -32,6 +32,7 @@ interface ContactValues {
     address?: {
         street: string;
         street2: string;
+        houseNumber?: string;
         city: string;
         postalCode: string;
         country?: string;
@@ -57,6 +58,7 @@ interface ContactFormDialogProps {
             label?: string;
             street: FormFieldConfig;
             street2: FormFieldConfig;
+            houseNumber?: FormFieldConfig;
             city: FormFieldConfig;
             postalCode: FormFieldConfig;
             country?: FormFieldConfig;
@@ -75,6 +77,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
     const usePhone = props.fieldConfig.phone !== undefined;
     const useAddress = props.fieldConfig.address !== undefined;
     const useCountry = props.fieldConfig.address?.country !== undefined;
+    const useHouseNumber = props.fieldConfig.address?.houseNumber !== undefined;
 
     const formSchema = z.object({
         fullName: useFullName ? z.string().refine((value) => {
@@ -108,6 +111,11 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
             }, {
                 message: props.fieldConfig.address?.street2.error
             }),
+            houseNumber: useHouseNumber ? z.string().refine((value) => {
+                return new RegExp(props.fieldConfig.address?.houseNumber?.pattern || '').test(value)
+            }, {
+                message: props.fieldConfig.address?.houseNumber?.error
+            }) : z.any().optional(),
             city: z.string().refine((value) => {
                 return new RegExp(props.fieldConfig.address?.city.pattern || '').test(value)
             }, {
@@ -136,6 +144,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
             address: props.values?.address || {
                 street: '',
                 street2: '',
+                houseNumer: '',
                 city: '',
                 postalCode: '',
                 country: '',
@@ -152,6 +161,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
             address: {
                 street: values.address?.street || '',
                 street2: values.address?.street2 || '',
+                houseNumber: values.address?.houseNumber || undefined,
                 city: values.address?.city || '',
                 postalCode: values.address?.postalCode || '',
                 country: values.address?.country || '',
@@ -181,7 +191,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                 </Button>
             </DialogTrigger>
             <DialogContent
-                className='overflow-y-scroll max-h-svh lg:max-w-2xl'
+                className='overflow-y-scroll max-h-svh lg:max-w-2xl @container'
                 closeBtnAriaLabel={props.dialog.cancelBtnLabel || ''}
             >
                 <DialogHeader>
@@ -289,27 +299,52 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
                             {props.fieldConfig.address?.label && <p className='text-sm font-semibold'>
                                 {props.fieldConfig.address?.label}
                             </p>}
-                            <FormField
-                                control={form.control}
-                                name="address.street"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {props.fieldConfig.address?.street?.label}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder={props.fieldConfig.address?.street?.placeholder}
-                                                autoComplete='address-line1'
-                                                {...field} />
-                                        </FormControl>
-                                        <FormDescription>
-                                            {props.fieldConfig.address?.street?.description}
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className='flex flex-col @md:flex-row gap-4 w-full'>
+                                <FormField
+                                    control={form.control}
+                                    name="address.street"
+                                    render={({ field }) => (
+                                        <FormItem className='grow'>
+                                            <FormLabel>
+                                                {props.fieldConfig.address?.street?.label}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder={props.fieldConfig.address?.street?.placeholder}
+                                                    autoComplete='address-line1'
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                {props.fieldConfig.address?.street?.description}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {useHouseNumber && <FormField
+                                    control={form.control}
+                                    name="address.houseNumber"
+                                    render={({ field }) => (
+                                        <FormItem className='w-auto @md:w-40'>
+                                            <FormLabel>
+                                                {props.fieldConfig.address?.houseNumber?.label}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder={props.fieldConfig.address?.houseNumber?.placeholder}
+                                                    autoComplete='address-line1'
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                {props.fieldConfig.address?.houseNumber?.description}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />}
+
+                            </div>
 
                             <FormField
                                 control={form.control}
@@ -490,12 +525,13 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     const streetComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'street');
     const street2Comp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'street2');
+    const houseNumberComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'houseNumber');
     const cityComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'city');
     const postalCodeComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'postalCode');
     const countryComp = getItemComponentByRole((addressComp as ItemGroupComponent)?.items, 'country');
 
     const useCountry = countryComp !== undefined;
-
+    const useHouseNumber = houseNumberComp !== undefined;
 
     const contactValues = {
         fullName: getResponseValue(response, 'fullName') || '',
@@ -505,6 +541,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
         address: {
             street: getResponseValue(response, 'street') || '',
             street2: getResponseValue(response, 'street2') || '',
+            houseNumber: getResponseValue(response, 'houseNumber'),
             city: getResponseValue(response, 'city') || '',
             postalCode: getResponseValue(response, 'postalCode') || '',
             country: getResponseValue(response, 'country') || '',
@@ -566,7 +603,10 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                         <Mailbox className='size-5 text-muted-foreground' />
                     </span>
                     <p className='flex flex-col'>
-                        <span>{contactValues.address?.street}</span>
+                        <span>{contactValues.address?.street}
+
+                            {useHouseNumber && <span className='ml-1'>{contactValues.address?.houseNumber}</span>}
+                        </span>
                         <span>{contactValues.address?.street2}</span>
                         <span className='flex items-center gap-1'>
                             <span>{contactValues.address?.postalCode}</span>
@@ -624,6 +664,13 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                                 value: useCountry ? newValues.address?.country || '' : ''
                             }
                         ];
+
+                        if (useHouseNumber) {
+                            items.push({
+                                key: 'houseNumber',
+                                value: newValues.address?.houseNumber || ''
+                            })
+                        }
 
                         if (!prev) {
                             return {
@@ -692,6 +739,13 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                             error: getLocaleStringTextByCode((street2Comp as ItemGroupComponent).items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
                             description: getLocaleStringTextByCode((street2Comp as ItemGroupComponent).items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
                         },
+                        houseNumber: useHouseNumber ? {
+                            label: getLocaleStringTextByCode(houseNumberComp?.content, props.languageCode) || '',
+                            placeholder: getLocaleStringTextByCode(houseNumberComp?.description, props.languageCode) || '',
+                            pattern: houseNumberComp?.properties?.pattern,
+                            error: getLocaleStringTextByCode((houseNumberComp as ItemGroupComponent).items?.find(item => item.role === 'error')?.content, props.languageCode) || '',
+                            description: getLocaleStringTextByCode((houseNumberComp as ItemGroupComponent).items?.find(item => item.role === 'hint')?.content, props.languageCode) || '',
+                        } : undefined,
                         city: {
                             label: getLocaleStringTextByCode(cityComp?.content, props.languageCode) || '',
                             placeholder: getLocaleStringTextByCode(cityComp?.description, props.languageCode) || '',

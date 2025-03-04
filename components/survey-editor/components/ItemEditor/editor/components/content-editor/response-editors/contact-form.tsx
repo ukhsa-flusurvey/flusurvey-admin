@@ -371,6 +371,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
         const cityComp = currentAddressComp?.items.find(item => item.role === 'city');
         const postalCodeComp = currentAddressComp?.items.find(item => item.role === 'postalCode');
         const countryComp = currentAddressComp?.items.find(item => item.role === 'country');
+        const houseNumberComp = currentAddressComp?.items.find(item => item.role === 'houseNumber');
 
         return <div className='space-y-4 p-2 border border-border rounded-md'>
             <p className='font-semibold text-sm '>
@@ -462,10 +463,31 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                         onChange(currentAddressComp);
                     }}
                     id='street'
-                    fieldName='Street'
+                    fieldName='Address line 1'
                     selectedLanguage={selectedLanguage}
                     hideToggle={true}
                 />
+
+                <SimpleFieldConfigs
+                    component={houseNumberComp as ItemGroupComponent}
+                    onChange={(newComp) => {
+                        currentAddressComp.items = currentAddressComp.items.filter(item => item.role !== 'houseNumber');
+                        if (!newComp) {
+                            onChange(currentAddressComp);
+                            return;
+                        }
+                        currentAddressComp.items.push(
+                            newComp
+                        );
+
+                        onChange(currentAddressComp);
+                    }}
+                    id='houseNumber'
+                    fieldName='House number (separate from street)'
+                    selectedLanguage={selectedLanguage}
+                    allowOptionItems={false}
+                />
+
                 <SimpleFieldConfigs
                     component={street2Comp as ItemGroupComponent}
                     onChange={(newComp) => {
@@ -482,7 +504,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
                         onChange(currentAddressComp);
                     }}
                     id='street2'
-                    fieldName='Street 2'
+                    fieldName='Address line 2'
                     selectedLanguage={selectedLanguage}
                     hideToggle={true}
                 />
