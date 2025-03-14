@@ -32,7 +32,7 @@ export interface SelectSlotType extends SlotTypeBase {
 }
 
 interface FormSlotType extends SlotTypeBase {
-    type: 'key-value' | 'list-selector'
+    type: 'key-value' | 'list-selector' | 'key-value-list'
 }
 
 interface ExpressionSlotType extends SlotTypeBase {
@@ -85,7 +85,15 @@ export interface SlotInputDefSelectorFromContext extends SlotInputDefBase {
     filterForItemType?: string, // array items only if they have this type
 }
 
-export type SlotInputDef = SlotInputDefSimple | SlotInputDefFormKeyValueFromContext | SlotInputDefSelectorFromContext;
+export interface SlotInputDefKeyValueList extends SlotInputDefBase {
+    type: 'key-value-list'
+    contextArrayKey?: string,
+    filterForItemType?: string, // array items only if they have this type
+    withFixedKey?: string; // if defined, the key will be fixed to this value and no key selector will be shown
+    withFixedValue?: string; // if defined, the value will be fixed to this value and no value selector will be shown
+}
+
+export type SlotInputDef = SlotInputDefSimple | SlotInputDefFormKeyValueFromContext | SlotInputDefSelectorFromContext | SlotInputDefKeyValueList;
 
 
 export interface ExpressionDef {

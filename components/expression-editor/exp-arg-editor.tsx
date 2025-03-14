@@ -57,8 +57,10 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
         }
 
         const currentSlotValues = currentArgValues.map((argValue, argIndex) => {
+            const slotType = currentSlotTypes.at(argIndex) || argValue?.exp?.name;
+
             return {
-                slotType: currentSlotTypes.at(argIndex),
+                slotType: slotType,
                 value: argValue
             }
         })
@@ -92,10 +94,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     }
 
     // Single slot editor:
-
-
-    const currentSlotTypes = props.availableMetadata?.slotTypes || []
-
+    const currentSlotTypes = props.availableMetadata?.slotTypes || props.availableExpData.map(arg => arg?.exp?.name);
     const isSimpleSelect = slotDef.allowedTypes?.length === 1 && slotDef.allowedTypes[0].type === 'select';
 
     const isDefined = currentSlotTypes.at(props.currentIndex) !== undefined && currentSlotTypes.at(props.currentIndex) !== '';

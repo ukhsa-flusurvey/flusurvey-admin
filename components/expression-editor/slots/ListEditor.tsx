@@ -61,7 +61,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                         const isExpression = expressionDef !== undefined;
                         if (!isExpression) {
                             return <div key={index}>
-                                <p>not expression</p>
+                                <p>unknown expression: {JSON.stringify(currentSlot)}</p>
                             </div>
                         }
 
@@ -71,7 +71,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                         if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
                             currentExpression = currentArgValue.exp;
                         } else {
-                            // TODO: create empty expression
+                            // create empty expression
                             currentExpression = { name: expressionDef.id }
                         }
 

@@ -1,11 +1,13 @@
 import React from 'react';
-import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef, SlotInputDefFormKeyValueFromContext, SlotInputDefSelectorFromContext } from '../utils';
+import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef, SlotInputDefFormKeyValueFromContext, SlotInputDefKeyValueList, SlotInputDefSelectorFromContext } from '../utils';
 import SelectorFromContext from '../components/SelectorFromContext';
 import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
 import SimpleTextInput from '../components/SimpleTextInput';
 import DatePicker from '../components/DatePicker';
 import TimedeltaInput from '../components/TimedeltaInput';
 import SimpleNumberInput from '../components/simple-number-input';
+import KeyValueListFromContext from '../components/key-value-list-from-context';
+import { ExpressionArgDType } from 'survey-engine/data_types';
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -144,10 +146,10 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                 return <p>Slot type not supported: {props.currentSlotType} of type {currentFormDef.type}</p>
         }
     } else {
+        let currentKeyIndex = props.slotIndex;
+        let currentValueIndex = props.slotIndex + 1;
         switch (currentFormDef.type) {
             case 'key-value':
-                let currentKeyIndex = props.slotIndex;
-                let currentValueIndex = props.slotIndex + 1;
                 if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 1) {
                     currentKeyIndex = props.slotDef.argIndexes[0];
                     currentValueIndex = props.slotDef.argIndexes[1];
@@ -186,6 +188,54 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
 
                         props.onArgsChange(currentData)
+                    }}
+                    onClearSlot={props.onClearSlot}
+                />);
+            case 'key-value-list':
+                if (props.slotDef.argIndexes !== undefined && props.slotDef.argIndexes.length > 1) {
+                    currentKeyIndex = props.slotDef.argIndexes[0];
+                    currentValueIndex = props.slotDef.argIndexes[1];
+                }
+
+                const currentListValues = props.currentArgs?.slice(currentValueIndex + 1)?.map(arg => arg?.str);
+
+                return (<KeyValueListFromContext
+                    slotDef={props.slotDef}
+                    context={props.context}
+                    slotTypeDef={currentFormDef as SlotInputDefKeyValueList}
+                    depth={props.depth}
+                    currentValue={{
+                        itemKey: props.currentArgs?.at(currentKeyIndex)?.str,
+                        slotKey: props.currentArgs?.at(currentValueIndex)?.str,
+                        listValues: currentListValues
+                    }}
+                    onChange={(newValue) => {
+                        const currentData = props.currentArgs !== undefined ? [...props.currentArgs] : [];
+                        if (currentData.length < currentValueIndex) {
+                            currentData.fill(undefined, currentData.length, currentValueIndex)
+                        }
+
+                        currentData[currentKeyIndex] = {
+                            str: newValue.itemKey,
+                            dtype: 'str'
+                        }
+                        currentData[currentValueIndex] = {
+                            str: newValue.slotKey,
+                            dtype: 'str'
+                        }
+
+                        const newOptions = newValue.listValues?.map(value => ({
+                            str: value,
+                            dtype: 'str' as ExpressionArgDType
+                        }))
+
+
+                        currentData.splice(currentValueIndex + 1, currentData.length - currentValueIndex - 1)
+                        if (newOptions !== undefined) {
+                            currentData.push(...newOptions)
+                        }
+
+                        props.onArgsChange([...currentData])
                     }}
                     onClearSlot={props.onClearSlot}
                 />)
