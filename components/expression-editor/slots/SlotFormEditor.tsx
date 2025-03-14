@@ -237,7 +237,10 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
 
                         props.onArgsChange([...currentData])
                     }}
-                    onClearSlot={props.onClearSlot}
+                    onClearSlot={() => {
+                        props.onClearSlot()
+                        props.onArgsChange([])
+                    }}
                 />)
             default:
                 return (<p>

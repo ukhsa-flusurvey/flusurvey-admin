@@ -145,14 +145,6 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
 
     // Focus the input when clicking anywhere in the container
     useEffect(() => {
-        const container = containerRef.current
-        if (container) {
-            container.addEventListener("click", focusInput)
-            return () => {
-                container.removeEventListener("click", focusInput)
-            }
-        }
-
         if (props.slotTypeDef.withFixedValue !== undefined || props.slotTypeDef.withFixedKey !== undefined) {
             const updatedValue = {
                 ...props.currentValue,
@@ -165,6 +157,14 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
             }
             if (updatedValue.itemKey !== props.currentValue.itemKey || updatedValue.slotKey !== props.currentValue.slotKey) {
                 props.onChange(updatedValue);
+            }
+        }
+
+        const container = containerRef.current
+        if (container) {
+            container.addEventListener("click", focusInput)
+            return () => {
+                container.removeEventListener("click", focusInput)
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
