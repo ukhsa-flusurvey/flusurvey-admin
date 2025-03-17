@@ -122,6 +122,157 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
     ...slotKeyValueListSlotEditors
 ]
 
+const advancedExpressions: ExpressionDef[] = [
+    {
+        id: 'isDefined',
+        categories: ['advanced'],
+        label: 'Is return value defined',
+        returnType: 'boolean',
+        icon: 'blocks',
+        slots: [
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str', 'num', 'boolean']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'isDefined',
+                data: []
+            }
+        }
+    },
+
+    {
+        id: 'getAttribute',
+        categories: ['advanced'],
+        label: 'Get attribute',
+        returnType: 'str',
+        icon: 'blocks',
+        slots: [
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['object', 'str']
+                    }
+                ]
+            },
+            {
+                label: 'Attribute',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getAttribute',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'getContext',
+        categories: ['advanced'],
+        label: 'Get context',
+        returnType: 'object',
+        icon: 'blocks',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getContext',
+                data: []
+            }
+        }
+    },
+
+    {
+        id: 'isLoggedIn',
+        categories: ['advanced'],
+        label: 'Is user logged in',
+        returnType: 'boolean',
+        icon: 'blocks',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'and',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'isDefined',
+                            data: [
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'getAttribute',
+                                        data: [
+                                            {
+                                                dtype: 'exp',
+                                                exp: {
+                                                    name: 'getContext',
+                                                }
+                                            },
+                                            {
+                                                dtype: 'str',
+                                                str: 'isLoggedIn'
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getAttribute',
+                            data: [
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'getContext',
+                                    }
+                                },
+                                {
+                                    dtype: 'str',
+                                    str: 'isLoggedIn'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        isTemplateFor: 'and'
+    }
+]
+
 
 const comparisonOperators: ExpressionDef[] = [
     {
@@ -537,7 +688,8 @@ const responseDependencies: ExpressionDef[] = [
                     }
                 ]
             }
-        }
+        },
+        isTemplateFor: 'hasResponse'
     }
 ]
 
@@ -547,7 +699,7 @@ export const surveyEngineRegistry: ExpressionDef[] = [
     ...miscExpressions,
     ...responseDependencies,
     ...comparisonOperators,
-
+    ...advancedExpressions,
     {
         categories: ['participant-flags'],
         id: 'hasParticipantFlag',
@@ -626,19 +778,11 @@ datePicker: {
     get: getDatePickerResponseValue,
   },
 
-isLoggedIn,
-
   participantFlags: {
     hasKey: hasParticipantFlagKey,
         hasKeyAndValue: hasParticipantFlagKeyAndValue,
             getAsNum: parseParticipantFlagAsNum,
   },
 
-
-
-// advanced
-isDefined
-getAttribute,
-getContext,
 
 */

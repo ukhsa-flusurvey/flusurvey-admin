@@ -29,7 +29,7 @@ export type StrArg = BaseArg & {
 export type ExpressionArg = ExpArg | NumArg | StrArg;
 
 
-type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean';
+type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean' | 'object';
 
 
 interface SlotTypeBase {
