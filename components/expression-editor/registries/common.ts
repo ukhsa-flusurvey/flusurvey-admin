@@ -55,7 +55,39 @@ export const miscExpressions: ExpressionDef[] = [
                 }
             }
         }
-    }
+    },
+
+    {
+        id: 'parseValueAsNum',
+        categories: ['misc'],
+        label: 'Parse value as number',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'parseValueAsNum',
+                data: []
+            }
+        }
+    },
 ]
 
 
