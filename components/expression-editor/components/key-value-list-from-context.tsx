@@ -8,6 +8,7 @@ import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ItemSlotOption {
     itemKey?: string;
@@ -206,6 +207,14 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
         }
     }
 
+    const slotInputUUID = uuidv4()
+
+    const itemKeyInputSuggestionsId = slotInputUUID + 'item-key-suggestions'
+    const itemKeyInputID = slotInputUUID + 'item-key-input'
+    const slotKeyInputSuggestionsId = slotInputUUID + 'slot-key-suggestions'
+    const slotKeyInputID = slotInputUUID + 'slot-key-input'
+    const optionKeyInputSuggestionsId = slotInputUUID + 'option-keys-suggestions'
+    const optionKeyInputID = slotInputUUID + 'option-keys-input'
 
     return (
         <BuiltInSlotWrapper
@@ -225,11 +234,11 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
             <>
                 <div className='px-2 py-2 flex flex-wrap gap-2'>
                     {props.slotTypeDef.withFixedKey === undefined && <div className="space-y-1 grow">
-                        <Label htmlFor="item-key" className='text-xs'>Item Key</Label>
+                        <Label htmlFor={itemKeyInputID} className='text-xs'>Item Key</Label>
                         <div className="relative">
                             <Input
-                                id="item-key"
-                                list="item-key-suggestions"
+                                id={itemKeyInputID}
+                                list={itemKeyInputSuggestionsId}
                                 className='text-xs md:text-xs font-mono'
                                 value={props.currentValue.itemKey || ''}
                                 autoComplete='off'
@@ -249,7 +258,7 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
                                 }}
                                 placeholder="Enter item key"
                             />
-                            <datalist id="item-key-suggestions">
+                            <datalist id={itemKeyInputSuggestionsId}>
                                 {itemKeySuggestions.map((suggestion) => (
                                     <option key={suggestion} value={suggestion} />
                                 ))}
@@ -258,10 +267,10 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
                     </div>}
 
                     {props.slotTypeDef.withFixedValue === undefined && <div className="space-y-1">
-                        <Label htmlFor="slot-key" className='text-xs'>Slot Key</Label>
+                        <Label htmlFor={slotKeyInputID} className='text-xs'>Slot Key</Label>
                         <div className="relative">
                             <Input
-                                id="slot-key"
+                                id={slotKeyInputID}
                                 value={props.currentValue.slotKey || ''}
                                 className='text-xs md:text-xs font-mono'
                                 autoComplete='off'
@@ -280,9 +289,9 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
                                     }
                                 }}
                                 placeholder="Enter slot key"
-                                list="slot-key-suggestions"
+                                list={slotKeyInputSuggestionsId}
                             />
-                            <datalist id="slot-key-suggestions">
+                            <datalist id={slotKeyInputSuggestionsId}>
                                 {['rg.mcg', 'rg.scg'].map((suggestion) => (
                                     <option key={suggestion} value={suggestion} />
                                 ))}
@@ -293,7 +302,7 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
 
                 <div className="space-y-1 px-2 py-2">
 
-                    <Label htmlFor="option-keys-input"
+                    <Label htmlFor={optionKeyInputID}
                         className='text-xs'
                     >Option Keys</Label>
                     <div
@@ -329,8 +338,8 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
                         })}
                         <input
                             ref={inputRef}
-                            id="option-keys-input"
-                            list="option-keys-suggestions"
+                            id={optionKeyInputID}
+                            list={optionKeyInputSuggestionsId}
                             value={newOptionKey || ''}
                             onChange={(e) => setNewOptionKey(e.target.value)}
                             autoComplete='off'
@@ -338,7 +347,7 @@ const KeyValueListFromContext: React.FC<KeyValueListFromContextProps> = (props) 
                             className="flex-1 bg-transparent border-none outline-none min-w-[120px] p-0 text-xs font-mono"
                             placeholder={"Type and press Enter to add"}
                         />
-                        <datalist id="option-keys-suggestions">
+                        <datalist id={optionKeyInputSuggestionsId}>
                             {optionKeySuggestions.map((suggestion) => (
                                 <option key={suggestion} value={suggestion} />
                             ))}
