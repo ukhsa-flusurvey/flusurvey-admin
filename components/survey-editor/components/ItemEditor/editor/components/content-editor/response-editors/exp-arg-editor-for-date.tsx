@@ -1,5 +1,5 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
+import { supportedBuiltInSlotTypes, surveyExpressionCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
 import { ExpressionArg } from '@/components/expression-editor/utils';
 import React, { useEffect } from 'react';
 
@@ -35,7 +35,7 @@ const ExpArgEditorForDate: React.FC<ExpArgEditorForDateProps> = (props) => {
             expRegistry={{
                 expressionDefs: surveyEngineRegistry,
                 builtInSlotTypes: supportedBuiltInSlotTypes,
-                categories: surveyEngineCategories,
+                categories: surveyExpressionCategories,
             }}
             currentIndex={0}
             slotDef={{

@@ -57,3 +57,91 @@ export const miscExpressions: ExpressionDef[] = [
         }
     }
 ]
+
+
+
+export const logicalOperators: ExpressionDef[] = [
+    {
+        categories: ['logical'],
+        id: 'and',
+        label: 'and',
+        returnType: 'boolean',
+        icon: 'brackets',
+        slots: [
+            {
+                label: 'if all true:',
+                required: true,
+                isListSlot: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['boolean']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'and',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['logical'],
+        id: 'or',
+        label: 'or',
+        returnType: 'boolean',
+        icon: 'braces',
+        slots: [
+            {
+                label: 'if any true:',
+                required: true,
+                isListSlot: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['boolean']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'or',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['logical'],
+        id: 'not',
+        label: 'not',
+        returnType: 'boolean',
+        icon: 'circle-slash',
+        slots: [
+            {
+                label: 'if not true:',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['boolean']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'not',
+                data: []
+            }
+        }
+    }
+]

@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react';
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
 import ExpressionPreview from './ExpressionPreview';
-import { Expression as CaseExpression } from 'survey-engine/data_types';
 import ExpressionEditor from '../ExpressionEditor';
 import Block from '../components/Block';
 import { toast } from 'sonner';

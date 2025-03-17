@@ -1,5 +1,6 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { ContextArrayItem, ExpArg, Expression, ExpressionDef, SlotInputDef } from '@/components/expression-editor/utils';
+import { supportedBuiltInSlotTypes, surveyEngineRegistry, surveyExpressionCategories } from '@/components/expression-editor/registries/surveyEngineRegistry';
+import { ContextArrayItem, ExpArg, Expression } from '@/components/expression-editor/utils';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
@@ -12,225 +13,6 @@ interface ConditionsEditorProps {
     onUpdateSurveyItem: (item: SurveyItem) => void;
 }
 
-export const surveyExpressionCategories = [
-    {
-        id: 'variables',
-        label: 'Variables'
-    },
-    {
-        id: 'logical',
-        label: 'Logical operators'
-    },
-    {
-        id: 'participant-flags',
-        label: 'Participant flags'
-    },
-    {
-        id: 'misc',
-        label: 'Misc'
-    }
-]
-
-const builtInSlotTypes: SlotInputDef[] = [
-    {
-        id: 'item-key-slot-key-options-single-choice',
-        type: 'key-value-list',
-        label: 'Single choice options',
-        contextArrayKey: 'singleChoiceOptions',
-        // filterForItemType: 'with-value',
-        withFixedValue: 'rg.scg',
-        icon: 'diamond',
-        color: 'green',
-        categories: ['variables'],
-    },
-    {
-        id: 'item-key-slot-key-options-multiple-choice',
-        type: 'key-value-list',
-        label: 'Multiple choice options',
-        contextArrayKey: 'multipleChoiceOptions',
-        withFixedValue: 'rg.mcg',
-        icon: 'square',
-        color: 'green',
-        categories: ['variables'],
-    },
-    {
-        id: 'item-key-slot-key-options-generic',
-        type: 'key-value-list',
-        label: 'Generic item, slot and option keys',
-        contextArrayKey: 'allItemKeys',
-        icon: 'triangle',
-        color: 'green',
-        categories: ['variables'],
-    },
-]
-
-const logicalOperators: ExpressionDef[] = [
-    {
-        categories: ['logical'],
-        id: 'and',
-        label: 'and',
-        returnType: 'boolean',
-        icon: 'brackets',
-        slots: [
-            {
-                label: 'if all true:',
-                required: true,
-                isListSlot: true,
-                allowedTypes: [
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['boolean']
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        categories: ['logical'],
-        id: 'or',
-        label: 'or',
-        returnType: 'boolean',
-        icon: 'braces',
-        slots: [
-            {
-                label: 'if any true:',
-                required: true,
-                isListSlot: true,
-                allowedTypes: [
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['boolean']
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        categories: ['logical'],
-        id: 'not',
-        label: 'not',
-        returnType: 'boolean',
-        icon: 'circle-slash',
-        slots: [
-            {
-                label: 'if not true:',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['boolean']
-                    }
-                ]
-            }
-        ]
-    }
-
-    // OR
-    // NOT
-]
-
-const miscExpressions: ExpressionDef[] = [
-    {
-        categories: ['misc'],
-        id: 'timestampWithOffset',
-        label: 'GET TIMESTAMP',
-        returnType: 'num',
-        icon: 'calendar',
-        slots: [
-            {
-                label: 'Offset',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'time-delta-picker',
-                        type: 'time-delta',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num'],
-                        excludedExpressions: ['timestampWithOffset']
-                    }
-                ]
-            },
-            {
-                label: 'Reference date',
-                required: false,
-                allowedTypes: [
-                    {
-                        id: 'date-picker',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ]
-    }
-]
-
-const surveyEngineRegistry: ExpressionDef[] = [
-    ...logicalOperators,
-    ...miscExpressions,
-    {
-        categories: ['misc'],
-        id: 'responseHasKeysAny',
-        label: 'Response contains any of these keys:',
-        returnType: 'boolean',
-        icon: 'layout-list',
-        slots: [
-            {
-                label: 'Item and option references:',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'item-key-slot-key-options-generic',
-                        type: 'key-value-list',
-                    },
-                    {
-                        id: 'item-key-options-multiple-choice',
-                        type: 'key-value-list',
-                    },
-                    {
-                        id: 'item-key-options-single-choice',
-                        type: 'key-value-list',
-                    }
-                ]
-            },
-
-        ]
-    },
-    {
-        categories: ['participant-flags'],
-        id: 'hasParticipantFlag',
-        label: 'HAS FLAG WITH KEY AND VALUE',
-        returnType: 'boolean',
-        icon: 'tag',
-        slots: [
-            {
-                label: 'Check for flag',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'participant-flag-selector',
-                        type: 'key-value',
-                    },
-                    {
-                        id: 'key-value-manual',
-                        type: 'key-value',
-                    }
-                ]
-            },
-
-        ]
-    }
-]
 
 export function extractSurveyKeys(surveyData?: Survey): {
     singleChoiceKeys: ContextArrayItem[];
@@ -378,7 +160,7 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
                 }}
                 expRegistry={{
                     expressionDefs: surveyEngineRegistry,
-                    builtInSlotTypes: builtInSlotTypes,
+                    builtInSlotTypes: supportedBuiltInSlotTypes,
                     categories: surveyExpressionCategories,
                 }}
                 context={{
@@ -400,12 +182,11 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
 
                 }}
                 onChange={(newArgs,) => {
-                    //console.log('newArgs', newArgs)
-                    //console.log('slotTypes', slotTypes)
+                    console.log('newArgs', newArgs)
                     const updatedSurveyItem = {
                         ...props.surveyItem,
                     }
-                    if (!newArgs || newArgs.length < 1) {
+                    if (!newArgs || newArgs.length < 1 || newArgs[0] === undefined) {
                         updatedSurveyItem.condition = undefined;
                     } else {
                         updatedSurveyItem.condition = (newArgs[0] as ExpArg).exp as CaseExpression;
