@@ -219,14 +219,16 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                     }
                                 } else {
                                     let newArg: ExpressionArg | undefined;
+                                    let isTemplateFor = '';
                                     if (slotTypeId !== undefined) {
                                         const expressionDef = lookupExpressionDef(slotTypeId, props.expRegistry.expressionDefs);
                                         if (expressionDef?.defaultValue !== undefined) {
                                             newArg = JSON.parse(JSON.stringify(expressionDef.defaultValue));
                                         }
+                                        isTemplateFor = expressionDef?.isTemplateFor || '';
                                     }
 
-                                    currentSlotTypes.push(slotTypeId);
+                                    currentSlotTypes.push(!isTemplateFor ? slotTypeId : isTemplateFor);
                                     currentValues.push(newArg);
                                 }
                                 props.onChangeValues(currentValues, currentSlotTypes);
