@@ -11,6 +11,10 @@ export const surveyExpressionCategories = [
         label: 'Logical operators'
     },
     {
+        id: 'comparison',
+        label: 'Comparison'
+    },
+    {
         id: 'participant-flags',
         label: 'Participant flags'
     },
@@ -21,6 +25,14 @@ export const surveyExpressionCategories = [
     {
         id: 'misc',
         label: 'Misc'
+    },
+    {
+        id: 'advanced',
+        label: 'Advanced'
+    },
+    {
+        id: 'templates',
+        label: 'Templates'
     }
 ]
 
@@ -98,15 +110,373 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         color: 'green',
         categories: ['variables'],
     },
+    {
+        id: 'item-keys',
+        type: 'list-selector',
+        contextArrayKey: 'allItemKeys',
+        label: 'Available item keys',
+        icon: 'tag',
+        color: 'green',
+        categories: ['variables'],
+    },
     ...slotKeyValueListSlotEditors
 ]
 
 
+const comparisonOperators: ExpressionDef[] = [
+    {
+        categories: ['comparison'],
+        id: 'eq',
+        label: 'Equals (L == R)',
+        returnType: 'boolean',
+        icon: 'code',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num', 'str']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num', 'str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'eq',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'lte',
+        label: 'Less than or equal (L <= R)',
+        returnType: 'boolean',
+        icon: 'code',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lte',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    },
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'lt',
+        label: 'Less than (L < R)',
+        returnType: 'boolean',
+        icon: 'code',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lt',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    },
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'gte',
+        label: 'Greater than or equal (L >= R)',
+        returnType: 'boolean',
+        icon: 'code',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'gte',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'gt',
+        label: 'Greater than (L > R)',
+        returnType: 'boolean',
+        icon: 'code',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'gt',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ]
+            }
+        }
+    },
+
+]
 
 
-export const surveyEngineRegistry: ExpressionDef[] = [
-    ...logicalOperators,
-    ...miscExpressions,
+
+const responseDependencies: ExpressionDef[] = [
+    {
+        id: 'hasResponse',
+        label: 'A specific response is present',
+        returnType: 'boolean',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ],
+            }
+        ],
+        categories: ['response-dependencies'],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasResponse',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: '',
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ]
+            }
+        }
+    },
     {
         categories: ['response-dependencies'],
         id: 'responseHasKeysAny',
@@ -133,8 +503,51 @@ export const surveyEngineRegistry: ExpressionDef[] = [
                 ]
             },
 
-        ]
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'responseHasKeysAny',
+                data: []
+            }
+        }
     },
+
+
+    // Templates:
+    {
+        categories: ['templates'],
+        id: 'consent-given',
+        label: 'Consent question accepted',
+        returnType: 'boolean',
+        icon: 'signpost',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasResponse',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'rg.con'
+                    }
+                ]
+            }
+        }
+    }
+]
+
+
+export const surveyEngineRegistry: ExpressionDef[] = [
+    ...logicalOperators,
+    ...miscExpressions,
+    ...responseDependencies,
+    ...comparisonOperators,
+
     {
         categories: ['participant-flags'],
         id: 'hasParticipantFlag',
@@ -160,3 +573,72 @@ export const surveyEngineRegistry: ExpressionDef[] = [
         ]
     }
 ]
+
+/*
+parseValueAsNum,
+
+    getResponseValueAsNum,
+    getResponseValueAsStr,
+    checkResponseValueWithRegex,
+
+    responseHasKeysAny,
+    responseHasKeysAll,
+    responseHasOnlyKeysOtherThan,
+
+    getSurveyItemValidation,
+
+    dateResponseDiffFromNow,
+getSecondsSince,
+    timestampWithOffset,
+
+    countResponseItems,
+
+
+
+// Other
+
+    singleChoice: {
+    any: singleChoiceOptionsSelected,
+        none: singleChoiceOnlyOtherOptionSelected,
+            getDateValue: singleChoiceGetNumOptionValue,
+                getNumValue: singleChoiceGetNumOptionValue,
+                    regexCheck: singleChoiceTextInputRegexCheck,
+  },
+multipleChoice: {
+    any: multipleChoiceOptionsSelected,
+        none: multipleChoiceOnlyOtherKeysSelected,
+            all: multipleChoiceAllOfTheseSelected,
+                selectionCount: multipleChoiceSelectionCount,
+                    getDateValue: multipleChoiceGetNumOptionValue,
+                        getNumValue: multipleChoiceGetNumOptionValue,
+                            regexCheck: mulitpleChoiceTextInputRegexCheck,
+  },
+consentQuestion: {
+    accepted: consentAcceptedCondition,
+  },
+textInput: {
+    regexCheck: textInputRegexCheck,
+  },
+multilineTextInput: {
+    regexCheck: multilineTextInputRegexCheck,
+  },
+datePicker: {
+    get: getDatePickerResponseValue,
+  },
+
+isLoggedIn,
+
+  participantFlags: {
+    hasKey: hasParticipantFlagKey,
+        hasKeyAndValue: hasParticipantFlagKeyAndValue,
+            getAsNum: parseParticipantFlagAsNum,
+  },
+
+
+
+// advanced
+isDefined
+getAttribute,
+getContext,
+
+*/
