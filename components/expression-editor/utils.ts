@@ -124,6 +124,7 @@ export interface ExpressionDef {
     icon?: IconVariant;
     // expression return type: action, num, str, boolean
     defaultValue?: ExpressionArg;
+    isTemplateFor?: string;
 }
 
 

@@ -65,7 +65,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     return
                 }
 
-                if (fallbackSlotType === 'exp-slot') {
+                if (fallbackSlotType === 'exp-slot' || dataAtArgIndex.dtype === 'exp') {
                     slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
                     return
                 }
@@ -90,7 +90,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     return;
                 }
 
-                if (fallbackSlotType === 'exp-slot') {
+                if (fallbackSlotType === 'exp-slot' || dataAtArgIndex.dtype === 'exp') {
                     slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
                     return
                 }

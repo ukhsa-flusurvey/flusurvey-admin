@@ -145,6 +145,9 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                     if (expressionDef?.defaultValue !== undefined) {
                         currentArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
                     }
+                    if (expressionDef?.isTemplateFor) {
+                        currentSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
+                    }
                 }
 
                 props.onChange?.(
