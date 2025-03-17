@@ -1,5 +1,3 @@
-import { ExpressionArg as CaseExpressionArg } from 'survey-engine/data_types';
-
 export interface Expression {
     name: string;
     returnType?: string;
@@ -9,7 +7,27 @@ export interface Expression {
     }
 }
 
-export type ExpressionArg = CaseExpressionArg
+type BaseArg = {
+    dtype?: string;
+}
+
+export type ExpArg = BaseArg & {
+    dtype: 'exp';
+    exp: Expression;
+}
+
+export type NumArg = BaseArg & {
+    dtype: 'num';
+    num: number;
+}
+
+export type StrArg = BaseArg & {
+    dtype: 'str';
+    str: string;
+}
+
+export type ExpressionArg = ExpArg | NumArg | StrArg;
+
 
 type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean';
 
@@ -105,6 +123,7 @@ export interface ExpressionDef {
     color?: ColorVariant;
     icon?: IconVariant;
     // expression return type: action, num, str, boolean
+    defaultValue?: ExpressionArg;
 }
 
 

@@ -39,6 +39,21 @@ export const miscExpressions: ExpressionDef[] = [
                     }
                 ]
             }
-        ]
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'timestampWithOffset',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['time-delta-picker']
+                }
+            }
+        }
     }
 ]

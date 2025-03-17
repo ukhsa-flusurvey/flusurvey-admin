@@ -1,10 +1,11 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { ContextArrayItem, ExpressionDef, SlotInputDef } from '@/components/expression-editor/utils';
+import { ContextArrayItem, ExpArg, Expression, ExpressionDef, SlotInputDef } from '@/components/expression-editor/utils';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, Survey, SurveyItem, SurveySingleItem, isItemGroupComponent, isSurveyGroupItem } from 'survey-engine/data_types';
+import { Expression as CaseExpression } from 'survey-engine/data_types';
 
 interface ConditionsEditorProps {
     surveyItem: SurveyItem;
@@ -38,7 +39,7 @@ const builtInSlotTypes: SlotInputDef[] = [
         contextArrayKey: 'singleChoiceOptions',
         // filterForItemType: 'with-value',
         withFixedValue: 'rg.scg',
-        icon: 'tag',
+        icon: 'diamond',
         color: 'green',
         categories: ['variables'],
     },
@@ -48,7 +49,7 @@ const builtInSlotTypes: SlotInputDef[] = [
         label: 'Multiple choice options',
         contextArrayKey: 'multipleChoiceOptions',
         withFixedValue: 'rg.mcg',
-        icon: 'tag',
+        icon: 'square',
         color: 'green',
         categories: ['variables'],
     },
@@ -57,7 +58,7 @@ const builtInSlotTypes: SlotInputDef[] = [
         type: 'key-value-list',
         label: 'Generic item, slot and option keys',
         contextArrayKey: 'allItemKeys',
-        icon: 'tag',
+        icon: 'triangle',
         color: 'green',
         categories: ['variables'],
     },
@@ -182,7 +183,7 @@ const surveyEngineRegistry: ExpressionDef[] = [
         id: 'responseHasKeysAny',
         label: 'Response contains any of these keys:',
         returnType: 'boolean',
-        icon: 'tag',
+        icon: 'layout-list',
         slots: [
             {
                 label: 'Item and option references:',
@@ -370,7 +371,7 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
             <ExpArgEditor
                 availableExpData={currentCondition ?
                     [
-                        { dtype: 'exp', exp: currentCondition }
+                        { dtype: 'exp', exp: currentCondition as Expression }
                     ] : []}
                 availableMetadata={{
                     slotTypes: currentExpArgSlot ? [currentExpArgSlot] : []
@@ -407,7 +408,7 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
                     if (!newArgs || newArgs.length < 1) {
                         updatedSurveyItem.condition = undefined;
                     } else {
-                        updatedSurveyItem.condition = newArgs[0]?.exp;
+                        updatedSurveyItem.condition = (newArgs[0] as ExpArg).exp as CaseExpression;
                     }
                     props.onUpdateSurveyItem(updatedSurveyItem);
                 }}

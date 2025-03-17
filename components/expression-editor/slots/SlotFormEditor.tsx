@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExpEditorContext, ExpressionArg, SlotDef, SlotInputDef, SlotInputDefFormKeyValueFromContext, SlotInputDefKeyValueList, SlotInputDefSelectorFromContext } from '../utils';
+import { ExpEditorContext, ExpressionArg, NumArg, SlotDef, SlotInputDef, SlotInputDefFormKeyValueFromContext, SlotInputDefKeyValueList, SlotInputDefSelectorFromContext, StrArg } from '../utils';
 import SelectorFromContext from '../components/SelectorFromContext';
 import KeyValueSelectorFromContext from '../components/KeyValueSelectorFromContext';
 import SimpleTextInput from '../components/SimpleTextInput';
@@ -7,7 +7,7 @@ import DatePicker from '../components/DatePicker';
 import TimedeltaInput from '../components/TimedeltaInput';
 import SimpleNumberInput from '../components/simple-number-input';
 import KeyValueListFromContext from '../components/key-value-list-from-context';
-import { ExpressionArgDType } from 'survey-engine/data_types';
+
 
 interface SlotFormEditorProps {
     slotDef: SlotDef;
@@ -51,7 +51,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     context={props.context}
                     slotTypeDef={currentFormDef as SlotInputDefSelectorFromContext}
                     depth={props.depth}
-                    currentValue={currentArgValue?.str}
+                    currentValue={(currentArgValue as StrArg)?.str}
                     onSelect={(value) => {
                         console.log(value)
                         const currentData = props.currentArgs || [];
@@ -71,7 +71,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     slotDef={props.slotDef}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}
-                    currentValue={currentArgValue?.str}
+                    currentValue={(currentArgValue as StrArg)?.str}
                     onValueChange={(value) => {
                         const currentData = props.currentArgs || [];
                         if (currentData.length < props.slotIndex) {
@@ -90,7 +90,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     slotDef={props.slotDef}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}
-                    currentValue={currentArgValue?.num}
+                    currentValue={(currentArgValue as NumArg)?.num}
                     onValueChange={(value) => {
                         const currentData = props.currentArgs || [];
                         if (currentData.length < props.slotIndex) {
@@ -109,7 +109,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     slotDef={props.slotDef}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}
-                    currentValue={currentArgValue?.num}
+                    currentValue={(currentArgValue as NumArg)?.num}
                     onValueChange={(value) => {
                         const currentData = props.currentArgs || [];
                         if (currentData.length < props.slotIndex) {
@@ -128,15 +128,19 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     slotDef={props.slotDef}
                     slotTypeDef={currentFormDef}
                     depth={props.depth}
-                    currentValue={currentArgValue?.num}
+                    currentValue={(currentArgValue as NumArg)?.num}
                     onValueChange={(value) => {
                         const currentData = props.currentArgs || [];
                         if (currentData.length < props.slotIndex) {
                             currentData.fill(undefined, currentData.length, props.slotIndex)
                         }
-                        currentData[props.slotIndex] = {
-                            num: value,
-                            dtype: 'num'
+                        if (value === undefined) {
+                            currentData[props.slotIndex] = undefined;
+                        } else {
+                            currentData[props.slotIndex] = {
+                                num: value,
+                                dtype: 'num'
+                            }
                         }
                         props.onArgsChange(currentData)
                     }}
@@ -155,8 +159,8 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     currentValueIndex = props.slotDef.argIndexes[1];
                 }
 
-                const currentKey = props.currentArgs?.at(currentKeyIndex)?.str;;
-                const currentValue = props.currentArgs?.at(currentValueIndex)?.str;;
+                const currentKey = (props.currentArgs?.at(currentKeyIndex) as StrArg)?.str;
+                const currentValue = (props.currentArgs?.at(currentValueIndex) as StrArg)?.str;
                 return (<KeyValueSelectorFromContext
                     slotDef={props.slotDef}
                     context={props.context}
@@ -197,7 +201,7 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     currentValueIndex = props.slotDef.argIndexes[1];
                 }
 
-                const currentListValues = props.currentArgs?.slice(currentValueIndex + 1)?.map(arg => arg?.str);
+                const currentListValues = props.currentArgs?.slice(currentValueIndex + 1)?.map(arg => (arg as StrArg)?.str);
 
                 return (<KeyValueListFromContext
                     slotDef={props.slotDef}
@@ -205,8 +209,8 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                     slotTypeDef={currentFormDef as SlotInputDefKeyValueList}
                     depth={props.depth}
                     currentValue={{
-                        itemKey: props.currentArgs?.at(currentKeyIndex)?.str,
-                        slotKey: props.currentArgs?.at(currentValueIndex)?.str,
+                        itemKey: (props.currentArgs?.at(currentKeyIndex) as StrArg)?.str,
+                        slotKey: (props.currentArgs?.at(currentValueIndex) as StrArg)?.str,
                         listValues: currentListValues
                     }}
                     onChange={(newValue) => {
@@ -216,17 +220,17 @@ const SlotFormEditor: React.FC<SlotFormEditorProps> = (props) => {
                         }
 
                         currentData[currentKeyIndex] = {
-                            str: newValue.itemKey,
-                            dtype: 'str'
+                            str: newValue.itemKey || '',
+                            dtype: 'str' as const
                         }
                         currentData[currentValueIndex] = {
-                            str: newValue.slotKey,
-                            dtype: 'str'
+                            str: newValue.slotKey || '',
+                            dtype: 'str' as const
                         }
 
                         const newOptions = newValue.listValues?.map(value => ({
-                            str: value,
-                            dtype: 'str' as ExpressionArgDType
+                            str: value || '',
+                            dtype: 'str' as const
                         }))
 
 

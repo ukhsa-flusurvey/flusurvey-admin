@@ -14,9 +14,10 @@ const ExpArgEditorForDate: React.FC<ExpArgEditorForDateProps> = (props) => {
 
     useEffect(() => {
         if (props.expArg) {
-            if (props.expArg.exp !== undefined) {
+
+            if (props.expArg.dtype === 'exp') {
                 setCurrentExpArgSlot(props.expArg.exp.name);
-            } else if (props.expArg.num !== undefined) {
+            } else if (props.expArg.dtype === 'num') {
                 setCurrentExpArgSlot('date-picker');
             }
         }
@@ -54,7 +55,7 @@ const ExpArgEditorForDate: React.FC<ExpArgEditorForDateProps> = (props) => {
 
             }}
             onChange={(newArgs, slotTypes) => {
-                if (!newArgs || newArgs.length < 1) {
+                if (!slotTypes || slotTypes.length < 1) {
                     props.onChange(undefined);
                     return;
                 }

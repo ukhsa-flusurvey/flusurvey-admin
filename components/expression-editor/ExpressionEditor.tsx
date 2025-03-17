@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 
 import { cn } from '@/lib/utils';
-import { ExpEditorContext, Expression, ExpressionCategory, ExpressionDef, SlotInputDef, lookupExpressionDef } from './utils';
+import { ExpArg, ExpEditorContext, Expression, ExpressionCategory, ExpressionDef, SlotInputDef, lookupExpressionDef } from './utils';
 import BlockHeader from './components/BlockHeader';
 
 import ExpArgEditor from './exp-arg-editor';
@@ -66,7 +66,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 }
 
                 if (fallbackSlotType === 'exp-slot') {
-                    slotTypes.push(dataAtArgIndex.exp?.name);
+                    slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
                     return
                 }
                 slotTypes.push(fallbackSlotType);
@@ -91,13 +91,12 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 }
 
                 if (fallbackSlotType === 'exp-slot') {
-                    slotTypes.push(dataAtArgIndex.exp?.name);
+                    slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
                     return
                 }
                 slotTypes.push(fallbackSlotType);
             }
         })
-
 
         return <div className='space-y-4'>
             {expressionDef.slots.map((slotDef, index) => {

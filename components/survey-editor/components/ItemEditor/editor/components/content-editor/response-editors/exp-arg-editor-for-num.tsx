@@ -14,9 +14,9 @@ const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
 
     useEffect(() => {
         if (props.expArg) {
-            if (props.expArg.exp !== undefined) {
+            if (props.expArg.dtype === 'exp') {
                 setCurrentExpArgSlot(props.expArg.exp.name);
-            } else if (props.expArg.num !== undefined) {
+            } else if (props.expArg.dtype === 'num') {
                 setCurrentExpArgSlot('number-input');
             }
         }
