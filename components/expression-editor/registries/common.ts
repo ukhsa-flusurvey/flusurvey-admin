@@ -84,7 +84,8 @@ export const miscExpressions: ExpressionDef[] = [
             dtype: 'exp',
             exp: {
                 name: 'parseValueAsNum',
-                data: []
+                data: [],
+                returnType: 'float'
             }
         }
     },

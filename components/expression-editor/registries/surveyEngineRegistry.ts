@@ -126,7 +126,7 @@ const advancedExpressions: ExpressionDef[] = [
     {
         id: 'isDefined',
         categories: ['advanced'],
-        label: 'Is return value defined',
+        label: 'Is value defined',
         returnType: 'boolean',
         icon: 'blocks',
         slots: [
@@ -644,11 +644,11 @@ const responseDependencies: ExpressionDef[] = [
                         type: 'key-value-list',
                     },
                     {
-                        id: 'item-key-options-multiple-choice',
+                        id: 'item-key-slot-key-options-multiple-choice',
                         type: 'key-value-list',
                     },
                     {
-                        id: 'item-key-options-single-choice',
+                        id: 'item-key-slot-key-options-single-choice',
                         type: 'key-value-list',
                     }
                 ]
@@ -660,6 +660,246 @@ const responseDependencies: ExpressionDef[] = [
             exp: {
                 name: 'responseHasKeysAny',
                 data: []
+            }
+        }
+    },
+    {
+        categories: ['response-dependencies'],
+        id: 'responseHasKeysAll',
+        label: 'Response contains all of these keys:',
+        returnType: 'boolean',
+        icon: 'layout-list',
+        slots: [
+            {
+                label: 'Item and option references:',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'item-key-slot-key-options-generic',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-multiple-choice',
+                        type: 'key-value-list',
+                    }
+                ]
+            },
+
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'responseHasKeysAll',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['response-dependencies'],
+        id: 'responseHasOnlyKeysOtherThan',
+        label: 'Has response but none of these keys:',
+        returnType: 'boolean',
+        icon: 'layout-list',
+        slots: [
+            {
+                label: 'Item and option references:',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'item-key-slot-key-options-generic',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-multiple-choice',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-single-choice',
+                        type: 'key-value-list',
+                    }
+
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'responseHasOnlyKeysOtherThan',
+                data: []
+            }
+        }
+    },
+
+    {
+        id: 'getResponseValueAsNum',
+        categories: ['response-dependencies'],
+        label: 'Get response value as number',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getResponseValueAsNum',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ],
+                returnType: 'float'
+            }
+        }
+    },
+
+    {
+        id: 'getResponseValueAsStr',
+        categories: ['response-dependencies'],
+        label: 'Get response value as string',
+        returnType: 'str',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getResponseValueAsStr',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ],
+                returnType: 'str'
+            }
+        }
+    },
+
+    {
+        id: 'countResponseItems',
+        categories: ['response-dependencies'],
+        label: 'Count response items',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'countResponseItems',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ]
+            }
+        }
+    },
+
+    {
+        id: 'checkResponseValueWithRegex',
+        categories: ['response-dependencies'],
+        label: 'Check response value with regex',
+        returnType: 'boolean',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Regex pattern',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'checkResponseValueWithRegex',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                    {
+                        dtype: 'str',
+                        str: '',
+                    },
+                ]
             }
         }
     },
@@ -727,62 +967,35 @@ export const surveyEngineRegistry: ExpressionDef[] = [
 ]
 
 /*
-parseValueAsNum,
 
-    getResponseValueAsNum,
-    getResponseValueAsStr,
-    checkResponseValueWithRegex,
-
-    responseHasKeysAny,
-    responseHasKeysAll,
-    responseHasOnlyKeysOtherThan,
 
     getSurveyItemValidation,
 
     dateResponseDiffFromNow,
-getSecondsSince,
+    getSecondsSince,
     timestampWithOffset,
 
-    countResponseItems,
 
 
+    // template
+    getDateValue: singleChoiceGetNumOptionValue,
+    getNumValue: singleChoiceGetNumOptionValue,
+    regexCheck: singleChoiceTextInputRegexCheck,
 
-// Other
+    selectionCount: multipleChoiceSelectionCount,
+    getDateValue: multipleChoiceGetNumOptionValue,
+    getNumValue: multipleChoiceGetNumOptionValue,
+    regexCheck: mulitpleChoiceTextInputRegexCheck,
 
-    singleChoice: {
-    any: singleChoiceOptionsSelected,
-        none: singleChoiceOnlyOtherOptionSelected,
-            getDateValue: singleChoiceGetNumOptionValue,
-                getNumValue: singleChoiceGetNumOptionValue,
-                    regexCheck: singleChoiceTextInputRegexCheck,
-  },
-multipleChoice: {
-    any: multipleChoiceOptionsSelected,
-        none: multipleChoiceOnlyOtherKeysSelected,
-            all: multipleChoiceAllOfTheseSelected,
-                selectionCount: multipleChoiceSelectionCount,
-                    getDateValue: multipleChoiceGetNumOptionValue,
-                        getNumValue: multipleChoiceGetNumOptionValue,
-                            regexCheck: mulitpleChoiceTextInputRegexCheck,
-  },
-consentQuestion: {
     accepted: consentAcceptedCondition,
-  },
-textInput: {
+
     regexCheck: textInputRegexCheck,
-  },
-multilineTextInput: {
-    regexCheck: multilineTextInputRegexCheck,
-  },
-datePicker: {
+
     get: getDatePickerResponseValue,
-  },
 
-  participantFlags: {
+    participantFlags: {
     hasKey: hasParticipantFlagKey,
-        hasKeyAndValue: hasParticipantFlagKeyAndValue,
-            getAsNum: parseParticipantFlagAsNum,
-  },
-
-
+    hasKeyAndValue: hasParticipantFlagKeyAndValue,
+    getAsNum: parseParticipantFlagAsNum,
+  }
 */
