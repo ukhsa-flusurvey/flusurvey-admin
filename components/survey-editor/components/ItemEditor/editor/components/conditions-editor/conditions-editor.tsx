@@ -131,7 +131,7 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
 
 
     return (
-        <div className='p-4 space-y-4' >
+        <div className='p-4 space-y-4 pb-24' >
 
             <h3 className='font-semibold text-base flex items-center gap-2'>
                 <span
