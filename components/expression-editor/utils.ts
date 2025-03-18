@@ -205,7 +205,7 @@ export const getRecommendedSlotTypes = (
         }
 
         expRegistry.builtInSlotTypes.forEach((builtIn) => {
-            if (slotDef.allowedTypes?.find(at => at.type === builtIn.type)
+            if (slotDef.allowedTypes?.find(at => at.type === builtIn.type && at.id === builtIn.id)
                 && builtIn.categories?.includes(category.id)
             ) {
                 currentGroup.slotTypes.push({

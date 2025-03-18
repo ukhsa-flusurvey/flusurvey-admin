@@ -73,7 +73,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
 
             } else {
                 const availableMetadata = props.expressionValue.metadata?.slotTypes?.at(index);
-                if (availableMetadata !== undefined) {
+                if (availableMetadata !== undefined && availableMetadata !== null) {
                     slotTypes.push(availableMetadata);
                     return
                 }
