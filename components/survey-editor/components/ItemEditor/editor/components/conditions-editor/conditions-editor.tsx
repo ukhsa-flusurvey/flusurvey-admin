@@ -166,7 +166,15 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
                 context={{
                     singleChoiceOptions: singleChoiceKeys,
                     multipleChoiceOptions: multipleChoiceKeys,
-                    allItemKeys: allItemKeys
+                    allItemKeys: allItemKeys,
+                    dateUnitPicker: [
+                        { key: 'years', label: 'Years' },
+                        { key: 'months', label: 'Months' },
+                        { key: 'days', label: 'Days' },
+                        { key: 'hours', label: 'Hours' },
+                        { key: 'minutes', label: 'Minutes' },
+                        { key: 'seconds', label: 'Seconds' },
+                    ],
                 }}
                 currentIndex={0}
                 slotDef={{

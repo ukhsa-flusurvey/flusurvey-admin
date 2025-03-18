@@ -119,6 +119,15 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         color: 'green',
         categories: ['variables'],
     },
+    {
+        id: 'date-unit-picker',
+        type: 'list-selector',
+        contextArrayKey: 'dateUnitPicker',
+        label: 'Date unit picker',
+        icon: 'calendar',
+        color: 'green',
+        categories: ['variables'],
+    },
     ...slotKeyValueListSlotEditors
 ]
 
@@ -585,7 +594,6 @@ const comparisonOperators: ExpressionDef[] = [
 ]
 
 
-
 const responseDependencies: ExpressionDef[] = [
     {
         id: 'hasResponse',
@@ -904,8 +912,57 @@ const responseDependencies: ExpressionDef[] = [
         }
     },
 
+    {
+        id: 'dateResponseDiffFromNow',
+        categories: ['response-dependencies'],
+        label: 'Get date response diff from now',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                ]
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                ]
+            },
+            {
+                label: 'Date unit',
+                required: true,
+                allowedTypes: [
+                    { id: 'date-unit-picker', type: 'list-selector' },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'dateResponseDiffFromNow',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'days',
+                    }
+                ]
+            }
+        }
+    },
+]
 
-    // Templates:
+const templates: ExpressionDef[] = [
     {
         categories: ['templates'],
         id: 'consent-given',
@@ -930,72 +987,304 @@ const responseDependencies: ExpressionDef[] = [
             }
         },
         isTemplateFor: 'hasResponse'
+    },
+
+    {
+        categories: ['templates'],
+        id: 'singleChoiceGetNumOptionValue',
+        label: 'Single choice get numeric or date option value',
+        returnType: 'num',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getResponseValueAsNum',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.scg.'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['item-keys', 'text-input']
+                }
+            },
+        },
+        isTemplateFor: 'getResponseValueAsNum',
+    },
+
+    {
+        categories: ['templates'],
+        id: 'multipleChoiceGetNumOptionValue',
+        label: 'Multiple choice get numeric or date option value',
+        returnType: 'num',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getResponseValueAsNum',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.mcg.'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['item-keys', 'text-input']
+                }
+            },
+        },
+        isTemplateFor: 'getResponseValueAsNum',
+    },
+
+    {
+        categories: ['templates'],
+        id: 'multipleChoiceSelectionCount',
+        label: 'Count number of selected options in multiple choice',
+        returnType: 'num',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'countResponseItems',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.mcg'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['item-keys', 'text-input']
+                }
+            },
+        },
+        isTemplateFor: 'countResponseItems',
+    },
+
+    {
+        categories: ['templates'],
+        id: 'datePickerResponseValue',
+        label: 'Get date picker response value',
+        returnType: 'num',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getResponseValueAsNum',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'rg.date'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['item-keys', 'text-input']
+                }
+            },
+        },
+        isTemplateFor: 'getResponseValueAsNum',
     }
 ]
 
+const participantFlags: ExpressionDef[] = [
+    {
+        categories: ['participant-flags'],
+        id: 'hasParticipantFlagKey',
+        label: 'Participant flag with key exists',
+        returnType: 'boolean',
+        icon: 'tag',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasParticipantFlagKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+
+    {
+        categories: ['participant-flags'],
+        id: 'hasParticipantFlagKeyAndValue',
+        label: 'Participant flag with key and value exists',
+        returnType: 'boolean',
+        icon: 'tag',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasParticipantFlagKeyAndValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+
+    {
+        categories: ['participant-flags'],
+        id: 'getParticipantFlagValue',
+        label: 'Get participant flag value',
+        returnType: 'str',
+        icon: 'tag',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getParticipantFlagValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+
+    {
+        categories: ['participant-flags'],
+        id: 'parseParticipantFlagAsNum',
+        label: 'Parse participant flag as number',
+        returnType: 'num',
+        icon: 'tag',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'parseValueAsNum',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getParticipantFlagValue',
+                            data: [
+                                {
+                                    dtype: 'str',
+                                    str: ''
+                                }
+                            ]
+                        }
+                    }
+                ],
+            }
+        },
+        isTemplateFor: 'parseValueAsNum',
+    }
+]
 
 export const surveyEngineRegistry: ExpressionDef[] = [
     ...logicalOperators,
     ...miscExpressions,
     ...responseDependencies,
+    ...templates,
     ...comparisonOperators,
     ...advancedExpressions,
+    ...participantFlags,
     {
-        categories: ['participant-flags'],
-        id: 'hasParticipantFlag',
-        label: 'HAS FLAG WITH KEY AND VALUE',
+        categories: ['response-dependencies'],
+        id: 'getSurveyItemValidation',
+        label: 'Is survey item validation true',
         returnType: 'boolean',
         icon: 'tag',
         slots: [
             {
-                label: 'Check for flag',
+                label: 'Item key',
                 required: true,
                 allowedTypes: [
-                    {
-                        id: 'participant-flag-selector',
-                        type: 'key-value',
-                    },
-                    {
-                        id: 'key-value-manual',
-                        type: 'key-value',
-                    }
-                ]
+                    { id: 'item-keys', type: 'list-selector' },
+                    { id: 'text-input', type: 'str', },
+                ],
             },
-
-        ]
+            {
+                label: 'Validation key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                ],
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getSurveyItemValidation',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: '',
+                    },
+                ]
+            }
+        }
     }
 ]
 
 /*
-
-
-    getSurveyItemValidation,
-
-    dateResponseDiffFromNow,
-    getSecondsSince,
-    timestampWithOffset,
-
-
-
-    // template
-    getDateValue: singleChoiceGetNumOptionValue,
-    getNumValue: singleChoiceGetNumOptionValue,
-    regexCheck: singleChoiceTextInputRegexCheck,
-
-    selectionCount: multipleChoiceSelectionCount,
-    getDateValue: multipleChoiceGetNumOptionValue,
-    getNumValue: multipleChoiceGetNumOptionValue,
-    regexCheck: mulitpleChoiceTextInputRegexCheck,
-
-    accepted: consentAcceptedCondition,
-
-    regexCheck: textInputRegexCheck,
-
-    get: getDatePickerResponseValue,
-
-    participantFlags: {
-    hasKey: hasParticipantFlagKey,
-    hasKeyAndValue: hasParticipantFlagKeyAndValue,
-    getAsNum: parseParticipantFlagAsNum,
-  }
+    TODO: getSecondsSince,
 */
