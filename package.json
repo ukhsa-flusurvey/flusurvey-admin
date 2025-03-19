@@ -46,7 +46,7 @@
 		"@types/node": "20.14.2",
 		"@types/react": "18.3.3",
 		"@types/react-dom": "18.3.0",
-		"case-editor-tools": "^1.6.8",
+		"case-editor-tools": "^1.6.9",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "1.0.4",
@@ -80,6 +80,7 @@
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "5.4.5",
 		"usehooks-ts": "^3.0.2",
+		"uuid": "^11.1.0",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {

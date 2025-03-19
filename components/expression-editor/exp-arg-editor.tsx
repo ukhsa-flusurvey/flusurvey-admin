@@ -1,12 +1,11 @@
 import React from 'react';
-import { ExpEditorContext, ExpressionArg, ExpressionCategory, ExpressionDef, SelectSlotType, SlotDef, SlotInputDef } from './utils';
+import { ExpArg, ExpEditorContext, Expression, ExpressionArg, ExpressionCategory, ExpressionDef, SelectSlotType, SlotDef, SlotInputDef, StrArg, lookupExpressionDef } from './utils';
 import ListEditor from './slots/ListEditor';
 import EmptySlot from './slots/EmptySlot';
 import { toast } from 'sonner';
 import SlotLabel from './components/SlotLabel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import SlotFormEditor from './slots/SlotFormEditor';
-import { Expression as CaseExpression } from 'survey-engine/data_types';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { Copy, X } from 'lucide-react';
@@ -57,8 +56,10 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
         }
 
         const currentSlotValues = currentArgValues.map((argValue, argIndex) => {
+            const slotType = currentSlotTypes.at(argIndex) || (argValue as ExpArg)?.exp?.name;
+
             return {
-                slotType: currentSlotTypes.at(argIndex),
+                slotType: slotType,
                 value: argValue
             }
         })
@@ -92,10 +93,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     }
 
     // Single slot editor:
-
-
-    const currentSlotTypes = props.availableMetadata?.slotTypes || []
-
+    const currentSlotTypes = props.availableMetadata?.slotTypes || props.availableExpData.map(arg => (arg as ExpArg)?.exp?.name);
     const isSimpleSelect = slotDef.allowedTypes?.length === 1 && slotDef.allowedTypes[0].type === 'select';
 
     const isDefined = currentSlotTypes.at(props.currentIndex) !== undefined && currentSlotTypes.at(props.currentIndex) !== '';
@@ -111,6 +109,10 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                     currentSlotTypes.fill(undefined, currentSlotTypes.length, props.currentIndex)
                 }
 
+                const currentArgs = props.availableExpData || []
+                if (currentArgs.length < props.currentIndex) {
+                    currentArgs.fill(undefined, currentArgs.length, props.currentIndex)
+                }
 
                 if (slotTypeId === 'clipboard') {
                     // paste item from clipboard
@@ -123,13 +125,9 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                             return;
                         }
                         currentSlotTypes[props.currentIndex] = content.slotType;
-                        const currentData = props.availableExpData || [];
-                        if (currentData.length < props.currentIndex) {
-                            currentData.fill(undefined, currentData.length, props.currentIndex)
-                        }
-                        currentData[props.currentIndex] = content.value;
+                        currentArgs[props.currentIndex] = content.value;
                         props.onChange?.(
-                            currentData,
+                            currentArgs,
                             currentSlotTypes
                         )
                     } catch (error) {
@@ -141,8 +139,19 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
 
                 currentSlotTypes[props.currentIndex] = slotTypeId;
+
+                if (slotTypeId !== undefined) {
+                    const expressionDef = lookupExpressionDef(slotTypeId, props.expRegistry.expressionDefs);
+                    if (expressionDef?.defaultValue !== undefined) {
+                        currentArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
+                    }
+                    if (expressionDef?.isTemplateFor) {
+                        currentSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
+                    }
+                }
+
                 props.onChange?.(
-                    props.availableExpData || [],
+                    currentArgs,
                     currentSlotTypes
                 )
             }}
@@ -161,7 +170,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
         return <div key={props.currentIndex}>
             <SlotLabel label={slotDef.label} required={slotDef.required} />
             <Select
-                value={currentArgValue?.str || ''}
+                value={(currentArgValue as StrArg)?.str || ''}
                 onValueChange={(value) => {
                     const currentData = props.availableExpData || [];
                     if (currentData.length < props.currentIndex) {
@@ -240,7 +249,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     }
 
     const currentArgValue = props.availableExpData.at(currentIndex);
-    let currentExpression: CaseExpression;
+    let currentExpression: Expression;
     if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
         currentExpression = currentArgValue.exp;
     } else {
@@ -318,7 +327,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                             currentData.fill(undefined, currentData.length, currentIndex)
                         }
                         currentData[currentIndex] = {
-                            exp: newExpression as CaseExpression,
+                            exp: newExpression,
                             dtype: 'exp'
                         }
 

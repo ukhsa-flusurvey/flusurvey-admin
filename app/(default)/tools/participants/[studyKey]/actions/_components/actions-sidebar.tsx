@@ -25,7 +25,15 @@ const ActionsSidebar: React.FC<ActionsSidebarProps> = (props) => {
         {
             label: 'Schedule message',
             href: `/tools/participants/${props.studyKey}/actions/schedule-message`,
-        }
+        },
+        {
+            label: 'Participant info updater',
+            href: `/tools/participants/${props.studyKey}/actions/participant-info-updater`,
+        },
+        {
+            label: 'Add reports',
+            href: `/tools/participants/${props.studyKey}/actions/add-reports`,
+        },
     ];
 
 

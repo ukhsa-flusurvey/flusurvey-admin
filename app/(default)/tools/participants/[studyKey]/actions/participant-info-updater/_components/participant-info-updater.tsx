@@ -3,71 +3,57 @@
 import LoadingButton from '@/components/loading-button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { EmailTemplate } from '@/utils/server/types/messaging';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addDays, format } from 'date-fns';
 import { Info } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Expression } from 'survey-engine/data_types';
 import { z } from "zod"
-import TaskRunner from './task-runner';
+import TaskRunner from '../../schedule-message/_components/task-runner';
 import { StudyEngine } from 'case-editor-tools/expression-utils/studyEngineExpressions';
-import ParticipantInfoUploader, { participantInfoSchema } from './participant-info-uploader';
+import ParticipantInfoUploader, { participantInfoSchema } from '../../schedule-message/_components/participant-info-uploader';
 import { Switch } from '@/components/ui/switch';
 import { v4 as uuidv4 } from 'uuid';
 
 
-const scheduleMessageActionSchema = z.object({
+const updateParticipantInfoActionSchema = z.object({
     studyKey: z.string().min(2).max(50),
-    messageType: z.string().min(2, 'template type is required').max(50),
-    scheduledFor: z.date(),
     useAsLinkingCode: z.boolean(),
     participantInfos: participantInfoSchema
 })
 
-interface ScheduleMessageActionFormProps {
+interface ParticipantInfoUpdaterProps {
     studyKey: string;
-    availableStudyEmailTemplates?: Array<EmailTemplate>;
 }
 
-const dateToInputStr = (date: Date) => {
-    return format(date, 'yyyy-MM-dd\'T\'HH:mm')
-}
-
-
-const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (props) => {
+const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) => {
     const [isPending, startTransition] = React.useTransition();
 
     const [taskToRun, setTaskToRun] = useState<{
         participantID: string;
         rules: Expression[];
         studyKey: string;
-        messageType: string;
+        useAsLinkingCode: boolean;
         taskID: string;
     }[]>([])
 
-    const form = useForm<z.infer<typeof scheduleMessageActionSchema>>({
-        resolver: zodResolver(scheduleMessageActionSchema),
+    const form = useForm<z.infer<typeof updateParticipantInfoActionSchema>>({
+        resolver: zodResolver(updateParticipantInfoActionSchema),
         defaultValues: {
-            messageType: "",
-            scheduledFor: new Date(),
             studyKey: props.studyKey,
             useAsLinkingCode: false,
             participantInfos: [],
         },
     })
 
-    function onSubmit(values: z.infer<typeof scheduleMessageActionSchema>) {
+    function onSubmit(values: z.infer<typeof updateParticipantInfoActionSchema>) {
 
         startTransition(() => {
             const newTasks: Array<{
                 participantID: string;
                 rules: Expression[];
                 studyKey: string;
-                messageType: string;
+                useAsLinkingCode: boolean;
                 taskID: string;
             }> = [];
             for (const pInfos of values.participantInfos) {
@@ -76,12 +62,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                     continue;
                 }
 
-                const rules = [
-                    StudyEngine.participantActions.messages.add(
-                        values.messageType,
-                        Math.floor(values.scheduledFor.getTime() / 1000),
-                    ),
-                ]
+                const rules: Expression[] = []
 
                 for (const key in pInfos) {
                     if (key === 'participantID') {
@@ -109,11 +90,11 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                 }
 
                 newTasks.push({
-                    taskID: uuidv4(),
                     participantID,
                     rules,
                     studyKey: values.studyKey,
-                    messageType: values.messageType,
+                    useAsLinkingCode: values.useAsLinkingCode,
+                    taskID: uuidv4(),
                 })
             }
             setTaskToRun(prev => {
@@ -128,68 +109,13 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             <Alert className="">
                 <Info className="size-4" />
                 <AlertDescription>
-                    {'Use this form to schedule a message to be sent to the participants. Use the CSV file to upload the participant IDs and their information. The CSV file should have a header row with the column names. One of the columns must be "participantID". All other columns will be added as flags or linking codes to the participant. Empty cells will remove the participant\'s flag or linking code for the given key'}
+                    {'Update participant infos (flags or linking codes) using the CSV file to upload. The CSV file should have a header row with the column names. One of the columns must be "participantID". All other columns will be added as flags or linking codes to the participant. Empty cells will remove the participant\'s flag or linking code for the given key'}
 
                 </AlertDescription>
             </Alert>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="messageType"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Message type</FormLabel>
-                                <FormControl>
-                                    <Select name="messageType"
-                                        onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a message type..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {!props.availableStudyEmailTemplates && <p className='text-center text-sm py-2 text-muted-foreground'> no templates available</p>}
-                                            {props.availableStudyEmailTemplates?.map((template) => (
-                                                <SelectItem key={template.messageType} value={template.messageType}>{template.messageType}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-
-                                </FormControl>
-                                <FormDescription>
-                                    Select the type of message to send.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="scheduledFor"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Scheduled for</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        id='schedule-next-time'
-                                        type='datetime-local'
-                                        placeholder='enter next time...'
-                                        value={dateToInputStr(field.value)}
-                                        min={dateToInputStr(addDays(new Date(), -1))}
-                                        onChange={(event) => {
-                                            const value = event.target.value;
-                                            field.onChange(new Date(value));
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the date and time when the message should be sent.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
 
                     <FormField
                         control={form.control}
@@ -235,11 +161,13 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                         )}
                     />
 
+
+
                     <LoadingButton
                         type="submit"
                         isLoading={isPending}
                     >
-                        Add message to participants
+                        Run action to update participant infos
                     </LoadingButton>
 
 
@@ -247,6 +175,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
             </Form>
 
             {taskToRun.length > 0 && <div className='mt-4'>
+
                 <h3 className='text-lg font-semibold mb-4'>Task runner</h3>
                 <ul className='space-y-2'>
                     {taskToRun.map((task, index) => (
@@ -255,7 +184,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                         >
                             {taskToRun.length - index}
                             <TaskRunner
-                                messageType={task.messageType}
+                                messageType={task.useAsLinkingCode ? 'Update linking codes' : 'Update participant flags'}
                                 participantID={task.participantID}
                                 rules={task.rules}
                                 studyKey={task.studyKey}
@@ -270,4 +199,4 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
     );
 };
 
-export default ScheduleMessageActionForm;
+export default ParticipantInfoUpdater;

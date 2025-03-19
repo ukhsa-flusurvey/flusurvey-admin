@@ -1,5 +1,5 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
+import { supportedBuiltInSlotTypes, surveyExpressionCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
 import { ExpressionArg } from '@/components/expression-editor/utils';
 import React, { useEffect } from 'react';
 
@@ -14,9 +14,9 @@ const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
 
     useEffect(() => {
         if (props.expArg) {
-            if (props.expArg.exp !== undefined) {
+            if (props.expArg.dtype === 'exp') {
                 setCurrentExpArgSlot(props.expArg.exp.name);
-            } else if (props.expArg.num !== undefined) {
+            } else if (props.expArg.dtype === 'num') {
                 setCurrentExpArgSlot('number-input');
             }
         }
@@ -34,7 +34,7 @@ const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
             expRegistry={{
                 expressionDefs: surveyEngineRegistry,
                 builtInSlotTypes: supportedBuiltInSlotTypes,
-                categories: surveyEngineCategories,
+                categories: surveyExpressionCategories,
             }}
             currentIndex={0}
             slotDef={{

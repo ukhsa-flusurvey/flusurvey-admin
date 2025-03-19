@@ -59,6 +59,7 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
 
     const handleDownload = () => {
         startTransition(async () => {
+            let downloadCount = 0;
             for (const file of selectedFiles) {
                 const filename = props.dailyExports.find(e => e.id === file)?.filename;
                 if (!filename) {
@@ -91,13 +92,22 @@ const DailExportsClient: React.FC<DailExportsClientProps> = (props) => {
                     a.download = downloadFilename;
                     document.body.appendChild(a);
                     a.click();
-                    a.remove();
-                    toast.success(downloadFilename + ' downloaded');
+
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                    downloadCount++;
+                    console.log(`${downloadCount}: ${filename}`);
+                    // Add a small delay between downloads
+                    await new Promise(resolve => setTimeout(resolve, 200));
                 } catch (e) {
                     console.error(e);
                     toast.error('Failed to download file');
                 }
             }
+            toast.success(`${downloadCount} files downloaded.`);
         });
     }
 

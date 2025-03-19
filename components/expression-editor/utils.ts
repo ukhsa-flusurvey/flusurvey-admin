@@ -1,5 +1,3 @@
-import { ExpressionArg as CaseExpressionArg } from 'survey-engine/data_types';
-
 export interface Expression {
     name: string;
     returnType?: string;
@@ -9,9 +7,29 @@ export interface Expression {
     }
 }
 
-export type ExpressionArg = CaseExpressionArg
+type BaseArg = {
+    dtype?: string;
+}
 
-type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean';
+export type ExpArg = BaseArg & {
+    dtype: 'exp';
+    exp: Expression;
+}
+
+export type NumArg = BaseArg & {
+    dtype: 'num';
+    num: number;
+}
+
+export type StrArg = BaseArg & {
+    dtype: 'str';
+    str: string;
+}
+
+export type ExpressionArg = ExpArg | NumArg | StrArg;
+
+
+type ExpressionTypes = 'action' | 'num' | 'str' | 'boolean' | 'object';
 
 
 interface SlotTypeBase {
@@ -32,7 +50,7 @@ export interface SelectSlotType extends SlotTypeBase {
 }
 
 interface FormSlotType extends SlotTypeBase {
-    type: 'key-value' | 'list-selector'
+    type: 'key-value' | 'list-selector' | 'key-value-list'
 }
 
 interface ExpressionSlotType extends SlotTypeBase {
@@ -85,7 +103,15 @@ export interface SlotInputDefSelectorFromContext extends SlotInputDefBase {
     filterForItemType?: string, // array items only if they have this type
 }
 
-export type SlotInputDef = SlotInputDefSimple | SlotInputDefFormKeyValueFromContext | SlotInputDefSelectorFromContext;
+export interface SlotInputDefKeyValueList extends SlotInputDefBase {
+    type: 'key-value-list'
+    contextArrayKey?: string,
+    filterForItemType?: string, // array items only if they have this type
+    withFixedKey?: string; // if defined, the key will be fixed to this value and no key selector will be shown
+    withFixedValue?: string; // if defined, the value will be fixed to this value and no value selector will be shown
+}
+
+export type SlotInputDef = SlotInputDefSimple | SlotInputDefFormKeyValueFromContext | SlotInputDefSelectorFromContext | SlotInputDefKeyValueList;
 
 
 export interface ExpressionDef {
@@ -97,6 +123,8 @@ export interface ExpressionDef {
     color?: ColorVariant;
     icon?: IconVariant;
     // expression return type: action, num, str, boolean
+    defaultValue?: ExpressionArg;
+    isTemplateFor?: string;
 }
 
 
@@ -177,7 +205,7 @@ export const getRecommendedSlotTypes = (
         }
 
         expRegistry.builtInSlotTypes.forEach((builtIn) => {
-            if (slotDef.allowedTypes?.find(at => at.type === builtIn.type)
+            if (slotDef.allowedTypes?.find(at => at.type === builtIn.type && at.id === builtIn.id)
                 && builtIn.categories?.includes(category.id)
             ) {
                 currentGroup.slotTypes.push({

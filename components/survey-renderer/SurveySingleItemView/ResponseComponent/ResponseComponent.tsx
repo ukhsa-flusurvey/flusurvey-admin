@@ -120,6 +120,21 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                 return <div key={respComp.key ? respComp.key : 'p' + index.toString()} hidden></div>;
             }
             const currentKeyPath = [props.itemKey, props.compDef.key, respComp.key].join('.');
+
+            const customCompDef = props.customResponseComponents?.find(customRespComp => customRespComp.name === respComp.role);
+            if (customCompDef !== undefined) {
+                const Component = customCompDef.component;
+                return <Component
+                    key={respComp.key}
+                    parentKey={currentKeyPath}
+                    languageCode={props.languageCode}
+                    compDef={respComp}
+                    prefill={getPrefillForItem(respComp)}
+                    responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
+                    dateLocales={props.dateLocales}
+                />
+            }
+
             switch (respComp.role) {
                 case 'text':
                     return <TextViewComponent
@@ -366,20 +381,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = (props) => {
                         responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
                     />
                 default:
-                    const customCompDef = props.customResponseComponents?.find(customRespComp => customRespComp.name === respComp.role);
-                    if (!customCompDef) {
-                        return <p key={respComp.key ? respComp.key : index.toString()}>{respComp.role}</p>
-                    }
-                    const Component = customCompDef.component;
-                    return <Component
-                        key={respComp.key}
-                        parentKey={currentKeyPath}
-                        languageCode={props.languageCode}
-                        compDef={respComp}
-                        prefill={getPrefillForItem(respComp)}
-                        responseChanged={handleItemResponse(respComp.key ? respComp.key : 'no key found')}
-                        dateLocales={props.dateLocales}
-                    />
+                    return <p key={respComp.key ? respComp.key : index.toString()}>{respComp.role}</p>
             }
         })
         }

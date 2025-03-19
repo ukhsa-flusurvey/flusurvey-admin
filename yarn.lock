@@ -2769,10 +2769,10 @@ caniuse-lite@^1.0.30001579, caniuse-lite@^1.0.30001646, caniuse-lite@^1.0.300016
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001684.tgz#0eca437bab7d5f03452ff0ef9de8299be6b08e16"
   integrity sha512-G1LRwLIQjBQoyq0ZJGqGIJUXzJ8irpbjHLpVRXDvBEScFJ9b17sgK6vlx0GAJFE21okD7zXl08rRRUfq6HdoEQ==
 
-case-editor-tools@^1.6.8:
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/case-editor-tools/-/case-editor-tools-1.6.8.tgz#31dbaf3586a362c9d53fce079ec22425489fcfa7"
-  integrity sha512-GkRUVeHbwUx0WsK7WXCYHb+6Xf8i7c5DFsK03QrSjxz0W5AHedfXU3pSnQHyUDP+DB8iP5k1geggZN1f9XGG3A==
+case-editor-tools@^1.6.9:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/case-editor-tools/-/case-editor-tools-1.6.9.tgz#5e3b2d5f4b4bc2f291b02f1fb0ef613d7e6cefb1"
+  integrity sha512-RzAqiua+YSTprAK6nK2r9gAGfZKNe3s/ZhItDg4902kb6eQkK9GOup2awiSuvEx9bos29JKRtXIG5PrNSp1hdQ==
   dependencies:
     survey-engine "^1.2.0"
 
@@ -6735,6 +6735,11 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+uuid@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
+  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
 
 velite@^0.2.1:
   version "0.2.1"

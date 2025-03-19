@@ -187,7 +187,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = (props) => {
                     isOpen={openNewDialog}
                     onClose={() => setOpenNewDialog(false)}
                 />
-                <Toaster />
+                <Toaster
+                    expand={true}
+                />
             </div >
         </SurveyEditorContextProvider>
     );

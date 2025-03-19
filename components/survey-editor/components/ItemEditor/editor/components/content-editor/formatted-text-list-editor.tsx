@@ -1,6 +1,6 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { supportedBuiltInSlotTypes, surveyEngineCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
-import { ExpressionArg } from '@/components/expression-editor/utils';
+import { supportedBuiltInSlotTypes, surveyExpressionCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
+import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { supportedLanguages } from '@/components/survey-editor/components/general/SurveyLanguageToggle';
@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { generateDateDisplayComp, generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Calendar, GripHorizontal, Info, Type, X } from 'lucide-react';
 import React from 'react';
-import { ItemComponent, LocalizedString } from 'survey-engine/data_types';
+import { ItemComponent, LocalizedString, Expression as CaseExpression } from 'survey-engine/data_types';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 
@@ -50,7 +50,7 @@ const FormattedPartEditor: React.FC<{
             if (!props.part.content || props.part.content.length < 1) {
                 return null;
             }
-            const currentExpValue = ((props.part.content[0] as LocalizedString).parts[0] as ExpressionArg).exp;
+            const currentExpValue = ((props.part.content[0] as LocalizedString).parts[0] as ExpArg).exp;
             const args: ExpressionArg[] = [];
             if (currentExpValue?.name !== '') {
                 args.push({
@@ -58,7 +58,7 @@ const FormattedPartEditor: React.FC<{
                     dtype: 'exp'
                 });
             }
-            const slotTypes = args.map(arg => arg.exp?.name);
+            const slotTypes = args.map(arg => (arg as ExpArg).exp?.name);
 
             content = <div className='space-y-3 pt-3 min-w-80'>
 
@@ -86,7 +86,7 @@ const FormattedPartEditor: React.FC<{
                         expRegistry={{
                             expressionDefs: surveyEngineRegistry,
                             builtInSlotTypes: supportedBuiltInSlotTypes,
-                            categories: surveyEngineCategories,
+                            categories: surveyExpressionCategories,
                         }}
 
                         context={{}}
@@ -103,7 +103,7 @@ const FormattedPartEditor: React.FC<{
                             const updatedPart = generateDateDisplayComp(
                                 props.part.key || '',
                                 {
-                                    date: updatedExp?.exp || { name: '' },
+                                    date: (updatedExp as ExpArg)?.exp as CaseExpression || { name: '' },
                                     dateFormat: props.part.style?.find(style => style.key === 'dateFormat')?.value || 'yyyy-MM-dd',
                                     languageCodes: [...supportedLanguages],
                                     className: props.part.style?.find(style => style.key === 'className')?.value || ''
