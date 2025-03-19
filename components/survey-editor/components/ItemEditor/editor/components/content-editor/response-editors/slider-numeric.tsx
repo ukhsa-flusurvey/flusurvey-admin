@@ -6,6 +6,7 @@ import { Label } from '@radix-ui/react-label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Input } from '@/components/ui/input';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface SliderNumericProps {
     surveyItem: SurveySingleItem;
@@ -103,10 +104,10 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
 
             <ExpArgEditorForNum
                 label='Min'
-                expArg={currentMin}
+                expArg={currentMin as ExpArg}
                 onChange={(argValue) => {
                     const currentData = sliderComp.properties || {};
-                    currentData.min = argValue;
+                    currentData.min = argValue as ExpressionArg;
                     sliderComp.properties = {
                         ...currentData,
                     }
@@ -116,10 +117,10 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
 
             <ExpArgEditorForNum
                 label='Max'
-                expArg={currentMax}
+                expArg={currentMax as ExpArg}
                 onChange={(argValue) => {
                     const currentData = sliderComp.properties || {};
-                    currentData.max = argValue;
+                    currentData.max = argValue as ExpressionArg;
                     sliderComp.properties = {
                         ...currentData,
                     }
@@ -129,10 +130,10 @@ const SliderNumeric: React.FC<SliderNumericProps> = (props) => {
 
             <ExpArgEditorForNum
                 label='Step size'
-                expArg={currentStep}
+                expArg={currentStep as ExpArg}
                 onChange={(argValue) => {
                     const currentData = sliderComp.properties || {};
-                    currentData.stepSize = argValue;
+                    currentData.stepSize = argValue as ExpressionArg;
                     sliderComp.properties = {
                         ...currentData,
                     }

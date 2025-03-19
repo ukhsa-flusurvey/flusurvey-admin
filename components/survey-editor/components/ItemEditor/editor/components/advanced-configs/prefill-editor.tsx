@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import ExpArgEditorForDate from '../content-editor/response-editors/exp-arg-editor-for-date';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface PrefillRuleItemProps {
     index: number;
@@ -158,7 +159,7 @@ const PrefillRuleItem: React.FC<PrefillRuleItemProps> = (props) => {
 
                 return <ExpArgEditorForDate
                     label='Optional date filter'
-                    expArg={currentDateFilter}
+                    expArg={currentDateFilter as ExpArg}
                     onChange={(argValue) => {
                         if (!props.rule.data || props.rule.data.length < 1) {
                             console.warn('rule.data is empty')
@@ -170,9 +171,9 @@ const PrefillRuleItem: React.FC<PrefillRuleItemProps> = (props) => {
                             return
                         } else {
                             if (props.rule.data.length > 1) {
-                                props.rule.data[1] = argValue;
+                                props.rule.data[1] = argValue as ExpressionArg;
                             } else {
-                                props.rule.data.push(argValue);
+                                props.rule.data.push(argValue as ExpressionArg);
                             }
                             props.onChange(props.rule);
                         }
