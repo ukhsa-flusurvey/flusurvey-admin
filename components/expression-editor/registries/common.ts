@@ -7,6 +7,7 @@ export const miscExpressions: ExpressionDef[] = [
         label: 'GET TIMESTAMP',
         returnType: 'num',
         icon: 'calendar',
+        color: 'lime',
         slots: [
             {
                 label: 'Offset',
@@ -63,6 +64,7 @@ export const miscExpressions: ExpressionDef[] = [
         label: 'Parse value as number',
         returnType: 'num',
         icon: 'function',
+        color: 'lime',
         slots: [
             {
                 label: 'Value',
@@ -100,6 +102,7 @@ export const logicalOperators: ExpressionDef[] = [
         label: 'and',
         returnType: 'boolean',
         icon: 'brackets',
+        color: 'blue',
         slots: [
             {
                 label: 'if all true:',
@@ -128,6 +131,7 @@ export const logicalOperators: ExpressionDef[] = [
         label: 'or',
         returnType: 'boolean',
         icon: 'braces',
+        color: 'blue',
         slots: [
             {
                 label: 'if any true:',
@@ -156,6 +160,7 @@ export const logicalOperators: ExpressionDef[] = [
         label: 'not',
         returnType: 'boolean',
         icon: 'circle-slash',
+        color: 'orange',
         slots: [
             {
                 label: 'if not true:',

@@ -45,7 +45,7 @@ const slotKeyValueListSlotEditors: SlotInputDef[] = [
         // filterForItemType: 'with-value',
         withFixedValue: 'rg.scg',
         icon: 'diamond',
-        color: 'green',
+        // color: 'green',
         categories: ['variables'],
     },
     {
@@ -55,7 +55,7 @@ const slotKeyValueListSlotEditors: SlotInputDef[] = [
         contextArrayKey: 'multipleChoiceOptions',
         withFixedValue: 'rg.mcg',
         icon: 'square',
-        color: 'green',
+        //color: 'green',
         categories: ['variables'],
     },
     {
@@ -64,7 +64,7 @@ const slotKeyValueListSlotEditors: SlotInputDef[] = [
         label: 'Generic item, slot and option keys',
         contextArrayKey: 'allItemKeys',
         icon: 'triangle',
-        color: 'green',
+        // color: 'green',
         categories: ['variables'],
     },
 ]
@@ -116,7 +116,7 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         contextArrayKey: 'allItemKeys',
         label: 'Available item keys',
         icon: 'tag',
-        color: 'green',
+        // color: 'green',
         categories: ['variables'],
     },
     {
@@ -125,7 +125,7 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         contextArrayKey: 'dateUnitPicker',
         label: 'Date unit picker',
         icon: 'calendar',
-        color: 'green',
+        // color: 'green',
         categories: ['variables'],
     },
     ...slotKeyValueListSlotEditors
@@ -138,6 +138,7 @@ const advancedExpressions: ExpressionDef[] = [
         label: 'Is value defined',
         returnType: 'boolean',
         icon: 'blocks',
+        color: 'teal',
         slots: [
             {
                 label: 'Value',
@@ -290,6 +291,7 @@ const comparisonOperators: ExpressionDef[] = [
         label: 'Equals (L == R)',
         returnType: 'boolean',
         icon: 'code',
+        color: 'teal',
         slots: [
             {
                 label: 'Left side',
@@ -344,6 +346,7 @@ const comparisonOperators: ExpressionDef[] = [
         label: 'Less than or equal (L <= R)',
         returnType: 'boolean',
         icon: 'code',
+        color: 'teal',
         slots: [
             {
                 label: 'Left side',
@@ -407,6 +410,7 @@ const comparisonOperators: ExpressionDef[] = [
         label: 'Less than (L < R)',
         returnType: 'boolean',
         icon: 'code',
+        color: 'teal',
         slots: [
             {
                 label: 'Left side',
@@ -470,6 +474,7 @@ const comparisonOperators: ExpressionDef[] = [
         label: 'Greater than or equal (L >= R)',
         returnType: 'boolean',
         icon: 'code',
+        color: 'teal',
         slots: [
             {
                 label: 'Left side',
@@ -533,6 +538,7 @@ const comparisonOperators: ExpressionDef[] = [
         label: 'Greater than (L > R)',
         returnType: 'boolean',
         icon: 'code',
+        color: 'blue',
         slots: [
             {
                 label: 'Left side',
@@ -599,6 +605,7 @@ const responseDependencies: ExpressionDef[] = [
         id: 'hasResponse',
         label: 'A specific response is present',
         returnType: 'boolean',
+        color: 'yellow',
         slots: [
             {
                 label: 'Item key',
@@ -639,8 +646,9 @@ const responseDependencies: ExpressionDef[] = [
     {
         categories: ['response-dependencies'],
         id: 'responseHasKeysAny',
-        label: 'Response contains any of these keys:',
+        label: 'Response contains any of these keys',
         returnType: 'boolean',
+        color: 'yellow',
         icon: 'layout-list',
         slots: [
             {
@@ -674,7 +682,7 @@ const responseDependencies: ExpressionDef[] = [
     {
         categories: ['response-dependencies'],
         id: 'responseHasKeysAll',
-        label: 'Response contains all of these keys:',
+        label: 'Response contains all of these keys',
         returnType: 'boolean',
         icon: 'layout-list',
         slots: [
@@ -707,6 +715,7 @@ const responseDependencies: ExpressionDef[] = [
         id: 'responseHasOnlyKeysOtherThan',
         label: 'Has response but none of these keys:',
         returnType: 'boolean',
+        color: 'yellow',
         icon: 'layout-list',
         slots: [
             {
@@ -743,6 +752,7 @@ const responseDependencies: ExpressionDef[] = [
         categories: ['response-dependencies'],
         label: 'Get response value as number',
         returnType: 'num',
+        color: 'lime',
         icon: 'function',
         slots: [
             {
@@ -825,6 +835,7 @@ const responseDependencies: ExpressionDef[] = [
         categories: ['response-dependencies'],
         label: 'Count response items',
         returnType: 'num',
+        color: 'lime',
         icon: 'function',
         slots: [
             {
@@ -865,7 +876,8 @@ const responseDependencies: ExpressionDef[] = [
         categories: ['response-dependencies'],
         label: 'Check response value with regex',
         returnType: 'boolean',
-        icon: 'function',
+        color: 'yellow',
+        icon: 'regex',
         slots: [
             {
                 label: 'Item key',
@@ -1101,6 +1113,7 @@ const participantFlags: ExpressionDef[] = [
         label: 'Participant flag with key exists',
         returnType: 'boolean',
         icon: 'tag',
+        color: 'dark',
         slots: [
             {
                 label: 'Key',
@@ -1134,6 +1147,7 @@ const participantFlags: ExpressionDef[] = [
         label: 'Participant flag with key and value exists',
         returnType: 'boolean',
         icon: 'tag',
+        color: 'dark',
         slots: [
             {
                 label: 'Key',
@@ -1180,6 +1194,7 @@ const participantFlags: ExpressionDef[] = [
         label: 'Get participant flag value',
         returnType: 'str',
         icon: 'tag',
+        color: 'dark',
         slots: [
             {
                 label: 'Key',
@@ -1251,7 +1266,8 @@ export const surveyEngineRegistry: ExpressionDef[] = [
         id: 'getSurveyItemValidation',
         label: 'Is survey item validation true',
         returnType: 'boolean',
-        icon: 'tag',
+        icon: 'terminal',
+        color: 'cyan',
         slots: [
             {
                 label: 'Item key',
