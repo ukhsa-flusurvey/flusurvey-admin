@@ -7,6 +7,7 @@ import { getItemTypeInfos } from '@/components/survey-editor/utils/utils';
 import ValidationsTab from './validation-editor/validations-tab';
 import GroupItemsEditor from './group-items-editor/group-items-editor';
 import AdvancedConfigs from './advanced-configs/advanced-configs';
+import ConditionsEditor from './conditions-editor/conditions-editor';
 
 
 interface ItemEditorTabsProps {
@@ -118,27 +119,10 @@ const ItemEditorTabs: React.FC<ItemEditorTabsProps> = (props) => {
                 <TabsContent value="condition"
                     className='overflow-x-scroll overflow-y-scroll overscroll-x-contain'
                 >
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
-                    <div className='min-w-[800px| flex rounded-full bg-red-50 text-nowrap h-40'>
-                        Condition ConditionCondition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition Condition
-                    </div>
+                    <ConditionsEditor
+                        surveyItem={props.surveyItem}
+                        onUpdateSurveyItem={props.onUpdateSurveyItem}
+                    />
                 </TabsContent>
 
                 <TabsContent value="validation">

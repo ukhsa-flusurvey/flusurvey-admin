@@ -6,6 +6,7 @@ import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface TimeInputContentConfigProps {
     component: ItemComponent;
@@ -92,10 +93,10 @@ const TimeInputContentConfig: React.FC<TimeInputContentConfigProps> = (props) =>
             <div>
                 <ExpArgEditorForNum
                     label='Step Size (seconds, e.g. 300 = 5 minutes)'
-                    expArg={currentStep}
+                    expArg={currentStep as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
-                        currentData.stepSize = argValue;
+                        currentData.stepSize = argValue as ExpressionArg;
                         props.onChange({
                             ...props.component,
                             properties: {

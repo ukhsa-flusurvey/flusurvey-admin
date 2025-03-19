@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { ExpEditorContext, ExpressionArg, ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef, getRecommendedSlotTypes } from '../utils';
+import { ExpEditorContext, Expression, ExpressionArg, ExpressionCategory, ExpressionDef, SlotDef, SlotInputDef, getRecommendedSlotTypes, lookupExpressionDef } from '../utils';
 import SlotTypeSelector from '../components/SlotTypeSelector';
 import SlotLabel from '../components/SlotLabel';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react';
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
 import ExpressionPreview from './ExpressionPreview';
-import { Expression as CaseExpression } from 'survey-engine/data_types';
 import ExpressionEditor from '../ExpressionEditor';
 import Block from '../components/Block';
 import { toast } from 'sonner';
@@ -51,7 +50,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                     {props.currentSlotValues.map((currentSlot, index) => {
                         if (currentSlot === undefined) {
                             return <div key={index}>
-                                <p>undefined</p>
+                                <p> slot is undefined </p>
                             </div>
                         }
 
@@ -61,17 +60,17 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                         const isExpression = expressionDef !== undefined;
                         if (!isExpression) {
                             return <div key={index}>
-                                <p>not expression</p>
+                                <p>unknown expression: {JSON.stringify(currentSlot)}</p>
                             </div>
                         }
 
                         const isHidden = hideSlotContent.includes(index);
 
-                        let currentExpression: CaseExpression;
+                        let currentExpression: Expression;
                         if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
                             currentExpression = currentArgValue.exp;
                         } else {
-                            // TODO: create empty expression
+                            // create empty expression
                             currentExpression = { name: expressionDef.id }
                         }
 
@@ -173,7 +172,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         onChange={(newExpression) => {
                                             const newValues = [...props.currentSlotValues].map((val) => val.value);
                                             newValues[index] = {
-                                                exp: newExpression as CaseExpression,
+                                                exp: newExpression,
                                                 dtype: 'exp'
                                             }
                                             props.onChangeValues(
@@ -219,9 +218,18 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         return;
                                     }
                                 } else {
-                                    currentSlotTypes.push(slotTypeId);
-                                    currentValues.push(undefined);
+                                    let newArg: ExpressionArg | undefined;
+                                    let isTemplateFor = '';
+                                    if (slotTypeId !== undefined) {
+                                        const expressionDef = lookupExpressionDef(slotTypeId, props.expRegistry.expressionDefs);
+                                        if (expressionDef?.defaultValue !== undefined) {
+                                            newArg = JSON.parse(JSON.stringify(expressionDef.defaultValue));
+                                        }
+                                        isTemplateFor = expressionDef?.isTemplateFor || '';
+                                    }
 
+                                    currentSlotTypes.push(!isTemplateFor ? slotTypeId : isTemplateFor);
+                                    currentValues.push(newArg);
                                 }
                                 props.onChangeValues(currentValues, currentSlotTypes);
 

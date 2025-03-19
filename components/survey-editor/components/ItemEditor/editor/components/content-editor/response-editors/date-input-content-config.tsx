@@ -7,6 +7,7 @@ import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForDate from './exp-arg-editor-for-date';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface DateInputContentConfigProps {
     component: ItemComponent;
@@ -108,10 +109,10 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
             <div>
                 <ExpArgEditorForDate
                     label='Min'
-                    expArg={currentMin}
+                    expArg={currentMin as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
-                        currentData.min = argValue;
+                        currentData.min = argValue as ExpressionArg;
                         props.onChange({
                             ...props.component,
                             properties: {
@@ -126,10 +127,10 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
             <div>
                 <ExpArgEditorForDate
                     label='Max'
-                    expArg={currentMax}
+                    expArg={currentMax as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
-                        currentData.max = argValue;
+                        currentData.max = argValue as ExpressionArg;
                         props.onChange({
                             ...props.component,
                             properties: {

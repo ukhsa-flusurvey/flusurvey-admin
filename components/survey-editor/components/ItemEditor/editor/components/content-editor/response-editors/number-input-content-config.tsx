@@ -10,6 +10,7 @@ import React from 'react';
 import { ExpressionArg, ItemComponent } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface NumberInputContentConfigProps {
     component: ItemComponent;
@@ -172,10 +173,10 @@ const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props
 
             <ExpArgEditorForNum
                 label='Min'
-                expArg={currentMin}
+                expArg={currentMin as ExpArg}
                 onChange={(argValue) => {
                     const currentData = props.component.properties || {};
-                    currentData.min = argValue;
+                    currentData.min = argValue as ExpressionArg;
                     props.onChange({
                         ...props.component,
                         properties: {
@@ -187,10 +188,10 @@ const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props
 
             <ExpArgEditorForNum
                 label='Max'
-                expArg={currentMax}
+                expArg={currentMax as ExpArg}
                 onChange={(argValue) => {
                     const currentData = props.component.properties || {};
-                    currentData.max = argValue;
+                    currentData.max = argValue as ExpressionArg;
                     props.onChange({
                         ...props.component,
                         properties: {
@@ -202,10 +203,10 @@ const NumberInputContentConfig: React.FC<NumberInputContentConfigProps> = (props
 
             <ExpArgEditorForNum
                 label='Step'
-                expArg={currentStep}
+                expArg={currentStep as ExpArg}
                 onChange={(argValue) => {
                     const currentData = props.component.properties || {};
-                    currentData.stepSize = argValue;
+                    currentData.stepSize = argValue as ExpressionArg;
                     props.onChange({
                         ...props.component,
                         properties: {

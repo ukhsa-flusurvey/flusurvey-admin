@@ -32,6 +32,7 @@ const SimpleTextInput: React.FC<SimpleTextInputProps> = (props) => {
                 <Input
                     value={props.currentValue || ''}
                     placeholder='Enter a value...'
+                    className='font-mono text-xs md:text-xs'
                     onChange={(e) => props.onValueChange(e.target.value)}
                 />
             </div>
