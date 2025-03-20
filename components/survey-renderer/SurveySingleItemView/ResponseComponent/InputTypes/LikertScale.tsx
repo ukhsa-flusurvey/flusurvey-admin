@@ -69,7 +69,7 @@ const LikertScale: React.FC<LikertScaleProps> = (props) => {
                 })}
         >
             <input
-                className="form-check-input cursor-pointer"
+                className="form-check-input cursor-pointer size-5"
                 type="radio"
                 name={props.parentKey}
                 id={optionKey}
@@ -80,42 +80,46 @@ const LikertScale: React.FC<LikertScaleProps> = (props) => {
             />
         </div>);
 
-        const label = (<div className={clsx(
-            {
-                "text-center": !className && !shouldStackOnSmallScreen(),
-                "d-inline-block d-sm-block ms-2 ms-sm-0 text-start text-sm-center": shouldStackOnSmallScreen()
-            },
-            "flex-grow-1",
-            className
-        )}>
-            {content ? <label
-                htmlFor={optionKey}
-                className="w-100 cursor-pointer"
-            >{content}</label> : null}
+        const label = (<div
+
+            className={clsx(
+                {
+                    "text-center": !className && !shouldStackOnSmallScreen(),
+                    "inline-block @sm:block ms-2 ms-sm-0 text-start @sm:text-center": shouldStackOnSmallScreen()
+                },
+                "flex-grow-1",
+                className
+            )}>
+            {content ? <div
+
+                className="w-full"
+            >{content}</div> : null}
         </div>);
 
-        return <div
+        return <label
             key={option.key}
+            htmlFor={optionKey}
             className={clsx(
-                "flex-grow-1",
+                "grow",
+                'hover:bg-black/5 cursor-pointer rounded-[--survey-card-border-radius-sm] py-2',
                 {
-                    "d-flex d-sm-block mb-2 mb-sm-1 align-items-center": shouldStackOnSmallScreen(),
+                    "flex @sm:block mb-2 mb-sm-1 items-center": shouldStackOnSmallScreen(),
                 })}
             style={{ flexBasis: 0 }}
         >
             {labelPlacementBefore() ? label : null}
             {radioBtn}
             {!labelPlacementBefore() ? label : null}
-        </div>
+        </label>
     }
 
     return (
         <div
             id={props.parentKey}
             className={clsx(
-                "d-flex",
+                "flex",
                 {
-                    "flex-column flex-sm-row": shouldStackOnSmallScreen()
+                    "flex-col @md:flex-row": shouldStackOnSmallScreen()
                 }
             )}
             aria-label="likert scale"
