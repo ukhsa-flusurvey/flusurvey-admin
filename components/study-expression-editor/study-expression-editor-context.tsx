@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { useDebounceValue } from "usehooks-ts";
 
+type ViewModes = 'expression-editor' | 'context-editor' | 'load-rules-from-disk';
 
 interface StudyExpressionEditorContextType {
     sessionId?: string;
@@ -13,6 +14,7 @@ interface StudyExpressionEditorContextType {
     currentStudyContext?: StudyContext;
     lastModified?: number;
     mode: StudyExpressionEditorMode;
+    view: ViewModes;
 
     updateCurrentRules: (rules?: Expression[]) => void;
     updateCurrentStudyContext: (studyContext?: StudyContext) => void;
@@ -22,11 +24,17 @@ interface StudyExpressionEditorContextType {
 
     // Session management
     sessions: Session[];
+    initNewSession: () => void;
     loadSession: (sessionId: string) => void;
     deleteSession: (sessionId: string) => void;
 
     // Study context operations
     loadStudyContextFromSession: (sessionId: string) => void;
+
+    saveRulesToDisk: () => void;
+
+    // View management
+    changeView: (view: ViewModes) => void;
 }
 
 const SESSION_STORAGE_KEY = 'studyEditorSessions';
@@ -48,6 +56,7 @@ const getFromStorage = (key: string): unknown => {
 
 
 const saveToStorage = (key: string, value: unknown): void => {
+    console.debug(`Saving ${key} to localStorage:`, value);
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
@@ -60,7 +69,7 @@ export const StudyExpressionEditorProvider: React.FC<{
     defaultSession?: Session;
 }> = ({ children, defaultSession }) => {
     const [currentSession, setCurrentSession] = useState<Session | undefined>(defaultSession);
-
+    const [view, setView] = useState<ViewModes>('load-rules-from-disk');
 
     // Load all sessions
     const [sessions, setSessions] = useState<Session[]>(() => {
@@ -103,6 +112,13 @@ export const StudyExpressionEditorProvider: React.FC<{
     }, [debouncedSessions])
 
 
+    const initNewSession = () => {
+        setCurrentSession({
+            id: uuidv4(),
+            lastModified: Date.now(),
+            mode: currentSession?.mode ?? 'study-rules',
+        });
+    }
 
     const loadSession = (sessionId: string) => {
         const session = sessions.find(s => s.id === sessionId);
@@ -130,7 +146,7 @@ export const StudyExpressionEditorProvider: React.FC<{
         setCurrentSession(prev => {
             if (!prev || !prev.id) {
                 prev = {
-                    id: uuidv4(),
+                    id: '',
                     mode: 'study-rules',
                     lastModified: Date.now(),
                 }
@@ -141,18 +157,21 @@ export const StudyExpressionEditorProvider: React.FC<{
                 ...updates,
                 lastModified: Date.now()
             };
-            const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
-            const sessionIndex = updatedSessions.findIndex(s => s.id === updated.id);
 
-            if (sessionIndex >= 0) {
-                updatedSessions[sessionIndex] = updated;
-            } else {
-                updatedSessions.unshift(updated);
-                if (updatedSessions.length > MAX_SESSIONS) {
-                    updatedSessions.pop();
+            if (updated.id.length > 0) {
+                const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
+                const sessionIndex = updatedSessions.findIndex(s => s.id === updated.id);
+
+                if (sessionIndex >= 0) {
+                    updatedSessions[sessionIndex] = updated;
+                } else {
+                    updatedSessions.unshift(updated);
+                    if (updatedSessions.length > MAX_SESSIONS) {
+                        updatedSessions.pop();
+                    }
                 }
+                setSessions(updatedSessions);
             }
-            setSessions(updatedSessions);
             return updated;
         });
     };
@@ -191,9 +210,34 @@ export const StudyExpressionEditorProvider: React.FC<{
         updateCurrentStudyContext(session.studyContext);
     }
 
+    const changeView = (view: ViewModes) => {
+        setView(view);
+    }
+
+    const saveRulesToDisk = () => {
+        if (!currentSession || currentSession.rules === undefined || currentSession.rules.length === 0) {
+            toast.error('No rules to save');
+            return;
+        }
+        const rulesStr = JSON.stringify(currentSession?.rules, null, 2);
+        const blob = new Blob([rulesStr], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+
+        const fileName = `${currentSession?.name ? currentSession?.name + '_' : currentSession?.mode === 'study-rules' ? 'study-rules' : 'action'}.json`;
+
+        link.download = fileName;
+        link.click();
+
+        toast.success('Rules saved to disk', {
+            description: fileName
+        });
+    }
+
 
     return (
         <StudyExpressionEditorContext.Provider value={{
+            view,
             sessionId: currentSession?.id,
             sessions,
             mode: currentSession?.mode ?? 'study-rules',
@@ -201,6 +245,7 @@ export const StudyExpressionEditorProvider: React.FC<{
             currentRules: currentSession?.rules,
             currentStudyContext: currentSession?.studyContext,
             changeMode,
+            initNewSession,
             loadSession,
             deleteSession,
             updateSession,
@@ -208,6 +253,8 @@ export const StudyExpressionEditorProvider: React.FC<{
             updateCurrentStudyContext,
             updateName,
             loadStudyContextFromSession,
+            changeView,
+            saveRulesToDisk,
         }}>
             {children}
         </StudyExpressionEditorContext.Provider>
