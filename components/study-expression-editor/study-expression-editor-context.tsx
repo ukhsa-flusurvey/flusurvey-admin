@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { Expression } from "../expression-editor/utils";
 import { Session, StudyContext, StudyExpressionEditorMode } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -77,6 +77,9 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
                     return;
                 }
                 setSessions(storedSessions);
+                if (currentSession?.id && storedSessions.find(s => s.id === currentSession.id)) {
+                    setCurrentSession(currentSession);
+                }
             }
         };
 
@@ -85,29 +88,26 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [currentSession]);
 
     // Update session in storage with throttling
-    const throttledSaveSession = useCallback(
-        throttle((session: Session) => {
-            // Update in the sessions list
-            const sessionIndex = sessions.findIndex(s => s.id === session.id);
-            const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
+    const throttledSaveSession = throttle((session: Session) => {
+        // Update in the sessions list
+        const sessionIndex = sessions.findIndex(s => s.id === session.id);
+        const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
 
-            if (sessionIndex >= 0) {
-                updatedSessions[sessionIndex] = session;
-            } else {
-                updatedSessions.unshift(session);
-                if (updatedSessions.length > MAX_SESSIONS) {
-                    updatedSessions.pop();
-                }
+        if (sessionIndex >= 0) {
+            updatedSessions[sessionIndex] = session;
+        } else {
+            updatedSessions.unshift(session);
+            if (updatedSessions.length > MAX_SESSIONS) {
+                updatedSessions.pop();
             }
+        }
 
-            setSessions(updatedSessions);
-            saveToStorage(SESSION_STORAGE_KEY, updatedSessions);
-        }, 500),
-        [sessions]
-    );
+        setSessions(updatedSessions);
+        saveToStorage(SESSION_STORAGE_KEY, updatedSessions);
+    }, 500)
 
     const loadSession = (sessionId: string) => {
         const session = sessions.find(s => s.id === sessionId);
