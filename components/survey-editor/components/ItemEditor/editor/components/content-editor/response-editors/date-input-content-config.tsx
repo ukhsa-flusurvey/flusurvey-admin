@@ -108,7 +108,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Min'
+                    label='Earliest'
                     expArg={currentMin as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
@@ -126,7 +126,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Max'
+                    label='Latest'
                     expArg={currentMax as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
