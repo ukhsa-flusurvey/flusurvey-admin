@@ -2,8 +2,8 @@ import { ReactNode, createContext, useContext, useEffect, useState } from "react
 import { Expression } from "../expression-editor/utils";
 import { Session, StudyContext, StudyExpressionEditorMode } from "./types";
 import { v4 as uuidv4 } from 'uuid';
-import throttle from 'lodash.throttle';
 import { toast } from "sonner";
+import { useDebounceValue } from "usehooks-ts";
 
 
 interface StudyExpressionEditorContextType {
@@ -55,8 +55,12 @@ const saveToStorage = (key: string, value: unknown): void => {
     }
 }
 
-export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [currentSession, setCurrentSession] = useState<Session | undefined>(undefined);
+export const StudyExpressionEditorProvider: React.FC<{
+    children: ReactNode;
+    defaultSession?: Session;
+}> = ({ children, defaultSession }) => {
+    const [currentSession, setCurrentSession] = useState<Session | undefined>(defaultSession);
+
 
     // Load all sessions
     const [sessions, setSessions] = useState<Session[]>(() => {
@@ -66,6 +70,8 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
         }
         return storedSessions;
     });
+
+    const [debouncedSessions] = useDebounceValue(sessions, 500);
 
 
     // Handle storage changes from other tabs
@@ -77,8 +83,10 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
                     return;
                 }
                 setSessions(storedSessions);
-                if (currentSession?.id && storedSessions.find(s => s.id === currentSession.id)) {
-                    setCurrentSession(currentSession);
+
+                if (currentSession?.id) {
+                    const updatedCurrentSession = storedSessions.find(s => s.id === currentSession.id);
+                    setCurrentSession(updatedCurrentSession);
                 }
             }
         };
@@ -90,24 +98,11 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
         };
     }, [currentSession]);
 
-    // Update session in storage with throttling
-    const throttledSaveSession = throttle((session: Session) => {
-        // Update in the sessions list
-        const sessionIndex = sessions.findIndex(s => s.id === session.id);
-        const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
+    useEffect(() => {
+        saveToStorage(SESSION_STORAGE_KEY, debouncedSessions);
+    }, [debouncedSessions])
 
-        if (sessionIndex >= 0) {
-            updatedSessions[sessionIndex] = session;
-        } else {
-            updatedSessions.unshift(session);
-            if (updatedSessions.length > MAX_SESSIONS) {
-                updatedSessions.pop();
-            }
-        }
 
-        setSessions(updatedSessions);
-        saveToStorage(SESSION_STORAGE_KEY, updatedSessions);
-    }, 500)
 
     const loadSession = (sessionId: string) => {
         const session = sessions.find(s => s.id === sessionId);
@@ -128,7 +123,6 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
             setCurrentSession(undefined);
         }
         const newSessions = sessions.filter(s => s.id !== sessionId);
-        saveToStorage(SESSION_STORAGE_KEY, newSessions);
         setSessions(newSessions);
     }
 
@@ -147,7 +141,18 @@ export const StudyExpressionEditorProvider: React.FC<{ children: ReactNode }> = 
                 ...updates,
                 lastModified: Date.now()
             };
-            throttledSaveSession(updated);
+            const updatedSessions = [...sessions].sort((a, b) => b.lastModified - a.lastModified);
+            const sessionIndex = updatedSessions.findIndex(s => s.id === updated.id);
+
+            if (sessionIndex >= 0) {
+                updatedSessions[sessionIndex] = updated;
+            } else {
+                updatedSessions.unshift(updated);
+                if (updatedSessions.length > MAX_SESSIONS) {
+                    updatedSessions.pop();
+                }
+            }
+            setSessions(updatedSessions);
             return updated;
         });
     };
