@@ -24,7 +24,7 @@ interface StudyExpressionEditorContextType {
 
     // Session management
     sessions: Session[];
-    initNewSession: () => void;
+    initNewSession: (withRules?: Expression[], withMode?: StudyExpressionEditorMode) => void;
     loadSession: (sessionId: string) => void;
     deleteSession: (sessionId: string) => void;
 
@@ -112,11 +112,12 @@ export const StudyExpressionEditorProvider: React.FC<{
     }, [debouncedSessions])
 
 
-    const initNewSession = () => {
+    const initNewSession = (withRules?: Expression[], withMode?: StudyExpressionEditorMode) => {
         setCurrentSession({
             id: uuidv4(),
             lastModified: Date.now(),
-            mode: currentSession?.mode ?? 'study-rules',
+            mode: withMode ? withMode : currentSession?.mode ?? 'study-rules',
+            rules: withRules,
         });
     }
 
@@ -124,6 +125,8 @@ export const StudyExpressionEditorProvider: React.FC<{
         const session = sessions.find(s => s.id === sessionId);
         if (session) {
             setCurrentSession(session);
+            setView('expression-editor');
+            toast.success('Session loaded');
         }
     }
 

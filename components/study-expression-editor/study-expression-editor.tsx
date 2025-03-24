@@ -18,7 +18,7 @@ const StudyExpressionEditor: React.FC<StudyExpressionEditorProps> = (props) => {
             mode: props.mode ?? 'study-rules',
             studyContext: props.studyContext,
         }}>
-            <div className='h-screen absolute top-0 left-0 w-screen z-40 flex flex-col'>
+            <div className='z-40 flex flex-col h-screen'>
                 <Menu
                     onExit={() => console.log('todo: exit')}
                 />
