@@ -1,11 +1,12 @@
 import React from 'react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
+import LoadRulesFromDisk from './load-rules-from-disk';
 
 const MainContent: React.FC = () => {
     const { view, mode, sessionId } = useStudyExpressionEditor();
 
     if (!sessionId) {
-        return <p>init new session: new vs open</p>
+        return <LoadRulesFromDisk />
     }
 
     switch (view) {
@@ -19,7 +20,7 @@ const MainContent: React.FC = () => {
         case 'context-editor':
             return <p>ContextEditor</p>
         case 'load-rules-from-disk':
-            return <p>Load rules from disk</p>
+            return <LoadRulesFromDisk />
         default:
             return <p>unknown view</p>
     }
