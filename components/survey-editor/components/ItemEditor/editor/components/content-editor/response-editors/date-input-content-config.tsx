@@ -60,9 +60,9 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
                         <SelectValue placeholder="Select a date input mode..." />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="YMD">YMD</SelectItem>
-                        <SelectItem value="YM">YM</SelectItem>
-                        <SelectItem value="Y">Y</SelectItem>
+                        <SelectItem value="YMD">Year, Month & Day</SelectItem>
+                        <SelectItem value="YM">Year & Month</SelectItem>
+                        <SelectItem value="Y">Year</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -108,7 +108,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Min'
+                    label='Earliest'
                     expArg={currentMin as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
@@ -126,7 +126,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Max'
+                    label='Latest'
                     expArg={currentMax as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
