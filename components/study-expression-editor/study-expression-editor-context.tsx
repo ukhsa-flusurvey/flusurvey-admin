@@ -108,6 +108,7 @@ export const StudyExpressionEditorProvider: React.FC<{
     }, [currentSession]);
 
     useEffect(() => {
+        toast.success('Session updated');
         saveToStorage(SESSION_STORAGE_KEY, debouncedSessions);
     }, [debouncedSessions])
 
