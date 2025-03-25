@@ -32,6 +32,7 @@ const LoadRulesFromDisk: React.FC = () => {
     } = useStudyExpressionEditor();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [newRulesToLoad, setNewRulesToLoad] = React.useState<Expression[] | undefined>(undefined);
+    const [nameFromFilename, setNameFromFilename] = React.useState<string | undefined>(undefined);
 
     let selectedFileType: SelectedFileInfo | undefined;
 
@@ -99,6 +100,10 @@ const LoadRulesFromDisk: React.FC = () => {
                                 if (files.length > 0) {
                                     // read file as a json
                                     const reader = new FileReader();
+                                    const filename = files[0].name;
+                                    const targetName = filename.split('.').at(0)?.split('_').slice(1).join('_');
+                                    setNameFromFilename(targetName);
+
                                     reader.onload = (e) => {
                                         const text = e.target?.result;
                                         if (typeof text === 'string') {
@@ -141,7 +146,8 @@ const LoadRulesFromDisk: React.FC = () => {
 
                             initNewSession(
                                 newRulesToLoad,
-                                selectedFileType === 'rules' ? 'study-rules' : 'action'
+                                selectedFileType === 'rules' ? 'study-rules' : 'action',
+                                nameFromFilename
                             )
                             changeView('expression-editor');
 
