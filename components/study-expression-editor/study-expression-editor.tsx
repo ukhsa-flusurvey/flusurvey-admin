@@ -4,6 +4,7 @@ import Menu from './components/menu';
 import { StudyContext, StudyExpressionEditorMode } from './types';
 import MainContent from './components/main-content';
 import { Toaster } from 'sonner';
+import KeyboardShortcuts from './components/keyboard-shortcuts';
 
 interface StudyExpressionEditorProps {
     studyContext?: StudyContext
@@ -19,6 +20,7 @@ const StudyExpressionEditor: React.FC<StudyExpressionEditorProps> = (props) => {
             studyContext: props.studyContext,
         }}>
             <div className='z-40 flex flex-col h-screen'>
+                <KeyboardShortcuts />
                 <Menu
                     onExit={() => console.log('todo: exit')}
                 />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
-import { Menubar, MenubarContent, MenubarItem, MenubarLabel, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from '@/components/ui/menubar';
+import { Menubar, MenubarContent, MenubarItem, MenubarLabel, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from '@/components/ui/menubar';
 import { toast } from 'sonner';
 
 interface MenuProps {
@@ -105,7 +105,7 @@ const Menu: React.FC<MenuProps> = (props) => {
                             saveRulesToDisk();
                         }}
                     >
-                        Save rules to disk
+                        Save rules to disk <MenubarShortcut>⌘ +  S</MenubarShortcut>
                     </MenubarItem>
 
 

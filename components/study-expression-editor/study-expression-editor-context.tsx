@@ -82,7 +82,6 @@ export const StudyExpressionEditorProvider: React.FC<{
 
     const [debouncedSessions] = useDebounceValue(sessions, 500);
 
-
     // Handle storage changes from other tabs
     useEffect(() => {
         const handleStorageChange = (e: StorageEvent) => {
@@ -228,7 +227,9 @@ export const StudyExpressionEditorProvider: React.FC<{
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
 
-        const fileName = `${currentSession?.name ? currentSession?.name + '_' : currentSession?.mode === 'study-rules' ? 'study-rules' : 'action'}.json`;
+        const prefix = currentSession?.mode === 'study-rules' ? 'study-rules' : 'study-action';
+
+        const fileName = `${prefix}${currentSession?.name ? ('_' + currentSession?.name) : ''}.json`;
 
         link.download = fileName;
         link.click();
