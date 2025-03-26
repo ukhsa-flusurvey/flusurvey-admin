@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
 import LoadContextFromDisk from './load-context-from-disk';
+import EditorCard from './editor-card';
 
 const Overview: React.FC = () => {
     const [open, setOpen] = React.useState(false);
@@ -94,6 +95,13 @@ const Overview: React.FC = () => {
                     >Toggle sidebar</Button>
                 </div>
                 <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-3'>
+                    <EditorCard
+                        label={'Survey keys'}
+                        description={'Define which surveys are available for this study.'}
+                        type={'string'}
+                        data={[]}
+                        onChange={() => { }}
+                    />
                     <div className='h-64'>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
                     </div>

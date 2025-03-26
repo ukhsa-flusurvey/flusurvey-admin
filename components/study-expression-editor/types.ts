@@ -1,19 +1,16 @@
 import { Expression } from "../expression-editor/utils";
 
+export interface KeyValuePairDefs {
+    key: string;
+    possibleValues: string[];
+}
+
 export type StudyContext = {
     surveyKeys?: string[];
     messageKeys?: string[];
     customEventKeys?: string[];
-    participantFlags?: {
-        [key: string]: {
-            possibleValues: string[];
-        }
-    },
-    reportKeys?: {
-        [key: string]: {
-            attributeKeys: string[];
-        }
-    }
+    participantFlags?: Array<KeyValuePairDefs>,
+    reportKeys?: Array<KeyValuePairDefs>,
 }
 
 
