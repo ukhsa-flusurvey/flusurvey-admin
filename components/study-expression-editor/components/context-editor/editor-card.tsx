@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import AddPopover from './add-popover';
 import ListItemView from './list-item-view';
+import { cn } from '@/lib/utils';
 
 interface EditorCardProps {
     label: string;
@@ -81,9 +82,13 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
 
     return (
         <div
-            className='border border-border rounded-lg flex flex-col bg-white'
+            className={cn('border border-border rounded-lg flex flex-col bg-white',
+                {
+                    'border-primary/50': props.selectedIndex !== undefined,
+                }
+            )}
         >
-            <div className='flex justify-between gap-2 items-start border-b border-border p-2'>
+            <div className='flex justify-between gap-2 items-start border-b border-border px-4 py-2'>
                 <div>
                     <h3 className='font-bold text-lg tracking-wide'>
                         {props.label}
@@ -130,13 +135,13 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                     onAddNewKey={addNewKey}
                 />
             </div>)}
-            {hasItems && (<ul className='w-full divide-y divide-border pt-2 pb-6 min-h-40 max-h-64 overflow-y-auto px-2'>
+            {hasItems && (<ul className='w-full divide-y divide-border pb-6 min-h-40 max-h-64 overflow-y-auto'>
                 {props.data?.map((item, index) => (
-                    <li key={index} className='py-1'>
+                    <li key={index} className=''>
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
                                 <Button variant={props.selectedIndex === index ? 'secondary' : 'ghost'}
-                                    className='w-full h-auto'
+                                    className='w-full h-auto rounded-none'
                                     onClick={() => {
                                         if (props.selectedIndex === index) {
                                             props.onSelectIndex?.(undefined);
