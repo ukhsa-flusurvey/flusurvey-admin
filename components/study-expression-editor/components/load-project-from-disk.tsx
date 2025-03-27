@@ -23,20 +23,9 @@ const LoadRulesFromDisk: React.FC = () => {
 
 
     const filePickerHint = () => {
-        switch (newSession?.mode) {
-            case 'study-rules':
-                return <p className='text-xs text-muted-foreground'>
-                    Selected file appears to be a rule file.
-                </p>
-            case 'action':
-                return <p className='text-xs text-muted-foreground'>
-                    Selected file appears to be an action file.
-                </p>
-            default:
-                return <p className='text-xs text-muted-foreground'>
-                    Select an action or rule JSON file to load.
-                </p>;
-        }
+        return <p className='text-xs text-muted-foreground'>
+            Select a CASE study expression project (*.csep) file to load.
+        </p>;
     }
 
     return (
@@ -92,6 +81,7 @@ const LoadRulesFromDisk: React.FC = () => {
                     </div>
                     <Button
                         variant={'default'}
+                        className='w-full'
                         disabled={!newSession}
                         onClick={() => {
                             if (!newSession) {
