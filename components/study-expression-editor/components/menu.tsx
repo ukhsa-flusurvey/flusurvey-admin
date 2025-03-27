@@ -1,7 +1,9 @@
 import React from 'react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
-import { Menubar, MenubarContent, MenubarItem, MenubarLabel, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from '@/components/ui/menubar';
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from '@/components/ui/menubar';
 import { toast } from 'sonner';
+import { StudyExpressionEditorMode } from '../types';
+import { DownloadIcon, FolderOpenIcon, SaveIcon } from 'lucide-react';
 
 interface MenuProps {
     onExit: () => void;
@@ -12,12 +14,12 @@ const Menu: React.FC<MenuProps> = (props) => {
         mode,
         view,
         sessionId,
-        changeMode,
         changeView,
         initNewSession,
         updateCurrentStudyContext,
         sessions,
         saveRulesToDisk,
+        saveSessionToDisk,
     } = useStudyExpressionEditor();
 
     const recentContexts = sessions.map(s => {
@@ -33,6 +35,16 @@ const Menu: React.FC<MenuProps> = (props) => {
 
     const hasRecentContexts = recentContexts.length > 0;
 
+    const initNewProject = (type: StudyExpressionEditorMode) => {
+        if (sessionId) {
+            if (!confirm('Are you sure you want to create a new session? All unsaved changes will be lost.')) {
+                return;
+            }
+        }
+        initNewSession(undefined, type);
+        changeView('expression-editor');
+    }
+
     return (
         <Menubar
             className='rounded-none border-0 border-b px-6'
@@ -43,61 +55,64 @@ const Menu: React.FC<MenuProps> = (props) => {
                 >
                     Study {mode === 'study-rules' ? 'Rules' : 'Action'} Editor
                 </MenubarTrigger>
-                <MenubarContent>
-                    <MenubarLabel>
-                        Editor mode:
-                    </MenubarLabel>
-                    <MenubarRadioGroup value={mode}>
-                        <MenubarRadioItem
-                            value={'action'}
-                            onClick={() => changeMode('action')}
-                        >
-                            Study Action
-                        </MenubarRadioItem>
-                        <MenubarRadioItem
-                            value={'study-rules'}
-                            onClick={() => changeMode('study-rules')}
-                        >
-                            Study Rules
-                        </MenubarRadioItem>
-                    </MenubarRadioGroup>
-                </MenubarContent>
+
             </MenubarMenu>
 
             <MenubarMenu>
                 <MenubarTrigger
                 >
-                    File
+                    Project
                 </MenubarTrigger>
                 <MenubarContent>
-                    <MenubarItem
-                        onClick={() => {
-                            if (sessionId) {
-                                if (!confirm('Are you sure you want to create a new session? All unsaved changes will be lost.')) {
-                                    return;
-                                }
-                            }
-                            initNewSession();
-                            changeView('expression-editor');
-                        }}
-                    >
-                        New
-                    </MenubarItem>
+
+                    <MenubarSub>
+                        <MenubarSubTrigger>New</MenubarSubTrigger>
+                        <MenubarSubContent>
+                            <MenubarItem
+                                onClick={() => { initNewProject('study-rules') }}
+                            >
+                                Study Rules Project
+                            </MenubarItem>
+                            <MenubarSeparator />
+                            <MenubarItem
+                                onClick={() => { initNewProject('action') }}
+                            >
+                                Study Actions Project
+                            </MenubarItem>
+                        </MenubarSubContent>
+                    </MenubarSub>
 
                     <MenubarSeparator />
 
                     <MenubarItem
                         onClick={() => {
                             if (sessionId) {
-                                if (!confirm('Are you sure you want to open a new session? All unsaved changes will be lost.')) {
+                                if (!confirm('Are you sure you want to open a new project? All unsaved changes will be lost.')) {
                                     return;
                                 }
                             }
-                            changeView('load-rules-from-disk');
+                            changeView('load-project-from-disk');
                         }}
                     >
-                        Open rules...
+                        <FolderOpenIcon
+                            className='mr-2 size-4 text-muted-foreground'
+                        />
+                        Open Project...
                     </MenubarItem>
+
+
+                    <MenubarItem
+                        onClick={() => saveSessionToDisk()}
+                    >
+                        <SaveIcon
+                            className='mr-2 size-4 text-muted-foreground'
+                        />
+                        Save Project <MenubarShortcut>⌘ +  S</MenubarShortcut>
+                    </MenubarItem>
+
+                    <MenubarSeparator />
+
+
 
                     <MenubarItem
                         disabled={!hasActiveSession}
@@ -105,7 +120,10 @@ const Menu: React.FC<MenuProps> = (props) => {
                             saveRulesToDisk();
                         }}
                     >
-                        Save rules to disk <MenubarShortcut>⌘ +  S</MenubarShortcut>
+                        <DownloadIcon
+                            className='mr-2 size-4 text-muted-foreground'
+                        />
+                        Export Rules <MenubarShortcut>⌘ +  E</MenubarShortcut>
                     </MenubarItem>
 
 

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { useDebounceValue } from "usehooks-ts";
 
-type ViewModes = 'expression-editor' | 'context-editor' | 'load-rules-from-disk';
+type ViewModes = 'expression-editor' | 'context-editor' | 'load-project-from-disk';
 
 interface StudyExpressionEditorContextType {
     sessionId?: string;
@@ -26,6 +26,8 @@ interface StudyExpressionEditorContextType {
     sessions: Session[];
     initNewSession: (withRules?: Expression[], withMode?: StudyExpressionEditorMode, withName?: string) => void;
     loadSession: (sessionId: string) => void;
+    loadSessionObject: (session: Session) => void;
+    saveSessionToDisk: () => void;
     deleteSession: (sessionId: string) => void;
 
     // Study context operations
@@ -69,7 +71,7 @@ export const StudyExpressionEditorProvider: React.FC<{
     defaultSession?: Session;
 }> = ({ children, defaultSession }) => {
     const [currentSession, setCurrentSession] = useState<Session | undefined>(defaultSession);
-    const [view, setView] = useState<ViewModes>('load-rules-from-disk');
+    const [view, setView] = useState<ViewModes>('load-project-from-disk');
 
     // Load all sessions
     const [sessions, setSessions] = useState<Session[]>(() => {
@@ -220,7 +222,7 @@ export const StudyExpressionEditorProvider: React.FC<{
 
     const saveRulesToDisk = () => {
         if (!currentSession || currentSession.rules === undefined || currentSession.rules.length === 0) {
-            toast.error('No rules to save');
+            toast.error('No rules to export');
             return;
         }
         const rulesStr = JSON.stringify(currentSession?.rules, null, 2);
@@ -240,6 +242,38 @@ export const StudyExpressionEditorProvider: React.FC<{
         });
     }
 
+    const saveSessionToDisk = () => {
+        if (!currentSession || !currentSession.id) {
+            toast.error('No session to save');
+            return;
+        }
+
+        currentSession.meta = {
+            editorVersion: "1.0.0",
+            fileTypeId: "case-study-expression-project"
+        }
+        const sessionStr = JSON.stringify(currentSession, null, 2);
+        const blob = new Blob([sessionStr], { type: 'application/csep' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+
+        const prefix = currentSession?.mode === 'study-rules' ? 'study-rules' : 'study-action';
+
+        const fileName = `${prefix}${currentSession?.name ? ('_' + currentSession?.name) : ''}.csep`;
+        link.download = fileName;
+        link.click();
+
+        toast.success('Session saved to disk', {
+            description: fileName
+        });
+    }
+
+    const loadSessionObject = (session: Session) => {
+        setCurrentSession(session);
+        setView('expression-editor');
+        toast.success('Session loaded');
+    }
+
 
     return (
         <StudyExpressionEditorContext.Provider value={{
@@ -253,6 +287,8 @@ export const StudyExpressionEditorProvider: React.FC<{
             changeMode,
             initNewSession,
             loadSession,
+            loadSessionObject,
+            saveSessionToDisk,
             deleteSession,
             updateSession,
             updateCurrentRules,

@@ -4,7 +4,8 @@ import { useStudyExpressionEditor } from '../study-expression-editor-context';
 
 const KeyboardShortcuts: React.FC = () => {
     const {
-        saveRulesToDisk
+        saveRulesToDisk,
+        saveSessionToDisk,
     } = useStudyExpressionEditor();
 
     useEffect(() => {
@@ -12,9 +13,13 @@ const KeyboardShortcuts: React.FC = () => {
             // Check if Cmd (metaKey) or Ctrl is pressed along with 'S'
             if ((event.metaKey || event.ctrlKey)) {
                 switch (event.key) {
-                    case 's':
+                    case 'e':
                         event.preventDefault();
                         saveRulesToDisk()
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        saveSessionToDisk();
                         break;
                 }
 
@@ -28,7 +33,7 @@ const KeyboardShortcuts: React.FC = () => {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [saveRulesToDisk]);
+    }, [saveRulesToDisk, saveSessionToDisk]);
 
     return null;
 };

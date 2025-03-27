@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
-import LoadRulesFromDisk from './load-rules-from-disk';
+import LoadProjectFromDisk from './load-project-from-disk';
 import StudyActionEditor from './study-action-editor';
 import StudyRulesEditorOverview from './study-rule-editor/overview';
 import StudyExpContextEditorOverview from './context-editor/overview';
@@ -9,7 +9,7 @@ const MainContent: React.FC = () => {
     const { view, mode, sessionId } = useStudyExpressionEditor();
 
     if (!sessionId) {
-        return <LoadRulesFromDisk />
+        return <LoadProjectFromDisk />
     }
 
     switch (view) {
@@ -22,8 +22,8 @@ const MainContent: React.FC = () => {
             return <p>unknown editor mode</p>
         case 'context-editor':
             return <StudyExpContextEditorOverview />
-        case 'load-rules-from-disk':
-            return <LoadRulesFromDisk />
+        case 'load-project-from-disk':
+            return <LoadProjectFromDisk />
         default:
             return <p>unknown view</p>
     }

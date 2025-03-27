@@ -17,6 +17,10 @@ export type StudyContext = {
 export type StudyExpressionEditorMode = 'action' | 'study-rules';
 
 export type Session = {
+    meta?: {
+        editorVersion: string;
+        fileTypeId: string;
+    };
     id: string;
     name?: string;
     mode: StudyExpressionEditorMode;

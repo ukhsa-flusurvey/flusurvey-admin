@@ -8,69 +8,30 @@ import { Badge } from '@/components/ui/badge';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 
 import { toast } from 'sonner';
-import { ExpArg, Expression } from '@/components/expression-editor/utils';
+import { Session } from '../types';
 
-type SelectedFileInfo = 'invalid' | 'rules' | 'actions';
-
-const isStudyRuleContent = (rules: Expression[]) => {
-    if (rules.at(0)?.name !== 'IFTHEN') {
-        return false;
-    }
-    if ((rules.at(0)?.data?.at(0) as ExpArg)?.exp?.name !== 'checkEventType') {
-        return false;
-    }
-    return true;
-}
 
 const LoadRulesFromDisk: React.FC = () => {
     const {
         sessions,
-        loadSession,
+        loadSessionObject,
         deleteSession,
-        initNewSession,
-        changeView,
+        loadSession,
     } = useStudyExpressionEditor();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
-    const [newRulesToLoad, setNewRulesToLoad] = React.useState<Expression[] | undefined>(undefined);
-    const [nameFromFilename, setNameFromFilename] = React.useState<string | undefined>(undefined);
-
-    let selectedFileType: SelectedFileInfo | undefined;
-
-    if (!newRulesToLoad) {
-        if (errorMsg) {
-            selectedFileType = 'invalid'
-        } else {
-            selectedFileType = undefined;
-        }
-    } else {
-        if (errorMsg) {
-            selectedFileType = 'invalid'
-        } else {
-            if (newRulesToLoad.length > 0) {
-                if (isStudyRuleContent(newRulesToLoad)) {
-                    selectedFileType = 'rules';
-                } else {
-                    selectedFileType = 'actions';
-                }
-            }
-        }
-    }
+    const [newSession, setNewSession] = React.useState<Session | undefined>(undefined);
 
 
-
-
-    const filePickerHint = (selectedFileInfo?: SelectedFileInfo) => {
-        switch (selectedFileInfo) {
-            case 'rules':
+    const filePickerHint = () => {
+        switch (newSession?.mode) {
+            case 'study-rules':
                 return <p className='text-xs text-muted-foreground'>
                     Selected file appears to be a rule file.
                 </p>
-            case 'actions':
+            case 'action':
                 return <p className='text-xs text-muted-foreground'>
                     Selected file appears to be an action file.
                 </p>
-            case 'invalid':
-                return null;
             default:
                 return <p className='text-xs text-muted-foreground'>
                     Select an action or rule JSON file to load.
@@ -84,42 +45,37 @@ const LoadRulesFromDisk: React.FC = () => {
 
                 <div className='py-3 space-y-4'>
                     <h2 className='text-xl font-bold mb-2'>
-                        Load rules from disk
+                        Load Project from disk
                     </h2>
 
                     <div className='space-y-2'>
                         <Filepicker
                             id='rules upload'
                             accept={{
-                                'application/json': ['.json'],
+                                'application/csep': ['.csep'],
                             }}
                             onChange={(files) => {
-                                setNewRulesToLoad(undefined);
+                                setNewSession(undefined);
                                 setErrorMsg(undefined);
 
                                 if (files.length > 0) {
                                     // read file as a json
                                     const reader = new FileReader();
-                                    const filename = files[0].name;
-                                    const targetName = filename.split('.').at(0)?.split('_').slice(1).join('_');
-                                    setNameFromFilename(targetName);
 
                                     reader.onload = (e) => {
                                         const text = e.target?.result;
                                         if (typeof text === 'string') {
                                             const data = JSON.parse(text);
 
-                                            if (!Array.isArray(data) ||
-                                                data.some(e => !e.name)
-                                            ) {
+                                            if (data.meta?.fileTypeId !== 'case-study-expression-project') {
                                                 setErrorMsg('The selected file is not a valid rule file.');
                                                 toast.error('The selected file is not a valid rule file.');
                                                 return;
                                             }
 
-                                            setNewRulesToLoad(data as Expression[]);
+                                            setNewSession(data as Session);
                                         } else {
-                                            setNewRulesToLoad(undefined);
+                                            setNewSession(undefined);
                                             setErrorMsg('Error reading file');
                                             toast.error('Error reading file');
                                         }
@@ -129,29 +85,20 @@ const LoadRulesFromDisk: React.FC = () => {
                                 }
                             }}
                         />
-                        {filePickerHint(selectedFileType)}
+                        {filePickerHint()}
                         {errorMsg && (
                             <p className='text-destructive mt-3'>{errorMsg}</p>
                         )}
                     </div>
                     <Button
                         variant={'default'}
-                        disabled={selectedFileType === 'invalid' || selectedFileType === undefined}
+                        disabled={!newSession}
                         onClick={() => {
-                            if (!newRulesToLoad) {
-                                toast.error('No rules to load');
+                            if (!newSession) {
+                                toast.error('No session to load');
                                 return;
                             }
-
-
-                            initNewSession(
-                                newRulesToLoad,
-                                selectedFileType === 'rules' ? 'study-rules' : 'action',
-                                nameFromFilename
-                            )
-                            changeView('expression-editor');
-
-                            toast.success('Rules loaded');
+                            loadSessionObject(newSession);
                         }}
                     >
                         Load
