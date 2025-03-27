@@ -12,7 +12,6 @@ import { KeyValuePairDefs } from '../../types';
 
 
 const Overview: React.FC = () => {
-    const [open, setOpen] = React.useState(false);
     const [openLoadContextDialog, setOpenLoadContextDialog] = React.useState(false);
     const { changeView, currentName, currentStudyContext, updateCurrentStudyContext } = useStudyExpressionEditor();
 
@@ -23,7 +22,7 @@ const Overview: React.FC = () => {
 
 
     const closeEditor = () => {
-        setOpen(false);
+        setSelection(undefined);
     }
 
     const saveContextToFile = () => {
@@ -65,7 +64,7 @@ const Overview: React.FC = () => {
             } as React.CSSProperties}
         >
             <main className='overflow-y-scroll @container w-full p-6 pt-2'>
-                <div className='flex justify-between gap-2 items-center'>
+                <div className='flex justify-between gap-2 items-center py-2'>
                     <Button
                         variant={'ghost'}
                         onClick={() => {
@@ -102,12 +101,9 @@ const Overview: React.FC = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div>
-                    <Button
-                        onClick={() => setOpen(!open)}
-                    >Toggle sidebar</Button>
-                </div>
-                <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-3'>
+
+
+                <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-3 pb-12'>
                     <EditorCard
                         label={'Survey keys'}
                         description={'Define which surveys are available for this study.'}
@@ -124,13 +120,12 @@ const Overview: React.FC = () => {
                             updateCurrentStudyContext(newStudyContext);
                         }}
                         onSelectIndex={(index) => {
-                            console.log(index);
                             if (index === undefined) {
                                 setSelection(undefined);
                                 return;
                             }
                             const item = currentStudyContext?.surveyKeys?.at(index);
-                            console.log(item);
+
                             if (!item) {
                                 return;
                             }
@@ -143,27 +138,74 @@ const Overview: React.FC = () => {
                     <div className='h-64'>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
                     </div>
+
+
+                    <EditorCard
+                        label={'Message keys'}
+                        description={'Define which study email templates are available.'}
+                        type={'string'}
+                        data={currentStudyContext?.messageKeys ?? []}
+                        selectedIndex={selection?.attributeKey === 'messageKeys' ? currentStudyContext?.messageKeys?.indexOf(selection?.item as string) : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { messageKeys: data as string[] };
+                            } else {
+                                newStudyContext.messageKeys = data as string[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            const item = currentStudyContext?.messageKeys?.at(index);
+                            if (!item) {
+                                return;
+                            }
+                            setSelection({
+                                item,
+                                attributeKey: 'messageKeys',
+                            });
+                        }}
+                    />
+
                     <div className='h-64'>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
                     </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
+
+                    <EditorCard
+                        label={'Custom event keys'}
+                        description={'Define which custom events should be handled by this study.'}
+                        type={'string'}
+                        data={currentStudyContext?.customEventKeys ?? []}
+                        selectedIndex={selection?.attributeKey === 'customEventKeys' ? currentStudyContext?.customEventKeys?.indexOf(selection?.item as string) : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { customEventKeys: data as string[] };
+                            } else {
+                                newStudyContext.customEventKeys = data as string[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            const item = currentStudyContext?.customEventKeys?.at(index);
+                            if (!item) {
+                                return;
+                            }
+                            setSelection({
+                                item,
+                                attributeKey: 'customEventKeys',
+                            });
+                        }}
+                    />
+
                 </div>
             </main>
 

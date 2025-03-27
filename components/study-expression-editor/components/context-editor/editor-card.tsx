@@ -72,16 +72,18 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                 props.onChange(newData);
             }
         }
-        props.onSelectIndex?.(undefined);
+        if (props.selectedIndex !== undefined) {
+            props.onSelectIndex?.(undefined);
+        }
     }
 
     const hasItems = props.data !== undefined && props.data?.length > 0;
 
     return (
         <div
-            className='border border-border rounded-lg p-4 flex flex-col h-hull'
+            className='border border-border rounded-lg flex flex-col h-hull'
         >
-            <div className='flex justify-between gap-2 items-start'>
+            <div className='flex justify-between gap-2 items-start border-b border-border p-2'>
                 <div>
                     <h3 className='font-bold text-lg tracking-wide'>
                         {props.label}
@@ -96,7 +98,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                     </p>
                 </div>
 
-                <div className='-mt-2 -me-2'>
+                <div className='-mt-1 -me-1'>
                     <AddPopover
                         trigger={
                             <Button
@@ -114,7 +116,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
 
             </div>
 
-            {!hasItems && (<div className='grow flex flex-col justify-center items-center'>
+            {!hasItems && (<div className='grow flex flex-col justify-center items-center py-4  h-40'>
                 <AddPopover
                     trigger={
                         <Button
@@ -128,7 +130,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                     onAddNewKey={addNewKey}
                 />
             </div>)}
-            {hasItems && (<ul className='w-full divide-y divide-border pt-4 max-h-64 overflow-y-auto'>
+            {hasItems && (<ul className='w-full divide-y divide-border pt-2 h-40 max-h-64 overflow-y-auto px-2'>
                 {props.data?.map((item, index) => (
                     <li key={index} className='py-1'>
                         <ContextMenu>
