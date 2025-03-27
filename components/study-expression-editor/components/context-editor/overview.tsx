@@ -16,7 +16,7 @@ const Overview: React.FC = () => {
     const { changeView, currentName, currentStudyContext, updateCurrentStudyContext } = useStudyExpressionEditor();
 
     const [selection, setSelection] = React.useState<{
-        item: string | KeyValuePairDefs;
+        index: number;
         attributeKey: string;
     } | undefined>(undefined);
 
@@ -77,9 +77,10 @@ const Overview: React.FC = () => {
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant={'ghost'}
-                                size={'icon'}
+                            <Button variant={'outline'}
+                                size={'sm'}
                             >
+                                <span>Options</span>
                                 <MoreVerticalIcon className='size-4' />
                             </Button>
                         </DropdownMenuTrigger>
@@ -109,7 +110,7 @@ const Overview: React.FC = () => {
                         description={'Define which surveys are available for this study.'}
                         type={'string'}
                         data={currentStudyContext?.surveyKeys ?? []}
-                        selectedIndex={selection?.attributeKey === 'surveyKeys' ? currentStudyContext?.surveyKeys?.indexOf(selection?.item as string) : undefined}
+                        selectedIndex={selection?.attributeKey === 'surveyKeys' ? selection?.index : undefined}
                         onChange={(data) => {
                             let newStudyContext = { ...currentStudyContext };
                             if (!newStudyContext) {
@@ -124,28 +125,47 @@ const Overview: React.FC = () => {
                                 setSelection(undefined);
                                 return;
                             }
-                            const item = currentStudyContext?.surveyKeys?.at(index);
-
-                            if (!item) {
-                                return;
-                            }
                             setSelection({
-                                item,
+                                index,
                                 attributeKey: 'surveyKeys',
                             });
                         }}
                     />
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
 
+                    <EditorCard
+                        label={'Participant flags'}
+                        description={'Define available participant flags and their possible values.'}
+                        type={'key-value-pair'}
+                        data={currentStudyContext?.participantFlags ?? []}
+                        selectedIndex={selection?.attributeKey === 'participantFlags' ? selection?.index : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { participantFlags: data as KeyValuePairDefs[] };
+                            } else {
+                                newStudyContext.participantFlags = data as KeyValuePairDefs[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+
+                            setSelection({
+                                index,
+                                attributeKey: 'participantFlags',
+                            });
+                        }}
+                    />
 
                     <EditorCard
                         label={'Message keys'}
                         description={'Define which study email templates are available.'}
                         type={'string'}
                         data={currentStudyContext?.messageKeys ?? []}
-                        selectedIndex={selection?.attributeKey === 'messageKeys' ? currentStudyContext?.messageKeys?.indexOf(selection?.item as string) : undefined}
+                        selectedIndex={selection?.attributeKey === 'messageKeys' ? selection?.index : undefined}
                         onChange={(data) => {
                             let newStudyContext = { ...currentStudyContext };
                             if (!newStudyContext) {
@@ -160,27 +180,47 @@ const Overview: React.FC = () => {
                                 setSelection(undefined);
                                 return;
                             }
-                            const item = currentStudyContext?.messageKeys?.at(index);
-                            if (!item) {
-                                return;
-                            }
                             setSelection({
-                                item,
+                                index,
                                 attributeKey: 'messageKeys',
                             });
                         }}
                     />
 
-                    <div className='h-64'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
-                    </div>
+                    <EditorCard
+                        label={'Reports'}
+                        description={'Define reports and their possible attribute keys.'}
+                        type={'key-value-pair'}
+                        data={currentStudyContext?.reportKeys ?? []}
+                        selectedIndex={selection?.attributeKey === 'reportKeys' ? selection?.index : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { reportKeys: data as KeyValuePairDefs[] };
+                            } else {
+                                newStudyContext.reportKeys = data as KeyValuePairDefs[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+
+                            setSelection({
+                                index,
+                                attributeKey: 'reportKeys',
+                            });
+                        }}
+                    />
 
                     <EditorCard
                         label={'Custom event keys'}
                         description={'Define which custom events should be handled by this study.'}
                         type={'string'}
                         data={currentStudyContext?.customEventKeys ?? []}
-                        selectedIndex={selection?.attributeKey === 'customEventKeys' ? currentStudyContext?.customEventKeys?.indexOf(selection?.item as string) : undefined}
+                        selectedIndex={selection?.attributeKey === 'customEventKeys' ? selection?.index : undefined}
                         onChange={(data) => {
                             let newStudyContext = { ...currentStudyContext };
                             if (!newStudyContext) {
@@ -195,12 +235,8 @@ const Overview: React.FC = () => {
                                 setSelection(undefined);
                                 return;
                             }
-                            const item = currentStudyContext?.customEventKeys?.at(index);
-                            if (!item) {
-                                return;
-                            }
                             setSelection({
-                                item,
+                                index,
                                 attributeKey: 'customEventKeys',
                             });
                         }}

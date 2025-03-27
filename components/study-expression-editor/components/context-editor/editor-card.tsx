@@ -51,6 +51,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
             if (props.onChange) {
                 props.onChange(newData);
             }
+            props.onSelectIndex?.(newData.length - 1);
         }
     }
 
@@ -67,9 +68,8 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
             }
         } else if (props.type === 'key-value-pair') {
             const newData = props.data !== undefined ? [...(props.data as KeyValuePairDefs[])] : [];
-            newData.filter(e => e.key !== (item as KeyValuePairDefs).key);
             if (props.onChange) {
-                props.onChange(newData);
+                props.onChange(newData.filter(e => e.key !== (item as KeyValuePairDefs).key));
             }
         }
         if (props.selectedIndex !== undefined) {
@@ -81,7 +81,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
 
     return (
         <div
-            className='border border-border rounded-lg flex flex-col h-hull'
+            className='border border-border rounded-lg flex flex-col bg-white'
         >
             <div className='flex justify-between gap-2 items-start border-b border-border p-2'>
                 <div>
@@ -130,7 +130,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                     onAddNewKey={addNewKey}
                 />
             </div>)}
-            {hasItems && (<ul className='w-full divide-y divide-border pt-2 h-40 max-h-64 overflow-y-auto px-2'>
+            {hasItems && (<ul className='w-full divide-y divide-border pt-2 pb-6 min-h-40 max-h-64 overflow-y-auto px-2'>
                 {props.data?.map((item, index) => (
                     <li key={index} className='py-1'>
                         <ContextMenu>
