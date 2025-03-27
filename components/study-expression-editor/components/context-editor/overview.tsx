@@ -8,7 +8,8 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
 import LoadContextFromDisk from './load-context-from-disk';
 import EditorCard from './editor-card';
-import { KeyValuePairDefs } from '../../types';
+import { KeyValuePairDefs, StudyContext } from '../../types';
+import ItemEditor from './item-editor';
 
 
 const Overview: React.FC = () => {
@@ -104,7 +105,7 @@ const Overview: React.FC = () => {
                 </div>
 
 
-                <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-3 pb-12'>
+                <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-2 pb-12'>
                     <EditorCard
                         label={'Survey keys'}
                         description={'Define which surveys are available for this study.'}
@@ -258,7 +259,7 @@ const Overview: React.FC = () => {
             >
                 <SidebarHeader>
                     <div className='relative'>
-                        <h2 className='font-bold text-lg pe-6'>Edit </h2>
+                        <h2 className='font-bold text-lg pe-6 ps-2'>Edit entry</h2>
 
                         <Button variant={'ghost'} size={'icon'}
                             className='absolute -right-2 -top-2'
@@ -268,12 +269,29 @@ const Overview: React.FC = () => {
                             <span className='sr-only'>Close sidebar</span>
                         </Button>
                     </div>
-
                 </SidebarHeader>
-                <SidebarContent
-
-                >
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta autem pariatur nobis voluptatibus? Dicta nihil quisquam quo et! Quidem corporis repellendus ipsam suscipit culpa fugiat exercitationem rerum! Tenetur, alias officia!
+                <SidebarContent>
+                    <ItemEditor
+                        key={JSON.stringify(selection)}
+                        type={selection?.attributeKey as keyof StudyContext}
+                        selection={selection ? currentStudyContext?.[selection.attributeKey as keyof StudyContext]?.at(selection.index) : undefined}
+                        usedKeys={currentStudyContext?.[selection?.attributeKey as keyof StudyContext]?.map(e => typeof e === 'string' ? e : e.key) ?? []}
+                        onChange={(item) => {
+                            if (!selection) {
+                                return;
+                            }
+                            let newStudyContext = { ...currentStudyContext };
+                            const attrKey = selection.attributeKey as keyof StudyContext;
+                            if (!newStudyContext) {
+                                newStudyContext = { [selection.attributeKey]: [] };
+                            }
+                            if (!newStudyContext[attrKey]) {
+                                newStudyContext[attrKey] = [];
+                            }
+                            newStudyContext[attrKey]![selection.index] = item;
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                    />
                 </SidebarContent>
             </Sidebar>
         </SidebarProvider>

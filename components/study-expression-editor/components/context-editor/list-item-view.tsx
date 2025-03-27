@@ -13,9 +13,9 @@ const ListItemView: React.FC<ListItemViewProps> = (props) => {
     } else {
         content = <div className='space-y-1 max-w-full text-start'>
             <div>{props.entry.key}</div>
-            <div className='text-xs text-muted-foreground ps-2 text-wrap'>
+            <div className='text-xs text-muted-foreground ps-2 text-wrap font-bold'>
                 {props.entry.possibleValues?.length > 0 ? props.entry.possibleValues.join(', ') :
-                    <span>{'<no values specified>'}</span>}
+                    <span className='font-normal'>{'<no values specified>'}</span>}
             </div>
         </div>;
     }
