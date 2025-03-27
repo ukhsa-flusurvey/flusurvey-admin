@@ -2,38 +2,21 @@ import React from 'react';
 import { KeyValuePairDefs } from '../../types';
 import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import AddPopover from './add-popover';
+import ListItemView from './list-item-view';
 
 interface EditorCardProps {
     label: string;
     description: string;
     type: 'string' | 'key-value-pair';
     data?: string[] | KeyValuePairDefs[];
+    selectedIndex?: number;
     onChange?: (data: string[] | KeyValuePairDefs[]) => void;
-    onSelectIndex?: (index: number) => void;
+    onSelectIndex?: (index: number | undefined) => void;
 }
 
-interface AddPopoverProps {
-    trigger: React.ReactNode;
-    usedKeys: string[];
-    align?: 'end';
-    onAddNewKey: (key: string) => void;
-}
-
-const AddPopover: React.FC<AddPopoverProps> = (props) => {
-    const [newKey, setNewKey] = React.useState('');
-
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                {props.trigger}
-            </PopoverTrigger>
-            <PopoverContent
-                align={props.align}
-            >Place content for the popover here.</PopoverContent>
-        </Popover>
-    );
-};
 
 const EditorCard: React.FC<EditorCardProps> = (props) => {
     const getUsedKeys = (): string[] => {
@@ -70,6 +53,29 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
             }
         }
     }
+
+    const removeItem = (item: string | KeyValuePairDefs) => {
+        if (!confirm('Are you sure you want to delete this entry? All unsaved changes will be lost.')) {
+            return;
+        }
+
+        if (props.type === 'string') {
+            const newData = props.data !== undefined ? [...(props.data as string[])] : [];
+            newData.splice(newData.indexOf(item as string), 1);
+            if (props.onChange) {
+                props.onChange(newData);
+            }
+        } else if (props.type === 'key-value-pair') {
+            const newData = props.data !== undefined ? [...(props.data as KeyValuePairDefs[])] : [];
+            newData.filter(e => e.key !== (item as KeyValuePairDefs).key);
+            if (props.onChange) {
+                props.onChange(newData);
+            }
+        }
+        props.onSelectIndex?.(undefined);
+    }
+
+    const hasItems = props.data !== undefined && props.data?.length > 0;
 
     return (
         <div
@@ -108,7 +114,7 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
 
             </div>
 
-            <div className='grow flex flex-col justify-center items-center'>
+            {!hasItems && (<div className='grow flex flex-col justify-center items-center'>
                 <AddPopover
                     trigger={
                         <Button
@@ -121,9 +127,36 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                     usedKeys={usedKeys}
                     onAddNewKey={addNewKey}
                 />
-            </div>
+            </div>)}
+            {hasItems && (<ul className='w-full divide-y divide-border pt-4 max-h-64 overflow-y-auto'>
+                {props.data?.map((item, index) => (
+                    <li key={index} className='py-1'>
+                        <ContextMenu>
+                            <ContextMenuTrigger asChild>
+                                <Button variant={props.selectedIndex === index ? 'secondary' : 'ghost'}
+                                    className='w-full h-auto'
+                                    onClick={() => {
+                                        if (props.selectedIndex === index) {
+                                            props.onSelectIndex?.(undefined);
+                                            return;
+                                        }
+                                        props.onSelectIndex?.(index)
+                                    }}
+                                >
+                                    <ListItemView
+                                        entry={item}
+                                    />
+                                </Button>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                                <ContextMenuItem onClick={() => removeItem(item)}>
+                                    Delete entry
+                                </ContextMenuItem>
 
-
+                            </ContextMenuContent>
+                        </ContextMenu>
+                    </li>))}
+            </ul>)}
         </div>
     );
 };

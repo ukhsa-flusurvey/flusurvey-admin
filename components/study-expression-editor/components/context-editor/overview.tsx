@@ -8,11 +8,18 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
 import LoadContextFromDisk from './load-context-from-disk';
 import EditorCard from './editor-card';
+import { KeyValuePairDefs } from '../../types';
+
 
 const Overview: React.FC = () => {
     const [open, setOpen] = React.useState(false);
     const [openLoadContextDialog, setOpenLoadContextDialog] = React.useState(false);
-    const { changeView, currentName, currentStudyContext } = useStudyExpressionEditor();
+    const { changeView, currentName, currentStudyContext, updateCurrentStudyContext } = useStudyExpressionEditor();
+
+    const [selection, setSelection] = React.useState<{
+        item: string | KeyValuePairDefs;
+        attributeKey: string;
+    } | undefined>(undefined);
 
 
     const closeEditor = () => {
@@ -42,10 +49,16 @@ const Overview: React.FC = () => {
         });
     }
 
+    const itemEditorOpen = selection !== undefined;
+
     return (
         <SidebarProvider
-            open={open}
-            onOpenChange={setOpen}
+            open={itemEditorOpen}
+            onOpenChange={(open) => {
+                if (!open) {
+                    setSelection(undefined);
+                }
+            }}
             style={{
                 "--sidebar-width": "25rem",
                 "--sidebar-width-mobile": "20rem",
@@ -99,8 +112,33 @@ const Overview: React.FC = () => {
                         label={'Survey keys'}
                         description={'Define which surveys are available for this study.'}
                         type={'string'}
-                        data={[]}
-                        onChange={() => { }}
+                        data={currentStudyContext?.surveyKeys ?? []}
+                        selectedIndex={selection?.attributeKey === 'surveyKeys' ? currentStudyContext?.surveyKeys?.indexOf(selection?.item as string) : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { surveyKeys: data as string[] };
+                            } else {
+                                newStudyContext.surveyKeys = data as string[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            console.log(index);
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            const item = currentStudyContext?.surveyKeys?.at(index);
+                            console.log(item);
+                            if (!item) {
+                                return;
+                            }
+                            setSelection({
+                                item,
+                                attributeKey: 'surveyKeys',
+                            });
+                        }}
                     />
                     <div className='h-64'>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor expedita totam blanditiis illum corrupti reiciendis. Perferendis dolores dicta officiis cum veniam atque accusamus ipsam? Sed consectetur architecto tempore blanditiis eligendi.
