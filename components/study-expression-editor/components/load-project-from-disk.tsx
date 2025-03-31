@@ -30,7 +30,7 @@ const LoadRulesFromDisk: React.FC = () => {
 
     return (
         <div className='flex flex-col items-center justify-center p-6 h-full'>
-            <div className='w-full max-w-2xl border-border border rounded-lg p-6 space-y-6'>
+            <div className='w-full max-w-2xl border-border border rounded-lg p-6 space-y-6 bg-white'>
 
                 <div className='py-3 space-y-4'>
                     <h2 className='text-xl font-bold mb-2'>
