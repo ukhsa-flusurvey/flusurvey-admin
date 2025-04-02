@@ -3,6 +3,8 @@ import AddPopover from './add-popover';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { ExpressionArg } from '@/components/expression-editor/utils';
+import HandlerListItem from './handler-list-item';
 
 interface SectionCardProps {
     title: string;
@@ -14,6 +16,17 @@ interface SectionCardProps {
     keySuggestions?: string[];
     addWithoutKey?: boolean;
     onAddNewEntry?: (key?: string) => void;
+
+    // items:
+    items?: Array<{
+        key?: string;
+        actions?: ExpressionArg[];
+    }>;
+    onSelectItem?: (index: number) => void;
+    onRemoveItem?: (index: number) => void;
+
+    // children
+    children?: React.ReactNode;
 }
 
 const SectionCard: React.FC<SectionCardProps> = (props) => {
@@ -47,6 +60,7 @@ const SectionCard: React.FC<SectionCardProps> = (props) => {
         />
     }
 
+    const hasItems = props.items !== undefined && props.items.length > 0;
 
     return (
         <Card>
@@ -68,6 +82,26 @@ const SectionCard: React.FC<SectionCardProps> = (props) => {
                 {props.onAddNewEntry && <div className='-mt-1 -me-3'>
                     {renderAddNew()}
                 </div>}
+            </div>
+
+            <div>
+                {hasItems && <ul className='w-full divide-y divide-border pb-6 min-h-40 max-h-64 overflow-y-auto'>
+                    {props.items?.map((item, index) => (<li
+                        key={'item-' + index}
+                    >
+                        <HandlerListItem
+                            label={item.key}
+                            actions={item.actions}
+                            onRemove={() => {
+                                console.log('remove item', index)
+                            }}
+                            onSelect={() => {
+                                console.log('select item', index)
+                            }}
+                        />
+                    </li>))}
+                </ul>}
+                {props.children}
             </div>
         </Card>
     );
