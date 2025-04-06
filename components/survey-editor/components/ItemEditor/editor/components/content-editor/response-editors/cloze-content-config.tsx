@@ -1,7 +1,6 @@
 import SortableWrapper from "@/components/survey-editor/components/general/SortableWrapper";
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
-import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +22,7 @@ import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
+import { KeyBadgeAndType } from "../../KeyBadgeAndTypeHint";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -35,17 +35,6 @@ const getClozeItemType = (item: ItemComponent): ClozeItemType => {
     return itemType as ClozeItemType;
 }
 
-export const KeyAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between w-full'>
-        <Badge className='h-auto py-0'>
-            {props.compKey}
-        </Badge>
-        <span className='text-muted-foreground'>
-            {props.type}
-        </span>
-    </div>
-}
-
 export const ContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
     return <div className='space-y-4'>
         <Collapsible defaultOpen={props.defaultOpen}
@@ -53,7 +42,7 @@ export const ContentTabCollapsible = (props: { compKey?: string, type: string, c
         >
             <CollapsibleTrigger asChild>
                 <div className='flex w-full gap-2'>
-                    <KeyAndType compKey={props.compKey} type={props.type} />
+                    <KeyBadgeAndType compKey={props.compKey} type={props.type} />
                     <span>
                         <ChevronDown className="size-4 group-data-[state=open]:rotate-180 transition-transform duration-500" />
                     </span>

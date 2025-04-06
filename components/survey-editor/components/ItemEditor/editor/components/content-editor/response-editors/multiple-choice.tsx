@@ -2,7 +2,6 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import TabCard from '@/components/survey-editor/components/general/tab-card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
@@ -19,6 +18,7 @@ import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
 import { ChoiceResponseOptionType } from '@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
+import { KeyBadgeAndType } from '../../KeyBadgeAndTypeHint';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -31,16 +31,6 @@ const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
     return optionType as ChoiceResponseOptionType;
 }
 
-export const KeyAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between w-full'>
-        <Badge className='h-auto py-0'>
-            {props.compKey}
-        </Badge>
-        <span className='text-muted-foreground'>
-            {props.type}
-        </span>
-    </div>
-}
 
 export const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
     return <div className='space-y-4'>
@@ -49,7 +39,7 @@ export const OptionContentTabCollapsible = (props: { compKey?: string, type: str
         >
             <CollapsibleTrigger asChild>
                 <div className='flex w-full gap-2'>
-                    <KeyAndType compKey={props.compKey} type={props.type} />
+                    <KeyBadgeAndType compKey={props.compKey} type={props.type} />
                     <span>
                         <ChevronDown className="size-4 group-data-[state=open]:rotate-180 transition-transform duration-500" />
                     </span>
