@@ -67,21 +67,53 @@ const Overview: React.FC = () => {
             </Card>
 
             <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-2 pb-12'>
-                <SectionCard
-                    title='Entry event handler'
-                    description='Rules applied when a participant enters the study'
-                >
-                    <HandlerListItem
-                        label={'Current entry event handler'}
-                        actions={[]}
-                        onRemove={() => {
-                            console.log('remove item')
-                        }}
-                        onSelect={() => {
-                            console.log('select item')
-                        }}
-                    />
-                </SectionCard>
+                <div className='space-y-4'>
+                    <SectionCard
+                        title='Entry event handler'
+                        description='Rules applied when a participant enters the study'
+                    >
+                        <HandlerListItem
+                            label={'Current entry event handler'}
+                            actions={[]}
+                            onRemove={() => {
+                                console.log('remove item')
+                            }}
+                            onSelect={() => {
+                                console.log('select item')
+                            }}
+                        />
+                    </SectionCard>
+
+                    <SectionCard
+                        title='Merge event handler'
+                        description='Rules for when a temporary participant is merged into an active participant'
+                    >
+                        <HandlerListItem
+                            actions={[]}
+                            onRemove={() => {
+                                console.log('remove item')
+                            }}
+                            onSelect={() => {
+                                console.log('select item')
+                            }}
+                        />
+                    </SectionCard>
+
+                    <SectionCard
+                        title='Leave event handler'
+                        description='Rules applied when a participant leaves the study (e.g., account is deleted)'
+                    >
+                        <HandlerListItem
+                            actions={[]}
+                            onRemove={() => {
+                                console.log('remove item')
+                            }}
+                            onSelect={() => {
+                                console.log('select item')
+                            }}
+                        />
+                    </SectionCard>
+                </div>
 
                 <SectionCard
                     title='Survey submission handlers'
@@ -113,9 +145,11 @@ const Overview: React.FC = () => {
                     count={customEventHandlers?.length ?? 0}
                     keySuggestions={currentStudyContext?.customEventKeys ?? []}
                     usedKeys={customEventHandlers?.map(h => h.key) ?? []}
+                    items={rulesSet?.getCustomEventHandlerInfos()}
                     onAddNewEntry={(key?: string) => {
                         console.log(key)
                     }}
+
                 />
 
                 <SectionCard
@@ -123,41 +157,14 @@ const Overview: React.FC = () => {
                     description='Rules executed on study timer event'
                     count={timerEventHandlers?.length ?? 0}
                     addWithoutKey={true}
+                    items={[]}
                     onAddNewEntry={() => {
                         // TODO
 
                     }}
                 />
 
-                <SectionCard
-                    title='Merge event handler'
-                    description='Rules for when a temporary participant is merged into an active participant'
-                >
-                    <HandlerListItem
-                        actions={[]}
-                        onRemove={() => {
-                            console.log('remove item')
-                        }}
-                        onSelect={() => {
-                            console.log('select item')
-                        }}
-                    />
-                </SectionCard>
 
-                <SectionCard
-                    title='Leave event handler'
-                    description='Rules applied when a participant leaves the study (e.g., account is deleted)'
-                >
-                    <HandlerListItem
-                        actions={[]}
-                        onRemove={() => {
-                            console.log('remove item')
-                        }}
-                        onSelect={() => {
-                            console.log('select item')
-                        }}
-                    />
-                </SectionCard>
             </div>
 
             <LoadRulesFromDisk
