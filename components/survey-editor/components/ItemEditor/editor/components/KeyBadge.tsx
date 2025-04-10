@@ -37,7 +37,6 @@ export const PopoverKeyBadge: React.FC<{
     const hasChanges = currentKey !== props.itemKey;
 
     useEffect(() => {
-        console.log('key changed', currentKey);
         if (currentKey.length <= 0) {
             setError("Key must not be empty.");
             return;
@@ -100,7 +99,7 @@ export const PopoverKeyBadge: React.FC<{
                         disabled={!isValidKey}
                         onClick={() => {
                             popoverCloseRef.current?.click();
-                            props.onKeyChange?.(currentKey);
+                            if (currentKey != props.itemKey) props.onKeyChange?.(currentKey);
                         }}
                     >
                         <Check className='size-4 text-muted-foreground' color="green" />
