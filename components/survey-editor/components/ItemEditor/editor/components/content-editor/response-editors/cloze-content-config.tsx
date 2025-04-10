@@ -1,30 +1,24 @@
 import SortableWrapper from "@/components/survey-editor/components/general/SortableWrapper";
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Binary, Calendar, Check, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripHorizontal, GripVertical, Heading, HeadingIcon, Languages, RotateCcw, SquareChevronDown, ToggleLeft, Trash, Undo, X } from "lucide-react";
-import React, { useEffect } from "react";
+import { Binary, Calendar, Clock, CornerDownLeft, FormInput, GripHorizontal, Heading, SquareChevronDown, X } from "lucide-react";
+import React, { useEffect, useRef } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
 import DateInputContentConfig from "./date-input-content-config";
 import MarkdownContentEditor from "../markdown-content-editor";
 import SortableItem from "@/components/survey-editor/components/general/SortableItem";
-import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
-import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 import { cn } from "@/lib/utils";
-import { KeyBadge, PopoverKeyBadge } from "../../KeyBadge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { PopoverKeyBadge } from "../../KeyBadge";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -189,10 +183,10 @@ const ClozeItemOverviewRow = (props: {
 const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     const [draggedId, setDraggedId] = React.useState<string | null>();
     const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
+    const lastItem = useRef<HTMLDivElement | null>(null);
 
     const clozeItems = props.component.items || [];
     const selectedItem = clozeItems.find(item => item.key === selectedKey);
-    console.log('selectedItem:', selectedItem);
     const draggedItem = clozeItems.find(item => item.key === draggedId);
     const usedKeys = clozeItems.map(comp => comp.key || '');
 
@@ -202,6 +196,13 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
         }
     });
 
+    useEffect(() => {
+        // Hacky way to scroll to the last item when it is newly added
+        const lastClozeItem = sortableClozeItems.at(-1);
+        if (lastItem.current && lastClozeItem?.key == selectedKey) {
+            lastItem.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, [selectedKey, sortableClozeItems]);
 
     const updateComponent = (newItems: ItemComponent[]) => {
         props.onChange({
@@ -253,30 +254,33 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                             <SortableItem
                                 id={clozeItem.id}
                                 key={clozeItem.id}
+
                             >
-                                <ClozeItemOverviewRow
-                                    i={i}
-                                    isDragOverlay={false}
-                                    clozeItems={clozeItems}
-                                    selectedItem={selectedItem}
-                                    draggedItem={draggedItem}
-                                    usedKeys={usedKeys}
-                                    onSelectionChange={(key) => setSelectedKey(key)}
-                                    onKeyChange={(oldKey, newKey) => {
-                                        const newItems = [...clozeItems];
-                                        const itemToUpdate = newItems.find(clozeItem => clozeItem.key === oldKey);
-                                        if (itemToUpdate) {
-                                            itemToUpdate.key = newKey;
-                                            updateComponent(newItems);
-                                        }
-                                    }}
-                                    onDelete={() => {
-                                        if (confirm('Are you sure you want to delete this item?')) {
-                                            updateComponent(clozeItems.filter(item => item.key !== clozeItem.key));
-                                            setSelectedKey(null);
-                                        }
-                                    }}
-                                />
+                                <div ref={i == sortableClozeItems.length - 1 ? lastItem : null}>
+                                    <ClozeItemOverviewRow
+                                        i={i}
+                                        isDragOverlay={false}
+                                        clozeItems={clozeItems}
+                                        selectedItem={selectedItem}
+                                        draggedItem={draggedItem}
+                                        usedKeys={usedKeys}
+                                        onSelectionChange={(key) => setSelectedKey(key)}
+                                        onKeyChange={(oldKey, newKey) => {
+                                            const newItems = [...clozeItems];
+                                            const itemToUpdate = newItems.find(clozeItem => clozeItem.key === oldKey);
+                                            if (itemToUpdate) {
+                                                itemToUpdate.key = newKey;
+                                                updateComponent(newItems);
+                                            }
+                                        }}
+                                        onDelete={() => {
+                                            if (confirm('Are you sure you want to delete this item?')) {
+                                                updateComponent(clozeItems.filter(item => item.key !== clozeItem.key));
+                                                setSelectedKey(null);
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </SortableItem>
                         ))}
                     </ol>
