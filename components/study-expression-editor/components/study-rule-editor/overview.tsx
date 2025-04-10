@@ -205,20 +205,22 @@ const Overview: React.FC = () => {
                     addWithoutKey={true}
                     items={timerEventHandlers}
                     onAddNewEntry={() => {
-
-                        // TODO
-
+                        rulesSet?.updateTimerEventHandler(undefined, {
+                            dtype: 'exp',
+                            exp: { name: 'DO', data: [] }
+                        });
+                        updateCurrentRules(rulesSet?.getRules());
                     }}
                     onSelectItem={(index) => {
                         setSelectedHandler({
                             type: 'timer-event',
                             index,
-                            actions: customEventHandlers?.at(index)?.actions
+                            actions: timerEventHandlers?.at(index)?.actions
                         })
                     }}
                     onRemoveItem={(index) => {
-                        // TODO:
-                        console.log('remove item', index)
+                        rulesSet?.updateTimerEventHandler(index, undefined);
+                        updateCurrentRules(rulesSet?.getRules());
                     }}
                 />
 

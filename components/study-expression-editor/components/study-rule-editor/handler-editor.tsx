@@ -19,6 +19,7 @@ interface HandlerEditorProps {
 }
 
 const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
+    console.log(props.selection)
     return (
         <div className='px-6 pt-2 pb-12 space-y-2 overflow-y-auto'>
             <Button
@@ -81,9 +82,9 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                         }}
                         currentIndex={0}
                         slotDef={{
-                            label: 'Actions',
+                            label: props.selection.type !== 'timer-event' ? 'Actions' : 'Action',
                             required: false,
-                            isListSlot: true,
+                            isListSlot: props.selection.type !== 'timer-event' ? true : false,
                             allowedTypes: [
                                 {
                                     id: 'exp-slot',

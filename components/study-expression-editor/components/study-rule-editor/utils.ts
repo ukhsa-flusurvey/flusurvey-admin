@@ -219,14 +219,30 @@ export class StudyRulesSet {
         }
     }
 
-    upddateTimerEventHandler(index: number, actions: ExpressionArg[] | undefined) {
-        if (actions === undefined) {
+    updateTimerEventHandler(index?: number, action?: ExpressionArg) {
+        if (this._timerEventHandler === undefined) {
+            this._timerEventHandler = initEventHandler('TIMER');
+        }
+        if (action === undefined) {
+            if (index === undefined) {
+                return;
+            }
+
             // remove handler
+            this._timerEventHandler?.data?.splice(index + 1, 1);
 
             // if removed last one, set to undefined
+            const hasNoHandlersLeft = this._timerEventHandler?.data?.length === undefined || this._timerEventHandler?.data?.length < 2;
+            if (hasNoHandlersLeft) {
+                this._timerEventHandler = undefined;
+            }
         } else {
-            // add or update handler
-            // if index < 0 add new "DO" handler
+            if (index === undefined) {
+                this._timerEventHandler?.data?.push(action);
+            } else {
+                // replace existing handler
+                this._timerEventHandler?.data?.splice(index + 1, 1, action);
+            }
         }
     }
 
@@ -301,10 +317,9 @@ export class StudyRulesSet {
         for (let i = 1; i < this._timerEventHandler.data.length; i++) {
             const handler = this._timerEventHandler.data.at(i) as ExpArg;
 
-
             handlers.push({
                 key: '',
-                actions: handler.exp.data?.slice(1) as ExpressionArg[] ?? []
+                actions: handler ? [handler] : []
             });
         }
         return handlers;
