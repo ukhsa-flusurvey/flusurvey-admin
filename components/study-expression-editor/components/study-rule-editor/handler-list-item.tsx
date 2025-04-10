@@ -1,11 +1,13 @@
 import { ExpressionArg } from '@/components/expression-editor/utils';
 import { Button } from '@/components/ui/button';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { BracketsIcon, ChevronRight, FileMinus2Icon, FilePlus2Icon, FlagIcon, GlobeIcon, LinkIcon, MailIcon, NotebookTextIcon, ShieldIcon } from 'lucide-react';
 import React from 'react';
 
 interface HandlerListItemProps {
+    index?: number;
     label?: string;
     actions?: ExpressionArg[];
     onSelect: () => void;
@@ -18,8 +20,10 @@ const IconWithTooltip: React.FC<{ icon: React.ReactNode, tooltip: string, show: 
     }
     return (
         <Tooltip>
-            <TooltipTrigger className='px-1'>
-                {props.icon}
+            <TooltipTrigger className='px-1' asChild>
+                <span>
+                    {props.icon}
+                </span>
             </TooltipTrigger>
             <TooltipContent align='center' side='top' sideOffset={-20}>
                 {props.tooltip}
@@ -46,85 +50,101 @@ const HandlerListItem: React.FC<HandlerListItemProps> = (props) => {
                     <Button
                         className='w-full h-auto min-h-12 rounded-none focus-visible:ring-0 focus-visible:bg-secondary justify-between'
                         variant={'ghost'}
+                        onClick={() => {
+                            props.onSelect();
+                        }}
                     >
-                        <div>
-                            <div className='font-mono text-xs font-bold text-start'>
-                                {props.label}
-                            </div>
-                            <div className='flex items-center mt-1 ps-2'>
-                                <IconWithTooltip
-                                    icon={<BracketsIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Empty handler'
-                                    show={props.actions === undefined || props.actions.length === 0}
-                                />
-                                <IconWithTooltip
-                                    icon={<MailIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Logic for participant messages'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'ADD_MESSAGE',
-                                        'REMOVE_ALL_MESSAGES',
-                                        'REMOVE_MESSAGES_BY_TYPE',
-                                        'NOTIFY_RESEARCHER'
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<FilePlus2Icon className='size-4 text-muted-foreground' />}
-                                    tooltip='Add new survey'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'ADD_NEW_SURVEY'
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<FileMinus2Icon className='size-4 text-muted-foreground' />}
-                                    tooltip='Remove survey'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'REMOVE_ALL_SURVEYS',
-                                        'REMOVE_SURVEYS_BY_KEY'
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<NotebookTextIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Report handling'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'INIT_REPORT',
-                                        'CANCEL_REPORT',
-                                        'UPDATE_REPORT_DATA',
-                                        'REMOVE_REPORT_DATA'
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<FlagIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Participant flags'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'UPDATE_FLAG',
-                                        'REMOVE_FLAG',
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<ShieldIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Handling of confidential data'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
-                                        'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<LinkIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='Linking codes / study codes'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'SET_LINKING_CODE',
-                                        'DELETE_LINKING_CODE',
-                                        'DRAW_STUDY_CODE_AS_LINKING_CODE',
-                                        'REMOVE_STUDY_CODE'
-                                    ])}
-                                />
-                                <IconWithTooltip
-                                    icon={<GlobeIcon className='size-4 text-muted-foreground' />}
-                                    tooltip='External handlers'
-                                    show={checkIfActionsIncludeAny(props.actions, [
-                                        'EXTERNAL_EVENT_HANDLER',
-                                    ])}
-                                />
+
+
+                        <div className='flex items-center gap-2'>
+                            {
+                                props.index !== undefined && <>
+                                    <span className='text-sm mx-1 text-muted-foreground'>
+                                        {props.index + 1}
+                                    </span>
+                                    <Separator orientation='vertical' className='h-6' />
+                                </>
+                            }
+
+                            <div>
+                                <div className='font-mono text-xs font-bold text-start'>
+                                    {props.label}
+                                </div>
+                                <div className='flex items-center mt-1 ps-2'>
+                                    <IconWithTooltip
+                                        icon={<BracketsIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Empty handler'
+                                        show={props.actions === undefined || props.actions.length === 0}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<MailIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Logic for participant messages'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'ADD_MESSAGE',
+                                            'REMOVE_ALL_MESSAGES',
+                                            'REMOVE_MESSAGES_BY_TYPE',
+                                            'NOTIFY_RESEARCHER'
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<FilePlus2Icon className='size-4 text-muted-foreground' />}
+                                        tooltip='Add new survey'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'ADD_NEW_SURVEY'
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<FileMinus2Icon className='size-4 text-muted-foreground' />}
+                                        tooltip='Remove survey'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'REMOVE_ALL_SURVEYS',
+                                            'REMOVE_SURVEYS_BY_KEY'
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<NotebookTextIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Report handling'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'INIT_REPORT',
+                                            'CANCEL_REPORT',
+                                            'UPDATE_REPORT_DATA',
+                                            'REMOVE_REPORT_DATA'
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<FlagIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Participant flags'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'UPDATE_FLAG',
+                                            'REMOVE_FLAG',
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<ShieldIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Handling of confidential data'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
+                                            'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<LinkIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='Linking codes / study codes'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'SET_LINKING_CODE',
+                                            'DELETE_LINKING_CODE',
+                                            'DRAW_STUDY_CODE_AS_LINKING_CODE',
+                                            'REMOVE_STUDY_CODE'
+                                        ])}
+                                    />
+                                    <IconWithTooltip
+                                        icon={<GlobeIcon className='size-4 text-muted-foreground' />}
+                                        tooltip='External handlers'
+                                        show={checkIfActionsIncludeAny(props.actions, [
+                                            'EXTERNAL_EVENT_HANDLER',
+                                        ])}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div>

@@ -61,6 +61,26 @@ export const initSurveySubmissionHandler = (key: string): Expression => {
     }
 }
 
+export const initCustomEventHandler = (key: string): Expression => {
+    return {
+        name: 'IFTHEN',
+        data: [
+            {
+                dtype: 'exp',
+                exp: {
+                    name: 'checkEventKey',
+                    data: [
+                        {
+                            dtype: 'str',
+                            str: key
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+
 export class StudyRulesSet {
     private _entryEventHandler: Expression | undefined;
     private _surveySubmissionHandler: Expression | undefined;
@@ -97,7 +117,7 @@ export class StudyRulesSet {
         this._mergeEventHandler?.data?.push(...actions);
     }
 
-    upddateLeaveEventHandler(actions: ExpressionArg[] | undefined) {
+    updateLeaveEventHandler(actions: ExpressionArg[] | undefined) {
         if (actions === undefined || actions.length === 0) {
             this._leaveEventHandler = undefined;
             return;
@@ -112,7 +132,7 @@ export class StudyRulesSet {
         }
         if (actions === undefined) {
             // remove handler
-            const indexToRemove = this._surveySubmissionHandler?.data?.findIndex(h => {
+            const indexToRemove = this._surveySubmissionHandler?.data?.slice(1).findIndex(h => {
                 if (h === undefined) {
                     return false;
                 }
@@ -121,7 +141,7 @@ export class StudyRulesSet {
             })
 
             if (indexToRemove !== undefined && indexToRemove > -1) {
-                this._surveySubmissionHandler?.data?.splice(indexToRemove, 1);
+                this._surveySubmissionHandler?.data?.splice(indexToRemove + 1, 1);
 
                 const hasNoHandlersLeft = this._surveySubmissionHandler?.data?.length === undefined || this._surveySubmissionHandler?.data?.length < 2;
                 if (hasNoHandlersLeft) {
@@ -134,7 +154,6 @@ export class StudyRulesSet {
                 if (h === undefined) {
                     return false;
                 }
-                console.log(h)
                 const currentKey = ((h as ExpArg).exp.data?.at(0) as ExpArg).exp.data?.at(0) as StrArg;
                 return currentKey.str === key;
             })
@@ -145,7 +164,7 @@ export class StudyRulesSet {
                     exp: initSurveySubmissionHandler(key)
                 });
             } else {
-                this._surveySubmissionHandler?.data?.splice(indexToUpdate, 1, {
+                this._surveySubmissionHandler?.data?.splice(indexToUpdate + 1, 1, {
                     dtype: 'exp',
                     exp: initSurveySubmissionHandler(key)
                 });
@@ -153,14 +172,50 @@ export class StudyRulesSet {
         }
     }
 
-    upddateCustomEventHandler(key: string, actions: ExpressionArg[] | undefined) {
+    updateCustomEventHandler(key: string, actions: ExpressionArg[] | undefined) {
+        if (this._customEventHandler === undefined) {
+            this._customEventHandler = initEventHandler('CUSTOM');
+        }
         if (actions === undefined) {
             // remove handler
+            const indexToRemove = this._customEventHandler?.data?.slice(1).findIndex(h => {
+                if (h === undefined) {
+                    return false;
+                }
+                const currentKey = ((h as ExpArg).exp.data?.at(0) as ExpArg).exp.data?.at(0) as StrArg;
+                return currentKey.str === key;
+            })
 
-            // if removed last one, set to undefined
+            if (indexToRemove !== undefined && indexToRemove > -1) {
+                this._customEventHandler?.data?.splice(indexToRemove + 1, 1);
+
+                const hasNoHandlersLeft = this._customEventHandler?.data?.length === undefined || this._customEventHandler?.data?.length < 2;
+                if (hasNoHandlersLeft) {
+                    this._customEventHandler = undefined;
+                }
+            }
         } else {
             // add or update handler
-            // if key not used yet, add new with key
+            const indexToUpdate = this._customEventHandler?.data?.slice(1).findIndex(h => {
+                if (h === undefined) {
+                    return false;
+                }
+
+                const currentKey = ((h as ExpArg).exp.data?.at(0) as ExpArg).exp.data?.at(0) as StrArg;
+                return currentKey.str === key;
+            })
+
+            if (indexToUpdate === -1 || indexToUpdate === undefined) {
+                this._customEventHandler?.data?.push({
+                    dtype: 'exp',
+                    exp: initCustomEventHandler(key)
+                });
+            } else {
+                this._customEventHandler?.data?.splice(indexToUpdate + 1, 1, {
+                    dtype: 'exp',
+                    exp: initCustomEventHandler(key)
+                });
+            }
         }
     }
 

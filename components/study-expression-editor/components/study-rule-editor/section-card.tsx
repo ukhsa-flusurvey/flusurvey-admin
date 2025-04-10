@@ -64,7 +64,7 @@ const SectionCard: React.FC<SectionCardProps> = (props) => {
     const isEmpty = props.items !== undefined && props.items.length === 0 && !props.children
 
     return (
-        <Card className='flex flex-col'>
+        <Card className='flex flex-col overflow-hidden'>
             <div className='flex justify-between gap-2 items-start border-b border-border px-4 py-2'>
                 <div>
                     <h3 className='font-bold text-lg tracking-wide'>
@@ -86,18 +86,23 @@ const SectionCard: React.FC<SectionCardProps> = (props) => {
             </div>
 
             <div className='grow'>
-                {hasItems && <ul className='w-full divide-y divide-border pb-6 min-h-40 max-h-64 overflow-y-auto'>
+                {hasItems && <ul className='w-full divide-y divide-border pb-6 min-h-40 max-h-80  overflow-y-auto '>
                     {props.items?.map((item, index) => (<li
                         key={'item-' + index}
                     >
                         <HandlerListItem
+                            index={index}
                             label={item.key}
                             actions={item.actions}
                             onRemove={() => {
-                                console.log('remove item', index)
+                                if (props.onRemoveItem) {
+                                    props.onRemoveItem(index);
+                                }
                             }}
                             onSelect={() => {
-                                console.log('select item', index)
+                                if (props.onSelectItem) {
+                                    props.onSelectItem(index);
+                                }
                             }}
                         />
                     </li>))}

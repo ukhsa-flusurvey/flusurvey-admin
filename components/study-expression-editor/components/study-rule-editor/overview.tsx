@@ -10,6 +10,7 @@ import LoadRulesFromDisk from './load-rules-from-disk';
 import SectionCard from './section-card';
 import { StudyRulesSet } from './utils';
 import HandlerListItem from './handler-list-item';
+import HandlerEditor, { HandlerSelection } from './handler-editor';
 
 const Overview: React.FC = () => {
     const [openLoadRulesDialog, setOpenLoadRulesDialog] = React.useState(false);
@@ -21,6 +22,7 @@ const Overview: React.FC = () => {
     } = useStudyExpressionEditor();
 
     const [rulesSet, setRulesSet] = React.useState<StudyRulesSet | undefined>(undefined);
+    const [selectedHandler, setSelectedHandler] = React.useState<HandlerSelection | undefined>(undefined);
 
     useEffect(() => {
         setRulesSet(new StudyRulesSet(currentRules ?? []));
@@ -29,6 +31,13 @@ const Overview: React.FC = () => {
     const surveySubmissionHandlers = rulesSet?.getSurveySubmissionHandlerInfos();
     const customEventHandlers = rulesSet?.getCustomEventHandlerInfos();
     const timerEventHandlers = rulesSet?.getTimerEventHandlerInfos();
+
+    if (selectedHandler) {
+        return <HandlerEditor
+            selection={selectedHandler}
+            onClose={() => setSelectedHandler(undefined)}
+        />
+    }
 
     return (
         <div className='p-6 space-y-6 overflow-y-auto @container'>
@@ -66,7 +75,7 @@ const Overview: React.FC = () => {
                 <NoContextHint />
             </Card>
 
-            <div className='grid grid-cols-1 gap-4 @2xl:grid-cols-2 @6xl:grid-cols-2 pb-12'>
+            <div className='grid grid-cols-1 gap-4 @4xl:grid-cols-2 pb-12'>
                 <div className='space-y-4'>
                     <SectionCard
                         title='Entry event handler'
@@ -132,10 +141,24 @@ const Overview: React.FC = () => {
 
                     items={surveySubmissionHandlers}
                     onSelectItem={(index) => {
-                        console.log('select item', index)
+                        setSelectedHandler({
+                            type: 'survey-submission',
+                            index,
+                            handlerKey: surveySubmissionHandlers?.at(index)?.key,
+                            actions: surveySubmissionHandlers?.at(index)?.actions
+                        })
                     }}
                     onRemoveItem={(index) => {
-                        console.log('remove item', index)
+                        if (!confirm('Are you sure you want to remove this handler?')) {
+                            return;
+                        }
+                        const key = surveySubmissionHandlers?.at(index)?.key;
+                        if (key === undefined) {
+                            console.warn('Invalid key');
+                            return;
+                        }
+                        rulesSet?.updateSurveySubmissionHandler(key, undefined);
+                        updateCurrentRules(rulesSet?.getRules());
                     }}
                 />
 
@@ -145,11 +168,34 @@ const Overview: React.FC = () => {
                     count={customEventHandlers?.length ?? 0}
                     keySuggestions={currentStudyContext?.customEventKeys ?? []}
                     usedKeys={customEventHandlers?.map(h => h.key) ?? []}
-                    items={rulesSet?.getCustomEventHandlerInfos()}
+                    items={customEventHandlers}
                     onAddNewEntry={(key?: string) => {
-                        console.log(key)
+                        if (!key) {
+                            return;
+                        }
+                        rulesSet?.updateCustomEventHandler(key, []);
+                        updateCurrentRules(rulesSet?.getRules());
                     }}
-
+                    onSelectItem={(index) => {
+                        setSelectedHandler({
+                            type: 'custom-event',
+                            index,
+                            handlerKey: customEventHandlers?.at(index)?.key,
+                            actions: customEventHandlers?.at(index)?.actions
+                        })
+                    }}
+                    onRemoveItem={(index) => {
+                        if (!confirm('Are you sure you want to remove this handler?')) {
+                            return;
+                        }
+                        const key = customEventHandlers?.at(index)?.key;
+                        if (key === undefined) {
+                            console.warn('Invalid key');
+                            return;
+                        }
+                        rulesSet?.updateCustomEventHandler(key, undefined);
+                        updateCurrentRules(rulesSet?.getRules());
+                    }}
                 />
 
                 <SectionCard
@@ -157,10 +203,22 @@ const Overview: React.FC = () => {
                     description='Rules executed on study timer event'
                     count={timerEventHandlers?.length ?? 0}
                     addWithoutKey={true}
-                    items={[]}
+                    items={timerEventHandlers}
                     onAddNewEntry={() => {
+
                         // TODO
 
+                    }}
+                    onSelectItem={(index) => {
+                        setSelectedHandler({
+                            type: 'timer-event',
+                            index,
+                            actions: customEventHandlers?.at(index)?.actions
+                        })
+                    }}
+                    onRemoveItem={(index) => {
+                        // TODO:
+                        console.log('remove item', index)
                     }}
                 />
 
