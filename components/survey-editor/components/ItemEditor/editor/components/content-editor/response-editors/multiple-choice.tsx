@@ -18,7 +18,7 @@ import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
 import { ChoiceResponseOptionType } from '@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
-import { KeyBadgeAndType } from '../../KeyBadgeAndTypeHint';
+import { KeyBadgeAndType } from '../../KeyBadge';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -145,6 +145,7 @@ export const ContentItem = (props: {
                     <TimeInputContentConfig
                         component={props.component as ItemGroupComponent}
                         onChange={props.onUpdateComponent}
+                        hideLabel={false}
                     />
                 </OptionContentTabCollapsible>;
             case ChoiceResponseOptionType.DisplayText:

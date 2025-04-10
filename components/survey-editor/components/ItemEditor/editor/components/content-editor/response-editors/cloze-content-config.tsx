@@ -5,8 +5,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Binary, Calendar, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripVertical, Heading, Languages, SquareChevronDown, ToggleLeft } from "lucide-react";
-import React from "react";
+import { Binary, Calendar, Check, ChevronDown, Clock, Cog, CornerDownLeft, FormInput, GripHorizontal, GripVertical, Heading, HeadingIcon, Languages, RotateCcw, SquareChevronDown, ToggleLeft, Trash, Undo, X } from "lucide-react";
+import React, { useEffect } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
@@ -22,7 +22,9 @@ import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
-import { KeyBadgeAndType } from "../../KeyBadgeAndTypeHint";
+import { cn } from "@/lib/utils";
+import { KeyBadge, PopoverKeyBadge } from "../../KeyBadge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -35,237 +37,171 @@ const getClozeItemType = (item: ItemComponent): ClozeItemType => {
     return itemType as ClozeItemType;
 }
 
-export const ContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
-    return <div className='space-y-4'>
-        <Collapsible defaultOpen={props.defaultOpen}
-            className='group'
-        >
-            <CollapsibleTrigger asChild>
-                <div className='flex w-full gap-2'>
-                    <KeyBadgeAndType compKey={props.compKey} type={props.type} />
-                    <span>
-                        <ChevronDown className="size-4 group-data-[state=open]:rotate-180 transition-transform duration-500" />
-                    </span>
-                </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className='pt-4'>
-                {props.children}
-            </CollapsibleContent>
-        </Collapsible>
-    </div>
-}
-
-export const ContentItem = (props: {
+const ContentItem = (props: {
     index: number, component: ItemComponent,
-    onUpdateComponent: (component: ItemComponent) => void,
-    onDeleteComponent: () => void,
-    existingKeys?: string[]
-
+    onUpdateComponent: (component: ItemComponent) => void
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
-    const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
-
     const clozeItemType = getClozeItemType(props.component);
-
-    //console.log('optionType:', clozeItemType);
 
     const renderContent = () => {
         const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
         switch (clozeItemType) {
             case ClozeItemType.SimpleText:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='SIMPLE TEXT'
-                    defaultOpen={props.index > -1}>
-                    <SimpleTextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        label='Text'
-                    />
-                </ContentTabCollapsible>;
+                return <SimpleTextViewContentEditor
+                    component={props.component}
+                    onChange={props.onUpdateComponent}
+                    label='Text'
+                />;
             case ClozeItemType.Dropdown:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='DROPDOWN'
-                    defaultOpen={props.index > -1}
-
-                >
-                    <DropdownContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        hideLabel={true}
-                        hidePlaceholder={true}
-                    />
-                </ContentTabCollapsible>;
+                return <DropdownContentConfig
+                    component={props.component}
+                    onChange={props.onUpdateComponent}
+                    hideLabel={true}
+                    hidePlaceholder={true}
+                />;
             case ClozeItemType.TextInput:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='TEXT INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <TextInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        allowMultipleLines={true}
-                    />
-                </ContentTabCollapsible>;
+                return <TextInputContentConfig
+                    component={props.component}
+                    onChange={props.onUpdateComponent}
+                    allowMultipleLines={true}
+                    hideLabel={true}
+                />;
             case ClozeItemType.NumberInput:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='NUMBER INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <NumberInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                    />
-                </ContentTabCollapsible>;
+                return <NumberInputContentConfig
+                    component={props.component}
+                    onChange={props.onUpdateComponent}
+                    hideLabel={true}
+                />;
             case ClozeItemType.DateInput:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='DATE INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <DateInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                    />
-                </ContentTabCollapsible>;
+                return <DateInputContentConfig
+                    component={props.component}
+                    onChange={props.onUpdateComponent}
+                    hideLabel={true}
+                />;
             case ClozeItemType.TimeInput:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='TIME INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <TimeInputContentConfig
-                        component={props.component as ItemGroupComponent}
-                        onChange={props.onUpdateComponent}
-                    />
-                </ContentTabCollapsible>;
+                return <TimeInputContentConfig
+                    component={props.component as ItemGroupComponent}
+                    onChange={props.onUpdateComponent}
+                    hideLabel={true}
+                />;
             case ClozeItemType.Markdown:
-                return <ContentTabCollapsible
-                    compKey={props.component.key}
-                    type='MARKDOWN'
-                    defaultOpen={props.index > -1}>
-                    <div className='space-y-1.5'
-                        data-no-dnd="true">
-                        <MarkdownContentEditor
-                            content={currentContent}
-                            onUpdateContent={(content) => {
-                                const updatedPart = { ...props.component };
-                                const updatedContent = localisedObjectToMap(updatedPart.content);
-                                updatedContent.set(selectedLanguage, content);
-                                updatedPart.content = generateLocStrings(updatedContent);
-                                props.onUpdateComponent(updatedPart);
-                            }}
-                        />
-                    </div>
-                </ContentTabCollapsible>;
+                return <div className='space-y-1.5'
+                    data-no-dnd="true">
+                    <MarkdownContentEditor
+                        content={currentContent}
+                        onUpdateContent={(content) => {
+                            const updatedPart = { ...props.component };
+                            const updatedContent = localisedObjectToMap(updatedPart.content);
+                            updatedContent.set(selectedLanguage, content);
+                            updatedPart.content = generateLocStrings(updatedContent);
+                            props.onUpdateComponent(updatedPart);
+                        }}
+                    />
+                </div>;
             case ClozeItemType.LineBreak:
-                return <div>Line break</div>;
+                return <div className="text-sm">Nothing to configure.</div>;
             default:
                 console.warn('Unknown / unimplemented item type:', clozeItemType);
-                return <div>Unknown / unimplemented role: {clozeItemType}</div>;
+                return <div className="text-danger text-sm">Unknown / unimplemented cloze item type: {clozeItemType}</div>;
         }
     }
 
-    return (<SortableItem
-        id={props.component.key || props.index.toString()}
-    >
-        <div className='relative'>
-            <div className='absolute left-0 top-1/2'>
-                <GripVertical className='size-4' />
+    return (renderContent());
+}
+
+const ClozeItemOverviewRow = (props: {
+    i: number,
+    isDragOverlay: boolean,
+    clozeItems: ItemComponent[],
+    selectedItem: ItemComponent | undefined,
+    draggedItem: ItemComponent | undefined,
+    usedKeys: string[],
+    onSelectionChange?: (key: string) => void,
+    onKeyChange?: (oldKey: string, newKey: string) => void,
+    onDelete?: () => void,
+}) => {
+    const { selectedLanguage } = useSurveyEditorCtx();
+    const clozeItem = props.clozeItems[props.i];
+    const clozeItemType = getClozeItemType(clozeItem);
+    const isSelected = (props.selectedItem && props.selectedItem.key === clozeItem.key) ?? false;
+
+    const icons = {
+        [ClozeItemType.SimpleText]: <Heading className='size-4 text-muted-foreground' />,
+        [ClozeItemType.Dropdown]: <SquareChevronDown className='size-4 text-muted-foreground' />,
+        [ClozeItemType.TextInput]: <FormInput className='size-4 text-muted-foreground' />,
+        [ClozeItemType.NumberInput]: <Binary className='size-4 text-muted-foreground' />,
+        [ClozeItemType.TimeInput]: <Clock className='size-4 text-muted-foreground' />,
+        [ClozeItemType.DateInput]: <Calendar className='size-4 text-muted-foreground' />,
+        [ClozeItemType.Markdown]: <Heading className='size-4 text-muted-foreground' />,
+        [ClozeItemType.LineBreak]: <CornerDownLeft className='size-4 text-muted-foreground' />,
+    };
+
+    const typeHints = {
+        [ClozeItemType.SimpleText]: 'Text',
+        [ClozeItemType.Dropdown]: 'Dropdown',
+        [ClozeItemType.TextInput]: 'Text Input',
+        [ClozeItemType.NumberInput]: 'Number Input',
+        [ClozeItemType.TimeInput]: 'Time Input',
+        [ClozeItemType.DateInput]: 'Date Input',
+        [ClozeItemType.Markdown]: 'Markdown',
+        [ClozeItemType.LineBreak]: 'Line Break',
+    };
+
+    const text = localisedObjectToMap(clozeItem.content).get(selectedLanguage) || 'Text';
+
+    const descriptiveText = clozeItemType == ClozeItemType.SimpleText ? text : typeHints[clozeItemType];
+
+    return <div>
+        <Button
+            variant={'outline'}
+            className={cn(
+                'w-full gap-2 py-2 h-auto px-3 text-start',
+                { 'bg-accent text-accent-foreground': isSelected },
+                (props.draggedItem?.key === clozeItem.key && !props.isDragOverlay) && 'invisible')}
+            onClick={props.isDragOverlay ? undefined : () => { props.onSelectionChange?.(clozeItem.key ?? ''); }}
+        >
+            <div>
+                {icons[clozeItemType] || <Heading className='size-4 text-muted-foreground' />}
             </div>
-            <TabCard
-                tabs={[
-                    {
-                        label: 'Content',
-                        icon: <Languages className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            {renderContent()}
-                        </TabWrapper>
-                    },
-                    {
-                        label: 'Conditions',
-                        icon: <ToggleLeft className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            TODO: display and disabled condition editor - for section header, disabled part is not relevant
+            <span className={cn('grow space-x-2',)}>
+                <PopoverKeyBadge
+                    itemKey={clozeItem.key ?? ''}
+                    isHighlighted={isSelected}
+                    allOtherKeys={props.usedKeys.filter(key => key !== clozeItem.key)}
+                    onKeyChange={(newKey) => { props.onKeyChange?.(clozeItem.key ?? '', newKey); }}
+                />
 
-                        </TabWrapper>
-                    },
-                    {
-                        label: 'Settings',
-                        icon: <Cog className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            <div className='space-y-1.5'
-                                data-no-dnd="true"
-                            >
-                                <Label
-                                    htmlFor='key'
-                                >
-                                    Key
-                                </Label>
-                                <div className='flex gap-2'>
-                                    <Input
-                                        id='key'
-                                        value={currentKey}
-                                        onChange={(e) => {
-                                            setCurrentKey(e.target.value);
-                                        }}
-                                    />
-
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key}
-                                        onClick={() => {
-                                            setCurrentKey(props.component.key || '');
-                                        }}
-                                    >
-                                        Reset
-                                    </Button>
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key || !currentKey || props.existingKeys?.includes(currentKey)}
-                                        onClick={() => {
-                                            props.onUpdateComponent({
-                                                ...props.component,
-                                                key: currentKey,
-                                            });
-                                        }}
-                                    >
-                                        Apply
-                                    </Button>
-                                </div>
-                                {(props.existingKeys?.includes(currentKey || '') && currentKey !== props.component.key) && <p className='text-danger-600 text-sm font-semibold'>Key already in use</p>}
-
-                            </div>
-                            <Separator />
-                            <Button
-                                data-no-dnd="true"
-                                variant={'outline'}
-                                className='hover:bg-danger-100'
-                                onClick={() => {
-                                    if (!confirm('Are you sure you want to delete this component?')) {
-                                        return;
-                                    }
-                                    props.onDeleteComponent();
-                                }}
-                            >
-                                Delete component
-                            </Button>
-                        </TabWrapper>
-                    },
-                ]}
-            />
-        </div>
-    </SortableItem>)
+                <span className='text-muted-foreground'>
+                    {descriptiveText}
+                </span>
+            </span>
+            <div className='flex flex-row gap-2 items-center'>
+                {isSelected && <Button className='h-[20px] w-[20px] hover:bg-slate-300 rounded-full' variant={'ghost'} onClick={props.onDelete}>
+                    <X className='size-4 text-muted-foreground' />
+                </Button>}
+                <GripHorizontal className='size-4' />
+            </div>
+        </Button >
+    </div >;
 }
 
 const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
-    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+    const [draggedId, setDraggedId] = React.useState<string | null>();
+    const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
 
     const clozeItems = props.component.items || [];
-    //console.log('clozeItems:', clozeItems);
+    const selectedItem = clozeItems.find(item => item.key === selectedKey);
+    console.log('selectedItem:', selectedItem);
+    const draggedItem = clozeItems.find(item => item.key === draggedId);
+    const usedKeys = clozeItems.map(comp => comp.key || '');
+
+    const sortableClozeItems = clozeItems.map((component, index) => {
+        return {
+            id: component.key || index.toString(), ...component
+        }
+    });
+
 
     const updateComponent = (newItems: ItemComponent[]) => {
         props.onChange({
@@ -284,84 +220,100 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
 
         const newItems = [...clozeItems, newItem];
         updateComponent(newItems);
+        setSelectedKey(randomKey);
     };
 
-    const draggedItem = clozeItems.find(comp => comp.key === draggedId);
-
-    const usedKeys = clozeItems.map(comp => comp.key || '');
-
     return (
-        <div className='mt-4'>
-            <p className='font-semibold mb-2'>Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
+        <div className=''>
+            <p className='font-semibold pb-2'>Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
             <SortableWrapper
                 sortableID={'response-group-editor'}
-                direction='vertical'
-                items={clozeItems.map((component, index) => {
-                    return {
-                        id: component.key || index.toString(),
-                    }
-                })}
+                items={sortableClozeItems}
                 onDraggedIdChange={(id) => {
                     setDraggedId(id);
                 }}
                 onReorder={(activeIndex, overIndex) => {
                     const newItems = [...clozeItems];
                     newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-
                     updateComponent(newItems);
                 }}
                 dragOverlayItem={(draggedId && draggedItem) ?
-                    <ContentItem
-                        index={-1}
-                        component={draggedItem}
-                        onDeleteComponent={() => { }}
-                        onUpdateComponent={() => { }}
-                    />
+                    <ClozeItemOverviewRow
+                        i={sortableClozeItems.findIndex(item => item.id === draggedId)}
+                        isDragOverlay={true}
+                        clozeItems={clozeItems}
+                        selectedItem={selectedItem}
+                        draggedItem={draggedItem}
+                        usedKeys={usedKeys} />
                     : null}
             >
-                <div className='overflow-y-auto'>
-                    <ol className='flex flex-col gap-4 min-w-full'>
-                        {clozeItems.map((component, index) => {
-                            return <ContentItem
-                                key={component.key || index}
-                                index={index}
-                                component={component}
-                                existingKeys={usedKeys}
-                                onDeleteComponent={() => {
-                                    const newItems = clozeItems.filter(comp => comp.key !== component.key);
-                                    updateComponent(newItems);
-                                }}
-                                onUpdateComponent={(updatedItem) => {
-                                    const newItems = clozeItems.map((comp => {
-                                        if (comp.key === component.key) {
-                                            return updatedItem;
+                <div className='space-y-2'>
+                    <ol className='max-h-64 overflow-y-auto space-y-1'>
+                        {sortableClozeItems.map((clozeItem, i) => (
+                            <SortableItem
+                                id={clozeItem.id}
+                                key={clozeItem.id}
+                            >
+                                <ClozeItemOverviewRow
+                                    i={i}
+                                    isDragOverlay={false}
+                                    clozeItems={clozeItems}
+                                    selectedItem={selectedItem}
+                                    draggedItem={draggedItem}
+                                    usedKeys={usedKeys}
+                                    onSelectionChange={(key) => setSelectedKey(key)}
+                                    onKeyChange={(oldKey, newKey) => {
+                                        const newItems = [...clozeItems];
+                                        const itemToUpdate = newItems.find(clozeItem => clozeItem.key === oldKey);
+                                        if (itemToUpdate) {
+                                            itemToUpdate.key = newKey;
+                                            updateComponent(newItems);
                                         }
-                                        return comp;
-                                    }))
-                                    updateComponent(newItems);
-                                }}
-                            />
-                        })}
-
-                        <div className='flex justify-center w-full'>
-                            <AddDropdown
-                                options={[
-                                    { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.Markdown, label: 'Markdown', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.Dropdown, label: 'Dropdown', icon: <SquareChevronDown className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.TextInput, label: 'Text Input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.NumberInput, label: 'Number Input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.TimeInput, label: 'Time Input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.DateInput, label: 'Date Input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ClozeItemType.LineBreak, label: 'Line Break', icon: <CornerDownLeft className='size-4 text-muted-foreground me-2' /> },
-                                ]}
-                                onAddItem={onAddItem}
-                            />
-                        </div>
+                                    }}
+                                    onDelete={() => {
+                                        if (confirm('Are you sure you want to delete this item?')) {
+                                            updateComponent(clozeItems.filter(item => item.key !== clozeItem.key));
+                                            setSelectedKey(null);
+                                        }
+                                    }}
+                                />
+                            </SortableItem>
+                        ))}
                     </ol>
+                    <Separator className='bg-border' />
+                    <div className='flex justify-center w-full '>
+                        <AddDropdown
+                            options={[
+                                { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.Markdown, label: 'Markdown', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.Dropdown, label: 'Dropdown', icon: <SquareChevronDown className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.TextInput, label: 'Text Input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.NumberInput, label: 'Number Input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.TimeInput, label: 'Time Input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.DateInput, label: 'Date Input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
+                                { key: ClozeItemType.LineBreak, label: 'Line Break', icon: <CornerDownLeft className='size-4 text-muted-foreground me-2' /> },
+                            ]}
+                            onAddItem={onAddItem}
+                        />
+                    </div>
                 </div>
-
             </SortableWrapper>
+
+            {selectedItem && <div>
+                <p className='font-semibold pb-2'>Selected Element:</p>
+                <ContentItem
+                    index={clozeItems.indexOf(selectedItem)}
+                    component={selectedItem}
+                    onUpdateComponent={(updatedComponent: ItemComponent) => {
+                        const updatedItems = [...clozeItems];
+                        const index = updatedItems.findIndex(item => item.key === selectedItem?.key);
+                        if (index !== -1) {
+                            updatedItems[index] = updatedComponent;
+                        }
+                        updateComponent(updatedItems);
+                    }}
+                />
+            </div>}
         </div>
     );
 
