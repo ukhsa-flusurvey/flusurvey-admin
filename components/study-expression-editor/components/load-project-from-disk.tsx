@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import React from 'react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, FilePlusIcon, FolderPlusIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 
 import { toast } from 'sonner';
-import { Session } from '../types';
+import { Session, StudyExpressionEditorMode } from '../types';
 
 
 const LoadRulesFromDisk: React.FC = () => {
@@ -17,6 +17,8 @@ const LoadRulesFromDisk: React.FC = () => {
         loadSessionObject,
         deleteSession,
         loadSession,
+        initNewSession,
+        changeView,
     } = useStudyExpressionEditor();
     const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
     const [newSession, setNewSession] = React.useState<Session | undefined>(undefined);
@@ -28,9 +30,44 @@ const LoadRulesFromDisk: React.FC = () => {
         </p>;
     }
 
+    const initNewProject = (type: StudyExpressionEditorMode) => {
+        initNewSession(undefined, type);
+        changeView('expression-editor');
+    }
+
+
     return (
         <div className='flex flex-col items-center justify-center p-6 h-full'>
             <div className='w-full max-w-2xl border-border border rounded-lg p-6 space-y-6 bg-white'>
+                <div>
+                    <h2 className='text-xl font-bold mb-2'>
+                        Start new project
+                    </h2>
+                    <div className='flex gap-2 items-center'>
+                        <Button
+                            variant={'outline'}
+                            className='grow'
+                            onClick={() => { initNewProject('study-rules') }}
+                        >
+                            <span>
+                                <FolderPlusIcon className='size-4 text-muted-foreground' />
+                            </span>
+                            New study rules project
+                        </Button>
+                        <Button
+                            variant={'outline'}
+                            className='grow'
+                            onClick={() => { initNewProject('action') }}
+                        >
+                            <span>
+                                <FilePlusIcon className='size-4 text-muted-foreground' />
+                            </span>
+                            New study action project
+                        </Button>
+                    </div>
+                </div>
+
+                <Separator />
 
                 <div className='py-3 space-y-4'>
                     <h2 className='text-xl font-bold mb-2'>
