@@ -42,6 +42,60 @@ const checkIfActionsIncludeAny = (actions: undefined | ExpressionArg[], includes
 
 
 const HandlerListItem: React.FC<HandlerListItemProps> = (props) => {
+    const hasMessageActions = checkIfActionsIncludeAny(props.actions, [
+        'ADD_MESSAGE',
+        'REMOVE_ALL_MESSAGES',
+        'REMOVE_MESSAGES_BY_TYPE',
+        'NOTIFY_RESEARCHER'
+    ]);
+
+    const hasAssignSurveyAction = checkIfActionsIncludeAny(props.actions, [
+        'ADD_NEW_SURVEY'
+    ]);
+
+    const hasRemoveSurveyAction = checkIfActionsIncludeAny(props.actions, [
+        'REMOVE_ALL_SURVEYS',
+        'REMOVE_SURVEYS_BY_KEY'
+    ]);
+
+    const hasReportAction = checkIfActionsIncludeAny(props.actions, [
+        'INIT_REPORT',
+        'CANCEL_REPORT',
+        'UPDATE_REPORT_DATA',
+        'REMOVE_REPORT_DATA'
+    ]);
+
+    const hasParticipantFlagsAction = checkIfActionsIncludeAny(props.actions, [
+        'UPDATE_FLAG',
+        'REMOVE_FLAG',
+    ]);
+
+    const hasHandlingOfConfidentialResponses = checkIfActionsIncludeAny(props.actions, [
+        'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
+        'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
+    ]);
+
+    const hasLinkingCodes = checkIfActionsIncludeAny(props.actions, [
+        'SET_LINKING_CODE',
+        'DELETE_LINKING_CODE',
+        'DRAW_STUDY_CODE_AS_LINKING_CODE',
+        'REMOVE_STUDY_CODE'
+    ]);
+
+    const hasExternalHandlers = checkIfActionsIncludeAny(props.actions, [
+        'EXTERNAL_EVENT_HANDLER',
+    ]);
+
+    const hasNoActions = props.actions === undefined || props.actions.length === 0 || (
+        !hasMessageActions &&
+        !hasAssignSurveyAction &&
+        !hasRemoveSurveyAction &&
+        !hasReportAction && !hasParticipantFlagsAction &&
+        !hasHandlingOfConfidentialResponses &&
+        !hasLinkingCodes &&
+        !hasExternalHandlers
+    );
+
     return (
         <TooltipProvider>
             <ContextMenu>
@@ -74,75 +128,47 @@ const HandlerListItem: React.FC<HandlerListItemProps> = (props) => {
                                     <IconWithTooltip
                                         icon={<BracketsIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Empty handler'
-                                        show={props.actions === undefined || props.actions.length === 0}
+                                        show={hasNoActions}
                                     />
                                     <IconWithTooltip
                                         icon={<MailIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Logic for participant messages'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'ADD_MESSAGE',
-                                            'REMOVE_ALL_MESSAGES',
-                                            'REMOVE_MESSAGES_BY_TYPE',
-                                            'NOTIFY_RESEARCHER'
-                                        ])}
+                                        show={hasMessageActions}
                                     />
                                     <IconWithTooltip
                                         icon={<FilePlus2Icon className='size-4 text-muted-foreground' />}
                                         tooltip='Add new survey'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'ADD_NEW_SURVEY'
-                                        ])}
+                                        show={hasAssignSurveyAction}
                                     />
                                     <IconWithTooltip
                                         icon={<FileMinus2Icon className='size-4 text-muted-foreground' />}
                                         tooltip='Remove survey'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'REMOVE_ALL_SURVEYS',
-                                            'REMOVE_SURVEYS_BY_KEY'
-                                        ])}
+                                        show={hasRemoveSurveyAction}
                                     />
                                     <IconWithTooltip
                                         icon={<NotebookTextIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Report handling'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'INIT_REPORT',
-                                            'CANCEL_REPORT',
-                                            'UPDATE_REPORT_DATA',
-                                            'REMOVE_REPORT_DATA'
-                                        ])}
+                                        show={hasReportAction}
                                     />
                                     <IconWithTooltip
                                         icon={<FlagIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Participant flags'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'UPDATE_FLAG',
-                                            'REMOVE_FLAG',
-                                        ])}
+                                        show={hasParticipantFlagsAction}
                                     />
                                     <IconWithTooltip
                                         icon={<ShieldIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Handling of confidential data'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
-                                            'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
-                                        ])}
+                                        show={hasHandlingOfConfidentialResponses}
                                     />
                                     <IconWithTooltip
                                         icon={<LinkIcon className='size-4 text-muted-foreground' />}
                                         tooltip='Linking codes / study codes'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'SET_LINKING_CODE',
-                                            'DELETE_LINKING_CODE',
-                                            'DRAW_STUDY_CODE_AS_LINKING_CODE',
-                                            'REMOVE_STUDY_CODE'
-                                        ])}
+                                        show={hasLinkingCodes}
                                     />
                                     <IconWithTooltip
                                         icon={<GlobeIcon className='size-4 text-muted-foreground' />}
                                         tooltip='External handlers'
-                                        show={checkIfActionsIncludeAny(props.actions, [
-                                            'EXTERNAL_EVENT_HANDLER',
-                                        ])}
+                                        show={hasExternalHandlers}
                                     />
                                 </div>
                             </div>

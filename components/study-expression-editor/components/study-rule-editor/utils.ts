@@ -246,6 +246,36 @@ export class StudyRulesSet {
         }
     }
 
+    getEntryEventHandler(): ExpressionArg {
+        return this._entryEventHandler ? {
+            dtype: 'exp',
+            exp: this._entryEventHandler
+        } : {
+            dtype: 'exp',
+            exp: initEventHandler('ENTER')
+        };
+    }
+
+    getLeaveEventHandler(): ExpressionArg {
+        return this._leaveEventHandler ? {
+            dtype: 'exp',
+            exp: this._leaveEventHandler
+        } : {
+            dtype: 'exp',
+            exp: initEventHandler('LEAVE')
+        };
+    }
+
+    getMergeEventHandler(): ExpressionArg {
+        return this._mergeEventHandler ? {
+            dtype: 'exp',
+            exp: this._mergeEventHandler
+        } : {
+            dtype: 'exp',
+            exp: initEventHandler('MERGE')
+        };
+    }
+
     getSurveySubmissionHandlerInfos(): {
         key: string;
         actions: ExpressionArg[];

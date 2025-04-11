@@ -10,7 +10,7 @@ export interface HandlerSelection {
     type: 'entry' | 'merge' | 'leave' | 'survey-submission' | 'custom-event' | 'timer-event';
     index?: number;
     handlerKey?: string;
-    actions?: ExpressionArg[];
+    actions?: Array<ExpressionArg | undefined>;
 }
 
 interface HandlerEditorProps {

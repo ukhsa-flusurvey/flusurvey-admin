@@ -11,6 +11,7 @@ import SectionCard from './section-card';
 import { StudyRulesSet } from './utils';
 import HandlerListItem from './handler-list-item';
 import HandlerEditor, { HandlerSelection } from './handler-editor';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 const Overview: React.FC = () => {
     const [openLoadRulesDialog, setOpenLoadRulesDialog] = React.useState(false);
@@ -28,9 +29,14 @@ const Overview: React.FC = () => {
         setRulesSet(new StudyRulesSet(currentRules ?? []));
     }, [currentRules])
 
+    const entryEventHandler = rulesSet?.getEntryEventHandler();
+    const leaveEventHandler = rulesSet?.getLeaveEventHandler();
+    const mergeEventHandler = rulesSet?.getMergeEventHandler();
     const surveySubmissionHandlers = rulesSet?.getSurveySubmissionHandlerInfos();
     const customEventHandlers = rulesSet?.getCustomEventHandlerInfos();
     const timerEventHandlers = rulesSet?.getTimerEventHandlerInfos();
+
+    console.log('entryEventHandler', entryEventHandler)
 
     if (selectedHandler) {
         return <HandlerEditor
@@ -82,13 +88,20 @@ const Overview: React.FC = () => {
                         description='Rules applied when a participant enters the study'
                     >
                         <HandlerListItem
-                            label={'Current entry event handler'}
-                            actions={[]}
+                            actions={entryEventHandler ? [entryEventHandler] : []}
                             onRemove={() => {
-                                console.log('remove item')
+                                rulesSet?.updateEntryEventHandler(undefined);
+                                updateCurrentRules(rulesSet?.getRules());
                             }}
                             onSelect={() => {
-                                console.log('select item')
+                                if (!entryEventHandler) {
+                                    return;
+                                }
+                                const actions = (entryEventHandler as ExpArg).exp.data?.slice(1);
+                                setSelectedHandler({
+                                    type: 'entry',
+                                    actions: actions ?? []
+                                })
                             }}
                         />
                     </SectionCard>
@@ -98,12 +111,20 @@ const Overview: React.FC = () => {
                         description='Rules for when a temporary participant is merged into an active participant'
                     >
                         <HandlerListItem
-                            actions={[]}
+                            actions={mergeEventHandler ? [mergeEventHandler] : []}
                             onRemove={() => {
-                                console.log('remove item')
+                                rulesSet?.updateMergeEventHandler(undefined);
+                                updateCurrentRules(rulesSet?.getRules());
                             }}
                             onSelect={() => {
-                                console.log('select item')
+                                if (!mergeEventHandler) {
+                                    return;
+                                }
+                                const actions = (mergeEventHandler as ExpArg).exp.data?.slice(1);
+                                setSelectedHandler({
+                                    type: 'merge',
+                                    actions: actions ?? []
+                                })
                             }}
                         />
                     </SectionCard>
@@ -113,12 +134,20 @@ const Overview: React.FC = () => {
                         description='Rules applied when a participant leaves the study (e.g., account is deleted)'
                     >
                         <HandlerListItem
-                            actions={[]}
+                            actions={leaveEventHandler ? [leaveEventHandler] : []}
                             onRemove={() => {
-                                console.log('remove item')
+                                rulesSet?.updateLeaveEventHandler(undefined);
+                                updateCurrentRules(rulesSet?.getRules());
                             }}
                             onSelect={() => {
-                                console.log('select item')
+                                if (!leaveEventHandler) {
+                                    return;
+                                }
+                                const actions = (leaveEventHandler as ExpArg).exp.data?.slice(1);
+                                setSelectedHandler({
+                                    type: 'leave',
+                                    actions: actions ?? []
+                                })
                             }}
                         />
                     </SectionCard>
