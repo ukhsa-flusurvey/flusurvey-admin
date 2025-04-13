@@ -150,7 +150,6 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
         }
     });
 
-    console.log('sortableClozeItems', sortableClozeItems);
 
     // Hacky way to scroll to the last item when it is newly added
     useEffect(() => {
@@ -159,10 +158,6 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
             lastItemRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }, [selectedKey, sortableClozeItems]);
-
-    useEffect(() => {
-        console.log('seletedKey', selectedKey);
-    }, [selectedKey]);
 
     const updateComponent = (newItems: ItemComponent[]) => {
         props.onChange({
@@ -227,9 +222,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                                         itemIconLookup={clozeItemIconLookup}
                                         itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
                                         onClick={() => {
-                                            console.log('onClick', clozeItem.key);
                                             setSelectedKey(clozeItem.key!);
-
                                         }}
                                         onKeyChange={(oldKey, newKey) => {
                                             const newItems = [...clozeItems];
