@@ -48,6 +48,10 @@ export const PopoverKeyBadge: React.FC<{
         setError(null);
     }, [currentKey, props.allOtherKeys]);
 
+    const handleKeyChange = () => {
+        if (currentKey !== props.itemKey && props.onKeyChange) props.onKeyChange(currentKey);
+    }
+
     return <Popover>
         <PopoverTrigger>
             <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} onClick={(e) => {
@@ -77,6 +81,11 @@ export const PopoverKeyBadge: React.FC<{
                             setCurrentKey(e.target.value.trim());
                         }}
                         className='w-full'
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleKeyChange();
+                            }
+                        }}
                     />
                 </div>
                 <div className="flex flex-row gap-2 justify-end items-center">
@@ -97,10 +106,7 @@ export const PopoverKeyBadge: React.FC<{
                         size={'icon'}
                         variant={'outline'}
                         disabled={!isValidKey}
-                        onClick={() => {
-                            popoverCloseRef.current?.click();
-                            if (currentKey != props.itemKey) props.onKeyChange?.(currentKey);
-                        }}
+                        onClick={handleKeyChange}
                     >
                         <Check className='size-4 text-muted-foreground' color="green" />
                     </Button>

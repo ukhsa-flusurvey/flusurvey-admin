@@ -2,7 +2,7 @@ import SortableWrapper from "@/components/survey-editor/components/general/Sorta
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Binary, Calendar, Clock, CornerDownLeft, FormInput, GripHorizontal, Heading, SquareChevronDown, X } from "lucide-react";
+import { Binary, Calendar, Clock, CornerDownLeft, FormInput, Heading, SquareChevronDown } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
@@ -10,21 +10,19 @@ import NumberInputContentConfig from "./number-input-content-config";
 import DateInputContentConfig from "./date-input-content-config";
 import MarkdownContentEditor from "../markdown-content-editor";
 import SortableItem from "@/components/survey-editor/components/general/SortableItem";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
-import { cn } from "@/lib/utils";
-import { PopoverKeyBadge } from "../../KeyBadge";
+import { ItemOverviewRow } from "./item-overview-row";
+import { useCopyToClipboard } from "usehooks-ts";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
     onChange: (newComp: ItemGroupComponent) => void;
 }
-
 
 const getClozeItemType = (item: ItemComponent): ClozeItemType => {
     const itemType = item.role as keyof typeof ClozeItemType;
@@ -32,14 +30,13 @@ const getClozeItemType = (item: ItemComponent): ClozeItemType => {
 }
 
 const ContentItem = (props: {
-    index: number, component: ItemComponent,
+    component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const clozeItemType = getClozeItemType(props.component);
 
     const renderContent = () => {
-        const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
         switch (clozeItemType) {
             case ClozeItemType.SimpleText:
                 return <SimpleTextViewContentEditor
@@ -83,7 +80,7 @@ const ContentItem = (props: {
                 return <div className='space-y-1.5'
                     data-no-dnd="true">
                     <MarkdownContentEditor
-                        content={currentContent}
+                        content={localisedObjectToMap(props.component.content).get(selectedLanguage) || ''}
                         onUpdateContent={(content) => {
                             const updatedPart = { ...props.component };
                             const updatedContent = localisedObjectToMap(updatedPart.content);
@@ -104,22 +101,7 @@ const ContentItem = (props: {
     return (renderContent());
 }
 
-const ClozeItemOverviewRow = (props: {
-    i: number,
-    isDragOverlay: boolean,
-    clozeItems: ItemComponent[],
-    selectedItem: ItemComponent | undefined,
-    draggedItem: ItemComponent | undefined,
-    usedKeys: string[],
-    onSelectionChange?: (key: string) => void,
-    onKeyChange?: (oldKey: string, newKey: string) => void,
-    onDelete?: () => void,
-}) => {
-    const { selectedLanguage } = useSurveyEditorCtx();
-    const clozeItem = props.clozeItems[props.i];
-    const clozeItemType = getClozeItemType(clozeItem);
-    const isSelected = (props.selectedItem && props.selectedItem.key === clozeItem.key) ?? false;
-
+const clozeItemIconLookup = (item: ItemComponent): React.ReactNode => {
     const icons = {
         [ClozeItemType.SimpleText]: <Heading className='size-4 text-muted-foreground' />,
         [ClozeItemType.Dropdown]: <SquareChevronDown className='size-4 text-muted-foreground' />,
@@ -130,7 +112,11 @@ const ClozeItemOverviewRow = (props: {
         [ClozeItemType.Markdown]: <Heading className='size-4 text-muted-foreground' />,
         [ClozeItemType.LineBreak]: <CornerDownLeft className='size-4 text-muted-foreground' />,
     };
+    const clozeItemType = getClozeItemType(item);
+    return icons[clozeItemType] || <Heading className='size-4 text-muted-foreground' />;
+}
 
+const clozeItemDescriptiveTextLookup = (item: ItemComponent, lang: string): string => {
     const typeHints = {
         [ClozeItemType.SimpleText]: 'Text',
         [ClozeItemType.Dropdown]: 'Dropdown',
@@ -142,52 +128,20 @@ const ClozeItemOverviewRow = (props: {
         [ClozeItemType.LineBreak]: 'Line Break',
     };
 
-    const text = localisedObjectToMap(clozeItem.content).get(selectedLanguage) || 'Text';
-
-    const descriptiveText = clozeItemType == ClozeItemType.SimpleText ? text : typeHints[clozeItemType];
-
-    return <div>
-        <Button
-            variant={'outline'}
-            className={cn(
-                'w-full gap-2 py-2 h-auto px-3 text-start',
-                { 'bg-accent text-accent-foreground': isSelected },
-                (props.draggedItem?.key === clozeItem.key && !props.isDragOverlay) && 'invisible')}
-            onClick={props.isDragOverlay ? undefined : () => { props.onSelectionChange?.(clozeItem.key ?? ''); }}
-        >
-            <div>
-                {icons[clozeItemType] || <Heading className='size-4 text-muted-foreground' />}
-            </div>
-            <span className={cn('grow space-x-2',)}>
-                <PopoverKeyBadge
-                    itemKey={clozeItem.key ?? ''}
-                    isHighlighted={isSelected}
-                    allOtherKeys={props.usedKeys.filter(key => key !== clozeItem.key)}
-                    onKeyChange={(newKey) => { props.onKeyChange?.(clozeItem.key ?? '', newKey); }}
-                />
-
-                <span className='text-muted-foreground'>
-                    {descriptiveText}
-                </span>
-            </span>
-            <div className='flex flex-row gap-2 items-center'>
-                {isSelected && <Button className='h-[20px] w-[20px] hover:bg-slate-300 rounded-full' variant={'ghost'} onClick={props.onDelete}>
-                    <X className='size-4 text-muted-foreground' />
-                </Button>}
-                <GripHorizontal className='size-4' />
-            </div>
-        </Button >
-    </div >;
+    const clozeItemType = getClozeItemType(item);
+    return clozeItemType == ClozeItemType.SimpleText ? localisedObjectToMap(item.content).get(lang) || 'Simple Text' : typeHints[clozeItemType] || 'Unknown Item Type';
 }
 
 const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
-    const [draggedId, setDraggedId] = React.useState<string | null>();
+    const { selectedLanguage } = useSurveyEditorCtx();
+    const [draggedKey, setDraggedKey] = React.useState<string | null>();
     const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
-    const lastItem = useRef<HTMLDivElement | null>(null);
+    const lastItemRef = useRef<HTMLDivElement | null>(null);
+    const [copiedValue, copyToClipboard] = useCopyToClipboard();
 
     const clozeItems = props.component.items || [];
     const selectedItem = clozeItems.find(item => item.key === selectedKey);
-    const draggedItem = clozeItems.find(item => item.key === draggedId);
+    const draggedItem = clozeItems.find(item => item.key === draggedKey);
     const usedKeys = clozeItems.map(comp => comp.key || '');
 
     const sortableClozeItems = clozeItems.map((component, index) => {
@@ -196,13 +150,19 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
         }
     });
 
+    console.log('sortableClozeItems', sortableClozeItems);
+
+    // Hacky way to scroll to the last item when it is newly added
     useEffect(() => {
-        // Hacky way to scroll to the last item when it is newly added
         const lastClozeItem = sortableClozeItems.at(-1);
-        if (lastItem.current && lastClozeItem?.key == selectedKey) {
-            lastItem.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (lastItemRef.current && lastClozeItem?.key == selectedKey) {
+            lastItemRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }, [selectedKey, sortableClozeItems]);
+
+    useEffect(() => {
+        console.log('seletedKey', selectedKey);
+    }, [selectedKey]);
 
     const updateComponent = (newItems: ItemComponent[]) => {
         props.onChange({
@@ -226,26 +186,28 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
 
     return (
         <div className=''>
-            <p className='font-semibold pb-2'>Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
+            <p className='font-semibold pb-2'>Cloze Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
             <SortableWrapper
                 sortableID={'response-group-editor'}
                 items={sortableClozeItems}
                 onDraggedIdChange={(id) => {
-                    setDraggedId(id);
+                    setDraggedKey(id);
                 }}
                 onReorder={(activeIndex, overIndex) => {
                     const newItems = [...clozeItems];
                     newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
                     updateComponent(newItems);
                 }}
-                dragOverlayItem={(draggedId && draggedItem) ?
-                    <ClozeItemOverviewRow
-                        i={sortableClozeItems.findIndex(item => item.id === draggedId)}
+                dragOverlayItem={(draggedKey && draggedItem) ?
+                    <ItemOverviewRow
+                        i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
                         isDragOverlay={true}
-                        clozeItems={clozeItems}
-                        selectedItem={selectedItem}
-                        draggedItem={draggedItem}
-                        usedKeys={usedKeys} />
+                        item={draggedItem}
+                        isSelected={draggedItem.key === selectedKey}
+                        isBeingDragged={true}
+                        usedKeys={usedKeys}
+                        itemIconLookup={clozeItemIconLookup}
+                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)} />
                     : null}
             >
                 <div className='space-y-2'>
@@ -253,18 +215,22 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                         {sortableClozeItems.map((clozeItem, i) => (
                             <SortableItem
                                 id={clozeItem.id}
-                                key={clozeItem.id}
-
-                            >
-                                <div ref={i == sortableClozeItems.length - 1 ? lastItem : null}>
-                                    <ClozeItemOverviewRow
+                                key={clozeItem.id}>
+                                <div ref={i == sortableClozeItems.length - 1 ? lastItemRef : null}>
+                                    <ItemOverviewRow
                                         i={i}
                                         isDragOverlay={false}
-                                        clozeItems={clozeItems}
-                                        selectedItem={selectedItem}
-                                        draggedItem={draggedItem}
                                         usedKeys={usedKeys}
-                                        onSelectionChange={(key) => setSelectedKey(key)}
+                                        item={clozeItem}
+                                        isSelected={selectedKey === clozeItem.key}
+                                        isBeingDragged={draggedKey === clozeItem.key}
+                                        itemIconLookup={clozeItemIconLookup}
+                                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                                        onClick={() => {
+                                            console.log('onClick', clozeItem.key);
+                                            setSelectedKey(clozeItem.key!);
+
+                                        }}
                                         onKeyChange={(oldKey, newKey) => {
                                             const newItems = [...clozeItems];
                                             const itemToUpdate = newItems.find(clozeItem => clozeItem.key === oldKey);
@@ -272,12 +238,40 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                                                 itemToUpdate.key = newKey;
                                                 updateComponent(newItems);
                                             }
+                                            if (selectedKey === oldKey) {
+                                                setSelectedKey(newKey);
+                                            }
                                         }}
                                         onDelete={() => {
                                             if (confirm('Are you sure you want to delete this item?')) {
                                                 updateComponent(clozeItems.filter(item => item.key !== clozeItem.key));
                                                 setSelectedKey(null);
                                             }
+                                        }}
+                                        onDuplicate={() => {
+                                            const itemToDuplicate = clozeItems.find(item => item.key === clozeItem.key);
+                                            if (itemToDuplicate != undefined) {
+                                                const newItem = { ...itemToDuplicate, key: Math.random().toString(36).substring(9) };
+                                                const newItems = [...clozeItems];
+                                                newItems.splice(i + 1, 0, newItem);
+                                                setSelectedKey(newItem.key);
+                                                updateComponent(newItems);
+                                            }
+                                        }}
+                                        onCopy={() => {
+                                            const itemToCopy = clozeItems.find(item => item.key === clozeItem.key);
+                                            if (itemToCopy != undefined) {
+                                                copyToClipboard(JSON.stringify(itemToCopy));
+                                            }
+                                        }}
+                                        onPaste={() => {
+                                            if (!copiedValue) return;
+                                            // Replace contents of current item with copied values
+                                            const copiedItem = JSON.parse(copiedValue) as ItemComponent;
+                                            const indexOfItem = clozeItems.findIndex(item => item.key === clozeItem.key);
+                                            clozeItems[indexOfItem] = copiedItem;
+                                            clozeItems[indexOfItem].key = clozeItem.key;
+                                            updateComponent(clozeItems);
                                         }}
                                     />
                                 </div>
@@ -304,9 +298,8 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
             </SortableWrapper>
 
             {selectedItem && <div>
-                <p className='font-semibold pb-2'>Selected Element:</p>
+                <p className='font-semibold pb-2'>Selected Cloze Item:</p>
                 <ContentItem
-                    index={clozeItems.indexOf(selectedItem)}
                     component={selectedItem}
                     onUpdateComponent={(updatedComponent: ItemComponent) => {
                         const updatedItems = [...clozeItems];
