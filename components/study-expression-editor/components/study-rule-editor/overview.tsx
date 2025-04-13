@@ -36,12 +36,15 @@ const Overview: React.FC = () => {
     const customEventHandlers = rulesSet?.getCustomEventHandlerInfos();
     const timerEventHandlers = rulesSet?.getTimerEventHandlerInfos();
 
-    console.log('entryEventHandler', entryEventHandler)
+
 
     if (selectedHandler) {
         return <HandlerEditor
             selection={selectedHandler}
             onClose={() => setSelectedHandler(undefined)}
+            onChange={(selection) => {
+                console.log('selection', selection)
+            }}
         />
     }
 

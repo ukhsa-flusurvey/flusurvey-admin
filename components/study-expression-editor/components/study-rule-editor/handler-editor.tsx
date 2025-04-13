@@ -1,5 +1,6 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { ExpressionArg } from '@/components/expression-editor/utils';
+import { studyEngineCategories, studyEngineRegistry } from '@/components/expression-editor/registries/studyEngineRegistry';
+import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeftIcon } from 'lucide-react';
@@ -16,10 +17,13 @@ export interface HandlerSelection {
 interface HandlerEditorProps {
     selection: HandlerSelection;
     onClose: () => void;
+    onChange: (selection: HandlerSelection) => void;
 }
 
 const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
     console.log(props.selection)
+
+    const currentActions = props.selection.actions;
     return (
         <div className='px-6 pt-2 pb-12 space-y-2 overflow-y-auto'>
             <Button
@@ -54,18 +58,17 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                 </h3>
                 <div className='bg-slate-100 rounded-md p-4'>
                     <ExpArgEditor
-                        availableExpData={[]}
+                        availableExpData={currentActions || []}
                         availableMetadata={{
-                            slotTypes: []
-                            //slotTypes: currentExpArgSlot ? [currentExpArgSlot] : []
+                            slotTypes: currentActions ? currentActions.map(e => {
+                                const exp = (e as ExpArg).exp;
+                                return exp.name
+                            }) : []
                         }}
                         expRegistry={{
-                            expressionDefs: [],
                             builtInSlotTypes: [],
-                            categories: [],
-                            /*expressionDefs: surveyEngineRegistry,
-                            builtInSlotTypes: supportedBuiltInSlotTypes,
-                            categories: surveyExpressionCategories,*/
+                            categories: studyEngineCategories,
+                            expressionDefs: studyEngineRegistry,
                         }}
                         context={{
                             /*singleChoiceOptions: singleChoiceKeys,

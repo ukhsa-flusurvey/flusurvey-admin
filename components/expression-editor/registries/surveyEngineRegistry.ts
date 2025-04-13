@@ -1300,7 +1300,3 @@ export const surveyEngineRegistry: ExpressionDef[] = [
         }
     }
 ]
-
-/*
-    TODO: getSecondsSince,
-*/
