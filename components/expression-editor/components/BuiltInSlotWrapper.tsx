@@ -9,7 +9,7 @@ import { X } from 'lucide-react';
 interface BuiltInSlotWrapperProps {
     children?: React.ReactNode;
     slotLabel: {
-        label: string;
+        label?: string;
         required?: boolean;
     }
     slotTypeDef: {
@@ -19,13 +19,13 @@ interface BuiltInSlotWrapperProps {
     }
     depth?: number;
     isInvalid?: boolean;
-    onClearSlot: () => void;
+    onClearSlot?: () => void;
 }
 
 const BuiltInSlotWrapper: React.FC<BuiltInSlotWrapperProps> = (props) => {
     return (
         <div>
-            <SlotLabel label={props.slotLabel.label} required={props.slotLabel.required}
+            {props.slotLabel.label && <SlotLabel label={props.slotLabel.label} required={props.slotLabel.required}
                 contextMenuContent={
                     <>
                         <ContextMenuItem
@@ -41,7 +41,7 @@ const BuiltInSlotWrapper: React.FC<BuiltInSlotWrapperProps> = (props) => {
                         </ContextMenuItem>
                     </>
                 }
-            />
+            />}
             <Block
                 depth={props.depth}
                 isInvalid={props.isInvalid}

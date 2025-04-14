@@ -55,13 +55,21 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         color: 'lime',
         categories: ['variables'],
     },
-
     {
         id: 'study-status-picker',
         type: 'list-selector',
         contextArrayKey: 'studyStatusValues',
         label: 'Available study status values',
         icon: 'tag',
+        color: 'green',
+        categories: ['variables'],
+    },
+    {
+        id: 'message-type-picker',
+        type: 'list-selector',
+        contextArrayKey: 'messageTypes',
+        label: 'Available message types',
+        icon: 'diamond',
         color: 'green',
         categories: ['variables'],
     }
@@ -230,16 +238,175 @@ const generalStudyActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'stopParticipation',
+        categories: ['general-study-actions'],
+        isTemplateFor: 'UPDATE_STUDY_STATUS',
+        label: 'Stop participation',
+        returnType: 'action',
+        icon: "square",
+        color: 'blue',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_STATUS',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: 'inactive'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['study-status-picker']
+                }
+            },
+        }
+    },
+    {
+        id: 'finishParticipation',
+        categories: ['general-study-actions'],
+        isTemplateFor: 'UPDATE_STUDY_STATUS',
+        label: 'Finish participation',
+        returnType: 'action',
+        icon: "pyramid",
+        color: 'blue',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_STATUS',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: 'finished'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['study-status-picker']
+                }
+            },
+        }
+    },
+    {
+        id: 'START_NEW_STUDY_SESSION',
+        label: 'Start New Study Session',
+        categories: ['general-study-actions'],
+        returnType: 'action',
+        icon: "code",
+        color: 'blue',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'START_NEW_STUDY_SESSION',
+                data: [],
+            },
+        }
+    },
+    {
+        id: 'REMOVE_STUDY_CODE',
+        label: 'Remove Entry from Study Wide Code List',
+        categories: ['general-study-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [
+            {
+                label: 'List key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ],
+            },
+            {
+                label: 'Code to remove',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_STUDY_CODE',
+                data: [],
+            },
+        }
+    },
+    {
+        id: 'NOTIFY_RESEARCHER',
+        label: 'Notify Researchers (Email)',
+        categories: ['general-study-actions'],
+        returnType: 'action',
+        icon: "diamond",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ],
+            },
+            {
+                label: 'Payload - as key value pairs',
+                required: false,
+                isListSlot: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'NOTIFY_RESEARCHER',
+                data: [
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
     }
 
 ]
 
 /*
-updateStudyStatus: UPDATE_STUDY_STATUS,
-    startNewStudySession: START_NEW_STUDY_SESSION,
-stopParticipation,
-  finishParticipation,
-  removeStudyCode: REMOVE_STUDY_CODE,
   notifyResearcher: NOTIFY_RESEARCHER,
 */
 

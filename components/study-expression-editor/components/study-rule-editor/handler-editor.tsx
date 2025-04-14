@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeftIcon } from 'lucide-react';
 import React from 'react';
+import { useStudyExpressionEditor } from '../../study-expression-editor-context';
 
 
 export interface HandlerSelection {
@@ -21,6 +22,9 @@ interface HandlerEditorProps {
 }
 
 const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
+    const {
+        currentStudyContext
+    } = useStudyExpressionEditor();
     console.log(props.selection)
 
     const currentActions = props.selection.actions;
@@ -77,10 +81,24 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                                     label: 'active'
                                 },
                                 {
+                                    key: 'inactive',
+                                    label: 'inactive'
+                                },
+                                {
+                                    key: 'finished',
+                                    label: 'finished'
+                                },
+                                {
                                     key: 'exited',
                                     label: 'exited'
                                 },
                             ],
+                            messageTypes: currentStudyContext?.messageKeys?.map(k => {
+                                return {
+                                    key: k,
+                                    label: k
+                                }
+                            }) ?? [],
                             /*singleChoiceOptions: singleChoiceKeys,
                             multipleChoiceOptions: multipleChoiceKeys,
                             allItemKeys: allItemKeys,

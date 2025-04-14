@@ -124,14 +124,10 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             expRegistry={props.expRegistry}
             onSelect={async (slotTypeId) => {
                 const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < props.currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, props.currentIndex)
-                }
+                const updatedSlotTypes = ensureMinLength(currentSlotTypes, props.currentIndex + 1)
 
-                const currentArgs = props.availableExpData || []
-                if (currentArgs.length < props.currentIndex) {
-                    currentArgs.fill(undefined, currentArgs.length, props.currentIndex)
-                }
+                const currentArgs = [...props.availableExpData] || [];
+                const updatedArgs = ensureMinLength(currentArgs, props.currentIndex + 1)
 
                 if (slotTypeId === 'clipboard') {
                     // paste item from clipboard
@@ -143,11 +139,11 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                             toast.error('Clipboard content is not valid');
                             return;
                         }
-                        currentSlotTypes[props.currentIndex] = content.slotType;
-                        currentArgs[props.currentIndex] = content.value;
+                        updatedSlotTypes[props.currentIndex] = content.slotType;
+                        updatedArgs[props.currentIndex] = content.value;
                         props.onChange?.(
-                            currentArgs,
-                            currentSlotTypes
+                            updatedArgs,
+                            updatedSlotTypes
                         )
                     } catch (error) {
                         toast.error('Error reading clipboard content');
@@ -157,21 +153,21 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                 }
 
 
-                currentSlotTypes[props.currentIndex] = slotTypeId;
+                updatedSlotTypes[props.currentIndex] = slotTypeId;
 
                 if (slotTypeId !== undefined) {
                     const expressionDef = lookupExpressionDef(slotTypeId, props.expRegistry.expressionDefs);
                     if (expressionDef?.defaultValue !== undefined) {
-                        currentArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
+                        updatedArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
                     }
                     if (expressionDef?.isTemplateFor) {
-                        currentSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
+                        updatedSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
                     }
                 }
 
                 props.onChange?.(
-                    currentArgs,
-                    currentSlotTypes
+                    updatedArgs,
+                    updatedSlotTypes
                 )
             }}
         />

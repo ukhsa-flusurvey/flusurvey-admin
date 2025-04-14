@@ -151,9 +151,9 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 icon={expressionDef.icon}
                 label={expressionDef.label}
             />
-            <div className='pl-7 mt-0 pr-2 pb-2'>
+            {expressionDef.slots.length > 0 && <div className='pl-7 mt-0 pr-2 pb-2'>
                 {renderedSlots()}
-            </div>
+            </div>}
         </div>
     )
 };
