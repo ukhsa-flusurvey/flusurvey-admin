@@ -158,15 +158,19 @@ export class StudyRulesSet {
                 return currentKey.str === key;
             })
 
+            const newHandler = initSurveySubmissionHandler(key);
+            if (actions && actions.length > 0) {
+                newHandler.data?.push(...actions);
+            }
             if (indexToUpdate === -1 || indexToUpdate === undefined) {
                 this._surveySubmissionHandler?.data?.push({
                     dtype: 'exp',
-                    exp: initSurveySubmissionHandler(key)
+                    exp: newHandler
                 });
             } else {
                 this._surveySubmissionHandler?.data?.splice(indexToUpdate + 1, 1, {
                     dtype: 'exp',
-                    exp: initSurveySubmissionHandler(key)
+                    exp: newHandler
                 });
             }
         }
@@ -204,16 +208,20 @@ export class StudyRulesSet {
                 const currentKey = ((h as ExpArg).exp.data?.at(0) as ExpArg).exp.data?.at(0) as StrArg;
                 return currentKey.str === key;
             })
+            const newHandler = initSurveySubmissionHandler(key);
+            if (actions && actions.length > 0) {
+                newHandler.data?.push(...actions);
+            }
 
             if (indexToUpdate === -1 || indexToUpdate === undefined) {
                 this._customEventHandler?.data?.push({
                     dtype: 'exp',
-                    exp: initCustomEventHandler(key)
+                    exp: newHandler
                 });
             } else {
                 this._customEventHandler?.data?.splice(indexToUpdate + 1, 1, {
                     dtype: 'exp',
-                    exp: initCustomEventHandler(key)
+                    exp: newHandler
                 });
             }
         }

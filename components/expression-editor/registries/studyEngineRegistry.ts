@@ -17,7 +17,11 @@ export const studyEngineCategories = [
     {
         id: 'general-study-actions',
         label: 'General study actions'
-    }
+    },
+    {
+        id: 'variables',
+        label: 'Variables'
+    },
 ]
 
 export const supportedBuiltInSlotTypes: SlotInputDef[] = [

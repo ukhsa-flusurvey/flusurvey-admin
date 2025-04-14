@@ -11,7 +11,8 @@ import SectionCard from './section-card';
 import { StudyRulesSet } from './utils';
 import HandlerListItem from './handler-list-item';
 import HandlerEditor, { HandlerSelection } from './handler-editor';
-import { ExpArg } from '@/components/expression-editor/utils';
+import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
+import { toast } from 'sonner';
 
 const Overview: React.FC = () => {
     const [openLoadRulesDialog, setOpenLoadRulesDialog] = React.useState(false);
@@ -36,14 +37,49 @@ const Overview: React.FC = () => {
     const customEventHandlers = rulesSet?.getCustomEventHandlerInfos();
     const timerEventHandlers = rulesSet?.getTimerEventHandlerInfos();
 
-
-
     if (selectedHandler) {
         return <HandlerEditor
             selection={selectedHandler}
             onClose={() => setSelectedHandler(undefined)}
             onChange={(selection) => {
                 console.log('selection', selection)
+                let newActions: ExpressionArg[] | undefined = selection.actions as ExpressionArg[] | undefined;
+                if (newActions === undefined || newActions.length === 0) {
+                    newActions = undefined;
+                }
+                switch (selection.type) {
+                    case 'survey-submission':
+                        if (selection.handlerKey === undefined) {
+                            toast.error('No handler key selected');
+                            return;
+                        }
+                        rulesSet?.updateSurveySubmissionHandler(selection.handlerKey, newActions);
+                        break;
+                    case 'custom-event':
+                        if (selection.handlerKey === undefined) {
+                            toast.error('No handler key selected');
+                            return;
+                        }
+                        rulesSet?.updateCustomEventHandler(selection.handlerKey, newActions);
+                        break;
+                    case 'timer-event':
+                        rulesSet?.updateTimerEventHandler(selection.index, newActions ? newActions.at(0) : undefined);
+                        break;
+                    case 'merge':
+                        rulesSet?.updateMergeEventHandler(newActions);
+                        break;
+                    case 'entry':
+                        rulesSet?.updateEntryEventHandler(newActions);
+                        break;
+                    case 'leave':
+                        rulesSet?.updateLeaveEventHandler(newActions);
+                        break;
+                }
+                updateCurrentRules(rulesSet?.getRules());
+                setSelectedHandler({
+                    ...selectedHandler,
+                    actions: newActions,
+                });
             }}
         />
     }

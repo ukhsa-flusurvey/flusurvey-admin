@@ -71,25 +71,20 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                             expressionDefs: studyEngineRegistry,
                         }}
                         context={{
-                            studyStatusValues: [{
-                                key: 'active',
-                                label: 'active'
-                            }, {
-                                key: 'exited',
-                                label: 'exited'
-                            },
-                            ]
+                            studyStatusValues: [
+                                {
+                                    key: 'active',
+                                    label: 'active'
+                                },
+                                {
+                                    key: 'exited',
+                                    label: 'exited'
+                                },
+                            ],
                             /*singleChoiceOptions: singleChoiceKeys,
                             multipleChoiceOptions: multipleChoiceKeys,
                             allItemKeys: allItemKeys,
-                            dateUnitPicker: [
-                                { key: 'years', label: 'Years' },
-                                { key: 'months', label: 'Months' },
-                                { key: 'days', label: 'Days' },
-                                { key: 'hours', label: 'Hours' },
-                                { key: 'minutes', label: 'Minutes' },
-                                { key: 'seconds', label: 'Seconds' },
-                            ],*/
+                           */
                         }}
                         currentIndex={0}
                         slotDef={{
@@ -105,17 +100,10 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                             ],
                         }}
                         onChange={(newArgs,) => {
-                            /* console.log('newArgs', newArgs)
-                             const updatedSurveyItem = {
-                                 ...props.surveyItem,
-                             }
-                             if (!newArgs || newArgs.length < 1 || newArgs[0] === undefined) {
-                                 updatedSurveyItem.condition = undefined;
-                             } else {
-                                 updatedSurveyItem.condition = (newArgs[0] as ExpArg).exp as CaseExpression;
-                             }
-                             props.onUpdateSurveyItem(updatedSurveyItem);
-                         */
+                            props.onChange({
+                                ...props.selection,
+                                actions: newArgs.filter(e => e !== undefined) as ExpressionArg[]
+                            })
                         }}
                     />
 
