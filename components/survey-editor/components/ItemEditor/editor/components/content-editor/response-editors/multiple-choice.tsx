@@ -16,6 +16,7 @@ import { ItemComponentRole } from '@/components/survey-editor/components/types';
 import { ItemOverviewRow } from './item-overview-row';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { Separator } from '@/components/ui/separator';
+import { useCopyToClipboard } from 'usehooks-ts';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -126,6 +127,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const [draggedKey, setDraggedKey] = React.useState<string | null>();
     const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
     const lastItem = useRef<HTMLDivElement | null>(null);
+    const [clipboardContent, setClipboardContent] = useCopyToClipboard();
 
     // TODO: remove magic strings
     const relevantResponseGroupRoleString = props.isSingleChoice ? ItemComponentRole.SingleChoiceGroup : ItemComponentRole.MultipleChoiceGroup;
@@ -216,48 +218,38 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                     <ItemOverviewRow
                         i={sortableResponseItems.findIndex(item => item.id === draggedKey)}
                         isDragOverlay={true}
-                        item={draggedItem}
                         isSelected={draggedItem.key === selectedKey}
                         isBeingDragged={true}
-                        usedKeys={usedKeys}
                         itemIconLookup={mcgItemIconLookup}
-                        itemDescriptiveTextLookup={(item) => mcgItemDescriptiveTextLookup(item, selectedLanguage)} />
+                        itemDescriptiveTextLookup={(item) => mcgItemDescriptiveTextLookup(item, selectedLanguage)}
+                        itemList={responseItems} />
                     : null}
             >
                 <div className='space-y-2'>
                     <ol className='max-h-64 overflow-y-auto space-y-1'>
-                        {sortableResponseItems.map((responseItem, i) => (
+                        {sortableResponseItems.map((sortableResponseItem, i) => (
                             <SortableItem
-                                id={responseItem.id}
-                                key={responseItem.id}>
+                                id={sortableResponseItem.id}
+                                key={sortableResponseItem.id}>
                                 <div ref={i == sortableResponseItems.length - 1 ? lastItem : null}>
                                     <ItemOverviewRow
                                         i={i}
                                         isDragOverlay={false}
-                                        usedKeys={usedKeys}
-                                        item={responseItem}
-                                        isSelected={selectedKey === responseItem.key}
-                                        isBeingDragged={draggedKey === responseItem.key}
+                                        isSelected={selectedKey === sortableResponseItem.key}
+                                        isBeingDragged={draggedKey === sortableResponseItem.key}
                                         itemIconLookup={mcgItemIconLookup}
                                         itemDescriptiveTextLookup={(item) => mcgItemDescriptiveTextLookup(item, selectedLanguage)}
-                                        onClick={() => { setSelectedKey(responseItem.key!); }}
-                                        onKeyChange={(oldKey, newKey) => {
-                                            const newItems = [...responseItems];
-                                            const itemToUpdate = newItems.find(responseItem => responseItem.key === oldKey);
-                                            if (itemToUpdate) {
-                                                itemToUpdate.key = newKey;
-                                                updateSurveyItemWithNewOptions(newItems);
-                                            }
-                                            if (selectedKey === oldKey) {
-                                                setSelectedKey(newKey);
-                                            }
+                                        itemList={responseItems}
+                                        getClipboardValue={() => clipboardContent?.toString() ?? ""}
+                                        setClipboardValue={(value) => setClipboardContent(value)}
+                                        onSelectionUpdate={(key) => {
+                                            setSelectedKey(key);
+                                            setDraggedKey(null);
                                         }}
-                                        onDelete={() => {
-                                            if (confirm('Are you sure you want to delete this item?')) {
-                                                updateSurveyItemWithNewOptions(responseItems.filter(item => item.key !== responseItem.key));
-                                                setSelectedKey(null);
-                                            }
-                                        }} />
+                                        onListUpdate={(newItemList) => {
+                                            updateSurveyItemWithNewOptions(newItemList);
+                                        }}
+                                    />
                                 </div>
                             </SortableItem>
                         ))}

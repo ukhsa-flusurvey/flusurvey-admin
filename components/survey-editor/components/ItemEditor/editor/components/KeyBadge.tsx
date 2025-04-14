@@ -48,7 +48,8 @@ export const PopoverKeyBadge: React.FC<{
         setError(null);
     }, [currentKey, props.allOtherKeys]);
 
-    const handleKeyChange = () => {
+    const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
+        e.stopPropagation();
         if (currentKey !== props.itemKey && props.onKeyChange) props.onKeyChange(currentKey);
     }
 
@@ -75,15 +76,15 @@ export const PopoverKeyBadge: React.FC<{
                 </div>
                 <div className="flex flex-row gap-2 items-center">
                     <Input
+                        className='w-full select-text'
                         value={currentKey}
                         autoFocus
                         onChange={(e) => {
                             setCurrentKey(e.target.value.trim());
                         }}
-                        className='w-full'
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                                handleKeyChange();
+                                handleKeyChange(e);
                             }
                         }}
                     />
@@ -95,7 +96,7 @@ export const PopoverKeyBadge: React.FC<{
                         className="shrink-0"
                         size={'icon'}
                         variant={'outline'}
-                        onClick={() => {
+                        onClick={(e) => {
                             setCurrentKey(props.itemKey)
                         }}
                     >

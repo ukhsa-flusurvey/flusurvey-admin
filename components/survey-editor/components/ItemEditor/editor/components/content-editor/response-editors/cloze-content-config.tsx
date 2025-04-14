@@ -137,7 +137,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     const [draggedKey, setDraggedKey] = React.useState<string | null>();
     const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
     const lastItemRef = useRef<HTMLDivElement | null>(null);
-    const [copiedValue, copyToClipboard] = useCopyToClipboard();
+    const [clipboardContent, setClipboardContent] = useCopyToClipboard();
 
     const clozeItems = props.component.items || [];
     const selectedItem = clozeItems.find(item => item.key === selectedKey);
@@ -197,12 +197,11 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                     <ItemOverviewRow
                         i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
                         isDragOverlay={true}
-                        item={draggedItem}
                         isSelected={draggedItem.key === selectedKey}
                         isBeingDragged={true}
-                        usedKeys={usedKeys}
                         itemIconLookup={clozeItemIconLookup}
-                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)} />
+                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                        itemList={clozeItems} />
                     : null}
             >
                 <div className='space-y-2'>
@@ -215,57 +214,17 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                                     <ItemOverviewRow
                                         i={i}
                                         isDragOverlay={false}
-                                        usedKeys={usedKeys}
-                                        item={clozeItem}
                                         isSelected={selectedKey === clozeItem.key}
                                         isBeingDragged={draggedKey === clozeItem.key}
                                         itemIconLookup={clozeItemIconLookup}
                                         itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                                        onClick={() => {
+                                        onSelectionUpdate={() => {
                                             setSelectedKey(clozeItem.key!);
                                         }}
-                                        onKeyChange={(oldKey, newKey) => {
-                                            const newItems = [...clozeItems];
-                                            const itemToUpdate = newItems.find(clozeItem => clozeItem.key === oldKey);
-                                            if (itemToUpdate) {
-                                                itemToUpdate.key = newKey;
-                                                updateComponent(newItems);
-                                            }
-                                            if (selectedKey === oldKey) {
-                                                setSelectedKey(newKey);
-                                            }
-                                        }}
-                                        onDelete={() => {
-                                            if (confirm('Are you sure you want to delete this item?')) {
-                                                updateComponent(clozeItems.filter(item => item.key !== clozeItem.key));
-                                                setSelectedKey(null);
-                                            }
-                                        }}
-                                        onDuplicate={() => {
-                                            const itemToDuplicate = clozeItems.find(item => item.key === clozeItem.key);
-                                            if (itemToDuplicate != undefined) {
-                                                const newItem = { ...itemToDuplicate, key: Math.random().toString(36).substring(9) };
-                                                const newItems = [...clozeItems];
-                                                newItems.splice(i + 1, 0, newItem);
-                                                setSelectedKey(newItem.key);
-                                                updateComponent(newItems);
-                                            }
-                                        }}
-                                        onCopy={() => {
-                                            const itemToCopy = clozeItems.find(item => item.key === clozeItem.key);
-                                            if (itemToCopy != undefined) {
-                                                copyToClipboard(JSON.stringify(itemToCopy));
-                                            }
-                                        }}
-                                        onPaste={() => {
-                                            if (!copiedValue) return;
-                                            // Replace contents of current item with copied values
-                                            const copiedItem = JSON.parse(copiedValue) as ItemComponent;
-                                            const indexOfItem = clozeItems.findIndex(item => item.key === clozeItem.key);
-                                            clozeItems[indexOfItem] = copiedItem;
-                                            clozeItems[indexOfItem].key = clozeItem.key;
-                                            updateComponent(clozeItems);
-                                        }}
+                                        itemList={clozeItems}
+                                        onListUpdate={(list) => updateComponent(list)}
+                                        getClipboardValue={() => clipboardContent?.toString() ?? ""}
+                                        setClipboardValue={(value) => setClipboardContent(value)}
                                     />
                                 </div>
                             </SortableItem>
