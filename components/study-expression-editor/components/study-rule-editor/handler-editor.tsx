@@ -1,5 +1,5 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { studyEngineCategories, studyEngineRegistry } from '@/components/expression-editor/registries/studyEngineRegistry';
+import { studyEngineCategories, studyEngineRegistry, supportedBuiltInSlotTypes } from '@/components/expression-editor/registries/studyEngineRegistry';
 import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -66,11 +66,19 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                             }) : []
                         }}
                         expRegistry={{
-                            builtInSlotTypes: [],
+                            builtInSlotTypes: supportedBuiltInSlotTypes,
                             categories: studyEngineCategories,
                             expressionDefs: studyEngineRegistry,
                         }}
                         context={{
+                            studyStatusValues: [{
+                                key: 'active',
+                                label: 'active'
+                            }, {
+                                key: 'exited',
+                                label: 'exited'
+                            },
+                            ]
                             /*singleChoiceOptions: singleChoiceKeys,
                             multipleChoiceOptions: multipleChoiceKeys,
                             allItemKeys: allItemKeys,

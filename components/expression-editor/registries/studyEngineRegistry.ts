@@ -13,7 +13,55 @@ export const studyEngineCategories = [
     {
         id: 'custom-event-checkers',
         label: 'Custom event methodes'
+    },
+    {
+        id: 'general-study-actions',
+        label: 'General study actions'
     }
+]
+
+export const supportedBuiltInSlotTypes: SlotInputDef[] = [
+    {
+        id: 'text-input',
+        type: 'str',
+        icon: 'form-input',
+        label: 'Text constant',
+        categories: ['variables'],
+    },
+    {
+        id: 'number-input',
+        type: 'num',
+        icon: 'form-input',
+        label: 'Number input',
+        categories: ['variables'],
+    },
+    {
+        id: 'date-picker',
+        type: 'date',
+        icon: 'calendar',
+        label: 'Date picker',
+        color: 'lime',
+        categories: ['variables'],
+    },
+    {
+        id: 'time-delta-picker',
+        type: 'time-delta',
+        icon: "circle-slash",
+        label: 'Time delta picker',
+        color: 'lime',
+        categories: ['variables'],
+    },
+
+    {
+        id: 'study-status-picker',
+        type: 'list-selector',
+        contextArrayKey: 'studyStatusValues',
+        label: 'Available study status values',
+        icon: 'tag',
+        color: 'green',
+        categories: ['variables'],
+    }
+
 ]
 
 const controlFlowOperators: ExpressionDef[] = [
@@ -139,6 +187,58 @@ const controlFlowOperators: ExpressionDef[] = [
 
 ]
 
+const generalStudyActions: ExpressionDef[] = [
+    {
+        id: 'UPDATE_STUDY_STATUS',
+        categories: ['general-study-actions'],
+        label: 'Update study status',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        slots: [
+            {
+                label: 'New status',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'study-status-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_STATUS',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: 'active'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['study-status-picker']
+                }
+            },
+        }
+    }
+
+]
+
+/*
+updateStudyStatus: UPDATE_STUDY_STATUS,
+    startNewStudySession: START_NEW_STUDY_SESSION,
+stopParticipation,
+  finishParticipation,
+  removeStudyCode: REMOVE_STUDY_CODE,
+  notifyResearcher: NOTIFY_RESEARCHER,
+*/
+
 
 /*
     // TODO: submission event
@@ -165,6 +265,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...controlFlowOperators,
     ...logicalOperators,
     ...miscExpressions,
+    ...generalStudyActions,
 ]
 
 
@@ -244,8 +345,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 export const StudyEngineActions = {
   participantActions: {
-    updateStudyStatus: UPDATE_STUDY_STATUS,
-    startNewStudySession: START_NEW_STUDY_SESSION,
+
     updateFlag: UPDATE_FLAG,
     removeFlag: REMOVE_FLAG,
     assignedSurveys: {
@@ -279,11 +379,9 @@ export const StudyEngineActions = {
     },
     externalEventHandler: EXTERNAL_EVENT_HANDLER,
     // Extra methods:
-    stopParticipation,
-    finishParticipation,
+
   },
-  removeStudyCode: REMOVE_STUDY_CODE,
-  notifyResearcher: NOTIFY_RESEARCHER,
+
 }
 
 export const StudyEngine = {
