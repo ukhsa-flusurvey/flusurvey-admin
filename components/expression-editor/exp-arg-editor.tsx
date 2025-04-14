@@ -35,12 +35,38 @@ interface ExpArgEditorProps {
     ) => void;
 }
 
+
+
+const ensureMinLength = <T,>(arr: Array<T>, minLength: number): Array<T> => {
+    if (arr.length >= minLength) {
+        return [...arr]; // Return a copy of the array
+    }
+
+    // Create a new array with the correct length, filled with undefined
+    const result = [...arr];
+    result.length = minLength;
+
+    return result;
+}
+
+const updateEntriesAfterIndex = <T,>(arr: Array<T>, index: number, newValues: Array<T>): Array<T> => {
+    // Create a new array with at least startIndex + newEntries.length elements
+    const targetLength = index + newValues.length;
+    const result = ensureMinLength(arr.slice(0, targetLength), targetLength);
+
+    // Update the entries starting from startIndex
+    for (let i = 0; i < newValues.length; i++) {
+        result[index + i] = newValues[i];
+    }
+
+    return result;
+}
+
 const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     slotDef,
     ...props
 }) => {
     const [, copy] = useCopyToClipboard();
-
 
     const isListSlot = slotDef.isListSlot || false;
 
@@ -70,22 +96,15 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             context={props.context}
             currentSlotValues={currentSlotValues}
             onChangeValues={(newValues, newSlotTypes) => {
-                const currentData = props.availableExpData || [];
-                if (currentData.length < props.currentIndex) {
-                    currentData.fill(undefined, currentData.length, props.currentIndex)
-                }
+                const currentData = [...props.availableExpData] || [];
+                const updatedData = updateEntriesAfterIndex(currentData, props.currentIndex, newValues)
 
                 const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < props.currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, props.currentIndex)
-                }
+                const updatedSlotTypes = updateEntriesAfterIndex(currentSlotTypes, props.currentIndex, newSlotTypes)
 
-                // replace list from index
-                currentData.splice(props.currentIndex, currentData.length - props.currentIndex, ...newValues)
-                currentSlotTypes.splice(props.currentIndex, currentSlotTypes.length - props.currentIndex, ...newSlotTypes)
                 props.onChange?.(
-                    currentData,
-                    currentSlotTypes
+                    updatedData,
+                    updatedSlotTypes
                 )
             }}
             depth={props.depth}
