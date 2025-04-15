@@ -53,7 +53,6 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
         const isExpression = expressionDef !== undefined;
 
         if (!isExpression) {
-            console.log(currentArgValue, currentSlotType);
             return <SlotFormEditor
                 currentSlotType={currentSlotType}
                 slotDef={{
@@ -63,7 +62,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                 builtInSlotTypeDefinitions={props.expRegistry.builtInSlotTypes}
                 context={props.context}
                 depth={props.depth}
-                slotIndex={index}
+                slotIndex={0}
                 currentArgs={[currentArgValue]}
                 onArgsChange={(newArgs) => {
                     const newValues = [...props.currentSlotValues].map((val) => val.value);
@@ -248,6 +247,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         currentSlotTypes.push(content.slotType);
                                         currentValues.push(content.value);
                                     } catch (error) {
+                                        toast.error('Error reading clipboard content');
                                         console.error(error)
                                         return;
                                     }
@@ -261,8 +261,6 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         }
                                         isTemplateFor = expressionDef?.isTemplateFor || '';
                                     }
-                                    console.log('new arg from list', newArg)
-                                    // TODO: does not work for non-expressions yet - FIX - newArg is undefined
                                     currentSlotTypes.push(!isTemplateFor ? slotTypeId : isTemplateFor);
                                     currentValues.push(newArg);
                                 }

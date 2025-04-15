@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ExpArg, ExpEditorContext, Expression, ExpressionCategory, ExpressionDef, SlotInputDef, lookupExpressionDef } from './utils';
 import BlockHeader from './components/BlockHeader';
 
-import ExpArgEditor from './exp-arg-editor';
+import ExpArgEditor, { ensureMinLength } from './exp-arg-editor';
 
 
 
@@ -39,62 +39,69 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
     }
 
     const renderedSlots = () => {
-        const slotTypes: Array<string | undefined> = [];
+        const slotTypes: Array<string | undefined> = ensureMinLength([], Math.max(expressionDef.slots.length, props.expressionValue.metadata?.slotTypes.length || 0));
+
+        props.expressionValue.metadata?.slotTypes.forEach((slotType, index) => {
+            slotTypes[index] = slotType;
+        })
+
 
         // slot types with fallbacks
         expressionDef.slots.forEach((slotDef, index) => {
             const hasArgIndex = slotDef.argIndexes !== undefined && slotDef.argIndexes.length > 0;
+
             if (hasArgIndex) {
                 const argIndex = slotDef.argIndexes![0];
+
+
                 const availableMetadata = props.expressionValue.metadata?.slotTypes?.at(argIndex);
                 if (availableMetadata !== undefined) {
-                    slotTypes.push(availableMetadata);
+                    slotTypes[argIndex] = availableMetadata;
                     return
                 }
 
                 // has data at argIndex
                 const dataAtArgIndex = props.expressionValue.data?.at(argIndex);
                 if (!dataAtArgIndex) {
-                    slotTypes.push(undefined);
+                    slotTypes[argIndex] = undefined;
                     return
                 }
 
                 const fallbackSlotType = slotDef.allowedTypes?.at(0)?.id;
                 if (fallbackSlotType === undefined) {
-                    slotTypes.push(undefined);
+                    slotTypes[argIndex] = undefined;
                     return
                 }
 
                 if (fallbackSlotType === 'exp-slot' || dataAtArgIndex.dtype === 'exp') {
-                    slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
+                    slotTypes[argIndex] = (dataAtArgIndex as ExpArg).exp?.name;
                     return
                 }
-                slotTypes.push(fallbackSlotType);
-
+                slotTypes[argIndex] = fallbackSlotType;
             } else {
                 const availableMetadata = props.expressionValue.metadata?.slotTypes?.at(index);
                 if (availableMetadata !== undefined && availableMetadata !== null) {
-                    slotTypes.push(availableMetadata);
+                    slotTypes[index] = availableMetadata;
                     return
                 }
                 // has data at argIndex
                 const dataAtArgIndex = props.expressionValue.data?.at(index);
                 if (!dataAtArgIndex) {
-                    slotTypes.push(undefined);
+                    slotTypes[index] = undefined;
                     return;
                 }
 
                 const fallbackSlotType = slotDef.allowedTypes?.at(0)?.id;
                 if (fallbackSlotType === undefined) {
-                    slotTypes.push(undefined);
+                    slotTypes[index] = undefined;
                     return;
                 }
 
                 if (fallbackSlotType === 'exp-slot' || dataAtArgIndex.dtype === 'exp') {
-                    slotTypes.push((dataAtArgIndex as ExpArg).exp?.name);
+                    slotTypes[index] = (dataAtArgIndex as ExpArg).exp?.name;
                     return
                 }
-                slotTypes.push(fallbackSlotType);
+                slotTypes[index] = fallbackSlotType;
             }
         })
 

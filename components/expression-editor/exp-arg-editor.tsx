@@ -37,7 +37,7 @@ interface ExpArgEditorProps {
 
 
 
-const ensureMinLength = <T,>(arr: Array<T>, minLength: number): Array<T> => {
+export const ensureMinLength = <T,>(arr: Array<T>, minLength: number): Array<T> => {
     if (arr.length >= minLength) {
         return [...arr]; // Return a copy of the array
     }
@@ -83,7 +83,6 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
         const currentSlotValues = currentArgValues.map((argValue, argIndex) => {
             const slotType = currentSlotTypes.at(argIndex) || (argValue as ExpArg)?.exp?.name;
-
             return {
                 slotType: slotType,
                 value: argValue
@@ -238,20 +237,18 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             }}
             onClearSlot={() => {
                 const currentIndex = props.currentIndex;
-                const currentData = props.availableExpData || [];
-                if (currentData.length < currentIndex) {
-                    currentData.fill(undefined, currentData.length, currentIndex)
-                }
-                const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, currentIndex)
-                }
 
-                currentSlotTypes[currentIndex] = undefined;
-                currentData[currentIndex] = undefined;
+                const currentSlotTypes = props.availableMetadata?.slotTypes || []
+                const updatedSlotTypes = ensureMinLength(currentSlotTypes, props.currentIndex + 1)
+
+                const currentArgs = [...props.availableExpData] || [];
+                const updatedArgs = ensureMinLength(currentArgs, props.currentIndex + 1)
+
+                updatedSlotTypes[currentIndex] = undefined;
+                updatedArgs[currentIndex] = undefined;
                 props.onChange?.(
-                    currentData,
-                    currentSlotTypes
+                    updatedArgs,
+                    updatedSlotTypes
                 )
             }}
         />
