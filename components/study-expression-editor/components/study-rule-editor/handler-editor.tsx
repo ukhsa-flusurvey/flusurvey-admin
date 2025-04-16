@@ -1,11 +1,9 @@
-import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { studyEngineCategories, studyEngineRegistry, supportedBuiltInSlotTypes } from '@/components/expression-editor/registries/studyEngineRegistry';
-import { ContextObjectItem, ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
+import { ExpressionArg } from '@/components/expression-editor/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeftIcon } from 'lucide-react';
 import React from 'react';
-import { useStudyExpressionEditor } from '../../study-expression-editor-context';
+import ExpEditorWrapper from './exp-editor-wrapper';
 
 
 export interface HandlerSelection {
@@ -22,27 +20,10 @@ interface HandlerEditorProps {
 }
 
 const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
-    const {
-        currentStudyContext
-    } = useStudyExpressionEditor();
     console.log(props.selection)
 
     const currentActions = props.selection.actions;
 
-    const pFlagsFromCtx: ContextObjectItem = {}
-    currentStudyContext?.participantFlags?.map(f => {
-        pFlagsFromCtx[f.key] = {
-            values: f.possibleValues,
-            type: 'string'
-        }
-    })
-    const pFlagKeys = Object.keys(pFlagsFromCtx).map(k => {
-        return {
-            key: k,
-            label: k,
-            type: 'string'
-        }
-    })
 
     return (
         <div className='px-6 pt-2 pb-12 space-y-2 overflow-y-auto'>
@@ -76,74 +57,17 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                         }
                     </span>
                 </h3>
-                <div className='bg-slate-100 rounded-md p-4'>
-                    <ExpArgEditor
-                        availableExpData={currentActions || []}
-                        availableMetadata={{
-                            slotTypes: currentActions ? currentActions.map(e => {
-                                const exp = (e as ExpArg).exp;
-                                return exp.name
-                            }) : []
-                        }}
-                        expRegistry={{
-                            builtInSlotTypes: supportedBuiltInSlotTypes,
-                            categories: studyEngineCategories,
-                            expressionDefs: studyEngineRegistry,
-                        }}
-                        context={{
-                            studyStatusValues: [
-                                {
-                                    key: 'active',
-                                    label: 'active'
-                                },
-                                {
-                                    key: 'inactive',
-                                    label: 'inactive'
-                                },
-                                {
-                                    key: 'finished',
-                                    label: 'finished'
-                                },
-                                {
-                                    key: 'exited',
-                                    label: 'exited'
-                                },
-                            ],
-                            messageTypes: currentStudyContext?.messageKeys?.map(k => {
-                                return {
-                                    key: k,
-                                    label: k
-                                }
-                            }) ?? [],
-                            participantFlags: pFlagsFromCtx,
-                            participantFlagKeys: pFlagKeys,
-                            /*singleChoiceOptions: singleChoiceKeys,
-                            multipleChoiceOptions: multipleChoiceKeys,
-                            allItemKeys: allItemKeys,
-                           */
-                        }}
-                        currentIndex={0}
-                        slotDef={{
-                            label: props.selection.type !== 'timer-event' ? 'Actions' : 'Action',
-                            required: false,
-                            isListSlot: props.selection.type !== 'timer-event' ? true : false,
-                            allowedTypes: [
-                                {
-                                    id: 'exp-slot',
-                                    type: 'expression',
-                                    allowedExpressionTypes: ['action']
-                                }
-                            ],
-                        }}
-                        onChange={(newArgs,) => {
-                            props.onChange({
-                                ...props.selection,
-                                actions: newArgs.filter(e => e !== undefined) as ExpressionArg[]
-                            })
-                        }}
-                    />
-
-                </div>
+                <ExpEditorWrapper
+                    label={props.selection.type !== 'timer-event' ? 'Actions' : 'Action'}
+                    value={currentActions || []}
+                    onChange={(newValue) => {
+                        props.onChange({
+                            ...props.selection,
+                            actions: newValue
+                        })
+                    }}
+                    isListSlot={props.selection.type !== 'timer-event' ? true : false}
+                />
             </Card>
 
 

@@ -7,13 +7,15 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { DownloadIcon, MoreVerticalIcon, UploadIcon } from 'lucide-react';
 import { useStudyExpressionEditor } from '../study-expression-editor-context';
-import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
+import ExpEditorWrapper from './study-rule-editor/exp-editor-wrapper';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 const StudyActionEditor: React.FC = () => {
     const [openLoadRulesDialog, setOpenLoadRulesDialog] = React.useState(false);
     const {
         currentRules,
         saveRulesToDisk,
+        updateCurrentRules,
     } = useStudyExpressionEditor();
 
     return (
@@ -58,64 +60,16 @@ const StudyActionEditor: React.FC = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </h3>
-                <div className='bg-slate-100 rounded-md p-4'>
-                    <ExpArgEditor
-                        availableExpData={currentRules ?
-                            currentRules.map(e => ({ dtype: 'exp', exp: e })) : []}
-                        availableMetadata={{
-                            slotTypes: []
-                            //slotTypes: currentExpArgSlot ? [currentExpArgSlot] : []
-                        }}
-                        expRegistry={{
-                            expressionDefs: [],
-                            builtInSlotTypes: [],
-                            categories: [],
-                            /*expressionDefs: surveyEngineRegistry,
-                            builtInSlotTypes: supportedBuiltInSlotTypes,
-                            categories: surveyExpressionCategories,*/
-                        }}
-                        context={{
-                            /*singleChoiceOptions: singleChoiceKeys,
-                            multipleChoiceOptions: multipleChoiceKeys,
-                            allItemKeys: allItemKeys,
-                            dateUnitPicker: [
-                                { key: 'years', label: 'Years' },
-                                { key: 'months', label: 'Months' },
-                                { key: 'days', label: 'Days' },
-                                { key: 'hours', label: 'Hours' },
-                                { key: 'minutes', label: 'Minutes' },
-                                { key: 'seconds', label: 'Seconds' },
-                            ],*/
-                        }}
-                        currentIndex={0}
-                        slotDef={{
-                            label: 'Actions',
-                            required: false,
-                            isListSlot: true,
-                            allowedTypes: [
-                                {
-                                    id: 'exp-slot',
-                                    type: 'expression',
-                                    allowedExpressionTypes: ['action']
-                                }
-                            ],
-                        }}
-                        onChange={(newArgs,) => {
-                            /* console.log('newArgs', newArgs)
-                             const updatedSurveyItem = {
-                                 ...props.surveyItem,
-                             }
-                             if (!newArgs || newArgs.length < 1 || newArgs[0] === undefined) {
-                                 updatedSurveyItem.condition = undefined;
-                             } else {
-                                 updatedSurveyItem.condition = (newArgs[0] as ExpArg).exp as CaseExpression;
-                             }
-                             props.onUpdateSurveyItem(updatedSurveyItem);
-                         */
-                        }}
-                    />
 
-                </div>
+                <ExpEditorWrapper
+                    label={'Actions'}
+                    value={currentRules ?
+                        currentRules.map(e => ({ dtype: 'exp', exp: e })) : []}
+                    onChange={(newValue) => {
+                        updateCurrentRules(newValue.filter(e => e !== undefined).map(d => (d as ExpArg).exp))
+                    }}
+                    isListSlot={true}
+                />
             </Card>
 
             <LoadRulesFromDisk
