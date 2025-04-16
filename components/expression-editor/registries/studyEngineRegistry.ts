@@ -26,6 +26,10 @@ export const studyEngineCategories = [
         id: 'variables',
         label: 'Variables'
     },
+    {
+        id: 'misc',
+        label: 'Misc'
+    }
 ]
 
 export const supportedBuiltInSlotTypes: SlotInputDef[] = [
@@ -85,13 +89,22 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         label: 'Available participant flags',
         icon: 'tag',
         color: 'dark',
-        allowExpressionsForValues: true,
+        allowExpressionsForValue: true,
     },
     {
         id: 'participant-flag-key-selector',
         type: 'list-selector',
         contextArrayKey: 'participantFlagKeys',
         label: 'Available participant flag keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'survey-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'surveyKeys',
+        label: 'Available survey keys',
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
@@ -504,11 +517,121 @@ const participantStateActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'ADD_NEW_SURVEY',
+        categories: ['participant-state-actions'],
+        label: 'Add new survey',
+        returnType: 'action',
+        icon: "calendar",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Available from',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num'],
+                        excludedExpressions: []
+                    }
+                ]
+            },
+            {
+                label: 'Available until',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num'],
+                        excludedExpressions: []
+                    }
+                ]
+            },
+            {
+                label: 'Category',
+                required: true,
+                allowedTypes: [
+                    {
+                        type: 'select',
+                        options: [
+                            {
+                                key: 'immediate',
+                                label: 'immediate'
+                            },
+                            {
+                                key: 'prio',
+                                label: 'priority'
+                            },
+                            {
+                                key: 'normal',
+                                label: 'normal'
+                            },
+                            {
+                                key: 'optional',
+                                label: 'optional'
+                            }
+                        ],
+                        id: 'select-input',
+
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'ADD_NEW_SURVEY',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    undefined,
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: 'normal'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            },
+        }
     }
 ]
 
 /*
-
+assignedSurveys: {
+      add: ADD_NEW_SURVEY,
+      removeAll: REMOVE_ALL_SURVEYS,
+      remove: REMOVE_SURVEY_BY_KEY,
+    },
 */
 
 
@@ -619,13 +742,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
 export const StudyEngineActions = {
   participantActions: {
 
-    updateFlag: UPDATE_FLAG,
-    removeFlag: REMOVE_FLAG,
-    assignedSurveys: {
-      add: ADD_NEW_SURVEY,
-      removeAll: REMOVE_ALL_SURVEYS,
-      remove: REMOVE_SURVEY_BY_KEY,
-    },
+
     reports: {
       init: INIT_REPORT,
       cancel: CANCEL_REPORT,

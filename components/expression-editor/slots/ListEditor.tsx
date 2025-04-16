@@ -59,7 +59,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                     label: '',
                     required: false,
                 }}
-                builtInSlotTypeDefinitions={props.expRegistry.builtInSlotTypes}
+                expRegistry={props.expRegistry}
                 context={props.context}
                 depth={props.depth}
                 slotIndex={0}
