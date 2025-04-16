@@ -742,7 +742,128 @@ const participantStateActions: ExpressionDef[] = [
                 }
             },
         }
-    }
+    },
+    {
+        id: 'ADD_MESSAGE',
+        label: 'Schedule a message',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "calendar",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Scheduled for',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    },
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'ADD_MESSAGE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'timestampWithOffset',
+                            data: [
+                                {
+                                    dtype: 'num',
+                                    num: 0
+                                }
+                            ],
+                        }
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
+    },
+    {
+        id: 'REMOVE_ALL_MESSAGES',
+        label: 'Remove all scheduled messages',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_ALL_MESSAGES',
+                data: [],
+            },
+        }
+    },
+    {
+        id: 'REMOVE_MESSAGES_BY_TYPE',
+        label: 'Remove scheduled messages of a specific type',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_MESSAGES_BY_TYPE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
+    },
 ]
 
 /*
@@ -871,11 +992,7 @@ export const StudyEngineActions = {
       delete: DELETE_LINKING_CODE,
       drawFromStudyCodeList: DRAW_STUDY_CODE_AS_LINKING_CODE,
     },
-    messages: {
-      add: ADD_MESSAGE,
-      removeAll: REMOVE_ALL_MESSAGES,
-      remove: REMOVE_MESSAGES_BY_TYPE,
-    },
+
     confidentialResponses: {
       removeByKey: REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY,
       removeAll: REMOVE_ALL_CONFIDENTIAL_RESPONSES,
