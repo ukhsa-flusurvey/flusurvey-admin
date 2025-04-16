@@ -623,15 +623,130 @@ const participantStateActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'REMOVE_ALL_SURVEYS',
+        label: 'Remove all assigned surveys',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_ALL_SURVEYS',
+                data: [],
+            },
+        }
+    },
+    {
+        id: 'REMOVE_SURVEY_BY_KEY',
+        label: 'Remove one assigned survey',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Which survey to remove',
+                required: true,
+                allowedTypes: [
+                    {
+                        type: 'select',
+                        options: [
+                            {
+                                key: 'first',
+                                label: 'first'
+                            },
+                            {
+                                key: 'last',
+                                label: 'last'
+                            }
+                        ],
+                        id: 'select-input',
+
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_SURVEY_BY_KEY',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'first'
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            },
+        }
+    },
+    {
+        id: 'REMOVE_SURVEYS_BY_KEY',
+        label: 'Remove all surveys of a specific key',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_SURVEYS_BY_KEY',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            },
+        }
     }
 ]
 
 /*
-assignedSurveys: {
-      add: ADD_NEW_SURVEY,
-      removeAll: REMOVE_ALL_SURVEYS,
-      remove: REMOVE_SURVEY_BY_KEY,
-    },
+
 */
 
 
@@ -741,8 +856,6 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 export const StudyEngineActions = {
   participantActions: {
-
-
     reports: {
       init: INIT_REPORT,
       cancel: CANCEL_REPORT,
@@ -768,8 +881,6 @@ export const StudyEngineActions = {
       removeAll: REMOVE_ALL_CONFIDENTIAL_RESPONSES,
     },
     externalEventHandler: EXTERNAL_EVENT_HANDLER,
-    // Extra methods:
-
   },
 
 }
