@@ -95,6 +95,7 @@ export interface SlotInputDefFormKeyValueFromContext extends SlotInputDefBase {
     type: 'key-value';
     contextObjectKey: string,
     filterForObjectType?: string,
+    allowExpressionsForValues?: boolean;
 }
 
 export interface SlotInputDefSelectorFromContext extends SlotInputDefBase {

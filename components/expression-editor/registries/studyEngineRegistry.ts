@@ -19,6 +19,10 @@ export const studyEngineCategories = [
         label: 'General study actions'
     },
     {
+        id: 'participant-state-actions',
+        label: 'Change participant state'
+    },
+    {
         id: 'variables',
         label: 'Variables'
     },
@@ -72,7 +76,27 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         icon: 'diamond',
         color: 'green',
         categories: ['variables'],
+    },
+    {
+        id: 'participant-flag-selector',
+        type: 'key-value',
+        contextObjectKey: 'participantFlags',
+        categories: ['variables'],
+        label: 'Available participant flags',
+        icon: 'tag',
+        color: 'dark',
+        allowExpressionsForValues: true,
+    },
+    {
+        id: 'participant-flag-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'participantFlagKeys',
+        label: 'Available participant flag keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
     }
+
 
 ]
 
@@ -406,8 +430,85 @@ const generalStudyActions: ExpressionDef[] = [
 
 ]
 
+const participantStateActions: ExpressionDef[] = [
+    {
+        id: 'UPDATE_FLAG',
+        categories: ['participant-state-actions'],
+        label: 'Update participant flag',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        slots: [
+            {
+                label: '',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-selector',
+                        type: 'key-value',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_FLAG',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['participant-flag-selector']
+                }
+            },
+        }
+    },
+    {
+        id: 'REMOVE_FLAG',
+        categories: ['participant-state-actions'],
+        label: 'Remove participant flag',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        slots: [
+            {
+                label: '',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_FLAG',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['participant-flag-key-selector']
+                }
+            },
+        }
+    }
+]
+
 /*
-  notifyResearcher: NOTIFY_RESEARCHER,
+
 */
 
 
@@ -437,6 +538,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...logicalOperators,
     ...miscExpressions,
     ...generalStudyActions,
+    ...participantStateActions,
 ]
 
 

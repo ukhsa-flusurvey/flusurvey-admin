@@ -1,6 +1,6 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
 import { studyEngineCategories, studyEngineRegistry, supportedBuiltInSlotTypes } from '@/components/expression-editor/registries/studyEngineRegistry';
-import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
+import { ContextObjectItem, ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeftIcon } from 'lucide-react';
@@ -28,6 +28,22 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
     console.log(props.selection)
 
     const currentActions = props.selection.actions;
+
+    const pFlagsFromCtx: ContextObjectItem = {}
+    currentStudyContext?.participantFlags?.map(f => {
+        pFlagsFromCtx[f.key] = {
+            values: f.possibleValues,
+            type: 'string'
+        }
+    })
+    const pFlagKeys = Object.keys(pFlagsFromCtx).map(k => {
+        return {
+            key: k,
+            label: k,
+            type: 'string'
+        }
+    })
+
     return (
         <div className='px-6 pt-2 pb-12 space-y-2 overflow-y-auto'>
             <Button
@@ -99,6 +115,8 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                                     label: k
                                 }
                             }) ?? [],
+                            participantFlags: pFlagsFromCtx,
+                            participantFlagKeys: pFlagKeys,
                             /*singleChoiceOptions: singleChoiceKeys,
                             multipleChoiceOptions: multipleChoiceKeys,
                             allItemKeys: allItemKeys,
