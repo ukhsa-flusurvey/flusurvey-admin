@@ -40,6 +40,14 @@ const KeyValueSelectorFromContext: React.FC<KeyValueSelectorFromContextProps> = 
     const possibleKeys = Object.keys(contextObject || {});
     const possibleValues = contextObject?.[currentKey || '']?.values || [];
 
+    if (currentKey !== undefined && currentKey !== '' && !possibleKeys.includes(currentKey)) {
+        possibleKeys?.push(currentKey)
+    }
+
+    if (props.currentValue !== undefined && props.currentValue !== '' && !possibleValues.includes(props.currentValue)) {
+        possibleValues?.push(props.currentValue)
+    }
+
 
     return (
         <BuiltInSlotWrapper
