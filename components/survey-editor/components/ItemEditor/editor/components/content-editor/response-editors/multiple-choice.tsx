@@ -15,9 +15,7 @@ import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorConte
 import { ItemComponentRole } from '@/components/survey-editor/components/types';
 import { ItemOverviewRow } from './item-overview-row';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
-import { Separator } from '@/components/ui/separator';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TabbedItemEditor } from './tabbed-item-editor';
 
 interface MultipleChoiceProps {
