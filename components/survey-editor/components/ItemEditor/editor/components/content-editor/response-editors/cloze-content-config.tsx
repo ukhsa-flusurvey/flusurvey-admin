@@ -153,7 +153,6 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
 
     // Hacky way to scroll to the last item when it is newly added
     useEffect(() => {
-        console.log('Selected key changed:', selectedKey);
         const lastClozeItem = sortableClozeItems.at(-1);
         if (lastItemRef.current && lastClozeItem?.key == selectedKey) {
             lastItemRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

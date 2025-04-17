@@ -53,8 +53,10 @@ export const PopoverKeyBadge: React.FC<{
     }, [currentKey, props.allOtherKeys]);
 
     const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
+        if (!isValidKey) return;
         e.stopPropagation();
         if (currentKey !== props.itemKey && props.onKeyChange) props.onKeyChange(currentKey);
+        popoverCloseRef.current?.click();
     }
 
     return <Popover>
