@@ -10,7 +10,6 @@ import NumberInputContentConfig from "./number-input-content-config";
 import DateInputContentConfig from "./date-input-content-config";
 import MarkdownContentEditor from "../markdown-content-editor";
 import SortableItem from "@/components/survey-editor/components/general/SortableItem";
-import { Separator } from "@/components/ui/separator";
 import TimeInputContentConfig from "./time-input-content-config";
 import { ClozeItemType } from "@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/ClozeQuestion";
 import DropdownContentConfig from "./dropdown-content-config";
@@ -18,6 +17,7 @@ import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 import { ItemOverviewRow } from "./item-overview-row";
 import { useCopyToClipboard } from "usehooks-ts";
+import { TabbedItemEditor } from "./tabbed-item-editor";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -124,12 +124,13 @@ const clozeItemDescriptiveTextLookup = (item: ItemComponent, lang: string): stri
         [ClozeItemType.NumberInput]: 'Number Input',
         [ClozeItemType.TimeInput]: 'Time Input',
         [ClozeItemType.DateInput]: 'Date Input',
-        [ClozeItemType.Markdown]: 'Markdown',
+        [ClozeItemType.Markdown]: 'Markdown Text',
         [ClozeItemType.LineBreak]: 'Line Break',
     };
 
-    const clozeItemType = getClozeItemType(item);
-    return clozeItemType == ClozeItemType.SimpleText ? localisedObjectToMap(item.content).get(lang) || 'Simple Text' : typeHints[clozeItemType] || 'Unknown Item Type';
+    const itemType = getClozeItemType(item);
+    const typeText = typeHints[itemType] ?? 'Unknown Type';
+    return itemType == ClozeItemType.SimpleText ? (localisedObjectToMap(item.content).get(lang) ?? typeText) : typeText;
 }
 
 const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
@@ -142,7 +143,6 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     const clozeItems = props.component.items || [];
     const selectedItem = clozeItems.find(item => item.key === selectedKey);
     const draggedItem = clozeItems.find(item => item.key === draggedKey);
-    const usedKeys = clozeItems.map(comp => comp.key || '');
 
     const sortableClozeItems = clozeItems.map((component, index) => {
         return {
@@ -153,6 +153,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
 
     // Hacky way to scroll to the last item when it is newly added
     useEffect(() => {
+        console.log('Selected key changed:', selectedKey);
         const lastClozeItem = sortableClozeItems.at(-1);
         if (lastItemRef.current && lastClozeItem?.key == selectedKey) {
             lastItemRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -204,7 +205,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                         itemList={clozeItems} />
                     : null}
             >
-                <div className='space-y-2'>
+                <div className='space-y-1'>
                     <ol className='max-h-64 overflow-y-auto space-y-1'>
                         {sortableClozeItems.map((clozeItem, i) => (
                             <SortableItem
@@ -218,8 +219,9 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                                         isBeingDragged={draggedKey === clozeItem.key}
                                         itemIconLookup={clozeItemIconLookup}
                                         itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                                        onSelectionUpdate={() => {
-                                            setSelectedKey(clozeItem.key!);
+                                        onSelectionUpdate={(key) => {
+                                            setSelectedKey(key);
+                                            setDraggedKey(null);
                                         }}
                                         itemList={clozeItems}
                                         onListUpdate={(list) => updateComponent(list)}
@@ -230,8 +232,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                             </SortableItem>
                         ))}
                     </ol>
-                    <Separator className='bg-border' />
-                    <div className='flex justify-center w-full '>
+                    <div className='flex justify-end w-full'>
                         <AddDropdown
                             options={[
                                 { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
@@ -249,20 +250,16 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                 </div>
             </SortableWrapper>
 
-            {selectedItem && <div>
-                <p className='font-semibold pb-2'>Selected Cloze Item:</p>
-                <ContentItem
-                    component={selectedItem}
-                    onUpdateComponent={(updatedComponent: ItemComponent) => {
-                        const updatedItems = [...clozeItems];
-                        const index = updatedItems.findIndex(item => item.key === selectedItem?.key);
-                        if (index !== -1) {
-                            updatedItems[index] = updatedComponent;
-                        }
-                        updateComponent(updatedItems);
-                    }}
-                />
-            </div>}
+            <TabbedItemEditor isActive={selectedItem != undefined} contentEditor={selectedItem && <ContentItem
+                component={selectedItem}
+                onUpdateComponent={(updatedComponent: ItemComponent) => {
+                    const updatedItems = [...clozeItems];
+                    const index = updatedItems.findIndex(item => item.key === selectedItem?.key);
+                    if (index !== -1) {
+                        updatedItems[index] = updatedComponent;
+                    }
+                    updateComponent(updatedItems);
+                }} />} conditionsEditor={selectedItem && <p className="text-sm">Condition Editor.</p>} title={'Selected Item:'} />
         </div>
     );
 

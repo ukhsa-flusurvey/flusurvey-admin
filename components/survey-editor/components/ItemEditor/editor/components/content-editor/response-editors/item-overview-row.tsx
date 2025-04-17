@@ -4,8 +4,7 @@ import { PopoverKeyBadge } from "../../KeyBadge";
 import { ChevronDown, ClipboardCopy, ClipboardPaste, Copy, GripHorizontal, Heading, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import React, { useCallback } from "react";
-import { useCopyToClipboard } from "usehooks-ts";
+import React from "react";
 
 interface ItemOverviewRowProps {
     i: number;
@@ -61,8 +60,8 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
             const newItem = { ...itemToDuplicate, key: Math.random().toString(36).substring(9) };
             const newItems = [...props.itemList];
             newItems.splice(props.i + 1, 0, newItem);
-            props.onSelectionUpdate?.(newItem.key);
             props.onListUpdate?.(newItems);
+            props.onSelectionUpdate?.(newItem.key);
         }
     }
 
@@ -72,7 +71,7 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
 
     return <div
         className={cn(
-            'w-full gap-2 py-2 h-auto my-1 px-3 text-start flex flex-row items-center rounded-md border text-sm font-medium transition-colors select-none',
+            'w-full gap-2 py-2 h-auto px-3 text-start flex flex-row items-center rounded-md border text-sm font-medium transition-colors user-select-none',
             { 'bg-gray-100 text-accent-foreground shadow-sm': props.isSelected },
             { 'bg-white hover:shadow-sm hover:bg-gray-50': !props.isSelected },
             (props.isBeingDragged && !props.isDragOverlay) && 'invisible')}

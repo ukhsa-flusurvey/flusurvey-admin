@@ -17,6 +17,8 @@ import { ItemOverviewRow } from './item-overview-row';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { Separator } from '@/components/ui/separator';
 import { useCopyToClipboard } from 'usehooks-ts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabbedItemEditor } from './tabbed-item-editor';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -108,7 +110,7 @@ const mcgItemIconLookup = (item: ItemComponent): React.ReactNode => {
 
 const mcgItemDescriptiveTextLookup = (item: ItemComponent, lang: string): string => {
     const typeHints = {
-        [ChoiceResponseOptionType.SimpleText]: 'Simple Text',
+        [ChoiceResponseOptionType.SimpleText]: 'Text',
         [ChoiceResponseOptionType.FormattedText]: 'Formatted Text',
         [ChoiceResponseOptionType.TextInput]: 'Text Input',
         [ChoiceResponseOptionType.NumberInput]: 'Number Input',
@@ -119,7 +121,8 @@ const mcgItemDescriptiveTextLookup = (item: ItemComponent, lang: string): string
     };
 
     const itemType = getOptionType(item);
-    return itemType == ChoiceResponseOptionType.SimpleText ? localisedObjectToMap(item.content).get(lang) || 'Simple Text' : typeHints[itemType] || 'Unknown Item Type';
+    const typeText = typeHints[itemType] ?? 'Unknown Type';
+    return itemType == ChoiceResponseOptionType.SimpleText ? (localisedObjectToMap(item.content).get(lang) ?? typeText) : typeText;
 }
 
 const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
@@ -129,9 +132,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
     const lastItem = useRef<HTMLDivElement | null>(null);
     const [clipboardContent, setClipboardContent] = useCopyToClipboard();
 
-    // TODO: remove magic strings
     const relevantResponseGroupRoleString = props.isSingleChoice ? ItemComponentRole.SingleChoiceGroup : ItemComponentRole.MultipleChoiceGroup;
-
     const rgIndex = props.surveyItem.components!.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     const rg = props.surveyItem.components!.items[rgIndex ?? 0] as ItemGroupComponent;
     const choiceGroupIndex = rg.items.findIndex(comp => comp.role === relevantResponseGroupRoleString);
@@ -140,7 +141,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
 
     const selectedItem = responseItems.find(item => item.key === selectedKey);
     const draggedItem = responseItems.find(item => item.key === draggedKey);
-    const usedKeys = responseItems.map(comp => comp.key || '');
 
     const sortableResponseItems = responseItems.map((component, index) => {
         return {
@@ -202,7 +202,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
 
     return (
         <div className=''>
-            <p className='font-semibold pb-2'>Items: <span className='text-muted-foreground'>({sortableResponseItems.length})</span></p>
+            <p className='font-semibold pb-2'>Options: <span className='text-muted-foreground'>({sortableResponseItems.length})</span></p>
             <SortableWrapper
                 sortableID={'response-group-editor'}
                 items={sortableResponseItems}
@@ -254,8 +254,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                             </SortableItem>
                         ))}
                     </ol>
-                    <Separator className='bg-border' />
-                    <div className='flex justify-center w-full '>
+                    <div className='flex justify-center w-full'>
                         <AddDropdown
                             options={[
                                 { key: ChoiceResponseOptionType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
@@ -273,20 +272,16 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                 </div>
             </SortableWrapper>
 
-            {selectedItem && <div>
-                <p className='font-semibold pb-2'>Selected Item:</p>
-                <ContentItem
-                    component={selectedItem}
-                    onUpdateComponent={(updatedComponent: ItemComponent) => {
-                        const newItems = [...responseItems];
-                        const itemToUpdate = newItems.find(item => item.key === selectedItem.key);
-                        if (itemToUpdate) {
-                            Object.assign(itemToUpdate, updatedComponent);
-                            updateSurveyItemWithNewOptions(newItems);
-                        }
-                    }}
-                />
-            </div>}
+            <TabbedItemEditor isActive={selectedItem != undefined} contentEditor={selectedItem && <ContentItem
+                component={selectedItem}
+                onUpdateComponent={(updatedComponent: ItemComponent) => {
+                    const newItems = [...responseItems];
+                    const itemToUpdate = newItems.find(item => item.key === selectedItem.key);
+                    if (itemToUpdate) {
+                        Object.assign(itemToUpdate, updatedComponent);
+                        updateSurveyItemWithNewOptions(newItems);
+                    }
+                }} />} conditionsEditor={selectedItem && <p className="text-sm">Condition Editor.</p>} title={'Selected Option:'} />
         </div>
     );
 };
