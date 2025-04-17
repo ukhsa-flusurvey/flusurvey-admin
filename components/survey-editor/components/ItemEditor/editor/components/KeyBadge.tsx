@@ -40,12 +40,16 @@ export const PopoverKeyBadge: React.FC<{
         if (currentKey.length <= 0) {
             setError("Key must not be empty.");
             return;
-        }
-        if (props.allOtherKeys.includes(currentKey)) {
+        } else if (props.allOtherKeys.includes(currentKey)) {
             setError("Key already exists.");
             return;
+        } else if (currentKey.includes('.')) {
+            setError("Key must not contain a dot.");
+            return;
+        } else {
+            setError(null);
+            return;
         }
-        setError(null);
     }, [currentKey, props.allOtherKeys]);
 
     const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -66,7 +70,7 @@ export const PopoverKeyBadge: React.FC<{
         <PopoverContent className="max-w-64" align="start" data-no-dnd="true" >
             <div className="flex flex-col gap-2 w-full">
                 <div className="flex flex-row gap-2 items-center justify-between mb-2">
-                    <Label className='text-sm font-semibold'>Item Key</Label>
+                    <Label htmlFor="keyInput" className='text-sm font-semibold'>Item Key</Label>
                     <PopoverClose
                         ref={popoverCloseRef}
                         className='top-2 right-2 rounded-full p-1 hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background'
@@ -76,6 +80,7 @@ export const PopoverKeyBadge: React.FC<{
                 </div>
                 <div className="flex flex-row gap-2 items-center">
                     <Input
+                        id="keyInput"
                         className='w-full select-text'
                         value={currentKey}
                         autoFocus
@@ -106,7 +111,7 @@ export const PopoverKeyBadge: React.FC<{
                         className="shrink-0"
                         size={'icon'}
                         variant={'outline'}
-                        disabled={!isValidKey}
+                        disabled={!isValidKey || !hasChanges}
                         onClick={handleKeyChange}
                     >
                         <Check className='size-4 text-muted-foreground' color="green" />
