@@ -108,6 +108,15 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
+    },
+    {
+        id: 'linking-code-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'linkingCodeKeys',
+        label: 'Available linking code or study code list keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
     }
 
 
@@ -354,6 +363,10 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'List key',
                 required: true,
                 allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
                     {
                         id: 'text-input',
                         type: 'str',
@@ -864,6 +877,159 @@ const participantStateActions: ExpressionDef[] = [
             },
         }
     },
+    {
+        id: 'SET_LINKING_CODE',
+        label: 'Set linking code',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ],
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'SET_LINKING_CODE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            },
+        }
+    },
+    {
+        id: 'DELETE_LINKING_CODE',
+        label: 'Delete linking code',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: 'Delete only for key (delete all if empty)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'DELETE_LINKING_CODE',
+                data: []
+            }
+        }
+    },
+    {
+        id: 'DRAW_STUDY_CODE_AS_LINKING_CODE',
+        label: 'Draw study code as linking code',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: 'Draw from code list',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ],
+            },
+            {
+                label: 'Store as key (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'DRAW_STUDY_CODE_AS_LINKING_CODE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            },
+        }
+    }
 ]
 
 /*
@@ -987,11 +1153,7 @@ export const StudyEngineActions = {
       setReportMessage,
       setReportSummary,
     },
-    linkingCodes: {
-      set: SET_LINKING_CODE,
-      delete: DELETE_LINKING_CODE,
-      drawFromStudyCodeList: DRAW_STUDY_CODE_AS_LINKING_CODE,
-    },
+
 
     confidentialResponses: {
       removeByKey: REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY,

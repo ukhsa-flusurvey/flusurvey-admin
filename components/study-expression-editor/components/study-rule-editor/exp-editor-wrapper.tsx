@@ -38,6 +38,15 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
             type: 'string'
         }
     })
+
+    const linkingCodeKeys = currentStudyContext?.linkingCodeKeys?.map(k => {
+        return {
+            key: k,
+            label: k,
+            type: 'string'
+        }
+    })
+
     return (
         <div className='bg-slate-100 rounded-md p-4'>
             <ExpArgEditor
@@ -81,6 +90,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     participantFlags: pFlagsFromCtx,
                     participantFlagKeys: pFlagKeys,
                     surveyKeys: surveyKeys ?? [],
+                    linkingCodeKeys: linkingCodeKeys ?? [],
                 }}
                 currentIndex={0}
                 slotDef={{
