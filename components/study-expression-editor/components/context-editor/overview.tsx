@@ -243,6 +243,33 @@ const Overview: React.FC = () => {
                         }}
                     />
 
+                    <EditorCard
+                        label={'Linking code keys'}
+                        description={'What linking codes or study codes list should be available in this study.'}
+                        type={'string'}
+                        data={currentStudyContext?.linkingCodeKeys ?? []}
+                        selectedIndex={selection?.attributeKey === 'linkingCodeKeys' ? selection?.index : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { linkingCodeKeys: data as string[] };
+                            } else {
+                                newStudyContext.linkingCodeKeys = data as string[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            setSelection({
+                                index,
+                                attributeKey: 'linkingCodeKeys',
+                            });
+                        }}
+                    />
+
                 </div>
             </main>
 

@@ -9,6 +9,7 @@ export type StudyContext = {
     surveyKeys?: string[];
     messageKeys?: string[];
     customEventKeys?: string[];
+    linkingCodeKeys?: string[];
     participantFlags?: Array<KeyValuePairDefs>,
     reportKeys?: Array<KeyValuePairDefs>,
 }
