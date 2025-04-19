@@ -53,7 +53,6 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
             if (hasArgIndex) {
                 const argIndex = slotDef.argIndexes![0];
 
-
                 const availableMetadata = props.expressionValue.metadata?.slotTypes?.at(argIndex);
                 if (availableMetadata !== undefined) {
                     slotTypes[argIndex] = availableMetadata;
@@ -107,12 +106,14 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
 
         return <div className='space-y-4'>
             {expressionDef.slots.map((slotDef, index) => {
+                const hasArgIndex = slotDef.argIndexes !== undefined && slotDef.argIndexes.length > 0;
+                const argIndex = hasArgIndex ? slotDef.argIndexes![0] : index;
 
                 return <ExpArgEditor
                     key={index}
                     depth={props.depth}
                     slotDef={slotDef}
-                    currentIndex={index}
+                    currentIndex={argIndex}
                     availableExpData={props.expressionValue.data || []}
                     availableMetadata={{
                         ...props.expressionValue.metadata,
@@ -120,12 +121,12 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                     }}
                     expRegistry={props.expRegistry}
                     context={props.context}
-                    isHidden={hideSlotContent.includes(index)}
+                    isHidden={hideSlotContent.includes(argIndex)}
                     onToggleHide={(hidden) => {
                         if (hidden) {
-                            setHideSlotContent([...hideSlotContent, index])
+                            setHideSlotContent([...hideSlotContent, argIndex])
                         } else {
-                            setHideSlotContent(hideSlotContent.filter(i => i !== index))
+                            setHideSlotContent(hideSlotContent.filter(i => i !== argIndex))
                         }
                     }}
                     onChange={(newArgs, newSlotTypes) => {
