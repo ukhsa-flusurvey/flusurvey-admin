@@ -8,10 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import SlotFormEditor from './slots/SlotFormEditor';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { Copy, X } from 'lucide-react';
+import { Copy, DeleteIcon, X } from 'lucide-react';
 import ExpressionPreview from './slots/ExpressionPreview';
 import Block from './components/Block';
 import ExpressionEditor from './ExpressionEditor';
+import { Separator } from '../ui/separator';
 
 interface ExpArgEditorProps {
     slotDef: SlotDef;
@@ -181,21 +182,21 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
         const currentArgValue = props.availableExpData?.at(currentIndex);
         const options = (slotDef.allowedTypes?.at(0) as SelectSlotType).options || [];
+        const selectValue = (currentArgValue as StrArg)?.str || ''
         return <div key={props.currentIndex}>
             <SlotLabel label={slotDef.label} required={slotDef.required} />
             <Select
-                value={(currentArgValue as StrArg)?.str || ''}
+                value={selectValue}
                 onValueChange={(value) => {
                     const currentData = props.availableExpData || [];
-                    if (currentData.length < props.currentIndex) {
-                        currentData.fill(undefined, currentData.length, props.currentIndex)
-                    }
-                    currentData[props.currentIndex] = {
+                    const updatedData = ensureMinLength(currentData, props.currentIndex + 1)
+
+                    updatedData[props.currentIndex] = value === 'undefined' ? undefined : {
                         str: value,
                         dtype: 'str'
                     }
                     props.onChange?.(
-                        currentData,
+                        updatedData,
                         currentSlotTypes
                     )
                 }}
@@ -205,6 +206,16 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                         placeholder="Select a value..." />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value='undefined'
+                        className='text-xs'
+                        disabled={selectValue === ''}
+                    >
+                        <span className='flex items-center gap-1'>
+                            <span><DeleteIcon className='size-4 text-muted-foreground' /></span>
+                            Reset selection
+                        </span>
+                    </SelectItem>
+                    <Separator />
                     {options?.map((option) => {
                         return <SelectItem key={option.key} value={option.key}>{option.label}</SelectItem>
                     })}
