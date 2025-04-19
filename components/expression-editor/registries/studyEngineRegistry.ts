@@ -29,6 +29,10 @@ export const studyEngineCategories = [
     {
         id: 'misc',
         label: 'Misc'
+    },
+    {
+        id: 'advanced',
+        label: 'Advanced'
     }
 ]
 
@@ -1122,7 +1126,65 @@ const participantStateActions: ExpressionDef[] = [
     }
 ]
 
+const advancedExpressions: ExpressionDef[] = [
+    {
+        id: 'externalEventEval',
+        categories: ['advanced'],
+        label: 'Use external serivce to evaluate event data',
+        returnType: 'str',
+        icon: 'code',
+        color: 'lime',
+        slots: [
+            {
+                label: '',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'external-event-handler-selector',
+                        type: 'key-value',
+                    }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'externalEventEval',
+                data: [],
+                metadata: {
+                    slotTypes: ['external-event-handler-selector']
+                }
+            },
+        }
+    },
+    {
+        id: 'externalEventEvalFloat',
+        categories: ['advanced'],
+        label: 'Use external serivce to evaluate event data (return float)',
+        returnType: 'num',
+        icon: 'code',
+        color: 'lime',
+        isTemplateFor: 'externalEventEval',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'externalEventEval',
+                returnType: 'float',
+                data: [],
+                metadata: {
+                    slotTypes: ['external-event-handler-selector']
+                }
+            },
+        }
+    }
+]
+
+
+
+
 /*
+externalEventEval -> default returning string, or return float value
 */
 
 
@@ -1153,6 +1215,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...miscExpressions,
     ...generalStudyActions,
     ...participantStateActions,
+    ...advancedExpressions,
 ]
 
 
