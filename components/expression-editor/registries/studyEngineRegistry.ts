@@ -130,9 +130,25 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
+    },
+    {
+        id: 'report-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'reportKeys',
+        label: 'Available report keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'report-key-attribute-selector',
+        type: 'key-value',
+        contextObjectKey: 'reportKeysWithAttributes',
+        label: 'Report key with attribute',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
     }
-
-
 ]
 
 const controlFlowOperators: ExpressionDef[] = [
@@ -1123,7 +1139,183 @@ const participantStateActions: ExpressionDef[] = [
                 }
             },
         }
-    }
+    },
+    {
+        id: 'INIT_REPORT',
+        categories: ['participant-state-actions'],
+        label: 'Initialize report',
+        returnType: 'action',
+        icon: "calendar",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Report key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'report-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'INIT_REPORT',
+                data: [
+                ],
+                metadata: {
+                    slotTypes: ['report-key-selector']
+                }
+            },
+
+        }
+    },
+    {
+        id: 'CANCEL_REPORT',
+        categories: ['participant-state-actions'],
+        label: 'Cancel report',
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Report key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'report-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'CANCEL_REPORT',
+                data: [
+                ],
+                metadata: {
+                    slotTypes: ['report-key-selector']
+                }
+            },
+
+        }
+    },
+    {
+        id: 'UPDATE_REPORT_DATA',
+        categories: ['participant-state-actions'],
+        label: 'Update report data',
+        returnType: 'action',
+        icon: "tag",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Report key and attribute',
+                argIndexes: [0, 1],
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'report-key-attribute-selector',
+                        type: 'key-value',
+                    },
+                ]
+            },
+            {
+                argIndexes: [2],
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str', 'num']
+                    }
+                ]
+            },
+            {
+                label: 'Interpret data as (optional)',
+                required: false,
+                argIndexes: [3],
+                allowedTypes: [
+                    {
+                        id: 'dtype-selector',
+                        type: 'select',
+                        options: [
+                            //{ key: '', label: 'Translation key' },
+                            { key: 'date', label: 'Date' },
+                            { key: 'float', label: 'Float' },
+                            { key: 'int', label: 'Integer' },
+                            { key: 'rawMessage', label: 'Raw message' },
+                            { key: 'keyList', label: 'List of keys' },
+                        ]
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_REPORT_DATA',
+                data: [],
+                metadata: {
+                    slotTypes: ['report-key-attribute-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'REMOVE_REPORT_DATA',
+        label: 'Remove report data by attribute key',
+        returnType: 'action',
+        icon: "circle-slash",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: '',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'report-key-attribute-selector',
+                        type: 'key-value',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_REPORT_DATA',
+                data: [],
+                metadata: {
+                    slotTypes: ['report-key-attribute-selector']
+                }
+            }
+        },
+    },
 ]
 
 const advancedExpressions: ExpressionDef[] = [
@@ -1184,7 +1376,7 @@ const advancedExpressions: ExpressionDef[] = [
 
 
 /*
-externalEventEval -> default returning string, or return float value
+
 */
 
 
@@ -1220,8 +1412,6 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 
 /*
-
-
   // Response checkers
 
   responseHasKeysAny,
@@ -1290,32 +1480,11 @@ export const studyEngineRegistry: ExpressionDef[] = [
   getTsForNextISOWeek,
   parseValueAsNum,
   generateRandomNumber: (min: number, max: number) => generateExpression('generateRandomNumber', undefined, min, max),
-  externalEventEval,
 }
 
-export const StudyEngineActions = {
-  participantActions: {
-    reports: {
-      init: INIT_REPORT,
-      cancel: CANCEL_REPORT,
-      updateData: UPDATE_REPORT_DATA,
-      removeData: REMOVE_REPORT_DATA,
-      // Extra methods:
-      setReportIcon,
-      setReportMessage,
-      setReportSummary,
-    },
-
-
-
-
-  },
-
-}
 
 export const StudyEngine = {
   ...NativeStudyEngineExpressions,
-  ...StudyEngineActions,
   singleChoice: {
     any: singleChoiceOptionsSelected,
     none: singleChoiceOnlyOtherOptionSelected

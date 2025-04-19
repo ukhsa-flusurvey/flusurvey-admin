@@ -55,6 +55,22 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
         }
     })
 
+    const reportKeysWithAttributes: ContextObjectItem = {}
+    currentStudyContext?.reportKeys?.forEach(h => {
+        reportKeysWithAttributes[h.key] = {
+            values: h.possibleValues,
+            type: 'string'
+        }
+    })
+
+    const reportKeys = Object.keys(reportKeysWithAttributes).map(k => {
+        return {
+            key: k,
+            label: k,
+            type: 'string'
+        }
+    })
+
     return (
         <div className='bg-slate-100 rounded-md p-4'>
             <ExpArgEditor
@@ -100,6 +116,8 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     surveyKeys: surveyKeys ?? [],
                     linkingCodeKeys: linkingCodeKeys ?? [],
                     externalEventHandlers: externalEventHandlers,
+                    reportKeys: reportKeys ?? [],
+                    reportKeysWithAttributes: reportKeysWithAttributes,
                 }}
                 currentIndex={0}
                 slotDef={{
