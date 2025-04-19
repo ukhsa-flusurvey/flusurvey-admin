@@ -117,6 +117,15 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
+    },
+    {
+        id: 'external-event-handler-selector',
+        type: 'key-value',
+        contextObjectKey: 'externalEventHandlers',
+        label: 'Service name and route',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
     }
 
 
@@ -1029,11 +1038,91 @@ const participantStateActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
+        label: 'Remove confidential response by key',
+        returnType: 'action',
+        icon: "triangle",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['text-input']
+                }
+            },
+        }
+    },
+    {
+        id: 'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
+        label: 'Remove all confidential responses',
+        returnType: 'action',
+        icon: "triangle",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
+                data: [],
+            },
+        }
+    },
+    {
+        id: 'EXTERNAL_EVENT_HANDLER',
+        label: 'External event handler',
+        returnType: 'action',
+        icon: "code",
+        color: 'blue',
+        categories: ['participant-state-actions'],
+        slots: [
+            {
+                label: '',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'external-event-handler-selector',
+                        type: 'key-value',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'EXTERNAL_EVENT_HANDLER',
+                data: [],
+                metadata: {
+                    slotTypes: ['external-event-handler-selector']
+                }
+            },
+        }
     }
 ]
 
 /*
-
 */
 
 
@@ -1155,11 +1244,8 @@ export const StudyEngineActions = {
     },
 
 
-    confidentialResponses: {
-      removeByKey: REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY,
-      removeAll: REMOVE_ALL_CONFIDENTIAL_RESPONSES,
-    },
-    externalEventHandler: EXTERNAL_EVENT_HANDLER,
+
+
   },
 
 }

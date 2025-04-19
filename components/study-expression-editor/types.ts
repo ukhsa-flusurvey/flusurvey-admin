@@ -12,6 +12,7 @@ export type StudyContext = {
     linkingCodeKeys?: string[];
     participantFlags?: Array<KeyValuePairDefs>,
     reportKeys?: Array<KeyValuePairDefs>,
+    externalEventHandlers?: Array<KeyValuePairDefs>,
 }
 
 

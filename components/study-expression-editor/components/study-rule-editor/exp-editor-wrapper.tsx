@@ -17,7 +17,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
     } = useStudyExpressionEditor();
 
     const pFlagsFromCtx: ContextObjectItem = {}
-    currentStudyContext?.participantFlags?.map(f => {
+    currentStudyContext?.participantFlags?.forEach(f => {
         pFlagsFromCtx[f.key] = {
             values: f.possibleValues,
             type: 'string'
@@ -43,6 +43,14 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
         return {
             key: k,
             label: k,
+            type: 'string'
+        }
+    })
+
+    const externalEventHandlers: ContextObjectItem = {}
+    currentStudyContext?.externalEventHandlers?.forEach(h => {
+        externalEventHandlers[h.key] = {
+            values: h.possibleValues,
             type: 'string'
         }
     })
@@ -91,6 +99,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     participantFlagKeys: pFlagKeys,
                     surveyKeys: surveyKeys ?? [],
                     linkingCodeKeys: linkingCodeKeys ?? [],
+                    externalEventHandlers: externalEventHandlers,
                 }}
                 currentIndex={0}
                 slotDef={{

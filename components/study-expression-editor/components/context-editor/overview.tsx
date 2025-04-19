@@ -270,6 +270,33 @@ const Overview: React.FC = () => {
                         }}
                     />
 
+                    <EditorCard
+                        label={'External event handlers'}
+                        description={'Define external event handler services and their possible routes.'}
+                        type={'key-value-pair'}
+                        data={currentStudyContext?.externalEventHandlers ?? []}
+                        selectedIndex={selection?.attributeKey === 'externalEventHandlers' ? selection?.index : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { externalEventHandlers: data as KeyValuePairDefs[] };
+                            } else {
+                                newStudyContext.externalEventHandlers = data as KeyValuePairDefs[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            setSelection({
+                                index,
+                                attributeKey: 'externalEventHandlers',
+                            });
+                        }}
+                    />
+
                 </div>
             </main>
 
