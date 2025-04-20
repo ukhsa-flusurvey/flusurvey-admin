@@ -1,10 +1,22 @@
 import { ExpressionDef, SlotInputDef } from "../utils";
-import { logicalOperators, miscExpressions } from "./common";
+import { comparisonOperators, logicalOperators, miscExpressions } from "./common";
 
 export const studyEngineCategories = [
     {
         id: 'control-flow',
         label: 'Control flow'
+    },
+    {
+        id: 'logical',
+        label: 'Logical operators'
+    },
+    {
+        id: 'comparison',
+        label: 'Comparisons'
+    },
+    {
+        id: 'mathematical-operators',
+        label: 'Mathematical operators'
     },
     {
         id: 'survey-submission-checkers',
@@ -1373,7 +1385,81 @@ const advancedExpressions: ExpressionDef[] = [
 ]
 
 
+const logicAndComparisionExpressions: ExpressionDef[] = [
+    ...comparisonOperators,
+    ...logicalOperators,
+    {
+        id: 'sum',
+        categories: ['mathematical-operators'],
+        label: 'Sum',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Values',
+                required: true,
+                isListSlot: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
 
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'sum',
+                data: [
+                ],
+                returnType: 'float',
+            }
+        }
+    },
+    {
+        id: 'neg',
+        categories: ['mathematical-operators'],
+        label: 'Negation',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'neg',
+                data: [
+                ],
+                returnType: 'float',
+
+            },
+        }
+    }
+]
 
 /*
 
@@ -1403,11 +1489,11 @@ const advancedExpressions: ExpressionDef[] = [
 
 export const studyEngineRegistry: ExpressionDef[] = [
     ...controlFlowOperators,
-    ...logicalOperators,
     ...miscExpressions,
     ...generalStudyActions,
     ...participantStateActions,
     ...advancedExpressions,
+    ...logicAndComparisionExpressions,
 ]
 
 
@@ -1462,19 +1548,9 @@ export const studyEngineRegistry: ExpressionDef[] = [
       getMessageNextTime: getMessageNextTimeForIncoming,
     }
   },
-  // logical and comparision
-  eq,
-  lt,
-  lte,
-  gt,
-  gte,
-  or,
-  and,
-  not,
-  sum,
-  neg,
+
   // Other
-  timestampWithOffset,
+
   getISOWeekForTs,
   getTsForNextStartOfMonth,
   getTsForNextISOWeek,
