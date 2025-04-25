@@ -9,12 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from 'lucide-react';
+import { Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from 'lucide-react';
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { Separator } from '@/components/ui/separator';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { PopoverKeyBadge } from '../../KeyBadge';
 
 interface RscaProps {
     surveyItem: SurveySingleItem;
@@ -45,67 +46,6 @@ const ModeSelector = (props: {
     </div>
 }
 
-const KeyEditor = (props: {
-    currentKey: string;
-    existingKeys?: string[];
-    onChange: (newKey: string) => void;
-}) => {
-    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
-
-    const hasValidKey = (key: string): boolean => {
-        if (key.length < 1) {
-            return false;
-        }
-        if (props.existingKeys?.includes(key)) {
-            return false;
-        }
-        return true;
-    }
-
-
-    return <div className='flex items-center gap-2'
-        data-no-dnd="true"
-    >
-        <Label htmlFor={'item-key-' + props.currentKey}>
-            Key
-        </Label>
-        <Input
-            id={'validation-key-' + props.currentKey}
-            className='w-32'
-            value={editedKey}
-            onChange={(e) => {
-                const value = e.target.value;
-
-                setEditedKey(value);
-            }}
-        />
-        {editedKey !== props.currentKey &&
-            <div className='flex items-center'>
-                <Button
-                    variant='ghost'
-                    className='text-destructive'
-                    size='icon'
-                    onClick={() => {
-                        setEditedKey(props.currentKey);
-                    }}
-                >
-                    <X className='size-4' />
-                </Button>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-primary'
-                    disabled={!hasValidKey(editedKey)}
-                    onClick={() => {
-                        props.onChange(editedKey);
-                    }}
-                >
-                    <Check className='size-4' />
-                </Button>
-            </div>}
-    </div>
-}
-
 const OptionEditor = (props: {
     option: ItemComponent;
     existingKeys?: string[];
@@ -125,16 +65,17 @@ const OptionEditor = (props: {
             </div>
             <div className='flex items-center gap-2 w-full'>
                 <div className='grow'>
-                    <KeyEditor
-                        currentKey={props.option.key || ''}
-                        existingKeys={props.existingKeys}
-                        onChange={(newKey) => {
+                    <PopoverKeyBadge
+                        headerText='Option Key'
+                        allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
+                        isHighlighted={true}
+                        itemKey={props.option.key ?? ''}
+                        onKeyChange={(newKey) => {
                             props.onChange({
                                 ...props.option,
                                 key: newKey
                             })
-                        }}
-                    />
+                        }} />
                 </div>
                 <Button
                     variant='ghost'
@@ -296,16 +237,17 @@ const RowEditor = (props: {
                         icon: <Languages className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
                             <div className='flex justify-between gap-2 items-center'>
-                                <KeyEditor
-                                    currentKey={props.row.key || ''}
-                                    existingKeys={props.existingKeys}
-                                    onChange={(newKey) => {
+                                <PopoverKeyBadge
+                                    headerText='Row Key'
+                                    allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
+                                    isHighlighted={true}
+                                    itemKey={props.row.key ?? ''}
+                                    onKeyChange={(newKey) => {
                                         props.onChange({
                                             ...props.row,
                                             key: newKey
                                         })
-                                    }}
-                                />
+                                    }} />
                                 <Button
                                     variant='ghost'
                                     size='sm'

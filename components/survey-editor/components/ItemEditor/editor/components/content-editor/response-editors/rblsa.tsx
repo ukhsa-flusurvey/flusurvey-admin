@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { ResponsiveBipolarLikertArrayVariant } from "case-editor-tools/surveys/types";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from "lucide-react";
+import { Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from "lucide-react";
 import React from "react";
 import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
+import { PopoverKeyBadge } from "../../KeyBadge";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -73,7 +74,7 @@ const ModeSelector = (props: {
     </div>
 }
 
-const KeyEditor = (props: {
+/* const KeyEditor = (props: {
     currentKey: string;
     existingKeys?: string[];
     onChange: (newKey: string) => void;
@@ -103,7 +104,6 @@ const KeyEditor = (props: {
             value={editedKey}
             onChange={(e) => {
                 const value = e.target.value;
-
                 setEditedKey(value);
             }}
         />
@@ -132,7 +132,7 @@ const KeyEditor = (props: {
                 </Button>
             </div>}
     </div>
-}
+} */
 
 const OptionEditor = (props: {
     option: ItemComponent;
@@ -152,16 +152,17 @@ const OptionEditor = (props: {
             </div>
             <div className='flex items-center gap-2 w-full'>
                 <div className='grow'>
-                    <KeyEditor
-                        currentKey={props.option.key || ''}
-                        existingKeys={props.existingKeys}
-                        onChange={(newKey) => {
+                    <PopoverKeyBadge
+                        headerText="Option Key"
+                        allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
+                        isHighlighted={true}
+                        itemKey={props.option.key ?? ''}
+                        onKeyChange={(newKey) => {
                             props.onChange({
                                 ...props.option,
                                 key: newKey
                             })
-                        }}
-                    />
+                        }} />
                 </div>
                 <Button
                     variant='ghost'
@@ -335,16 +336,17 @@ const RowEditor = (props: {
                         icon: <Languages className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
                             <div className='flex justify-between gap-2 items-center space-y-4'>
-                                <KeyEditor
-                                    currentKey={props.row.key || ''}
-                                    existingKeys={props.existingKeys}
-                                    onChange={(newKey) => {
+                                <PopoverKeyBadge
+                                    headerText="Row Key"
+                                    allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
+                                    isHighlighted={true}
+                                    itemKey={props.row.key ?? ''}
+                                    onKeyChange={(newKey) => {
                                         props.onChange({
                                             ...props.row,
                                             key: newKey
                                         })
-                                    }}
-                                />
+                                    }} />
                                 <Button
                                     variant='ghost'
                                     size='sm'

@@ -12,8 +12,8 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { toast } from 'sonner';
 import MoveItemDialog from './MoveItemDialog';
-import KeyPreviewAndEditor from './KeyPreviewAndEditor';
 import ItemLabelPreviewAndEditor from './item-label-preview-and-editor';
+import { PopoverKeyBadge } from './KeyBadge';
 
 interface ItemHeaderProps {
     surveyItem: SurveyItem;
@@ -204,6 +204,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     )
 
     const itemLabel = props.surveyItem.metadata?.itemLabel;
+    const isRoot = item.parentKey === '';
 
     return (
         <TooltipProvider>
@@ -230,12 +231,18 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                 </Tooltip>
 
                 <div className=''>
-                    <KeyPreviewAndEditor
-                        parentKey={item.parentKey}
+                    <PopoverKeyBadge
+                        allOtherKeys={props.surveyItemList.map(i => i.key).filter(i => i !== item.itemKey)}
                         itemKey={item.itemKey}
-                        surveyItemList={props.surveyItemList}
-                        onChangeKey={(newKey: string) => {
-                            props.onChangeKey(props.surveyItem.key, newKey);
+                        headerText={isRoot ? 'Root Group Key' : 'Item Key'}
+                        isHighlighted={true}
+                        highlightColor={item.color}
+                        onKeyChange={(newSubKey) => {
+                            const keyParts = props.surveyItem.key.split('.');
+                            keyParts.pop();
+                            keyParts.push(newSubKey);
+                            const newFullKey = keyParts.join('.');
+                            props.onChangeKey(props.surveyItem.key, newFullKey);
                         }}
                     />
                 </div>

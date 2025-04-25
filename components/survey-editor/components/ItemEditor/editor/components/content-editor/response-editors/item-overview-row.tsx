@@ -86,7 +86,7 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
         <div>
             {props.itemIconLookup(item) || <Heading className='size-4 text-muted-foreground' />}
         </div>
-        <span className={cn('grow space-x-2',)}>
+        <div className={cn('flex flex-row grow space-x-2',)}>
             <PopoverKeyBadge
                 itemKey={item.key ?? ''}
                 isHighlighted={props.isSelected}
@@ -97,7 +97,7 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
             <span className='text-muted-foreground'>
                 {props.itemDescriptiveTextLookup(item)}
             </span>
-        </span>
+        </div>
         <div className='flex flex-row gap-2 items-center'>
             {props.isSelected && <>
                 <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
