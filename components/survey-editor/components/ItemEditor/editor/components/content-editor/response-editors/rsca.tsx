@@ -9,13 +9,17 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from 'lucide-react';
+import { Circle, Cog, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from 'lucide-react';
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { Separator } from '@/components/ui/separator';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { PopoverKeyBadge } from '../../KeyBadge';
+import { ItemComponentRole } from '@/components/survey-editor/components/types';
+import { SimpleTextViewContentEditor } from './text-view-content-editor';
+import { StyleClassNameEditor } from './style-class-name-editor';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RscaProps {
     surveyItem: SurveySingleItem;
@@ -51,31 +55,33 @@ const OptionEditor = (props: {
     existingKeys?: string[];
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
+    isBeingDragged?: boolean;
 }) => {
-    const { selectedLanguage } = useSurveyEditorCtx();
-
-    const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
-
     return <SortableItem
         id={props.option.key!}
+        className={props.isBeingDragged ? 'opacity-0' : ''}
     >
-        <div className='border border-border rounded-md p-2 relative space-y-2 bg-slate-50'>
-            <div className='absolute left-1/2 top-0'>
-                <GripHorizontal className='size-4' />
-            </div>
+        <div className='border border-border rounded-md p-2 relative bg-white'>
             <div className='flex items-center gap-2 w-full'>
+                <GripVertical className='size-4' />
+                <PopoverKeyBadge
+                    headerText='Option Key'
+                    allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
+                    isHighlighted={true}
+                    itemKey={props.option.key ?? ''}
+                    onKeyChange={(newKey) => {
+                        props.onChange({
+                            ...props.option,
+                            key: newKey
+                        })
+                    }} />
                 <div className='grow'>
-                    <PopoverKeyBadge
-                        headerText='Option Key'
-                        allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
-                        isHighlighted={true}
-                        itemKey={props.option.key ?? ''}
-                        onKeyChange={(newKey) => {
-                            props.onChange({
-                                ...props.option,
-                                key: newKey
-                            })
-                        }} />
+                    <SimpleTextViewContentEditor
+                        component={props.option}
+                        onChange={(updatedComponent) => props.onChange(updatedComponent)}
+                        hideLabel={true}
+                        placeholder='Enter option label...'
+                    />
                 </div>
                 <Button
                     variant='ghost'
@@ -90,30 +96,6 @@ const OptionEditor = (props: {
                     <Trash2 className='size-4' />
                 </Button>
             </div>
-
-            <Label
-                className='flex items-center gap-2'
-                htmlFor={`option-label-${props.option.key}`}
-            >
-                <span>
-                    Label
-                </span>
-                <Input
-                    id={`option-label-${props.option.key}`}
-                    className='w-full'
-                    value={optionLabel || ''}
-                    placeholder='Enter option label...'
-                    onChange={(e) => {
-                        const updatedComponent = { ...props.option };
-                        const updatedContent = localisedObjectToMap(updatedComponent.content);
-                        updatedContent.set(selectedLanguage, e.target.value);
-                        updatedComponent.content = generateLocStrings(updatedContent);
-                        props.onChange(updatedComponent)
-                    }}
-                />
-            </Label>
-
-
         </div>
 
     </SortableItem>
@@ -162,7 +144,7 @@ const OptionsEditor = (props: {
                 : null}
         >
 
-            <ol className='px-1 space-y-2 py-4'>
+            <ol className='px-1 space-y-2 py-2'>
                 {props.options.length === 0 && <p className='text-sm text-primary'>
                     No options defined.
                 </p>}
@@ -186,45 +168,69 @@ const OptionsEditor = (props: {
                             });
                             props.onChange(newOptions);
                         }}
+                        isBeingDragged={draggedId === option.key}
                     />
                 })}
             </ol>
         </SortableWrapper>
 
-        <AddDropdown
-            options={[
-                { key: 'option', label: 'Option', icon: <Circle className='size-4 text-neutral-500 me-2' /> },
-            ]}
-            onAddItem={(type) => {
-                if (type === 'option') {
-                    const newOption: ItemComponent = {
-                        key: Math.random().toString(36).substring(9),
-                        role: 'option',
+        <div className='w-full flex items-center justify-center'>
+            <AddDropdown
+                options={[
+                    { key: ItemComponentRole.Option, label: 'Option', icon: <Circle className='size-4 text-neutral-500 me-2' /> },
+                ]}
+                onAddItem={(type) => {
+                    if (type === ItemComponentRole.Option) {
+                        const newOption: ItemComponent = {
+                            key: Math.random().toString(36).substring(9),
+                            role: ItemComponentRole.Option,
+                        }
+                        props.onChange([...props.options, newOption]);
                     }
-                    props.onChange([...props.options, newOption]);
-                }
-            }}
-        />
+                }}
+            />
+        </div>
     </div>
 }
+
+enum RscaStyleKeys {
+    horizontalModeLabelPlacement = 'horizontalModeLabelPlacement',
+    horizontalModeClassName = 'horizontalModeClassName',
+    verticalModeClassName = 'verticalModeClassName',
+    tableModeClassName = 'tableModeClassName',
+    verticalModeReverseOrder = 'verticalModeReverseOrder',
+}
+
 
 const RowEditor = (props: {
     row: ItemComponent;
     existingKeys?: string[];
     onChange: (newRow: ItemComponent) => void;
     onDelete: () => void;
+    isBeingDragged?: boolean;
 }) => {
-    const { selectedLanguage } = useSurveyEditorCtx();
+    const horizontalModeLabelPlacement = props.row.style?.find(s => s.key === RscaStyleKeys.horizontalModeLabelPlacement)?.value || 'bottom';
 
-    const rowLabel = localisedObjectToMap(props.row.content).get(selectedLanguage) || '';
-
-    const horizontalModeLabelPlacement = props.row.style?.find(s => s.key === 'horizontalModeLabelPlacement')?.value || 'bottom';
-    const horizontalModeClassName = props.row.style?.find(s => s.key === 'horizontalModeClassName')?.value;
-    const verticalModeClassName = props.row.style?.find(s => s.key === 'verticalModeClassName')?.value;
-    const tableModeClassName = props.row.style?.find(s => s.key === 'tableModeClassName')?.value;
+    const onRowStyleChange = (key: string, newValue: string | undefined) => {
+        const existingStyles = [...props.row.style || []];
+        const index = existingStyles.findIndex(st => st.key === key);
+        if (newValue) {
+            if (index > -1) {
+                existingStyles[index] = { key, value: newValue };
+            } else {
+                existingStyles.push({ key, value: newValue });
+            }
+        } else {
+            if (index > -1) {
+                existingStyles.splice(index, 1);
+            }
+        }
+        props.onChange({ ...props.row, style: existingStyles });
+    }
 
     return <SortableItem
         id={props.row.key!}
+        className={props.isBeingDragged ? 'opacity-0' : ''}
     >
         <div className='relative'>
             <div className='absolute left-0 top-1/2'>
@@ -236,7 +242,8 @@ const RowEditor = (props: {
                         label: 'General',
                         icon: <Languages className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div className='flex justify-between gap-2 items-center'>
+
+                            <div className='flex items-center gap-2 w-full'>
                                 <PopoverKeyBadge
                                     headerText='Row Key'
                                     allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
@@ -248,11 +255,19 @@ const RowEditor = (props: {
                                             key: newKey
                                         })
                                     }} />
+                                <div className='grow'>
+                                    <SimpleTextViewContentEditor
+                                        component={props.row}
+                                        onChange={(updatedComponent) => props.onChange(updatedComponent)}
+                                        hideLabel={true}
+                                        placeholder='Enter row label...'
+                                    />
+                                </div>
                                 <Button
                                     variant='ghost'
-                                    size='sm'
+                                    size='icon'
                                     onClick={() => {
-                                        if (!confirm('Are you sure you want to delete this row?')) {
+                                        if (!confirm('Are you sure you want to delete this option?')) {
                                             return;
                                         }
                                         props.onDelete();
@@ -260,30 +275,6 @@ const RowEditor = (props: {
                                 >
                                     <Trash2 className='size-4' />
                                 </Button>
-                            </div>
-                            <div
-                                data-no-dnd="true"
-                                className='flex items-center gap-2'
-                            >
-                                <Label
-                                    htmlFor={`row-label-${props.row.key}`}
-                                >
-                                    Label
-                                </Label>
-                                <Input
-                                    id={`row-label-${props.row.key}`}
-                                    className='w-full'
-                                    value={rowLabel || ''}
-                                    placeholder='Enter row label...'
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        const updatedComponent = { ...props.row };
-                                        const updatedContent = localisedObjectToMap(updatedComponent.content);
-                                        updatedContent.set(selectedLanguage, value);
-                                        updatedComponent.content = generateLocStrings(updatedContent);
-                                        props.onChange(updatedComponent);
-                                    }}
-                                />
                             </div>
                         </TabWrapper>
                     },
@@ -298,22 +289,23 @@ const RowEditor = (props: {
                         label: 'Extras',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>Option label placement in horizontal mode:</p>
+                            <div className='flex items-center gap-2'>
+                                <Label className='text-xs'>horizontalModeLabelPlacement</Label>
                                 <Select
                                     value={horizontalModeLabelPlacement}
+
                                     onValueChange={(value) => {
                                         const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'horizontalModeLabelPlacement');
+                                        const index = existingStyles.findIndex(st => st.key === RscaStyleKeys.horizontalModeLabelPlacement);
                                         if (value === 'bottom') {
                                             if (index > -1) {
                                                 existingStyles.splice(index, 1);
                                             }
                                         } else {
                                             if (index > -1) {
-                                                existingStyles[index] = { key: 'horizontalModeLabelPlacement', value };
+                                                existingStyles[index] = { key: RscaStyleKeys.horizontalModeLabelPlacement, value };
                                             } else {
-                                                existingStyles.push({ key: 'horizontalModeLabelPlacement', value });
+                                                existingStyles.push({ key: RscaStyleKeys.horizontalModeLabelPlacement, value });
                                             }
                                         }
 
@@ -333,91 +325,24 @@ const RowEditor = (props: {
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>Row class name in horizontal mode:</p>
-                                <Input
-                                    value={horizontalModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'horizontalModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'horizontalModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'horizontalModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
                             <Separator />
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>Row class name in vertical mode:</p>
-                                <Input
-                                    value={verticalModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'verticalModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'verticalModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'verticalModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RscaStyleKeys.horizontalModeClassName}
+                                label={RscaStyleKeys.horizontalModeClassName}
+                                onChange={onRowStyleChange} />
                             <Separator />
-
-                            <div>
-                                <p className='font-semibold text-sm mb-1.5'>Row class name in table mode:</p>
-                                <Input
-                                    value={tableModeClassName}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === 'tableModeClassName');
-                                        if (value === '') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: 'tableModeClassName', value };
-                                            } else {
-                                                existingStyles.push({ key: 'tableModeClassName', value });
-                                            }
-                                        }
-
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                />
-                            </div>
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RscaStyleKeys.verticalModeClassName}
+                                label={RscaStyleKeys.verticalModeClassName}
+                                onChange={onRowStyleChange} />
+                            <Separator />
+                            <StyleClassNameEditor
+                                styles={props.row.style || []}
+                                styleKey={RscaStyleKeys.tableModeClassName}
+                                label={RscaStyleKeys.tableModeClassName}
+                                onChange={onRowStyleChange} />
 
                         </TabWrapper>
                     }
@@ -471,7 +396,7 @@ const RowsEditor = (props: {
                 : null}
         >
 
-            <ol className='px-1 space-y-2 py-4'>
+            <ol className='px-1 space-y-2 py-2'>
                 {props.rows.length === 0 && <p className='text-sm text-primary'>
                     No rows defined.
                 </p>}
@@ -495,6 +420,7 @@ const RowsEditor = (props: {
                             });
                             props.onChange(newOptions);
                         }}
+                        isBeingDragged={draggedId === row.key}
                     />
                 })}
             </ol>
@@ -502,27 +428,29 @@ const RowsEditor = (props: {
 
 
 
-        <AddDropdown
-            options={[
-                { key: 'row', label: 'New row', icon: <Rows className='size-4 text-neutral-500 me-2' /> },
-            ]}
-            onAddItem={(type) => {
-                if (type === 'row') {
-                    const newRow: ItemComponent = {
-                        key: Math.random().toString(36).substring(9),
-                        role: 'row',
+        <div className='w-full flex items-center justify-center'>
+            <AddDropdown
+                options={[
+                    { key: ItemComponentRole.Row, label: 'Row', icon: <Rows className='size-4 text-neutral-500 me-2' /> },
+                ]}
+                onAddItem={(type) => {
+                    if (type === ItemComponentRole.Row) {
+                        const newRow: ItemComponent = {
+                            key: Math.random().toString(36).substring(9),
+                            role: ItemComponentRole.Row,
+                        }
+                        props.onChange([...props.rows, newRow]);
                     }
-                    props.onChange([...props.rows, newRow]);
-                }
-            }}
-        />
+                }}
+            />
+        </div>
     </div>
 }
 
 const Rsca: React.FC<RscaProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
-    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
+    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
         return <p>Response group not found</p>;
     }
@@ -531,7 +459,7 @@ const Rsca: React.FC<RscaProps> = (props) => {
         return <p>Response group not found</p>;
     }
 
-    const rscaGroupIndex = rg.items.findIndex(comp => comp.role === 'responsiveSingleChoiceArray');
+    const rscaGroupIndex = rg.items.findIndex(comp => comp.role === ItemComponentRole.ResponsiveSingleChoiceArray);
     if (rscaGroupIndex === undefined || rscaGroupIndex === -1) {
         return <p>Responsive single choice array not found</p>;
     }
@@ -548,11 +476,11 @@ const Rsca: React.FC<RscaProps> = (props) => {
     const lgMode = styles?.find(st => st.key === 'lgMode')?.value;
     const xlMode = styles?.find(st => st.key === 'xlMode')?.value;
 
-    const useVerticalModeReverseOrder = styles?.find(st => st.key === 'verticalModeReverseOrder')?.value === 'true';
+    const useVerticalModeReverseOrder = styles?.find(st => st.key === RscaStyleKeys.verticalModeReverseOrder)?.value === 'true';
 
-    const options = (rscaGroup.items.find(comp => comp.role === 'options') as ItemGroupComponent)?.items || [];
-    const rows = (rscaGroup.items.filter(comp => comp.role === 'row') as ItemGroupComponent[]) || [];
-    const errorHintComp = rscaGroup.items.find(comp => comp.role === 'rowErrorHint');
+    const options = (rscaGroup.items.find(comp => comp.role === ItemComponentRole.Options) as ItemGroupComponent)?.items || [];
+    const rows = (rscaGroup.items.filter(comp => comp.role === ItemComponentRole.Row) as ItemGroupComponent[]) || [];
+    const errorHintComp = rscaGroup.items.find(comp => comp.role === ItemComponentRole.RowErrorHint) as ItemComponent;
 
     const onChangeRSCA = (newRSCA: ItemGroupComponent) => {
         const existingItems = props.surveyItem.components?.items || [];
@@ -582,150 +510,164 @@ const Rsca: React.FC<RscaProps> = (props) => {
         onChangeRSCA(rscaGroup);
     }
 
+    const triggerClassName = "text-sm data-[state=active]:bg-white data-[state=active]:font-bold data-[state=active]:border data-[state=active]:border-slate-200 data-[state=active]:text-accent-foreground data-[state=active]:[box-shadow:none]";
+
     return (
         <div className='space-y-4'>
-            <OptionsEditor
-                options={options}
-                onChange={(newOptions) => {
-                    const optionsIndex = rscaGroup.items.findIndex(comp => comp.role === 'options');
-                    if (optionsIndex === -1) {
-                        rscaGroup.items.push({
-                            role: 'options',
-                            items: newOptions
-                        });
-                    } else {
-                        rscaGroup.items[optionsIndex] = {
-                            role: 'options',
-                            items: newOptions
-                        };
-                    }
-                    onChangeRSCA(rscaGroup);
-                }}
-            />
-
-            <RowsEditor
-                rows={rows}
-                onChange={(r) => {
-                    const newRows = rscaGroup.items.filter(comp => comp.role !== 'row');
-                    newRows.push(...r);
-                    rscaGroup.items = newRows;
-                    onChangeRSCA(rscaGroup);
-                }}
-            />
-
-            <div className='space-y-2'>
-                <p className='font-semibold'>
-                    Render mode for screen sizes:
-                </p>
-                <ModeSelector
-                    size='default'
-                    mode={defaultMode}
-                    onChange={onModeChange}
-                />
-
-                <ModeSelector
-                    size='sm'
-                    mode={smMode}
-                    onChange={onModeChange}
-                />
-
-                <ModeSelector
-                    size='md'
-                    mode={mdMode}
-                    onChange={onModeChange}
-                />
-
-                <ModeSelector
-                    size='lg'
-                    mode={lgMode}
-                    onChange={onModeChange}
-                />
-
-                <ModeSelector
-                    size='xl'
-                    mode={xlMode}
-                    onChange={onModeChange}
-                />
-            </div>
-
-            <div className='space-y-2'>
-                <p className='font-semibold'>
-                    Reverse option order in vertical mode:
-                </p>
-
-                <Label
-                    className='flex items-center gap-2'
-                    htmlFor='vertical-mode-reverse-order'
-                >
-                    <Switch
-                        id='vertical-mode-reverse-order'
-                        checked={useVerticalModeReverseOrder}
-                        onCheckedChange={(checked) => {
-                            let existingStyles = [...styles];
-
-                            const verticalModeReverseOrderKey = 'verticalModeReverseOrder';
-
-                            if (checked) {
-                                const index = existingStyles.findIndex(st => st.key === verticalModeReverseOrderKey);
-
-                                if (index > -1) {
-                                    existingStyles[index] = { key: verticalModeReverseOrderKey, value: 'true' };
-                                } else {
-                                    existingStyles.push({ key: verticalModeReverseOrderKey, value: 'true' });
-                                }
+            <Tabs defaultValue="options-rows" className="mt-2">
+                <div className="flex flex-row justify-between items-center">
+                    <p className='font-semibold'>Responsive Single Choice Array</p>
+                    <TabsList className="bg-muted p-0.5 rounded-md border border-neutral-200 gap-1">
+                        <TabsTrigger className={triggerClassName} value="options-rows">Options & Rows</TabsTrigger>
+                        <TabsTrigger className={triggerClassName} value="extras">Extras</TabsTrigger>
+                        {/* Use Badge here to indicate if there are any conditions */}
+                    </TabsList>
+                </div>
+                <TabsContent value="options-rows">
+                    <OptionsEditor
+                        options={options}
+                        onChange={(newOptions) => {
+                            const optionsIndex = rscaGroup.items.findIndex(comp => comp.role === ItemComponentRole.Options);
+                            if (optionsIndex === -1) {
+                                rscaGroup.items.push({
+                                    role: ItemComponentRole.Options,
+                                    items: newOptions
+                                });
                             } else {
-                                existingStyles = existingStyles.filter(st => st.key !== verticalModeReverseOrderKey);
-                            }
-
-                            rscaGroup.style = existingStyles;
-                            onChangeRSCA(rscaGroup);
-                        }}
-                    />
-
-                    <span>
-                        {useVerticalModeReverseOrder ? 'Yes' : 'No'}
-                    </span>
-                </Label>
-
-            </div>
-
-            <div className='space-y-2'>
-
-                <Label
-                    htmlFor='row-error-hint'
-                    className='space-y-1.5'
-                >
-                    <span className='font-semibold text-base'>
-                        Error message if row is empty:
-                    </span>
-
-                    <Input
-                        id='row-error-hint'
-                        className='w-full'
-                        value={errorHintComp ? localisedObjectToMap(errorHintComp.content).get(selectedLanguage) || '' : ''}
-                        onChange={(e) => {
-                            const updatedComponent = errorHintComp ? { ...errorHintComp } : {
-                                key: Math.random().toString(36).substring(9),
-                                role: 'rowErrorHint',
-                            };
-                            const updatedContent = localisedObjectToMap(updatedComponent.content);
-                            updatedContent.set(selectedLanguage, e.target.value);
-                            updatedComponent.content = generateLocStrings(updatedContent);
-
-
-                            const index = rscaGroup.items.findIndex(comp => comp.role === 'rowErrorHint');
-                            if (index === -1) {
-                                rscaGroup.items.push(updatedComponent);
-                            } else {
-                                rscaGroup.items[index] = updatedComponent;
+                                rscaGroup.items[optionsIndex] = {
+                                    role: ItemComponentRole.Options,
+                                    items: newOptions
+                                };
                             }
                             onChangeRSCA(rscaGroup);
                         }}
-                        placeholder='Enter error message...'
                     />
-                </Label>
+                    <RowsEditor
+                        rows={rows}
+                        onChange={(r) => {
+                            const newRows = rscaGroup.items.filter(comp => comp.role !== ItemComponentRole.Row);
+                            newRows.push(...r);
+                            rscaGroup.items = newRows;
+                            onChangeRSCA(rscaGroup);
+                        }}
+                    />
+                </TabsContent>
+                <TabsContent value="extras" className='space-y-4'>
+                    <div className='space-y-2'>
+                        <p className='font-semibold'>
+                            Render mode for screen sizes:
+                        </p>
+                        <ModeSelector
+                            size='default'
+                            mode={defaultMode}
+                            onChange={onModeChange}
+                        />
 
-            </div>
+                        <ModeSelector
+                            size='sm'
+                            mode={smMode}
+                            onChange={onModeChange}
+                        />
+
+                        <ModeSelector
+                            size='md'
+                            mode={mdMode}
+                            onChange={onModeChange}
+                        />
+
+                        <ModeSelector
+                            size='lg'
+                            mode={lgMode}
+                            onChange={onModeChange}
+                        />
+
+                        <ModeSelector
+                            size='xl'
+                            mode={xlMode}
+                            onChange={onModeChange}
+                        />
+                    </div>
+
+                    <div className='space-y-2'>
+                        <p className='font-semibold'>
+                            Reverse option order in vertical mode:
+                        </p>
+
+                        <Label
+                            className='flex items-center gap-2'
+                            htmlFor='vertical-mode-reverse-order'
+                        >
+                            <Switch
+                                id='vertical-mode-reverse-order'
+                                checked={useVerticalModeReverseOrder}
+                                onCheckedChange={(checked) => {
+                                    let existingStyles = [...styles];
+
+                                    const verticalModeReverseOrderKey = RscaStyleKeys.verticalModeReverseOrder;
+
+                                    if (checked) {
+                                        const index = existingStyles.findIndex(st => st.key === verticalModeReverseOrderKey);
+
+                                        if (index > -1) {
+                                            existingStyles[index] = { key: verticalModeReverseOrderKey, value: 'true' };
+                                        } else {
+                                            existingStyles.push({ key: verticalModeReverseOrderKey, value: 'true' });
+                                        }
+                                    } else {
+                                        existingStyles = existingStyles.filter(st => st.key !== verticalModeReverseOrderKey);
+                                    }
+
+                                    rscaGroup.style = existingStyles;
+                                    onChangeRSCA(rscaGroup);
+                                }}
+                            />
+
+                            <span>
+                                {useVerticalModeReverseOrder ? 'Yes' : 'No'}
+                            </span>
+                        </Label>
+
+                    </div>
+
+                    <div className='space-y-2'>
+
+                        <Label
+                            htmlFor='row-error-hint'
+                            className='space-y-1.5'
+                        >
+                            <span className='font-semibold text-base'>
+                                Error message if row is empty:
+                            </span>
+
+                            <Input
+                                id='row-error-hint'
+                                className='w-full'
+                                value={errorHintComp ? localisedObjectToMap(errorHintComp.content).get(selectedLanguage) || '' : ''}
+                                onChange={(e) => {
+                                    const updatedComponent = errorHintComp ? { ...errorHintComp } : {
+                                        key: Math.random().toString(36).substring(9),
+                                        role: ItemComponentRole.RowErrorHint,
+                                    };
+                                    const updatedContent = localisedObjectToMap(updatedComponent.content);
+                                    updatedContent.set(selectedLanguage, e.target.value);
+                                    updatedComponent.content = generateLocStrings(updatedContent);
+
+
+                                    const index = rscaGroup.items.findIndex(comp => comp.role === ItemComponentRole.RowErrorHint);
+                                    if (index === -1) {
+                                        rscaGroup.items.push(updatedComponent);
+                                    } else {
+                                        rscaGroup.items[index] = updatedComponent;
+                                    }
+                                    onChangeRSCA(rscaGroup);
+                                }}
+                                placeholder='Enter error message...'
+                            />
+                        </Label>
+
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 };

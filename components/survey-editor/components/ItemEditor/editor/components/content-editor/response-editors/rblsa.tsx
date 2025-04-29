@@ -18,6 +18,7 @@ import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } 
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 import { PopoverKeyBadge } from "../../KeyBadge";
+import { StyleClassNameEditor } from "./style-class-name-editor";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -29,24 +30,6 @@ enum RblsaStyleKeys {
     tableModeClassName = 'tableModeClassName',
     labelRowModeClassName = 'withLabelRowModeClassName',
     verticalModeClassName = 'verticalModeClassName',
-}
-
-const StyleClassNameEditor = (props: {
-    styles: { key: string, value: string }[],
-    styleKey: string,
-    label: string,
-    onChange: (key: string, value: string | undefined) => void
-}) => {
-    return <div className="flex items-center gap-2" data-no-dnd="true">
-        <Label htmlFor={'input-' + props.styleKey} className="text-xs">
-            {props.label}
-        </Label>
-        <Input
-            id={'input-' + props.styleKey}
-            value={props.styles?.find(st => st.key === props.styleKey)?.value ?? ""}
-            onChange={(e) => { props.onChange(props.styleKey, e.target.value) }}
-        />
-    </div>
 }
 
 const ModeSelector = (props: {
@@ -386,9 +369,7 @@ const RowsEditor = (props: {
     onChange: (newRows: ItemGroupComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-
     const draggedItem = props.rows.find(row => row.key === draggedId);
-
 
     return <div>
         <p className='font-semibold'>
