@@ -25,8 +25,6 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
         availableStudyKeys.push(props.emailTemplateConfig.studyKey);
     }
 
-    console.log(availableStudyKeys)
-
     return (
         <TooltipProvider>
             <div className='p-4 min-w-96 max-w-96 space-y-4'>
