@@ -74,66 +74,6 @@ const ModeSelector = (props: {
     </div>
 }
 
-/* const KeyEditor = (props: {
-    currentKey: string;
-    existingKeys?: string[];
-    onChange: (newKey: string) => void;
-}) => {
-    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
-
-    const hasValidKey = (key: string): boolean => {
-        if (key.length < 1) {
-            return false;
-        }
-        if (props.existingKeys?.includes(key)) {
-            return false;
-        }
-        return true;
-    }
-
-
-    return <div className='flex items-center gap-2'
-        data-no-dnd="true"
-    >
-        <Label htmlFor={'item-key-' + props.currentKey}>
-            Key
-        </Label>
-        <Input
-            id={'item-key-' + props.currentKey}
-            className='w-32'
-            value={editedKey}
-            onChange={(e) => {
-                const value = e.target.value;
-                setEditedKey(value);
-            }}
-        />
-        {editedKey !== props.currentKey &&
-            <div className='flex items-center'>
-                <Button
-                    variant='ghost'
-                    className='text-destructive'
-                    size='icon'
-                    onClick={() => {
-                        setEditedKey(props.currentKey);
-                    }}
-                >
-                    <X className='size-4' />
-                </Button>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-primary'
-                    disabled={!hasValidKey(editedKey)}
-                    onClick={() => {
-                        props.onChange(editedKey);
-                    }}
-                >
-                    <Check className='size-4' />
-                </Button>
-            </div>}
-    </div>
-} */
-
 const OptionEditor = (props: {
     option: ItemComponent;
     existingKeys?: string[];
