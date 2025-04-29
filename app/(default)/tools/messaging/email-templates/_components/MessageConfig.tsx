@@ -57,7 +57,9 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                             placeholder='Enter the message type'
                             value={props.emailTemplateConfig.messageType ?? ''}
                             onChange={(event) => {
-                                const value = event.target.value;
+                                let value = event.target.value;
+                                value = value.trim().replaceAll(' ', '-').replaceAll('/', '-').replaceAll('?', '').replaceAll('&', '').replaceAll('"', '').replaceAll("'", '').replaceAll('(', '').replaceAll(')', '').replaceAll('[', '').replaceAll(']', '').replaceAll('{', '').replaceAll('}', '').replaceAll('<', '').replaceAll('>', '').replaceAll(':', '').replaceAll(';', '').replaceAll(',', '').replaceAll('\\', '');
+
                                 const newEmailTemplateConfig = { ...props.emailTemplateConfig };
                                 newEmailTemplateConfig.messageType = value;
                                 props.onChange(newEmailTemplateConfig);
