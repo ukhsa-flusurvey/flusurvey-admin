@@ -18,6 +18,7 @@ import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorConte
 import { ItemOverviewRow } from "./item-overview-row";
 import { useCopyToClipboard } from "usehooks-ts";
 import { TabbedItemEditor } from "./tabbed-item-editor";
+import { Separator } from "@/components/ui/separator";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -182,74 +183,78 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     };
 
     return (
-        <div className=''>
-            <p className='font-semibold pb-2'>Cloze Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
-            <SortableWrapper
-                sortableID={'response-group-editor'}
-                items={sortableClozeItems}
-                onDraggedIdChange={(id) => {
-                    setDraggedKey(id);
-                }}
-                onReorder={(activeIndex, overIndex) => {
-                    const newItems = [...clozeItems];
-                    newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-                    updateComponent(newItems);
-                }}
-                dragOverlayItem={(draggedKey && draggedItem) ?
-                    <ItemOverviewRow
-                        i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
-                        isDragOverlay={true}
-                        isSelected={draggedItem.key === selectedKey}
-                        isBeingDragged={true}
-                        itemIconLookup={clozeItemIconLookup}
-                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                        itemList={clozeItems} />
-                    : null}
-            >
-                <div className='space-y-2'>
-                    <ol className='max-h-64 overflow-y-auto space-y-1'>
-                        {sortableClozeItems.map((clozeItem, i) => (
-                            <SortableItem
-                                id={clozeItem.id}
-                                key={clozeItem.id}>
-                                <div ref={i == sortableClozeItems.length - 1 ? lastItemRef : null}>
-                                    <ItemOverviewRow
-                                        i={i}
-                                        isDragOverlay={false}
-                                        isSelected={selectedKey === clozeItem.key}
-                                        isBeingDragged={draggedKey === clozeItem.key}
-                                        itemIconLookup={clozeItemIconLookup}
-                                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                                        onSelectionUpdate={(key) => {
-                                            setSelectedKey(key);
-                                            setDraggedKey(null);
-                                        }}
-                                        itemList={clozeItems}
-                                        onListUpdate={(list) => updateComponent(list)}
-                                        getClipboardValue={() => clipboardContent?.toString() ?? ""}
-                                        setClipboardValue={(value) => setClipboardContent(value)}
-                                    />
-                                </div>
-                            </SortableItem>
-                        ))}
-                    </ol>
-                    <div className='flex justify-center w-full'>
-                        <AddDropdown
-                            options={[
-                                { key: ClozeItemType.SimpleText, label: typeHints[ClozeItemType.SimpleText], icon: icons[ClozeItemType.SimpleText] },
-                                { key: ClozeItemType.Markdown, label: typeHints[ClozeItemType.Markdown], icon: icons[ClozeItemType.Markdown] },
-                                { key: ClozeItemType.Dropdown, label: typeHints[ClozeItemType.Dropdown], icon: icons[ClozeItemType.Dropdown] },
-                                { key: ClozeItemType.TextInput, label: typeHints[ClozeItemType.TextInput], icon: icons[ClozeItemType.TextInput] },
-                                { key: ClozeItemType.NumberInput, label: typeHints[ClozeItemType.NumberInput], icon: icons[ClozeItemType.NumberInput] },
-                                { key: ClozeItemType.TimeInput, label: typeHints[ClozeItemType.TimeInput], icon: icons[ClozeItemType.TimeInput] },
-                                { key: ClozeItemType.DateInput, label: typeHints[ClozeItemType.DateInput], icon: icons[ClozeItemType.DateInput] },
-                                { key: ClozeItemType.LineBreak, label: typeHints[ClozeItemType.LineBreak], icon: icons[ClozeItemType.LineBreak] },
-                            ]}
-                            onAddItem={onAddItem}
-                        />
+        <div className='space-y-6'>
+            <div>
+                <p className='font-semibold pb-2'>Cloze Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
+                <SortableWrapper
+                    sortableID={'response-group-editor'}
+                    items={sortableClozeItems}
+                    onDraggedIdChange={(id) => {
+                        setDraggedKey(id);
+                    }}
+                    onReorder={(activeIndex, overIndex) => {
+                        const newItems = [...clozeItems];
+                        newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
+                        updateComponent(newItems);
+                    }}
+                    dragOverlayItem={(draggedKey && draggedItem) ?
+                        <ItemOverviewRow
+                            i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
+                            isDragOverlay={true}
+                            isSelected={draggedItem.key === selectedKey}
+                            isBeingDragged={true}
+                            itemIconLookup={clozeItemIconLookup}
+                            itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                            itemList={clozeItems} />
+                        : null}
+                >
+                    <div className='space-y-2'>
+                        <ol className='max-h-64 overflow-y-auto space-y-1'>
+                            {sortableClozeItems.map((clozeItem, i) => (
+                                <SortableItem
+                                    id={clozeItem.id}
+                                    key={clozeItem.id}>
+                                    <div ref={i == sortableClozeItems.length - 1 ? lastItemRef : null}>
+                                        <ItemOverviewRow
+                                            i={i}
+                                            isDragOverlay={false}
+                                            isSelected={selectedKey === clozeItem.key}
+                                            isBeingDragged={draggedKey === clozeItem.key}
+                                            itemIconLookup={clozeItemIconLookup}
+                                            itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                                            onSelectionUpdate={(key) => {
+                                                setSelectedKey(key);
+                                                setDraggedKey(null);
+                                            }}
+                                            itemList={clozeItems}
+                                            onListUpdate={(list) => updateComponent(list)}
+                                            getClipboardValue={() => clipboardContent?.toString() ?? ""}
+                                            setClipboardValue={(value) => setClipboardContent(value)}
+                                        />
+                                    </div>
+                                </SortableItem>
+                            ))}
+                        </ol>
+                        <div className='flex justify-center w-full'>
+                            <AddDropdown
+                                options={[
+                                    { key: ClozeItemType.SimpleText, label: typeHints[ClozeItemType.SimpleText], icon: icons[ClozeItemType.SimpleText] },
+                                    { key: ClozeItemType.Markdown, label: typeHints[ClozeItemType.Markdown], icon: icons[ClozeItemType.Markdown] },
+                                    { key: ClozeItemType.Dropdown, label: typeHints[ClozeItemType.Dropdown], icon: icons[ClozeItemType.Dropdown] },
+                                    { key: ClozeItemType.TextInput, label: typeHints[ClozeItemType.TextInput], icon: icons[ClozeItemType.TextInput] },
+                                    { key: ClozeItemType.NumberInput, label: typeHints[ClozeItemType.NumberInput], icon: icons[ClozeItemType.NumberInput] },
+                                    { key: ClozeItemType.TimeInput, label: typeHints[ClozeItemType.TimeInput], icon: icons[ClozeItemType.TimeInput] },
+                                    { key: ClozeItemType.DateInput, label: typeHints[ClozeItemType.DateInput], icon: icons[ClozeItemType.DateInput] },
+                                    { key: ClozeItemType.LineBreak, label: typeHints[ClozeItemType.LineBreak], icon: icons[ClozeItemType.LineBreak] },
+                                ]}
+                                onAddItem={onAddItem}
+                            />
+                        </div>
                     </div>
-                </div>
-            </SortableWrapper>
+                </SortableWrapper>
+            </div>
+
+            <Separator />
 
             <TabbedItemEditor isActive={selectedItem != undefined}
                 contentEditor={selectedItem && <ContentItem
