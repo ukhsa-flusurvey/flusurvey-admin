@@ -73,7 +73,7 @@ const OverviewMatrixCellContent: React.FC<{
                     }
                 )}>
                     {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
-                    {!hideKey && KeyBadge({ itemKey: cell.key ?? '', isHighlighted: isSelected || (highlightKey ?? false) })}
+                    {!hideKey && <KeyBadge itemKey={cell.key ?? ''} isHighlighted={isSelected || (highlightKey ?? false)} />}
                     <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
                 </div>
             </ContextMenuTrigger>
