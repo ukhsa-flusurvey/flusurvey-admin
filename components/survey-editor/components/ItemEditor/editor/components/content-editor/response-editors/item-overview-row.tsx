@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ItemComponent } from "survey-engine/data_types";
 import { PopoverKeyBadge } from "../../KeyBadge";
-import { ChevronDown, ClipboardCopy, ClipboardPaste, Copy, GripHorizontal, Heading, Trash } from "lucide-react";
+import { ClipboardCopy, ClipboardPaste, Copy, GripHorizontal, Heading, MoreHorizontalIcon, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import React from "react";
@@ -102,16 +102,16 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
             {props.isSelected && <>
                 <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                     <DropdownMenuTrigger asChild>
-                        <Button className='h-[20px] w-[20px] flex items-center justify-center hover:bg-slate-300 rounded-full' variant={'ghost'} onClick={onDelete}>
-                            <ChevronDown className='size-4 text-muted-foreground' />
+                        <Button className='h-[20px] flex items-center px-2 justify-center hover:bg-slate-300 rounded-full' variant={'ghost'} onClick={onDelete}>
+                            <MoreHorizontalIcon className='size-4 text-muted-foreground' />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={onDelete} onClick={(e) => e.stopPropagation()}><span className="text-muted-foreground mr-2" ><Trash size={16} /></span>Delete</DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem onSelect={onDuplicate} onClick={(e) => e.stopPropagation()}><span className="text-muted-foreground mr-2" ><Copy size={16} /></span>Duplicate</DropdownMenuItem>
                         <DropdownMenuItem onSelect={onCopy} onClick={(e) => e.stopPropagation()}><span className="text-muted-foreground mr-2" ><ClipboardCopy size={16} /></span>Copy Contents</DropdownMenuItem>
                         <DropdownMenuItem onSelect={onPaste} onClick={(e) => e.stopPropagation()}><span className="text-muted-foreground mr-2" ><ClipboardPaste size={16} /></span>Paste Contents</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={onDelete} onClick={(e) => e.stopPropagation()}><span className="text-muted-foreground mr-2" ><Trash size={16} /></span>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </>}
