@@ -204,7 +204,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                         itemList={clozeItems} />
                     : null}
             >
-                <div className='space-y-1'>
+                <div className='space-y-2'>
                     <ol className='max-h-64 overflow-y-auto space-y-1'>
                         {sortableClozeItems.map((clozeItem, i) => (
                             <SortableItem
@@ -231,7 +231,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                             </SortableItem>
                         ))}
                     </ol>
-                    <div className='flex justify-end w-full'>
+                    <div className='flex justify-center w-full'>
                         <AddDropdown
                             options={[
                                 { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
