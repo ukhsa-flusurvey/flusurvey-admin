@@ -35,7 +35,7 @@ const AddDropdown: React.FC<AddDropdownProps> = (props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='center'>
                 {props.options.map(option => (
-                    <DropdownMenuItem key={option.key} className='flex items-center'
+                    <DropdownMenuItem key={option.key} className='flex items-center gap-2'
                         onClick={() => props.onAddItem(option.key)}
                     >
                         <span>
