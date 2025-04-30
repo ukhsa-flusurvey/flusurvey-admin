@@ -65,7 +65,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = (props) => {
                 <Button
                     type='button'
                     className={clsx(
-                        'w-12 h-12 text-2xl rounded-full hover:rounded-md transition-all duration-200',
+                        'w-12 h-12 text-2xl rounded-full hover:rounded-md transition-all duration-200 [&_svg]:size-5',
                         {
                             'rounded-md': props.isActive,
                         }
