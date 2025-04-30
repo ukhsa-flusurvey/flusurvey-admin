@@ -100,6 +100,7 @@ export const PopoverKeyBadge: React.FC<{
                             value={currentKey}
                             placeholder="Enter a key..."
                             autoFocus
+                            autoComplete="off"
                             onChange={(e) => {
                                 setCurrentKey(e.target.value.trim());
                             }}
