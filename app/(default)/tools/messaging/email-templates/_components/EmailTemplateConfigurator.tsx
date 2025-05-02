@@ -21,6 +21,7 @@ interface EmailTemplateConfiguratorProps {
     messageType?: string;
     isSystemTemplate: boolean;
     isGlobalTemplate?: boolean;
+    availableStudyKeys?: string[];
 }
 
 const initialEmailTemplate: EmailTemplate = {
@@ -148,6 +149,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                 isNewTemplate={!props.emailTemplateConfig}
                                 isSystemTemplate={props.isSystemTemplate}
                                 isGlobalTemplate={props.isGlobalTemplate}
+                                availableStudyKeys={props.availableStudyKeys}
                                 onChange={(newConfig) => {
                                     setIsDirty(true);
                                     setEmailTemplateConfig(newConfig)
