@@ -64,17 +64,19 @@ const OptionEditor = (props: {
         <div className='border border-border rounded-md p-2 relative bg-white'>
             <div className='flex items-center gap-2 w-full'>
                 <GripVertical className='size-4' />
-                <PopoverKeyBadge
-                    headerText='Option Key'
-                    allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
-                    isHighlighted={true}
-                    itemKey={props.option.key ?? ''}
-                    onKeyChange={(newKey) => {
-                        props.onChange({
-                            ...props.option,
-                            key: newKey
-                        })
-                    }} />
+                <div className='flex items-center basis-1/4'>
+                    <PopoverKeyBadge
+                        headerText='Option Key'
+                        allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
+                        isHighlighted={true}
+                        itemKey={props.option.key ?? ''}
+                        onKeyChange={(newKey) => {
+                            props.onChange({
+                                ...props.option,
+                                key: newKey
+                            })
+                        }} />
+                </div>
                 <div className='grow'>
                     <SimpleTextViewContentEditor
                         component={props.option}
@@ -233,7 +235,7 @@ const RowEditor = (props: {
         className={props.isBeingDragged ? 'opacity-0' : ''}
     >
         <div className='relative'>
-            <div className='absolute left-0 top-1/2'>
+            <div className='absolute left-0 top-1/2 pt-1 pl-2'>
                 <GripVertical className='size-4' />
             </div>
             <TabCard
@@ -242,19 +244,21 @@ const RowEditor = (props: {
                         label: 'General',
                         icon: <Languages className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-
                             <div className='flex items-center gap-2 w-full'>
-                                <PopoverKeyBadge
-                                    headerText='Row Key'
-                                    allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
-                                    isHighlighted={true}
-                                    itemKey={props.row.key ?? ''}
-                                    onKeyChange={(newKey) => {
-                                        props.onChange({
-                                            ...props.row,
-                                            key: newKey
-                                        })
-                                    }} />
+                                <div className='flex items-center basis-1/4 pl-2'>
+                                    <PopoverKeyBadge
+                                        headerText='Row Key'
+                                        allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
+                                        isHighlighted={true}
+                                        itemKey={props.row.key ?? ''}
+                                        onKeyChange={(newKey) => {
+                                            props.onChange({
+                                                ...props.row,
+                                                key: newKey
+                                            })
+                                        }} />
+                                </div>
+
                                 <div className='grow'>
                                     <SimpleTextViewContentEditor
                                         component={props.row}
@@ -290,7 +294,7 @@ const RowEditor = (props: {
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
                             <div className='flex items-center gap-2'>
-                                <Label className='text-xs'>horizontalModeLabelPlacement</Label>
+                                <Label className='text-xs w-1/3'>Horizontal Mode Label Placement</Label>
                                 <Select
                                     value={horizontalModeLabelPlacement}
 
@@ -329,19 +333,19 @@ const RowEditor = (props: {
                             <StyleClassNameEditor
                                 styles={props.row.style || []}
                                 styleKey={RscaStyleKeys.horizontalModeClassName}
-                                label={RscaStyleKeys.horizontalModeClassName}
+                                label={"Horizontal Mode Class Name"}
                                 onChange={onRowStyleChange} />
                             <Separator />
                             <StyleClassNameEditor
                                 styles={props.row.style || []}
                                 styleKey={RscaStyleKeys.verticalModeClassName}
-                                label={RscaStyleKeys.verticalModeClassName}
+                                label={"Vertical Mode Class Name"}
                                 onChange={onRowStyleChange} />
                             <Separator />
                             <StyleClassNameEditor
                                 styles={props.row.style || []}
                                 styleKey={RscaStyleKeys.tableModeClassName}
-                                label={RscaStyleKeys.tableModeClassName}
+                                label={"Table Mode Class Name"}
                                 onChange={onRowStyleChange} />
 
                         </TabWrapper>

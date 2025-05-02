@@ -8,7 +8,7 @@ export const StyleClassNameEditor = (props: {
     onChange: (key: string, value: string | undefined) => void
 }) => {
     return <div className="flex items-center gap-2" data-no-dnd="true">
-        <Label htmlFor={'input-' + props.styleKey} className="text-xs">
+        <Label htmlFor={'input-' + props.styleKey} className="text-xs w-1/3">
             {props.label}
         </Label>
         <Input
