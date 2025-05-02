@@ -3,6 +3,10 @@ import { comparisonOperators, logicalOperators, miscExpressions } from "./common
 
 export const studyEngineCategories = [
     {
+        id: 'variables',
+        label: 'Variables'
+    },
+    {
         id: 'control-flow',
         label: 'Control flow'
     },
@@ -35,10 +39,6 @@ export const studyEngineCategories = [
         label: 'Change participant state'
     },
     {
-        id: 'variables',
-        label: 'Variables'
-    },
-    {
         id: 'misc',
         label: 'Misc'
     },
@@ -46,6 +46,10 @@ export const studyEngineCategories = [
         id: 'advanced',
         label: 'Advanced'
     },
+    {
+        id: 'date-helpers',
+        label: 'Date helpers'
+    }
 ]
 
 export const supportedBuiltInSlotTypes: SlotInputDef[] = [
@@ -85,6 +89,15 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         contextArrayKey: 'studyStatusValues',
         label: 'Available study status values',
         icon: 'tag',
+        color: 'green',
+        categories: ['variables'],
+    },
+    {
+        id: 'month-selector',
+        type: 'list-selector',
+        contextArrayKey: 'monthValues',
+        label: 'Available month values',
+        icon: 'calendar',
         color: 'green',
         categories: ['variables'],
     },
@@ -1820,11 +1833,147 @@ const logicAndComparisionExpressions: ExpressionDef[] = [
     }
 ]
 
+const dateHelpers: ExpressionDef[] = [
+    {
+        id: 'getISOWeekForTs',
+        categories: ['date-helpers'],
+        label: 'Get ISO week for timestamp',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Timestamp',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getISOWeekForTs',
+                data: []
+            }
+        }
+    },
+    {
+        id: 'getTsForNextISOWeek',
+        categories: ['date-helpers'],
+        label: 'Get timestamp for next occurrence of an ISO week',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'ISO Week',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'After this timestamp (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getTsForNextISOWeek',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'getTsForNextStartOfMonth',
+        categories: ['date-helpers'],
+        label: 'Get timestamp for next occurrence of a start of month',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Month',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'month-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'After this timestamp (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getTsForNextStartOfMonth',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+]
+
 /*
-  getISOWeekForTs,
-  getTsForNextStartOfMonth,
-  getTsForNextISOWeek,
-  generateRandomNumber: (min: number, max: number) => generateExpression('generateRandomNumber', undefined, min, max),
+
 */
 
 
@@ -1836,6 +1985,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...advancedExpressions,
     ...logicAndComparisionExpressions,
     ...eventCheckers,
+    ...dateHelpers,
 ]
 
 

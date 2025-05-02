@@ -79,6 +79,14 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
         }
     });
 
+    const monthValues = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => {
+        return {
+            key: m,
+            label: m
+        }
+    });
+
+
     return (
         <div className='bg-slate-100 rounded-md p-4'>
             <ExpArgEditor
@@ -127,6 +135,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     reportKeys: reportKeys ?? [],
                     reportKeysWithAttributes: reportKeysWithAttributes,
                     customEventKeys: customEventKeys ?? [],
+                    monthValues: monthValues ?? [],
                 }}
                 currentIndex={0}
                 slotDef={{
