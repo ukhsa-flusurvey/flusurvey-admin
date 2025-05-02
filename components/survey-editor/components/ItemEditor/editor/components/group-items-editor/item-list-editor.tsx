@@ -123,7 +123,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
 
     }
 
-    const ItemRowButton = (i: number, isDragOverlay: boolean) => {
+    const renderRowItem = (i: number, isDragOverlay: boolean) => {
         const item = currentItems[i];
         return <div>
             <ContextMenu>
@@ -228,14 +228,14 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                     }
                     props.onUpdateSurveyItem(newGroup);
                 }}
-                dragOverlayItem={(draggedId && draggedItem) ? ItemRowButton(currentItems.findIndex(item => item.id === draggedId), true) : null}>
+                dragOverlayItem={(draggedId && draggedItem) ? renderRowItem(currentItems.findIndex(item => item.id === draggedId), true) : null}>
                 <ol className='px-1 space-y-2 py-4'>
                     {currentItems.map((item, i) => (
                         <SortableItem
                             id={item.id}
                             key={item.id}
                         >
-                            {ItemRowButton(i, false)}
+                            {renderRowItem(i, false)}
                         </SortableItem>
                     ))}
                 </ol>

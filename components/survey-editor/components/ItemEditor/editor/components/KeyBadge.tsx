@@ -67,12 +67,6 @@ export const PopoverKeyBadge: React.FC<{
         }
     }, [currentKey, props.allOtherKeys]);
 
-    useEffect(() => {
-        setCurrentKey(props.itemKey);
-        setIsSelected(props.isHighlighted ?? false);
-        setError(null);
-    }, [props.itemKey]);
-
     const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
         if (!isValidKey) return;
         e.stopPropagation();
@@ -80,8 +74,14 @@ export const PopoverKeyBadge: React.FC<{
         popoverCloseRef.current?.click();
     }
 
-    return <Popover>
-        <PopoverTrigger className="flex items-center justify-center">
+    return <Popover
+        onOpenChange={(open) => {
+            if (open) {
+                setCurrentKey(props.itemKey)
+            }
+        }}
+    >
+        <PopoverTrigger>
             <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} highlightColor={props.highlightColor}
                 onClick={(e) => {
                     if (props.onClick != undefined) {
@@ -91,41 +91,48 @@ export const PopoverKeyBadge: React.FC<{
                     }
                 }} />
         </PopoverTrigger>
-        <PopoverContent className="max-w-64" align="start" data-no-dnd="true" >
+        <PopoverContent className="max-w-80 relative"
+            side='right'
+            align="start"
+            alignOffset={12}
+            data-no-dnd="true" >
             <div className="flex flex-col gap-2 w-full">
-                <div className="flex flex-row gap-2 items-center justify-between mb-2">
-                    <Label htmlFor="keyInput" className='text-sm font-semibold'>{headerText}</Label>
-                    <PopoverClose
-                        ref={popoverCloseRef}
-                        className='top-2 right-2 rounded-full p-1 hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background'
-                    >
-                        <X className='size-4' />
-                    </PopoverClose>
-                </div>
-                <div className="flex flex-row gap-2 items-center">
-                    <Input
-                        id="keyInput"
-                        className='w-full select-text'
-                        value={currentKey}
-                        autoFocus
-                        onChange={(e) => {
-                            setCurrentKey(e.target.value.trim());
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleKeyChange(e);
-                            }
-                        }}
-                    />
-                </div>
-                <div className="flex flex-row gap-2 justify-end items-center">
-                    {error && <span className='text-xs grow text-red-800'>{error}</span>}
+
+                <PopoverClose
+                    ref={popoverCloseRef}
+                    className='absolute top-2 right-2 rounded-full p-1 hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background'
+                >
+                    <X className='size-4' />
+                </PopoverClose>
+
+                <div className="flex flex-row gap-2 items-end">
+                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-1.5'>
+                        <span className="mb-1.5">
+                            {headerText}
+                        </span>
+                        <Input
+                            id="keyInput"
+                            className='w-full select-text'
+                            value={currentKey}
+                            placeholder="Enter a key..."
+                            autoFocus
+                            autoComplete="off"
+                            onChange={(e) => {
+                                setCurrentKey(e.target.value.trim());
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleKeyChange(e);
+                                }
+                            }}
+                        />
+                    </Label>
                     <Button
                         disabled={!hasChanges}
                         className="shrink-0"
                         size={'icon'}
                         variant={'outline'}
-                        onClick={(e) => {
+                        onClick={() => {
                             setCurrentKey(props.itemKey)
                         }}
                     >
@@ -140,6 +147,9 @@ export const PopoverKeyBadge: React.FC<{
                     >
                         <Check className='size-4 text-muted-foreground' color="green" />
                     </Button>
+                </div>
+                <div className="flex flex-row gap-2 justify-end items-center">
+                    {error && <span className='text-xs grow text-red-800'>{error}</span>}
                 </div>
             </div>
         </PopoverContent>

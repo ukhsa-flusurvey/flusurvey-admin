@@ -2,7 +2,7 @@ import SortableWrapper from "@/components/survey-editor/components/general/Sorta
 import AddDropdown from "@/components/survey-editor/components/general/add-dropdown";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Binary, Calendar, Clock, CornerDownLeft, FormInput, Heading, SquareChevronDown } from "lucide-react";
+import { Binary, Calendar, Clock, CornerDownLeft, FormInput, Heading, SquareChevronDown, TypeIcon, TypeOutlineIcon } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { ItemComponent, ItemGroupComponent } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
@@ -18,6 +18,7 @@ import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorConte
 import { ItemOverviewRow } from "./item-overview-row";
 import { useCopyToClipboard } from "usehooks-ts";
 import { TabbedItemEditor } from "./tabbed-item-editor";
+import { Separator } from "@/components/ui/separator";
 
 interface ClozeContentConfigProps {
     component: ItemGroupComponent;
@@ -101,33 +102,35 @@ const ContentItem = (props: {
     return (renderContent());
 }
 
+const icons = {
+    [ClozeItemType.SimpleText]: <TypeIcon className='size-4 text-muted-foreground' />,
+    [ClozeItemType.Dropdown]: <SquareChevronDown className='size-4 text-muted-foreground' />,
+    [ClozeItemType.TextInput]: <FormInput className='size-4 text-muted-foreground' />,
+    [ClozeItemType.NumberInput]: <Binary className='size-4 text-muted-foreground' />,
+    [ClozeItemType.TimeInput]: <Clock className='size-4 text-muted-foreground' />,
+    [ClozeItemType.DateInput]: <Calendar className='size-4 text-muted-foreground' />,
+    [ClozeItemType.Markdown]: <TypeOutlineIcon className='size-4 text-muted-foreground' />,
+    [ClozeItemType.LineBreak]: <CornerDownLeft className='size-4 text-muted-foreground' />,
+};
+
 const clozeItemIconLookup = (item: ItemComponent): React.ReactNode => {
-    const icons = {
-        [ClozeItemType.SimpleText]: <Heading className='size-4 text-muted-foreground' />,
-        [ClozeItemType.Dropdown]: <SquareChevronDown className='size-4 text-muted-foreground' />,
-        [ClozeItemType.TextInput]: <FormInput className='size-4 text-muted-foreground' />,
-        [ClozeItemType.NumberInput]: <Binary className='size-4 text-muted-foreground' />,
-        [ClozeItemType.TimeInput]: <Clock className='size-4 text-muted-foreground' />,
-        [ClozeItemType.DateInput]: <Calendar className='size-4 text-muted-foreground' />,
-        [ClozeItemType.Markdown]: <Heading className='size-4 text-muted-foreground' />,
-        [ClozeItemType.LineBreak]: <CornerDownLeft className='size-4 text-muted-foreground' />,
-    };
     const clozeItemType = getClozeItemType(item);
     return icons[clozeItemType] || <Heading className='size-4 text-muted-foreground' />;
 }
 
-const clozeItemDescriptiveTextLookup = (item: ItemComponent, lang: string): string => {
-    const typeHints = {
-        [ClozeItemType.SimpleText]: 'Text',
-        [ClozeItemType.Dropdown]: 'Dropdown',
-        [ClozeItemType.TextInput]: 'Text Input',
-        [ClozeItemType.NumberInput]: 'Number Input',
-        [ClozeItemType.TimeInput]: 'Time Input',
-        [ClozeItemType.DateInput]: 'Date Input',
-        [ClozeItemType.Markdown]: 'Markdown Text',
-        [ClozeItemType.LineBreak]: 'Line Break',
-    };
 
+const typeHints = {
+    [ClozeItemType.SimpleText]: 'Simple Text',
+    [ClozeItemType.Markdown]: 'Markdown Text',
+    [ClozeItemType.Dropdown]: 'Dropdown',
+    [ClozeItemType.TextInput]: 'Text Input',
+    [ClozeItemType.NumberInput]: 'Number Input',
+    [ClozeItemType.TimeInput]: 'Time Input',
+    [ClozeItemType.DateInput]: 'Date Input',
+    [ClozeItemType.LineBreak]: 'Line Break',
+};
+
+const clozeItemDescriptiveTextLookup = (item: ItemComponent, lang: string): string => {
     const itemType = getClozeItemType(item);
     const typeText = typeHints[itemType] ?? 'Unknown Type';
     return itemType == ClozeItemType.SimpleText ? (localisedObjectToMap(item.content).get(lang) ?? typeText) : typeText;
@@ -180,85 +183,92 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
     };
 
     return (
-        <div className=''>
-            <p className='font-semibold pb-2'>Cloze Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
-            <SortableWrapper
-                sortableID={'response-group-editor'}
-                items={sortableClozeItems}
-                onDraggedIdChange={(id) => {
-                    setDraggedKey(id);
-                }}
-                onReorder={(activeIndex, overIndex) => {
-                    const newItems = [...clozeItems];
-                    newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-                    updateComponent(newItems);
-                }}
-                dragOverlayItem={(draggedKey && draggedItem) ?
-                    <ItemOverviewRow
-                        i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
-                        isDragOverlay={true}
-                        isSelected={draggedItem.key === selectedKey}
-                        isBeingDragged={true}
-                        itemIconLookup={clozeItemIconLookup}
-                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                        itemList={clozeItems} />
-                    : null}
-            >
-                <div className='space-y-2'>
-                    <ol className='max-h-64 overflow-y-auto space-y-1'>
-                        {sortableClozeItems.map((clozeItem, i) => (
-                            <SortableItem
-                                id={clozeItem.id}
-                                key={clozeItem.id}>
-                                <div ref={i == sortableClozeItems.length - 1 ? lastItemRef : null}>
-                                    <ItemOverviewRow
-                                        i={i}
-                                        isDragOverlay={false}
-                                        isSelected={selectedKey === clozeItem.key}
-                                        isBeingDragged={draggedKey === clozeItem.key}
-                                        itemIconLookup={clozeItemIconLookup}
-                                        itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
-                                        onSelectionUpdate={(key) => {
-                                            setSelectedKey(key);
-                                            setDraggedKey(null);
-                                        }}
-                                        itemList={clozeItems}
-                                        onListUpdate={(list) => updateComponent(list)}
-                                        getClipboardValue={() => clipboardContent?.toString() ?? ""}
-                                        setClipboardValue={(value) => setClipboardContent(value)}
-                                    />
-                                </div>
-                            </SortableItem>
-                        ))}
-                    </ol>
-                    <div className='flex justify-center w-full'>
-                        <AddDropdown
-                            options={[
-                                { key: ClozeItemType.SimpleText, label: 'Text', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.Markdown, label: 'Markdown', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.Dropdown, label: 'Dropdown', icon: <SquareChevronDown className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.TextInput, label: 'Text Input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.NumberInput, label: 'Number Input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.TimeInput, label: 'Time Input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.DateInput, label: 'Date Input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                { key: ClozeItemType.LineBreak, label: 'Line Break', icon: <CornerDownLeft className='size-4 text-muted-foreground me-2' /> },
-                            ]}
-                            onAddItem={onAddItem}
-                        />
+        <div className='space-y-6'>
+            <div>
+                <p className='font-semibold pb-2'>Cloze Items: <span className='text-muted-foreground'>({clozeItems.length})</span></p>
+                <SortableWrapper
+                    sortableID={'response-group-editor'}
+                    items={sortableClozeItems}
+                    onDraggedIdChange={(id) => {
+                        setDraggedKey(id);
+                    }}
+                    onReorder={(activeIndex, overIndex) => {
+                        const newItems = [...clozeItems];
+                        newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
+                        updateComponent(newItems);
+                    }}
+                    dragOverlayItem={(draggedKey && draggedItem) ?
+                        <ItemOverviewRow
+                            i={sortableClozeItems.findIndex(item => item.id === draggedKey)}
+                            isDragOverlay={true}
+                            isSelected={draggedItem.key === selectedKey}
+                            isBeingDragged={true}
+                            itemIconLookup={clozeItemIconLookup}
+                            itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                            itemList={clozeItems} />
+                        : null}
+                >
+                    <div className='space-y-2'>
+                        <ol className='max-h-64 overflow-y-auto space-y-1'>
+                            {sortableClozeItems.map((clozeItem, i) => (
+                                <SortableItem
+                                    id={clozeItem.id}
+                                    key={clozeItem.id}>
+                                    <div ref={i == sortableClozeItems.length - 1 ? lastItemRef : null}>
+                                        <ItemOverviewRow
+                                            i={i}
+                                            isDragOverlay={false}
+                                            isSelected={selectedKey === clozeItem.key}
+                                            isBeingDragged={draggedKey === clozeItem.key}
+                                            itemIconLookup={clozeItemIconLookup}
+                                            itemDescriptiveTextLookup={(item) => clozeItemDescriptiveTextLookup(item, selectedLanguage)}
+                                            onSelectionUpdate={(key) => {
+                                                setSelectedKey(key);
+                                                setDraggedKey(null);
+                                            }}
+                                            itemList={clozeItems}
+                                            onListUpdate={(list) => updateComponent(list)}
+                                            getClipboardValue={() => clipboardContent?.toString() ?? ""}
+                                            setClipboardValue={(value) => setClipboardContent(value)}
+                                        />
+                                    </div>
+                                </SortableItem>
+                            ))}
+                        </ol>
+                        <div className='flex justify-center w-full'>
+                            <AddDropdown
+                                options={[
+                                    { key: ClozeItemType.SimpleText, label: typeHints[ClozeItemType.SimpleText], icon: icons[ClozeItemType.SimpleText] },
+                                    { key: ClozeItemType.Markdown, label: typeHints[ClozeItemType.Markdown], icon: icons[ClozeItemType.Markdown] },
+                                    { key: ClozeItemType.Dropdown, label: typeHints[ClozeItemType.Dropdown], icon: icons[ClozeItemType.Dropdown] },
+                                    { key: ClozeItemType.TextInput, label: typeHints[ClozeItemType.TextInput], icon: icons[ClozeItemType.TextInput] },
+                                    { key: ClozeItemType.NumberInput, label: typeHints[ClozeItemType.NumberInput], icon: icons[ClozeItemType.NumberInput] },
+                                    { key: ClozeItemType.TimeInput, label: typeHints[ClozeItemType.TimeInput], icon: icons[ClozeItemType.TimeInput] },
+                                    { key: ClozeItemType.DateInput, label: typeHints[ClozeItemType.DateInput], icon: icons[ClozeItemType.DateInput] },
+                                    { key: ClozeItemType.LineBreak, label: typeHints[ClozeItemType.LineBreak], icon: icons[ClozeItemType.LineBreak] },
+                                ]}
+                                onAddItem={onAddItem}
+                            />
+                        </div>
                     </div>
-                </div>
-            </SortableWrapper>
+                </SortableWrapper>
+            </div>
 
-            <TabbedItemEditor isActive={selectedItem != undefined} contentEditor={selectedItem && <ContentItem
-                component={selectedItem}
-                onUpdateComponent={(updatedComponent: ItemComponent) => {
-                    const updatedItems = [...clozeItems];
-                    const index = updatedItems.findIndex(item => item.key === selectedItem?.key);
-                    if (index !== -1) {
-                        updatedItems[index] = updatedComponent;
-                    }
-                    updateComponent(updatedItems);
-                }} />} conditionsEditor={selectedItem && <p className="text-sm">Condition Editor.</p>} title={'Selected Item:'} />
+            <Separator />
+
+            <TabbedItemEditor isActive={selectedItem != undefined}
+                contentEditor={selectedItem && <ContentItem
+                    component={selectedItem}
+                    onUpdateComponent={(updatedComponent: ItemComponent) => {
+                        const updatedItems = [...clozeItems];
+                        const index = updatedItems.findIndex(item => item.key === selectedItem?.key);
+                        if (index !== -1) {
+                            updatedItems[index] = updatedComponent;
+                        }
+                        updateComponent(updatedItems);
+                    }} />}
+                conditionsEditor={selectedItem && <p className="text-sm">Condition Editor.</p>}
+                title={'Selected Item:'} />
         </div>
     );
 

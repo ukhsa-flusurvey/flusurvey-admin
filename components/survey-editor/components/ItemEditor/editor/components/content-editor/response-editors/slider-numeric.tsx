@@ -2,11 +2,11 @@ import React from 'react';
 import { ExpressionArg, ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import ExpArgEditorForNum from './exp-arg-editor-for-num';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { Label } from '@radix-ui/react-label';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { Input } from '@/components/ui/input';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { ExpArg } from '@/components/expression-editor/utils';
+import { Label } from '@/components/ui/label';
 
 interface SliderNumericProps {
     surveyItem: SurveySingleItem;

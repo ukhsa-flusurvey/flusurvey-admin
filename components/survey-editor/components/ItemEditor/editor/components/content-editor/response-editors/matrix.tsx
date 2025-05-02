@@ -72,20 +72,22 @@ const OverviewMatrixCellContent: React.FC<{
                     }
                 )}>
                     {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
-                    {!hideKey && PopoverKeyBadge({
-                        itemKey: cell.key ?? '',
-                        isHighlighted: isSelected || (highlightKey ?? false),
-                        allOtherKeys: allOtherKeys ?? [],
-                        onKeyChange: (newKey) => {
-                            if (newKey) {
-                                const newCell = {
-                                    ...cell,
-                                    key: newKey,
+                    {!hideKey && (
+                        <PopoverKeyBadge
+                            itemKey={cell.key ?? ''}
+                            isHighlighted={isSelected || (highlightKey ?? false)}
+                            allOtherKeys={allOtherKeys ?? []}
+                            onKeyChange={(newKey) => {
+                                if (newKey) {
+                                    const newCell = {
+                                        ...cell,
+                                        key: newKey,
+                                    };
+                                    onKeyChange(cell.key ?? '', newKey, newCell);
                                 }
-                                onKeyChange(cell.key ?? '', newKey, newCell);
-                            }
-                        }
-                    })}
+                            }}
+                        />
+                    )}
                     <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
                 </div>
             </ContextMenuTrigger>

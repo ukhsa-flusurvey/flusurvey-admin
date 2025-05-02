@@ -19,7 +19,7 @@ export default async function Page() {
                 ]
             }
         >
-            <div className="flex">
+            <div className="flex pb-12">
                 <Suspense fallback={<ScheduledEmailsSkeleton />}>
                     <ScheduledEmails />
                 </Suspense>

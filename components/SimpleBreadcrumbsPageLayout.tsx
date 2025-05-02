@@ -11,13 +11,13 @@ interface SimpleBreadcrumbsPageLayoutProps {
 
 const SimpleBreadcrumbsPageLayout: React.FC<SimpleBreadcrumbsPageLayoutProps> = (props) => {
     return (
-        <div className="px-6 h-full">
-            <div className="pt-3 flex gap-8">
+        <div className="px-6 overflow-y-auto">
+            <div className="pt-3">
                 <Breadcrumbs
                     links={props.links}
                 />
             </div>
-            <main className="py-6 h-full">
+            <main className="py-6">
                 {props.children}
             </main>
         </div>

@@ -1,6 +1,7 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -14,10 +15,16 @@ interface MessageConfigProps {
     isNewTemplate: boolean;
     isSystemTemplate?: boolean;
     isGlobalTemplate?: boolean;
+    availableStudyKeys?: string[];
     onChange: (template: EmailTemplate) => void;
 }
 
 const MessageConfig: React.FC<MessageConfigProps> = (props) => {
+    const availableStudyKeys = props.availableStudyKeys ?? [];
+    if (props.emailTemplateConfig.studyKey && !availableStudyKeys.includes(props.emailTemplateConfig.studyKey)) {
+        availableStudyKeys.push(props.emailTemplateConfig.studyKey);
+    }
+
     return (
         <TooltipProvider>
             <div className='p-4 min-w-96 max-w-96 space-y-4'>
@@ -48,7 +55,9 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                             placeholder='Enter the message type'
                             value={props.emailTemplateConfig.messageType ?? ''}
                             onChange={(event) => {
-                                const value = event.target.value;
+                                let value = event.target.value;
+                                value = value.trim().replaceAll(' ', '-').replaceAll('/', '-').replaceAll('?', '').replaceAll('&', '').replaceAll('"', '').replaceAll("'", '').replaceAll('(', '').replaceAll(')', '').replaceAll('[', '').replaceAll(']', '').replaceAll('{', '').replaceAll('}', '').replaceAll('<', '').replaceAll('>', '').replaceAll(':', '').replaceAll(';', '').replaceAll(',', '').replaceAll('\\', '');
+
                                 const newEmailTemplateConfig = { ...props.emailTemplateConfig };
                                 newEmailTemplateConfig.messageType = value;
                                 props.onChange(newEmailTemplateConfig);
@@ -70,18 +79,28 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                                 </TooltipContent>
                             </Tooltip>
                         </Label>
-                        <Input
-                            id='study-key'
-                            placeholder='Enter a study key'
-                            readOnly={!props.isNewTemplate}
+                        <Select
+                            //id='study-key'
+                            disabled={!props.isNewTemplate}
                             value={props.emailTemplateConfig.studyKey ?? ''}
-                            onChange={(event) => {
-                                const value = event.target.value;
+                            onValueChange={(value) => {
                                 const newEmailTemplateConfig = { ...props.emailTemplateConfig };
                                 newEmailTemplateConfig.studyKey = value;
                                 props.onChange(newEmailTemplateConfig);
                             }}
-                        />
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a study key..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {availableStudyKeys?.map((studyKey) => {
+                                    return <SelectItem
+                                        key={studyKey}
+                                        value={studyKey}
+                                    >{studyKey}</SelectItem>
+                                })}
+                            </SelectContent>
+                        </Select>
                     </div>}
 
                     <Separator />

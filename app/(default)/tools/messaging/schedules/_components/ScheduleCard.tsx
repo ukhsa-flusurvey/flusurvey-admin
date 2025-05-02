@@ -1,9 +1,10 @@
 import { MessageSchedule } from '@/utils/server/types/messaging';
 import { formatDistanceStrict } from 'date-fns';
-import { dateFromTimestamp, formatTimestamp } from '../utils';
+import { dateFromTimestamp } from '../utils';
 import { Badge } from '@/components/ui/badge';
 import { CalendarClock, RefreshCw } from 'lucide-react';
 import { LinkMenuItem } from '@/components/LinkMenu';
+import ClientSideDateTimeDisplay from './client-side-datetime-display';
 
 
 const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => {
@@ -34,7 +35,7 @@ const ScheduleCard: React.FC<{ schedule: MessageSchedule }> = ({ schedule }) => 
                         <CalendarClock className="size-5" />
                     </span>
                     <span className="px-1">
-                        {formatTimestamp(schedule.nextTime)}
+                        <ClientSideDateTimeDisplay dateTime={dateFromTimestamp(schedule.nextTime)} />
                     </span>
                 </div>
 
