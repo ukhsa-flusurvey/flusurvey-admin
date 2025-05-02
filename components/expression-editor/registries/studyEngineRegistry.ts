@@ -1390,6 +1390,63 @@ const advancedExpressions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'generateRandomNumber',
+        categories: ['advanced'],
+        label: 'Generate random number',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Min',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Max',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'generateRandomNumber',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    },
+                    {
+                        dtype: 'num',
+                        num: 100
+                    }
+                ],
+                returnType: 'float',
+            },
+        }
     }
 ]
 
@@ -1764,7 +1821,10 @@ const logicAndComparisionExpressions: ExpressionDef[] = [
 ]
 
 /*
-
+  getISOWeekForTs,
+  getTsForNextStartOfMonth,
+  getTsForNextISOWeek,
+  generateRandomNumber: (min: number, max: number) => generateExpression('generateRandomNumber', undefined, min, max),
 */
 
 
@@ -1831,13 +1891,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     }
   },
 
-  // Other
 
-  getISOWeekForTs,
-  getTsForNextStartOfMonth,
-  getTsForNextISOWeek,
-  parseValueAsNum,
-  generateRandomNumber: (min: number, max: number) => generateExpression('generateRandomNumber', undefined, min, max),
 }
 
 
