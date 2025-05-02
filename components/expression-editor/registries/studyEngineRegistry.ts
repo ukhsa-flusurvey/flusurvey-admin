@@ -23,8 +23,8 @@ export const studyEngineCategories = [
         label: 'Survey submission methods',
     },
     {
-        id: 'custom-event-checkers',
-        label: 'Custom event methodes'
+        id: 'event-checkers',
+        label: 'Event properties'
     },
     {
         id: 'general-study-actions',
@@ -45,7 +45,7 @@ export const studyEngineCategories = [
     {
         id: 'advanced',
         label: 'Advanced'
-    }
+    },
 ]
 
 export const supportedBuiltInSlotTypes: SlotInputDef[] = [
@@ -121,6 +121,15 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         type: 'list-selector',
         contextArrayKey: 'surveyKeys',
         label: 'Available survey keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'custom-event-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'customEventKeys',
+        label: 'Available custom event keys',
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
@@ -1385,6 +1394,299 @@ const advancedExpressions: ExpressionDef[] = [
 ]
 
 
+
+const eventCheckers: ExpressionDef[] = [
+    // event type
+    {
+        id: 'checkEventType',
+        categories: ['event-checkers'],
+        label: 'Check event type',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Event type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'event-type-selector',
+                        type: 'select',
+                        options: ['ENTER', 'SUBMIT', 'TIMER', 'MERGE', 'CUSTOM', 'LEAVE'].map(t => {
+                            return {
+                                key: t,
+                                label: t
+                            }
+                        }),
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'checkEventType',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ]
+            },
+        }
+    },
+    // survey submission
+    {
+        id: 'checkSurveyResponseKey',
+        categories: ['event-checkers'],
+        label: 'Current event is submission of survey with key',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'checkSurveyResponseKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            },
+        }
+    },
+    // custom events
+    {
+        id: 'checkEventKey',
+        categories: ['event-checkers'],
+        label: 'Custom event with key',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'custom-event-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'checkEventKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['custom-event-key-selector']
+                }
+            },
+        }
+    },
+    {
+        id: 'hasEventPayload',
+        categories: ['event-checkers'],
+        label: 'Has (any) event payload',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasEventPayload',
+                data: [
+                ],
+            },
+        }
+    },
+    {
+        id: 'hasEventPayloadKey',
+        categories: ['event-checkers'],
+        label: 'Has event payload with key',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasEventPayloadKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+            },
+        }
+    },
+    {
+        id: 'hasEventPayloadKeyWithValue',
+        categories: ['event-checkers'],
+        label: 'Has event payload with key and value',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasEventPayloadKeyWithValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+            },
+        }
+    },
+    {
+        id: 'getEventPayloadValueAsStr',
+        categories: ['event-checkers'],
+        label: 'Get event payload value as string',
+        returnType: 'str',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getEventPayloadValueAsStr',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                returnType: 'string',
+            },
+
+        }
+    },
+    {
+        id: 'getEventPayloadValueAsNum',
+        categories: ['event-checkers'],
+        label: 'Get event payload value as number',
+        returnType: 'num',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getEventPayloadValueAsNum',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                returnType: 'float',
+            },
+        }
+    },
+]
+
 const logicAndComparisionExpressions: ExpressionDef[] = [
     ...comparisonOperators,
     ...logicalOperators,
@@ -1466,27 +1768,6 @@ const logicAndComparisionExpressions: ExpressionDef[] = [
 */
 
 
-/*
-    // TODO: submission event
-    checkSurveyResponseKey,
-
-
-    TODO: custom event
-    checkEventKey,
-      eventPayload: {
-        hasEventPayload,
-        hasEventPayloadKey,
-        hasEventPayloadKeyWithValue,
-        getEventPayloadValueAsStr,
-        getEventPayloadValueAsNum,
-  },
-
-
-  TODO: general
-  checkEventType,
-*/
-
-
 export const studyEngineRegistry: ExpressionDef[] = [
     ...controlFlowOperators,
     ...miscExpressions,
@@ -1494,6 +1775,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...participantStateActions,
     ...advancedExpressions,
     ...logicAndComparisionExpressions,
+    ...eventCheckers,
 ]
 
 

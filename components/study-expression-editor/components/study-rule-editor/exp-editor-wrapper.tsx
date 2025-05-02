@@ -71,6 +71,14 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
         }
     })
 
+    const customEventKeys = currentStudyContext?.customEventKeys?.map(k => {
+        return {
+            key: k,
+            label: k,
+            type: 'string'
+        }
+    });
+
     return (
         <div className='bg-slate-100 rounded-md p-4'>
             <ExpArgEditor
@@ -118,6 +126,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     externalEventHandlers: externalEventHandlers,
                     reportKeys: reportKeys ?? [],
                     reportKeysWithAttributes: reportKeysWithAttributes,
+                    customEventKeys: customEventKeys ?? [],
                 }}
                 currentIndex={0}
                 slotDef={{
