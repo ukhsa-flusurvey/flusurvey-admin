@@ -81,7 +81,7 @@ export const PopoverKeyBadge: React.FC<{
             }
         }}
     >
-        <PopoverTrigger>
+        <PopoverTrigger className="flex items-center justify-center">
             <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} highlightColor={props.highlightColor}
                 onClick={(e) => {
                     if (props.onClick != undefined) {
