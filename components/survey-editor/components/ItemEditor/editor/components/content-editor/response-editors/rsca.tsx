@@ -56,6 +56,7 @@ const OptionEditor = (props: {
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
     isBeingDragged?: boolean;
+    hideLabel?: boolean;
 }) => {
     return <SortableItem
         id={props.option.key!}
@@ -77,14 +78,15 @@ const OptionEditor = (props: {
                             })
                         }} />
                 </div>
-                <div className='grow'>
+                {!props.hideLabel && <div className='grow'>
                     <SimpleTextViewContentEditor
                         component={props.option}
                         onChange={(updatedComponent) => props.onChange(updatedComponent)}
                         hideLabel={true}
                         placeholder='Enter option label...'
                     />
-                </div>
+                </div>}
+                {props.hideLabel && <div className='grow' />}
                 <Button
                     variant='ghost'
                     size='icon'
@@ -103,8 +105,9 @@ const OptionEditor = (props: {
     </SortableItem>
 }
 
-const OptionsEditor = (props: {
+export const OptionsEditor = (props: {
     options: ItemComponent[],
+    hideLabel?: boolean,
     onChange: (newOptions: ItemComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
@@ -142,6 +145,7 @@ const OptionsEditor = (props: {
                     option={draggedItem}
                     onChange={() => { }}
                     onDelete={() => { }}
+                    hideLabel={props.hideLabel}
                 />
                 : null}
         >
@@ -171,6 +175,7 @@ const OptionsEditor = (props: {
                             props.onChange(newOptions);
                         }}
                         isBeingDragged={draggedId === option.key}
+                        hideLabel={props.hideLabel}
                     />
                 })}
             </ol>
