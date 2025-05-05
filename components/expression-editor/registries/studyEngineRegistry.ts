@@ -1460,6 +1460,65 @@ const advancedExpressions: ExpressionDef[] = [
                 returnType: 'float',
             },
         }
+    },
+    {
+        id: 'isStudyCodePresent',
+        categories: ['advanced'],
+        label: 'Is study code present',
+        returnType: 'boolean',
+        icon: 'tag',
+        color: 'blue',
+        slots: [
+            {
+                label: 'List key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ],
+            },
+            {
+                label: 'Code to check',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'isStudyCodePresent',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                ],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            },
+        }
     }
 ]
 
@@ -1973,6 +2032,20 @@ const dateHelpers: ExpressionDef[] = [
 ]
 
 /*
+    // Response checkers
+
+  responseHasKeysAny,
+  responseHasOnlyKeysOtherThan,
+  getResponseValueAsNum,
+  getResponseValueAsStr,
+  getSelectedKeys,
+  hasResponseKey,
+  hasResponseKeyWithValue,
+  countResponseItems,
+  // Old responses
+  checkConditionForOldResponses,
+
+  isStudyCodePresent,
 
 */
 
@@ -1990,19 +2063,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 
 /*
-  // Response checkers
 
-  responseHasKeysAny,
-  responseHasOnlyKeysOtherThan,
-  getResponseValueAsNum,
-  getResponseValueAsStr,
-  getSelectedKeys,
-  hasResponseKey,
-  hasResponseKeyWithValue,
-  countResponseItems,
-  isStudyCodePresent,
-  // Old responses
-  checkConditionForOldResponses,
   // Event payload methods:
 
   // Participant state:
