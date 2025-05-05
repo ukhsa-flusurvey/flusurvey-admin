@@ -15,14 +15,19 @@ interface ParticipantListItemProps {
     selected: boolean;
 }
 
-const getLastSubmission = (lastSubmissions?: { [key: string]: number }) => {
-    if (!lastSubmissions) return <>
+const getModifiedAt = (modifiedAt?: number, lastSubmissions?: { [key: string]: number }) => {
+    if (!modifiedAt && !lastSubmissions) return <>
         None
     </>
-    const lastSubmission = Object.values(lastSubmissions).sort((a, b) => b - a)[0]
+
+    let value = modifiedAt;
+    if (!value) {
+        value = Object.values(lastSubmissions!).sort((a, b) => b - a)[0]
+    }
+
 
     // format date form unix timestamp
-    const date = new Date(lastSubmission * 1000)
+    const date = new Date(value * 1000)
 
     return <>
         {format(date, 'dd-MMM-yyyy')}
@@ -65,7 +70,7 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
                         <div className='text-neutral-700 text-xs grow flex items-center gap-1'>
 
                             <Activity className='size-3 text-neutral-400 me-1' />
-                            {getLastSubmission(props.participant.lastSubmissions)}
+                            {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
 
                         </div>
 

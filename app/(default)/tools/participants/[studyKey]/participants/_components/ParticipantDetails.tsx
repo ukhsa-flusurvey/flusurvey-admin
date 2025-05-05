@@ -42,7 +42,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
         );
     }
 
-    const lastActivity = participant.lastSubmissions ? Object.values(participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
+    const lastModified = participant.modifiedAt ? participant.modifiedAt : participant.lastSubmissions ? Object.values(participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
 
     const participantCard = <Card className='p-6'>
         <div className='flex flex-col gap-6'>
@@ -81,10 +81,10 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = async (props) => {
                 <div className=''>
                     <div className='text-sm text-foreground mb-1 flex items-center gap-1'>
                         <span className='text-neutral-400'><Activity className='size-4' /></span>
-                        Last activity
+                        Last modified
                     </div>
                     <div>
-                        {lastActivity ? (new Date(lastActivity * 1000).toLocaleDateString()) : 'Never'}
+                        {lastModified ? (new Date(lastModified * 1000).toLocaleDateString()) : 'Never'}
                     </div>
                 </div>
                 <span className='grow'></span>

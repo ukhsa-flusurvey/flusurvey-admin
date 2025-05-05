@@ -18,6 +18,7 @@ export interface ParticipantState {
     participantId: string;
     studyStatus: string;
     enteredAt: number;
+    modifiedAt: number;
     currentStudySession?: string;
     flags: { [key: string]: string };
     linkingCodes?: { [key: string]: string };
@@ -30,6 +31,11 @@ export const pStateFromAPI = (pState: any): ParticipantState => {
     // convert enteredAt to number
     if (pState.enteredAt && typeof (pState.enteredAt) === 'string') {
         pState.enteredAt = parseInt(pState.enteredAt);
+    }
+
+    // convert modifiedAt to number
+    if (pState.modifiedAt && typeof (pState.modifiedAt) === 'string') {
+        pState.modifiedAt = parseInt(pState.modifiedAt);
     }
 
     // convert lastSubmissions to numbers
