@@ -232,7 +232,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
 
                 <div className=''>
                     <PopoverKeyBadge
-                        allOtherKeys={props.surveyItemList.map(i => i.key).filter(i => i !== item.itemKey)}
+                        allOtherKeys={props.surveyItemList.map(i => getItemKeyFromFullKey(i.key)).filter(i => i !== item.itemKey)}
                         itemKey={item.itemKey}
                         headerText={isRoot ? 'Root Group Key' : 'Item Key'}
                         isHighlighted={true}
