@@ -2143,6 +2143,91 @@ const responseCheckers: ExpressionDef[] = [
         }
     },
     {
+        id: 'getResponseValueAsNum',
+        categories: ['response-checkers'],
+        label: 'Get response value as number',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp', exp: {
+                name: 'getResponseValueAsNum',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: '',
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ],
+                returnType: 'float'
+            }
+        },
+    },
+    {
+        id: 'getResponseValueAsStr',
+        categories: ['response-checkers'],
+        label: 'Get response value as string',
+        returnType: 'str',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            },
+            {
+                label: 'Response slot key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'], excludedExpressions: ['getAttribute'] }
+                ],
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp', exp: {
+                name: 'getResponseValueAsStr',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: '',
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'rg.',
+                    },
+                ],
+            }
+        },
+    },
+    {
         id: 'countResponseItems',
         categories: ['response-checkers'],
         label: 'Count response items',
@@ -2296,9 +2381,6 @@ const responseCheckers: ExpressionDef[] = [
 
 /*
   // Response checkers
-
-  getResponseValueAsNum,
-  getResponseValueAsStr,
 
   hasResponseKey,
   hasResponseKeyWithValue,
