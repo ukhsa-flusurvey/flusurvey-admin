@@ -2357,6 +2357,63 @@ const responseCheckers: ExpressionDef[] = [
         }
     },
     {
+        id: 'getSelectedKeys',
+        categories: ['response-checkers'],
+        label: 'Get selected keys',
+        returnType: 'str',
+        icon: 'code',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Slot key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getSelectedKeys',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ],
+                returnType: 'string'
+            },
+        }
+    },
+    {
         id: 'countResponseItems',
         categories: ['response-checkers'],
         label: 'Count response items',
@@ -2509,11 +2566,6 @@ const responseCheckers: ExpressionDef[] = [
 ]
 
 /*
-  // Response checkers
-
-  hasResponseKey,
-  hasResponseKeyWithValue,
-  getSelectedKeys,
 
 */
 
