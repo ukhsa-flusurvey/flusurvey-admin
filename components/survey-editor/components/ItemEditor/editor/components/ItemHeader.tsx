@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { PopoverClose, PopoverTrigger } from '@radix-ui/react-popover';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopy, CodeSquare, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
+import { ClipboardCopy, CodeSquare, CornerDownLeft, CornerDownRight, House, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import MoveItemDialog from './MoveItemDialog';
 import ItemLabelPreviewAndEditor from './item-label-preview-and-editor';
 import { PopoverKeyBadge } from './KeyBadge';
+import { useItemEditorCtx } from '../../item-editor-context';
 
 interface ItemHeaderProps {
     surveyItem: SurveyItem;
@@ -26,6 +27,37 @@ interface ItemHeaderProps {
     onChangeKey: (oldKey: string, newKey: string) => void;
     onChangeItemLabel: (newLabel: string) => void;
 }
+
+const KeyPathDisplay: React.FC<{ fullKey: string; color: string }> = ({ fullKey, color }) => {
+    const { setSelectedItemKey, setCurrentPath } = useItemEditorCtx();
+    const keyParts = fullKey.split('.');
+
+    if (keyParts.length <= 1) {
+        return null;
+    } else {
+        const handleClick = (index: number) => {
+            const partialKey = keyParts.slice(0, index + 1).join('.');
+            setCurrentPath(getParentKeyFromFullKey(partialKey));
+            setSelectedItemKey(partialKey);
+        };
+
+        return (
+            <span className='text-xs font-semibold cursor-default' style={{ color: color }}>
+                {keyParts.slice(0, keyParts.length - 1).map((keyPart, partIndex) => (
+                    <React.Fragment key={partIndex}>
+                        <span
+                            className="cursor-pointer hover:underline hover:opacity-80"
+                            onClick={() => handleClick(partIndex)}
+                        >
+                            {keyPart}
+                        </span>
+                        {partIndex < keyParts.length - 2 && <span> . </span>}
+                    </React.Fragment>
+                ))}
+            </span>
+        );
+    }
+};
 
 const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
@@ -230,21 +262,27 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                     </TooltipContent>
                 </Tooltip>
 
-                <div className=''>
-                    <PopoverKeyBadge
-                        allOtherKeys={props.surveyItemList.map(i => getItemKeyFromFullKey(i.key)).filter(i => i !== item.itemKey)}
-                        itemKey={item.itemKey}
-                        headerText={isRoot ? 'Root Group Key' : 'Item Key'}
-                        isHighlighted={true}
-                        highlightColor={item.color}
-                        onKeyChange={(newSubKey) => {
-                            const keyParts = props.surveyItem.key.split('.');
-                            keyParts.pop();
-                            keyParts.push(newSubKey);
-                            const newFullKey = keyParts.join('.');
-                            props.onChangeKey(props.surveyItem.key, newFullKey);
-                        }}
-                    />
+                <div className='flex flex-col items-start gap-0.5'>
+                    <div className='flex'>
+                        <KeyPathDisplay fullKey={props.surveyItem.key} color={item.color ?? ''} />
+                    </div>
+                    <div className='flex-grow flex flex-row gap-1 items-center'>
+                        {!isRoot && <CornerDownRight size={16} color={item.color} />}
+                        <PopoverKeyBadge
+                            allOtherKeys={props.surveyItemList.map(i => getItemKeyFromFullKey(i.key)).filter(i => i !== item.itemKey)}
+                            itemKey={item.itemKey}
+                            headerText={isRoot ? 'Root Group Key' : 'Item Key'}
+                            isHighlighted={true}
+                            highlightColor={item.color}
+                            onKeyChange={(newSubKey) => {
+                                const keyParts = props.surveyItem.key.split('.');
+                                keyParts.pop();
+                                keyParts.push(newSubKey);
+                                const newFullKey = keyParts.join('.');
+                                props.onChangeKey(props.surveyItem.key, newFullKey);
+                            }}
+                        />
+                    </div>
                 </div>
                 <div className='grow flex justify-center'>
                     <ItemLabelPreviewAndEditor
