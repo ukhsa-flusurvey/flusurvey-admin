@@ -2037,6 +2037,62 @@ const dateHelpers: ExpressionDef[] = [
 
 const responseCheckers: ExpressionDef[] = [
     {
+        id: 'countResponseItems',
+        categories: ['response-checkers'],
+        label: 'Count response items',
+        returnType: 'num',
+        icon: 'code',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Slot key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'countResponseItems',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            },
+        }
+    },
+    {
         id: 'checkConditionForOldResponses',
         categories: ['response-checkers'],
         label: 'Check condition for old responses',
@@ -2143,8 +2199,6 @@ const responseCheckers: ExpressionDef[] = [
   hasResponseKey,
   hasResponseKeyWithValue,
   countResponseItems,
-  // Old responses
-  checkConditionForOldResponses,
 
 */
 
