@@ -49,6 +49,10 @@ export const studyEngineCategories = [
     {
         id: 'date-helpers',
         label: 'Date helpers'
+    },
+    {
+        id: 'response-checkers',
+        label: 'Response checkers'
     }
 ]
 
@@ -2031,6 +2035,103 @@ const dateHelpers: ExpressionDef[] = [
     },
 ]
 
+const responseCheckers: ExpressionDef[] = [
+    {
+        id: 'checkConditionForOldResponses',
+        categories: ['response-checkers'],
+        label: 'Check condition for old responses',
+        returnType: 'boolean',
+        icon: 'split',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Condition',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['boolean']
+                    }
+                ]
+            },
+            {
+                label: 'How many responses need to fulfill condition ("all", "any", count)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+
+                ]
+            },
+            {
+                label: 'Responses since',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Responses until',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'checkConditionForOldResponses',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'lt',
+                            data: [
+                                {
+                                    dtype: 'num',
+                                    num: 0
+                                },
+                                {
+                                    dtype: 'num',
+                                    num: 0
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'all'
+                    }
+                ]
+            },
+        }
+    }
+]
+
 /*
     // Response checkers
 
@@ -2045,8 +2146,6 @@ const dateHelpers: ExpressionDef[] = [
   // Old responses
   checkConditionForOldResponses,
 
-  isStudyCodePresent,
-
 */
 
 
@@ -2056,6 +2155,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...generalStudyActions,
     ...participantStateActions,
     ...advancedExpressions,
+    ...responseCheckers,
     ...logicAndComparisionExpressions,
     ...eventCheckers,
     ...dateHelpers,
