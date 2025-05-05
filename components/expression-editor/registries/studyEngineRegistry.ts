@@ -2228,6 +2228,135 @@ const responseCheckers: ExpressionDef[] = [
         },
     },
     {
+        id: 'hasResponseKey',
+        categories: ['response-checkers'],
+        label: 'A specific response key is present',
+        returnType: 'boolean',
+        color: 'yellow',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Slot key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasResponseKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            },
+        }
+    },
+    {
+        id: 'hasResponseKeyWithValue',
+        categories: ['response-checkers'],
+        label: 'A specific response key is present and has a specific value',
+        returnType: 'boolean',
+        color: 'yellow',
+        slots: [
+            {
+                label: 'Item key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Slot key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Expected value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasResponseKeyWithValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            },
+        }
+    },
+    {
         id: 'countResponseItems',
         categories: ['response-checkers'],
         label: 'Count response items',
