@@ -56,6 +56,39 @@ export const studyEngineCategories = [
     }
 ]
 
+const slotKeyValueListSlotEditors: SlotInputDef[] = [
+    {
+        id: 'item-key-slot-key-options-single-choice',
+        type: 'key-value-list',
+        label: 'Single choice options',
+        contextArrayKey: 'singleChoiceOptions',
+        // filterForItemType: 'with-value',
+        withFixedValue: 'rg.scg',
+        icon: 'diamond',
+        // color: 'green',
+        categories: ['variables'],
+    },
+    {
+        id: 'item-key-slot-key-options-multiple-choice',
+        type: 'key-value-list',
+        label: 'Multiple choice options',
+        contextArrayKey: 'multipleChoiceOptions',
+        withFixedValue: 'rg.mcg',
+        icon: 'square',
+        //color: 'green',
+        categories: ['variables'],
+    },
+    {
+        id: 'item-key-slot-key-options-generic',
+        type: 'key-value-list',
+        label: 'Generic item, slot and option keys',
+        contextArrayKey: 'allItemKeys',
+        icon: 'triangle',
+        // color: 'green',
+        categories: ['variables'],
+    },
+]
+
 export const supportedBuiltInSlotTypes: SlotInputDef[] = [
     {
         id: 'text-input',
@@ -186,7 +219,8 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
-    }
+    },
+    ...slotKeyValueListSlotEditors,
 ]
 
 const controlFlowOperators: ExpressionDef[] = [
@@ -2037,6 +2071,78 @@ const dateHelpers: ExpressionDef[] = [
 
 const responseCheckers: ExpressionDef[] = [
     {
+        categories: ['response-checkers'],
+        id: 'responseHasKeysAny',
+        label: 'Response contains any of these keys',
+        returnType: 'boolean',
+        color: 'yellow',
+        icon: 'layout-list',
+        slots: [
+            {
+                label: 'Item and option references:',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'item-key-slot-key-options-generic',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-multiple-choice',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-single-choice',
+                        type: 'key-value-list',
+                    }
+                ]
+            },
+
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'responseHasKeysAny',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['response-checkers'],
+        id: 'responseHasOnlyKeysOtherThan',
+        label: 'Has response but none of these keys',
+        returnType: 'boolean',
+        color: 'yellow',
+        icon: 'layout-list',
+        slots: [
+            {
+                label: 'Item and option references:',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'item-key-slot-key-options-generic',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-multiple-choice',
+                        type: 'key-value-list',
+                    },
+                    {
+                        id: 'item-key-slot-key-options-single-choice',
+                        type: 'key-value-list',
+                    }
+
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'responseHasOnlyKeysOtherThan',
+                data: []
+            }
+        }
+    },
+    {
         id: 'countResponseItems',
         categories: ['response-checkers'],
         label: 'Count response items',
@@ -2189,16 +2295,14 @@ const responseCheckers: ExpressionDef[] = [
 ]
 
 /*
-    // Response checkers
+  // Response checkers
 
-  responseHasKeysAny,
-  responseHasOnlyKeysOtherThan,
   getResponseValueAsNum,
   getResponseValueAsStr,
-  getSelectedKeys,
+
   hasResponseKey,
   hasResponseKeyWithValue,
-  countResponseItems,
+  getSelectedKeys,
 
 */
 
