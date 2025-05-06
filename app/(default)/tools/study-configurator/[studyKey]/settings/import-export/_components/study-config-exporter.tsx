@@ -57,6 +57,9 @@ const StudyConfigExporter: React.FC<StudyConfigExporterProps> = (props) => {
 
     return (
         <div className='space-y-4'>
+            <h4 className='text-lg font-medium mb-2'>
+                Export study configuration
+            </h4>
             <Label className='flex items-center gap-2'>
                 <Checkbox
                     checked={includeConfig}
