@@ -301,7 +301,7 @@ const StudyConfigImporter: React.FC<StudyConfigImporterProps> = (props) => {
                             <p className='mb-2 text-xs'>Override current study configuration with selected parts of the imported file</p>
                             <LoadingButton
                                 isLoading={isPending}
-                                disabled={importedConfig === undefined || !includeConfig && !includeSurveys && !includeRules || !hasValidConfig}
+                                disabled={(importedConfig === undefined) || ((!includeConfig && !includeSurveys && !includeRules) || !hasValidConfig)}
                                 onClick={onApplyImport}
                             >
                                 Import
