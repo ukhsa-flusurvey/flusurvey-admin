@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import StudyConfigExporter from "./_components/study-config-exporter";
+import StudyConfigImporter from "./_components/study-config-importer";
 
 
 interface PageProps {
@@ -37,10 +38,11 @@ export default async function Page(props: PageProps) {
                     studyKey={props.params.studyKey}
                 />
 
-                <div>
-                    TODO: importer
-                </div>
+                <Separator />
 
+                <StudyConfigImporter
+                    studyKey={props.params.studyKey}
+                />
 
             </CardContent>
         </Card>
