@@ -238,7 +238,7 @@ const StudyConfigImporter: React.FC<StudyConfigImporterProps> = (props) => {
                                                 setHasRules(hasRules);
                                                 if (!hasConfig && !hasSurveys && !hasRules) {
                                                     setImportedConfig(undefined);
-                                                    toast.error('Selected file does not appear to be a valid custom rule file. Please check if you have selected the correct file.');
+                                                    toast.error('Selected file does not appear to be a valid study configuration file. Please check if you have selected the correct file.');
                                                     return;
                                                 }
 
