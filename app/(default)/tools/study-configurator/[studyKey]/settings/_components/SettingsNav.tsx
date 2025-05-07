@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Bell, Cog, ListIcon, LucideIcon, Users } from 'lucide-react';
+import { AlertTriangle, Bell, Cog, FolderCogIcon, ListIcon, LucideIcon, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import Link from 'next/link';
@@ -38,6 +38,11 @@ const SettingsNav: React.FC<SettingsNavProps> = (props) => {
             title: 'Access Control',
             href: `/tools/study-configurator/${props.studyKey}/settings/permissions`,
             icon: Users,
+        },
+        {
+            title: 'Import / Export',
+            href: `/tools/study-configurator/${props.studyKey}/settings/import-export`,
+            icon: FolderCogIcon,
         },
         {
             title: 'Advanced',
