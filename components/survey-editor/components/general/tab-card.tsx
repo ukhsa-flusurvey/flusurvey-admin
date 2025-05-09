@@ -1,6 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { prop } from '@mdxeditor/editor';
-import { on } from 'events';
 import React from 'react';
 
 interface TabCardProps {
