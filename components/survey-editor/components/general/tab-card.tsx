@@ -1,4 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { prop } from '@mdxeditor/editor';
+import { on } from 'events';
 import React from 'react';
 
 interface TabCardProps {
@@ -7,6 +9,8 @@ interface TabCardProps {
         icon?: React.ReactNode,
         content: React.ReactNode
     }>;
+    selectedTab?: string;
+    onTabSelect?: (tabLabel: string) => void;
 }
 
 const TabCard: React.FC<TabCardProps> = (props) => {
@@ -14,7 +18,10 @@ const TabCard: React.FC<TabCardProps> = (props) => {
         <div className='p-0 w-full grow'>
             <Tabs
                 className="h-full flex flex-col"
-                defaultValue={props.tabs[0].label.toLowerCase()}
+                defaultValue={(props.selectedTab ?? props.tabs[0].label).toLowerCase()}
+                onValueChange={(value) => {
+                    props.onTabSelect?.(value);
+                }}
             >
                 <div className='flex justify-start border-b border-border'>
                     <TabsList className='flex flex-wrap justify-start p-0  pt-0.5 h-auto bg-transparent gap-1 w-full rounded-none'>

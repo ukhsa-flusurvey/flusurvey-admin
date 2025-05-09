@@ -12,7 +12,6 @@ import { Separator } from "@/components/ui/separator";
 import { ResponsiveBipolarLikertArrayVariant } from "case-editor-tools/surveys/types";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
 import { Cog, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from "lucide-react";
-import React from "react";
 import { ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
@@ -20,6 +19,7 @@ import { PopoverKeyBadge } from "../../KeyBadge";
 import { StyleClassNameEditor } from "./style-class-name-editor";
 import { OptionsEditor } from "./rsca";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from "react";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -64,12 +64,15 @@ const RowEditor = (props: {
     onChange: (newRow: ItemGroupComponent) => void;
     onDelete: () => void;
     isBeingDragged?: boolean;
+    preSelectedTab?: string;
+    onTabSelect?: (tabLabel: string) => void;
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
     const rowStartLabel = localisedObjectToMap(rowStartLabelItem?.content).get(selectedLanguage) || '';
     const rowEndLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.EndLabel);
     const rowEndLabel = localisedObjectToMap(rowEndLabelItem?.content).get(selectedLanguage) || '';
+
 
     const onRowStyleChange = (key: string, newValue: string | undefined) => {
         const existingStyles = [...props.row.style || []];
@@ -97,6 +100,8 @@ const RowEditor = (props: {
                 <GripVertical className='size-4' />
             </div>
             <TabCard
+                selectedTab={props.preSelectedTab ?? 'General'}
+                onTabSelect={(label) => props.onTabSelect?.(label)}
                 tabs={[
                     {
                         label: 'General',
@@ -215,6 +220,7 @@ const RowsEditor = (props: {
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
     const draggedItem = props.rows.find(row => row.key === draggedId);
+    const [selectedTabsMap, setSelectedTabsMap] = React.useState<Record<string, string>>({});
 
     return <div>
         <p className='font-semibold'>
@@ -246,6 +252,7 @@ const RowsEditor = (props: {
                     row={draggedItem}
                     onChange={() => { }}
                     onDelete={() => { }}
+                    preSelectedTab={selectedTabsMap[draggedId]}
                 />
                 : null}
         >
@@ -274,6 +281,11 @@ const RowsEditor = (props: {
                                 return o.key !== row.key;
                             });
                             props.onChange(newOptions);
+                        }}
+                        onTabSelect={(tabLabel) => {
+                            const newSelectedTabsMap = { ...selectedTabsMap };
+                            newSelectedTabsMap[row.key || index.toString()] = tabLabel;
+                            setSelectedTabsMap(newSelectedTabsMap);
                         }}
                     />
                 })}

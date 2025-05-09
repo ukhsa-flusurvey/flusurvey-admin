@@ -215,6 +215,8 @@ const RowEditor = (props: {
     onChange: (newRow: ItemComponent) => void;
     onDelete: () => void;
     isBeingDragged?: boolean;
+    preSelectedTab?: string;
+    onTabSelect?: (tabLabel: string) => void;
 }) => {
     const horizontalModeLabelPlacement = props.row.style?.find(s => s.key === RscaStyleKeys.horizontalModeLabelPlacement)?.value || 'bottom';
 
@@ -244,6 +246,8 @@ const RowEditor = (props: {
                 <GripVertical className='size-4' />
             </div>
             <TabCard
+                selectedTab={props.preSelectedTab ?? 'General'}
+                onTabSelect={(label) => props.onTabSelect?.(label)}
                 tabs={[
                     {
                         label: 'General',
@@ -367,6 +371,7 @@ const RowsEditor = (props: {
     onChange: (newRows: ItemComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
+    const [selectedTabsMap, setSelectedTabsMap] = React.useState<Record<string, string>>({});
 
     const draggedItem = props.rows.find(row => row.key === draggedId);
 
@@ -401,6 +406,7 @@ const RowsEditor = (props: {
                     row={draggedItem}
                     onChange={() => { }}
                     onDelete={() => { }}
+                    preSelectedTab={selectedTabsMap[draggedId]}
                 />
                 : null}
         >
@@ -430,6 +436,11 @@ const RowsEditor = (props: {
                             props.onChange(newOptions);
                         }}
                         isBeingDragged={draggedId === row.key}
+                        onTabSelect={(tabLabel) => {
+                            const newSelectedTabsMap = { ...selectedTabsMap };
+                            newSelectedTabsMap[row.key || index.toString()] = tabLabel;
+                            setSelectedTabsMap(newSelectedTabsMap);
+                        }}
                     />
                 })}
             </ol>
