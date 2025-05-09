@@ -407,8 +407,7 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
     return (
         <div className="space-y-4">
             <Tabs defaultValue="options-rows" className="mt-2">
-                <div className="flex flex-row justify-between items-center">
-                    <p className='font-semibold'>Responsive Bipolar Likert Scale Array</p>
+                <div className="flex flex-row justify-end items-center">
                     <TabsList className="bg-muted p-0.5 rounded-md border border-neutral-200 gap-1">
                         <TabsTrigger className={triggerClassName} value="options-rows">Options & Rows</TabsTrigger>
                         <TabsTrigger className={triggerClassName} value="extras">Extras</TabsTrigger>
