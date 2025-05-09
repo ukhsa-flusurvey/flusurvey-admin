@@ -53,6 +53,10 @@ export const studyEngineCategories = [
     {
         id: 'response-checkers',
         label: 'Response checkers'
+    },
+    {
+        id: 'participant-state-checkers',
+        label: 'Participant state checkers'
     }
 ]
 
@@ -2562,7 +2566,300 @@ const responseCheckers: ExpressionDef[] = [
                 ]
             },
         }
-    }
+    },
+]
+
+const participantStateCheckers: ExpressionDef[] = [
+
+    {
+        id: 'getStudyEntryTime',
+        categories: ['participant-state-checkers'],
+        label: 'Get study entry time',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyEntryTime',
+                data: []
+            }
+        }
+    },
+    {
+        id: 'hasSurveyKeyAssigned',
+        categories: ['participant-state-checkers'],
+        label: 'Has a survey with key assigned',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasSurveyKeyAssigned',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'getSurveyKeyAssignedFrom',
+        categories: ['participant-state-checkers'],
+        label: 'Get survey key assigned from timestamp',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getSurveyKeyAssignedFrom',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'getSurveyKeyAssignedUntil',
+        categories: ['participant-state-checkers'],
+        label: 'Get survey key assigned until timestamp',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getSurveyKeyAssignedUntil',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+
+    // Templates:
+    {
+        id: 'isSurveyKeyActive',
+        categories: ['participant-state-checkers'],
+        label: 'Template: Is survey in active window',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'and',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'lt',
+                            data: [
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'getSurveyKeyAssignedFrom',
+                                        data: [],
+                                        metadata: {
+                                            slotTypes: ['survey-key-selector']
+                                        }
+                                    }
+                                },
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'timestampWithOffset',
+                                        data: [
+                                            {
+                                                dtype: 'num',
+                                                num: 0
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'gt',
+                            data: [
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'getSurveyKeyAssignedUntil',
+                                        data: [],
+                                        metadata: {
+                                            slotTypes: ['survey-key-selector']
+                                        }
+                                    }
+                                },
+                                {
+                                    dtype: 'exp',
+                                    exp: {
+                                        name: 'timestampWithOffset',
+                                        data: [
+                                            {
+                                                dtype: 'num',
+                                                num: 0
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                ]
+            }
+        }
+    },
+    {
+        id: 'isSurveyKeyValidFromOlderThan',
+        categories: ['participant-state-checkers'],
+        label: 'Template: Survey assignment start is before reference time',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lt',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getSurveyKeyAssignedFrom',
+                            data: [],
+                            metadata: {
+                                slotTypes: ['survey-key-selector']
+                            }
+                        }
+                    }, {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'timestampWithOffset',
+                            data: [
+                                {
+                                    dtype: 'num',
+                                    num: 0
+                                }
+                            ]
+                        }
+                    }
+                ],
+            }
+        },
+    },
+    {
+        id: 'isSurveyKeyValidUntilSoonerThan',
+        categories: ['participant-state-checkers'],
+        label: 'Template: Survey assignment end is before reference time',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'gt',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'timestampWithOffset',
+                            data: [
+                                {
+                                    dtype: 'num',
+                                    num: 0
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getSurveyKeyAssignedUntil',
+                            data: [],
+                            metadata: {
+                                slotTypes: ['survey-key-selector']
+                            }
+                        }
+                    },
+                ]
+            }
+        },
+    },
 ]
 
 /*
@@ -2577,6 +2874,7 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...participantStateActions,
     ...advancedExpressions,
     ...responseCheckers,
+    ...participantStateCheckers,
     ...logicAndComparisionExpressions,
     ...eventCheckers,
     ...dateHelpers,
@@ -2589,10 +2887,6 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
   // Participant state:
   participantState: {
-    getStudyEntryTime,
-    hasSurveyKeyAssigned,
-    getSurveyKeyAssignedFrom,
-    getSurveyKeyAssignedUntil,
     hasStudyStatus,
     hasParticipantFlagKeyAndValue,
     hasParticipantFlagKey,
@@ -2641,9 +2935,5 @@ export const StudyEngine = {
   consent: {
     accepted: consentAcceptedCondition,
   },
-  survey: {
-    isActive: hasSurveyKeyActive,
-    validFromOlderThan: hasSurveyKeyValidFromOlderThan,
-    validUntilSoonerThan: hasSurveyKeyValidUntilSoonerThan,
-  },
+
 */
