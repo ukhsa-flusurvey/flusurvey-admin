@@ -93,7 +93,7 @@ const RowEditor = (props: {
 
     return <SortableItem
         id={props.row.key!}
-        className={props.isBeingDragged ? 'opacity-0' : ''}
+        className={props.isBeingDragged ? 'invisible' : ''}
     >
         <div className='relative'>
             <div className='absolute left-0 top-1/2'>
