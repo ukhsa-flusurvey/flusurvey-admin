@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/context-menu"
 import { useCopyToClipboard } from 'usehooks-ts';
 import { useItemEditorCtx } from '../../../item-editor-context';
-import { PopoverKeyBadge } from '../KeyBadge';
 
 interface ItemListEditorProps {
     surveyItem: SurveyItem;
@@ -149,19 +148,19 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                         <div>
                             <item.icon className='size-4' />
                         </div>
-                        <div className={cn('flex flex-row grow space-x-2')}>
-                            {item.itemKey && <PopoverKeyBadge
-                                allOtherKeys={currentItems.map((i) => i.itemKey ?? "").filter((i) => i != item.itemKey)}
-                                itemKey={item.itemKey}
-                                isHighlighted={true}
-                                highlightColor={item.textColor}
-                                onKeyChange={(newKey) => {
-                                    groupItem.items[i].key = newKey;
-                                    props.onUpdateSurveyItem(groupItem);
-                                }}
-                            />}
+                        <span className={cn(
+                            'grow space-x-2',
+                        )}>
+                            {item.itemKey &&
+                                <span className={cn(
+                                    'font-mono',
+                                )}
+                                    style={{
+                                        borderColor: item.textColor,
+                                    }}
+                                >{item.itemKey}</span>}
                             <span className='font-semibold italic'>{item.label}</span>
-                        </div>
+                        </span>
                         {item.isConfidential && <span className='p-1'>
                             <Shield color={item.textColor} className='size-4' />
                         </span>}

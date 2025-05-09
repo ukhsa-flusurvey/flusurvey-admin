@@ -106,7 +106,7 @@ export const PopoverKeyBadge: React.FC<{
                 </PopoverClose>
 
                 <div className="flex flex-row gap-2 items-end">
-                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-1.5'>
+                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-2'>
                         <span className="mb-1.5">
                             {headerText}
                         </span>
@@ -148,9 +148,7 @@ export const PopoverKeyBadge: React.FC<{
                         <Check className='size-4 text-muted-foreground' color="green" />
                     </Button>
                 </div>
-                <div className="flex flex-row gap-2 justify-end items-center">
-                    {error && <span className='text-xs grow text-red-800'>{error}</span>}
-                </div>
+                {error && <span className='text-xs grow text-red-800'>{error}</span>}
             </div>
         </PopoverContent>
     </Popover>;
