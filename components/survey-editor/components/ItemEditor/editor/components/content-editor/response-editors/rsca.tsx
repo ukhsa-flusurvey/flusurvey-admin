@@ -302,41 +302,42 @@ const RowEditor = (props: {
                         label: 'Extras',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div className='flex items-center gap-2'>
+                            <div className='flex items-center gap-2 w-full'>
                                 <Label className='text-xs w-1/3'>Horizontal Mode Label Placement</Label>
-                                <Select
-                                    value={horizontalModeLabelPlacement}
-
-                                    onValueChange={(value) => {
-                                        const existingStyles = [...props.row.style || []];
-                                        const index = existingStyles.findIndex(st => st.key === RscaStyleKeys.horizontalModeLabelPlacement);
-                                        if (value === 'bottom') {
-                                            if (index > -1) {
-                                                existingStyles.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (index > -1) {
-                                                existingStyles[index] = { key: RscaStyleKeys.horizontalModeLabelPlacement, value };
+                                <div className='w-2/3'>
+                                    <Select
+                                        value={horizontalModeLabelPlacement}
+                                        onValueChange={(value) => {
+                                            const existingStyles = [...props.row.style || []];
+                                            const index = existingStyles.findIndex(st => st.key === RscaStyleKeys.horizontalModeLabelPlacement);
+                                            if (value === 'bottom') {
+                                                if (index > -1) {
+                                                    existingStyles.splice(index, 1);
+                                                }
                                             } else {
-                                                existingStyles.push({ key: RscaStyleKeys.horizontalModeLabelPlacement, value });
+                                                if (index > -1) {
+                                                    existingStyles[index] = { key: RscaStyleKeys.horizontalModeLabelPlacement, value };
+                                                } else {
+                                                    existingStyles.push({ key: RscaStyleKeys.horizontalModeLabelPlacement, value });
+                                                }
                                             }
-                                        }
 
-                                        props.onChange({
-                                            ...props.row,
-                                            style: existingStyles
-                                        })
-                                    }}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a label placement..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value='bottom'>Bottom</SelectItem>
-                                        <SelectItem value='top'>Top</SelectItem>
-                                        <SelectItem value='none'>Hidden</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                            props.onChange({
+                                                ...props.row,
+                                                style: existingStyles
+                                            })
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a label placement..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value='bottom'>Bottom</SelectItem>
+                                            <SelectItem value='top'>Top</SelectItem>
+                                            <SelectItem value='none'>Hidden</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                             <Separator />
                             <StyleClassNameEditor
