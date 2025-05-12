@@ -71,7 +71,7 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
 
     return <div
         className={cn(
-            'w-full gap-2 py-2 h-auto px-3 text-start flex flex-row items-center rounded-md border text-sm font-medium transition-colors user-select-none',
+            'group w-full gap-2 py-2 h-auto px-3 text-start flex flex-row items-center rounded-md border text-sm font-medium transition-colors user-select-none',
             { 'bg-gray-100 text-accent-foreground shadow-sm': props.isSelected },
             { 'bg-white hover:shadow-sm hover:bg-gray-50': !props.isSelected },
             (props.isBeingDragged && !props.isDragOverlay) && 'invisible')}
@@ -115,7 +115,9 @@ export const ItemOverviewRow: React.FC<ItemOverviewRowProps> = (props) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </>}
-            <GripHorizontal className='size-4' />
+            <span className='px-1 hidden group-hover:block'>
+                <GripHorizontal className='size-4 text-muted-foreground' />
+            </span>
         </div>
     </div>;
 }
