@@ -130,7 +130,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                     <Button
                         variant={'outline'}
                         className={cn(
-                            'w-full gap-2 py-3 h-auto px-3 text-start',
+                            'w-full gap-2 py-3 h-auto px-3 text-start group',
                             item.className,
                             (draggedId === item.id && !isDragOverlay) && 'invisible',
                             {
@@ -139,6 +139,10 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                         style={{
                             color: item.textColor,
                             borderColor: item.textColor,
+                        }}
+                        onClick={isDragOverlay ? undefined : () => {
+                            setCurrentPath(groupItem.key);
+                            setSelectedItemKey(item.id);
                         }}
                         onDoubleClick={isDragOverlay ? undefined : () => {
                             setCurrentPath(groupItem.key);
@@ -164,7 +168,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                         {item.isConfidential && <span className='p-1'>
                             <Shield color={item.textColor} className='size-4' />
                         </span>}
-                        <span className='p-1'>
+                        <span className='px-1 hidden group-hover:block'>
                             <GripHorizontal className='size-4' />
                         </span>
                     </Button>
