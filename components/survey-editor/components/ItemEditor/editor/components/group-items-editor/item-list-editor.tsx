@@ -96,8 +96,6 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                 return;
             }
 
-
-
             // check if item already exists
             const existingItem = groupItem.items?.find(item => {
                 const itemKey = item.key.split('.').pop();
@@ -124,8 +122,10 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
 
     const renderRowItem = (i: number, isDragOverlay: boolean) => {
         const item = currentItems[i];
-        return < ContextMenu >
-            <ContextMenuTrigger disabled={isDragOverlay}>
+        return <ContextMenu>
+            <ContextMenuTrigger disabled={isDragOverlay}
+                asChild
+            >
                 <Button
                     variant={'outline'}
                     className={cn(
