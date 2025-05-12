@@ -169,7 +169,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                             <Shield color={item.textColor} className='size-4' />
                         </span>}
                         <span className='px-1 hidden group-hover:block'>
-                            <GripHorizontal className='size-4' />
+                            <GripHorizontal className='size-4 text-muted-foreground' />
                         </span>
                     </Button>
                 </ContextMenuTrigger>
