@@ -2915,13 +2915,77 @@ const participantStateCheckers: ExpressionDef[] = [
                 }
             }
         }
+    },
+    {
+        id: 'hasParticipantFlagKey',
+        categories: ['participant-state-checkers'],
+        label: 'Has participant flag key',
+        returnType: 'boolean',
+        icon: 'tag',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasParticipantFlagKey',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'hasParticipantFlagKeyAndValue',
+        categories: ['participant-state-checkers'],
+        label: 'Has participant flag key and value',
+        returnType: 'boolean',
+        icon: 'tag',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key and value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-selector',
+                        type: 'list-selector',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasParticipantFlagKeyAndValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-selector']
+                }
+            }
+        }
     }
 ]
 
+
 /*
- 
-    hasParticipantFlagKeyAndValue,
-    hasParticipantFlagKey,
+    
+    hasParticipantFlagKeyAndValue,    
     getParticipantFlagValue,
     getParticipantFlagValueAsNum,
 
