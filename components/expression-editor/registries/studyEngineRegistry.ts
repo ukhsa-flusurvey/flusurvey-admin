@@ -2567,7 +2567,33 @@ const responseCheckers: ExpressionDef[] = [
             },
         }
     },
+    {
+        id: 'consentAcceptedCondition',
+        categories: ['response-checkers'],
+        label: 'Consent accepted',
+        returnType: 'boolean',
+        icon: 'form-input',
+        slots: [],
+        isTemplateFor: 'hasResponseKey',
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasResponseKey',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: 'rg.con'
+                    }
+                ]
+            }
+        }
+    }
 ]
+
 
 const participantStateCheckers: ExpressionDef[] = [
 
@@ -2882,9 +2908,6 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 
 /*
-
-  // Event payload methods:
-
   // Participant state:
   participantState: {
     hasStudyStatus,
@@ -2919,21 +2942,4 @@ export const studyEngineRegistry: ExpressionDef[] = [
 
 
 }
-
-
-export const StudyEngine = {
-  ...NativeStudyEngineExpressions,
-  singleChoice: {
-    any: singleChoiceOptionsSelected,
-    none: singleChoiceOnlyOtherOptionSelected
-  },
-  multipleChoice: {
-    any: multipleChoiceOptionsSelected,
-    none: multipleChoiceOnlyOtherKeysSelected,
-    all: multipleChoiceAllOfTheseSelected,
-  },
-  consent: {
-    accepted: consentAcceptedCondition,
-  },
-
 */
