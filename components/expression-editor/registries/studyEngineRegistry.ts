@@ -2979,16 +2979,78 @@ const participantStateCheckers: ExpressionDef[] = [
                 }
             }
         }
+    },
+    {
+        id: 'getParticipantFlagValue',
+        categories: ['participant-state-checkers'],
+        label: 'Get participant flag value',
+        returnType: 'str',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getParticipantFlagValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'getParticipantFlagValueAsNum',
+        categories: ['participant-state-checkers'],
+        label: 'Get participant flag value as number',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'parseValueAsNum',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getParticipantFlagValue',
+                            data: [],
+                            metadata: {
+                                slotTypes: ['participant-flag-key-selector']
+                            }
+                        }
+                    }
+                ],
+            }
+        }
     }
 ]
 
 
-/*
-    
-    hasParticipantFlagKeyAndValue,    
-    getParticipantFlagValue,
-    getParticipantFlagValueAsNum,
-
+/*    
+  
 */
 
 
