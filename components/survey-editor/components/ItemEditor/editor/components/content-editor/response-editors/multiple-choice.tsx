@@ -227,7 +227,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
                         : null}
                 >
                     <div className='space-y-2'>
-                        <ol className='max-h-64 overflow-y-auto space-y-1'>
+                        <ol className='space-y-1'>
                             {sortableResponseItems.map((sortableResponseItem, i) => (
                                 <SortableItem
                                     id={sortableResponseItem.id}
