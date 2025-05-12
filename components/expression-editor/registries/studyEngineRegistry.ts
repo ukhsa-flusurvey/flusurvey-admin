@@ -2886,9 +2886,44 @@ const participantStateCheckers: ExpressionDef[] = [
             }
         },
     },
+    {
+        id: 'hasStudyStatus',
+        categories: ['participant-state-checkers'],
+        label: 'Has study status',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Study status',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'study-status-picker',
+                        type: 'list-selector',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasStudyStatus',
+                data: [],
+                metadata: {
+                    slotTypes: ['study-status-picker']
+                }
+            }
+        }
+    }
 ]
 
 /*
+ 
+    hasParticipantFlagKeyAndValue,
+    hasParticipantFlagKey,
+    getParticipantFlagValue,
+    getParticipantFlagValueAsNum,
 
 */
 
@@ -2910,15 +2945,12 @@ export const studyEngineRegistry: ExpressionDef[] = [
 /*
   // Participant state:
   participantState: {
-    hasStudyStatus,
-    hasParticipantFlagKeyAndValue,
-    hasParticipantFlagKey,
+   
     linkingCode: {
       has: hasLinkingCode,
       get: getLinkingCode,
     },
-    getParticipantFlagValue,
-    getParticipantFlagValueAsNum,
+    
     getLastSubmissionDate,
     lastSubmissionDateOlderThan,
     hasMessageTypeAssigned,
