@@ -50,7 +50,7 @@ const ContentItem = (props: {
                     component={props.component}
                     onChange={props.onUpdateComponent}
                     hideLabel={true}
-                    hidePlaceholder={true}
+                    hidePlaceholder={false}
                 />;
             case ClozeItemType.TextInput:
                 return <TextInputContentConfig
@@ -209,7 +209,7 @@ const ClozeContentConfig: React.FC<ClozeContentConfigProps> = (props) => {
                         : null}
                 >
                     <div className='space-y-2'>
-                        <ol className='max-h-64 overflow-y-auto space-y-1'>
+                        <ol className='space-y-1'>
                             {sortableClozeItems.map((clozeItem, i) => (
                                 <SortableItem
                                     id={clozeItem.id}
