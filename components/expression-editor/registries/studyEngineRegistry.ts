@@ -3124,17 +3124,100 @@ const participantStateCheckers: ExpressionDef[] = [
             }
         }
     },
+    {
+        id: 'getLastSubmissionDate',
+        categories: ['participant-state-checkers'],
+        label: 'Get last submission date',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getLastSubmissionDate',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+
+    {
+        id: 'lastSubmissionDateOlderThan',
+        categories: ['participant-state-checkers'],
+        label: 'Last submission date is older than',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Reference date',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Survey key',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lastSubmissionDateOlderThan',
+            }
+        }
+    }
 ]
 
 
 /*
-  linkingCode: {
-      has: hasLinkingCode,
-      get: getLinkingCode,
-    },
-
-    getLastSubmissionDate,
-    lastSubmissionDateOlderThan,
     hasMessageTypeAssigned,
     getMessageNextTime,
 */
