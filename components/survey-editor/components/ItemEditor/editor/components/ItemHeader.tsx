@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { PopoverClose, PopoverTrigger } from '@radix-ui/react-popover';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopy, CodeSquare, CornerDownLeft, CornerDownRight, House, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
+import { ClipboardCopy, CodeSquare, CornerDownRight, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
