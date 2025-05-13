@@ -3045,12 +3045,98 @@ const participantStateCheckers: ExpressionDef[] = [
                 ],
             }
         }
-    }
+    },
+    {
+        id: 'hasLinkingCode',
+        categories: ['participant-state-checkers'],
+        label: 'Has linking code',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasLinkingCode',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'getLinkingCode',
+        categories: ['participant-state-checkers'],
+        label: 'Get linking code',
+        returnType: 'str',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getLinkingCode',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
+    },
 ]
 
 
-/*    
-  
+/*
+  linkingCode: {
+      has: hasLinkingCode,
+      get: getLinkingCode,
+    },
+
+    getLastSubmissionDate,
+    lastSubmissionDateOlderThan,
+    hasMessageTypeAssigned,
+    getMessageNextTime,
 */
 
 
@@ -3071,16 +3157,6 @@ export const studyEngineRegistry: ExpressionDef[] = [
 /*
   // Participant state:
   participantState: {
-   
-    linkingCode: {
-      has: hasLinkingCode,
-      get: getLinkingCode,
-    },
-    
-    getLastSubmissionDate,
-    lastSubmissionDateOlderThan,
-    hasMessageTypeAssigned,
-    getMessageNextTime,
     incomingParticipantState: {
       // for merge event
       getStudyEntryTime: getStudyEntryTimeForIncoming,
