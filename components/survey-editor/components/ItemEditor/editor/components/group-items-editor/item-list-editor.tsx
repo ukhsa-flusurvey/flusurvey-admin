@@ -2,7 +2,7 @@ import React from 'react';
 import { SurveyGroupItem, SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
 import ItemCreator from '../../../explorer/ItemCreator';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopyIcon, GripHorizontal, Plus, Shield, TrashIcon } from 'lucide-react';
+import { ClipboardCopyIcon, GripVertical, Plus, Shield, TrashIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
@@ -96,8 +96,6 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
                 return;
             }
 
-
-
             // check if item already exists
             const existingItem = groupItem.items?.find(item => {
                 const itemKey = item.key.split('.').pop();
@@ -124,82 +122,87 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
 
     const renderRowItem = (i: number, isDragOverlay: boolean) => {
         const item = currentItems[i];
-        return <div>
-            <ContextMenu>
-                <ContextMenuTrigger disabled={isDragOverlay}>
-                    <Button
-                        variant={'outline'}
-                        className={cn(
-                            'w-full gap-2 py-3 h-auto px-3 text-start',
-                            item.className,
-                            (draggedId === item.id && !isDragOverlay) && 'invisible',
-                            {
-                                'font-bold': item.isPathActive,
-                            })}
-                        style={{
-                            color: item.textColor,
-                            borderColor: item.textColor,
-                        }}
-                        onDoubleClick={isDragOverlay ? undefined : () => {
-                            setCurrentPath(groupItem.key);
-                            setSelectedItemKey(item.id);
-                        }}
-                    >
-                        <div>
-                            <item.icon className='size-4' />
-                        </div>
-                        <span className={cn(
-                            'grow space-x-2',
-                        )}>
-                            {item.itemKey &&
-                                <span className={cn(
-                                    'font-mono',
-                                )}
-                                    style={{
-                                        borderColor: item.textColor,
-                                    }}
-                                >{item.itemKey}</span>}
-                            <span className='font-semibold italic'>{item.label}</span>
-                        </span>
-                        {item.isConfidential && <span className='p-1'>
-                            <Shield color={item.textColor} className='size-4' />
-                        </span>}
-                        <span className='p-1'>
-                            <GripHorizontal className='size-4' />
-                        </span>
-                    </Button>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                    <ContextMenuItem
-                        onClick={() => {
-                            const surveyItemToCopy = (props.surveyItem as SurveyGroupItem).items.find(i => i.key === item.id);
-                            if (!surveyItemToCopy) {
-                                toast.error('Item not found');
-                                return;
-                            }
-                            const surveyItemJSON = JSON.stringify(surveyItemToCopy, null, 2);
-                            copy(surveyItemJSON);
-                            toast('Item copied to clipboard');
-                        }}
-                    >
-                        <ClipboardCopyIcon className='size-4' />
-                        <span className='ml-2'>Copy</span>
-                    </ContextMenuItem>
+        return <ContextMenu>
+            <ContextMenuTrigger disabled={isDragOverlay}
+                asChild
+            >
+                <Button
+                    variant={'outline'}
+                    className={cn(
+                        'w-full gap-2 py-3 h-auto px-3 text-start group relative',
+                        item.className,
+                        (draggedId === item.id && !isDragOverlay) && 'invisible',
+                        {
+                            'font-bold': item.isPathActive,
+                        })}
+                    style={{
+                        color: item.textColor,
+                        borderColor: item.textColor,
+                    }}
+                    onClick={isDragOverlay ? undefined : () => {
+                        setCurrentPath(groupItem.key);
+                        setSelectedItemKey(item.id);
+                    }}
+                    onDoubleClick={isDragOverlay ? undefined : () => {
+                        setCurrentPath(groupItem.key);
+                        setSelectedItemKey(item.id);
+                    }}
+                >
+                    <div>
+                        <item.icon className='size-4' />
+                    </div>
+                    <span className={cn(
+                        'grow space-x-2',
+                    )}>
+                        {item.itemKey &&
+                            <span className={cn(
+                                'font-mono',
+                            )}
+                                style={{
+                                    borderColor: item.textColor,
+                                }}
+                            >{item.itemKey}</span>}
+                        <span className='font-semibold italic'>{item.label}</span>
+                    </span>
+                    {item.isConfidential && <span className='p-1'>
+                        <Shield color={item.textColor} className='size-4' />
+                    </span>}
+                    <span className='absolute -left-4 top-0 hidden group-hover:flex items-center h-full'>
+                        <GripVertical className='size-4 text-muted-foreground' />
+                    </span>
+                </Button>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem
+                    onClick={() => {
+                        const surveyItemToCopy = (props.surveyItem as SurveyGroupItem).items.find(i => i.key === item.id);
+                        if (!surveyItemToCopy) {
+                            toast.error('Item not found');
+                            return;
+                        }
+                        const surveyItemJSON = JSON.stringify(surveyItemToCopy, null, 2);
+                        copy(surveyItemJSON);
+                        toast('Item copied to clipboard');
+                    }}
+                >
+                    <ClipboardCopyIcon className='size-4' />
+                    <span className='ml-2'>Copy</span>
+                </ContextMenuItem>
 
-                    <ContextMenuSeparator />
-                    <ContextMenuItem
-                        onClick={() => {
-                            if (confirm('Are you sure you want to delete this item?')) {
-                                props.onDeleteItem(item.id);
-                            }
-                        }}
-                    >
-                        <TrashIcon className='size-4' />
-                        <span className='ml-2'>Delete</span>
-                    </ContextMenuItem>
-                </ContextMenuContent>
-            </ContextMenu>
-        </div>;
+                <ContextMenuSeparator />
+                <ContextMenuItem
+                    onClick={() => {
+                        if (confirm('Are you sure you want to delete this item?')) {
+                            props.onDeleteItem(item.id);
+                        }
+                    }}
+                >
+                    <TrashIcon className='size-4' />
+                    <span className='ml-2'>Delete</span>
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu >
+
     }
 
     return (

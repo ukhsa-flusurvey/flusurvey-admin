@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { PopoverClose, PopoverTrigger } from '@radix-ui/react-popover';
 import { Button } from '@/components/ui/button';
-import { ClipboardCopy, CodeSquare, CornerDownLeft, CornerDownRight, House, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
+import { ClipboardCopy, CodeSquare, CornerDownRight, MoreVertical, Move, ShieldCheck, SquarePen, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
@@ -238,6 +238,8 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     const itemLabel = props.surveyItem.metadata?.itemLabel;
     const isRoot = item.parentKey === '';
 
+    const relevantKeys = props.surveyItemList.filter(i => getParentKeyFromFullKey(i.key) == getParentKeyFromFullKey(props.surveyItem.key)).map(i => getItemKeyFromFullKey(i.key));
+
     return (
         <TooltipProvider>
             <div className='px-3 py-2 flex gap-3 items-center bg-secondary'>
@@ -269,7 +271,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                     <div className='flex-grow flex flex-row gap-1 items-center'>
                         {!isRoot && <CornerDownRight size={16} color={item.color} />}
                         <PopoverKeyBadge
-                            allOtherKeys={props.surveyItemList.map(i => getItemKeyFromFullKey(i.key)).filter(i => i !== item.itemKey)}
+                            allOtherKeys={relevantKeys.filter(i => i !== item.itemKey)}
                             itemKey={item.itemKey}
                             headerText={isRoot ? 'Root Group Key' : 'Item Key'}
                             isHighlighted={true}
