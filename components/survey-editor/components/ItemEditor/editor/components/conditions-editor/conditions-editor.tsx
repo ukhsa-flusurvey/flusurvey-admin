@@ -108,7 +108,8 @@ export function extractSurveyKeys(surveyData?: Survey): {
 
     // Start processing from the survey definition
     if (surveyData.surveyDefinition && surveyData.surveyDefinition.items) {
-        surveyData.surveyDefinition.items.forEach(processSurveyItem);
+        processSurveyItem(surveyData.surveyDefinition)
+        // surveyData.surveyDefinition.items.forEach(processSurveyItem);
     }
 
     return {
@@ -126,9 +127,6 @@ const ConditionsEditor: React.FC<ConditionsEditorProps> = (props) => {
     const currentExpArgSlot = props.surveyItem.condition?.name;
 
     const { singleChoiceKeys, multipleChoiceKeys, allItemKeys } = extractSurveyKeys(survey);
-
-    console.log('currentCondition', currentCondition)
-
 
     return (
         <div className='p-4 space-y-4 pb-24' >
