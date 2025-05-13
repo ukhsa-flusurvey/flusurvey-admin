@@ -3213,14 +3213,86 @@ const participantStateCheckers: ExpressionDef[] = [
                 name: 'lastSubmissionDateOlderThan',
             }
         }
+    },
+    {
+        id: 'hasMessageTypeAssigned',
+        categories: ['participant-state-checkers'],
+        label: 'Has message type assigned',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasMessageTypeAssigned',
+                data: [],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            }
+        }
+    },
+    {
+        id: 'getMessageNextTime',
+        categories: ['participant-state-checkers'],
+        label: 'Get message next time',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getMessageNextTime',
+                data: [],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            }
+        }
     }
 ]
-
-
-/*
-    hasMessageTypeAssigned,
-    getMessageNextTime,
-*/
 
 
 export const studyEngineRegistry: ExpressionDef[] = [
