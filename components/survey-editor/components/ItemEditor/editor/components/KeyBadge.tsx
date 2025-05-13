@@ -3,13 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Check, RotateCcw, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { MouseEventHandler } from "react";
 
-export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, onClick?: MouseEventHandler<HTMLDivElement> | undefined }) => {
-    return <Badge onClick={props.onClick} variant={props.isHighlighted ? 'default' : 'outline'} className='h-auto border-2 py-0'>{props.itemKey}</Badge>;
+export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, highlightColor?: string, onClick?: MouseEventHandler<HTMLDivElement> | undefined }) => {
+    return (
+        <Badge
+            onClick={props.onClick}
+            variant={props.isHighlighted ? 'default' : 'outline'}
+            className={cn("h-auto border-2 py-0", {
+                "hover:opacity-80": props.isHighlighted,
+            })}
+            style={{ backgroundColor: props.highlightColor }}
+        >
+            {props.itemKey}
+        </Badge>
+    );
 }
 
 export const KeyBadgeAndType = (props: { compKey?: string, type: string }) => {
@@ -25,6 +37,8 @@ export const PopoverKeyBadge: React.FC<{
     allOtherKeys: string[],
     itemKey: string,
     isHighlighted?: boolean,
+    highlightColor?: string,
+    headerText?: string,
     onClick?: MouseEventHandler<HTMLDivElement> | undefined,
     onKeyChange?: (newKey: string) => void,
 }> = (props) => {
@@ -35,6 +49,7 @@ export const PopoverKeyBadge: React.FC<{
     const isValidKey = error === null;
     const externalIsSelected = props.isHighlighted != undefined;
     const hasChanges = currentKey !== props.itemKey;
+    const headerText = props.headerText ?? 'Item Key';
 
     useEffect(() => {
         if (currentKey.length <= 0) {
@@ -66,14 +81,15 @@ export const PopoverKeyBadge: React.FC<{
             }
         }}
     >
-        <PopoverTrigger>
-            <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} onClick={(e) => {
-                if (props.onClick != undefined) {
-                    props.onClick(e);
-                } else {
-                    setIsSelected(externalIsSelected ? props.isHighlighted! : true)
-                }
-            }} />
+        <PopoverTrigger className="flex items-center justify-center">
+            <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} highlightColor={props.highlightColor}
+                onClick={(e) => {
+                    if (props.onClick != undefined) {
+                        props.onClick(e);
+                    } else {
+                        setIsSelected(externalIsSelected ? props.isHighlighted! : true)
+                    }
+                }} />
         </PopoverTrigger>
         <PopoverContent className="max-w-80 relative"
             side='right'
@@ -90,9 +106,9 @@ export const PopoverKeyBadge: React.FC<{
                 </PopoverClose>
 
                 <div className="flex flex-row gap-2 items-end">
-                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-1.5'>
+                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-2'>
                         <span className="mb-1.5">
-                            Item Key
+                            {headerText}
                         </span>
                         <Input
                             id="keyInput"
@@ -132,9 +148,7 @@ export const PopoverKeyBadge: React.FC<{
                         <Check className='size-4 text-muted-foreground' color="green" />
                     </Button>
                 </div>
-                <div className="flex flex-row gap-2 justify-end items-center">
-                    {error && <span className='text-xs grow text-red-800'>{error}</span>}
-                </div>
+                {error && <span className='text-xs grow text-red-800'>{error}</span>}
             </div>
         </PopoverContent>
     </Popover>;

@@ -11,14 +11,13 @@ import SortableItem from '@/components/survey-editor/components/general/Sortable
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
 import { ComponentGenerators } from 'case-editor-tools/surveys/utils/componentGenerators';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
 import MarkdownContentEditor from './markdown-content-editor';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { PopoverKeyBadge } from '../KeyBadge';
 
 
 interface TopContentEditorProps {
@@ -30,10 +29,9 @@ export const ContentItem = (props: {
     index: number, component: ItemComponent,
     onUpdateComponent: (component: ItemComponent) => void,
     onDeleteComponent: () => void
-
+    allOtherKeys?: string[]
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
-    const [currentKey, setCurrentKey] = React.useState(props.component.key);
 
     const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
 
@@ -99,46 +97,18 @@ export const ContentItem = (props: {
                         label: 'Settings',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div className='space-y-1.5'
-                                data-no-dnd="true"
-                            >
-                                <Label
-                                    htmlFor='key'
-                                >
-                                    Key
-                                </Label>
-                                <div className='flex gap-2'>
-                                    <Input
-                                        id='key'
-                                        value={currentKey}
-                                        onChange={(e) => {
-                                            setCurrentKey(e.target.value);
-                                        }}
-                                    />
-
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key}
-                                        onClick={() => {
-                                            setCurrentKey(props.component.key || '');
-                                        }}
-                                    >
-                                        Reset
-                                    </Button>
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key}
-                                        onClick={() => {
-                                            props.onUpdateComponent({
-                                                ...props.component,
-                                                key: currentKey,
-                                            });
-                                        }}
-                                    >
-                                        Apply
-                                    </Button>
-                                </div>
-
+                            <div className='space-y-1.5' data-no-dnd="true">
+                                <PopoverKeyBadge
+                                    allOtherKeys={props.allOtherKeys ?? []}
+                                    itemKey={props.component.key ?? ""}
+                                    isHighlighted={true}
+                                    onKeyChange={(key) => {
+                                        props.onUpdateComponent({
+                                            ...props.component,
+                                            key: key,
+                                        });
+                                    }}
+                                />
                             </div>
                             <Separator />
                             <Button
@@ -170,6 +140,8 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
     const allItemComponents = props.surveyItem.components?.items || [];
     const relevantBodyComponents = filterForBodyComponents(allItemComponents);
     const topComponents = findTopComponents(relevantBodyComponents);
+
+    const allUsedKeys = topComponents.map(comp => comp.key ?? "");
 
     const draggedItem = topComponents.find(comp => comp.key === draggedId);
 
@@ -310,6 +282,7 @@ const TopContentEditor: React.FC<TopContentEditorProps> = (props) => {
                                     }
                                     props.onUpdateSurveyItem(newSurveyItem);
                                 }}
+                                allOtherKeys={allUsedKeys.filter(key => key !== component.key)}
                             />
                         })}
 
