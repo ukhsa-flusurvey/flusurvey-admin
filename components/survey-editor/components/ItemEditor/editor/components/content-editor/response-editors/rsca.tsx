@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Circle, Cog, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from 'lucide-react';
+import { Circle, Cog, GripVertical, Languages, Rows, ToggleLeft, Trash2, XIcon } from 'lucide-react';
 import React from 'react';
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
@@ -62,14 +62,20 @@ const OptionEditor = (props: {
         id={props.option.key!}
         className={props.isBeingDragged ? 'opacity-0' : ''}
     >
-        <div className='border border-border rounded-md p-2 relative bg-white'>
+        <div className='border border-border rounded-md py-2 px-3 relative bg-white group'>
             <div className='flex items-center gap-2 w-full'>
-                <GripVertical className='size-4' />
+                <div className='absolute -left-4 top-0 hidden group-hover:flex items-center h-full'>
+                    <GripVertical className='size-4 text-muted-foreground' />
+                </div>
+                <span className='text-muted-foreground text-xs'>
+                    Option:
+                </span>
+
                 <div className='flex items-center basis-1/4'>
                     <PopoverKeyBadge
                         headerText='Option Key'
                         allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
-                        isHighlighted={true}
+                        isHighlighted={false}
                         itemKey={props.option.key ?? ''}
                         onKeyChange={(newKey) => {
                             props.onChange({
@@ -87,18 +93,21 @@ const OptionEditor = (props: {
                     />
                 </div>}
                 {props.hideLabel && <div className='grow' />}
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => {
-                        if (!confirm('Are you sure you want to delete this option?')) {
-                            return;
-                        }
-                        props.onDelete();
-                    }}
-                >
-                    <Trash2 className='size-4' />
-                </Button>
+                <div className=''>
+                    <Button
+                        variant='ghost'
+                        size='icon'
+                        className='size-7'
+                        onClick={() => {
+                            if (!confirm('Are you sure you want to delete this option?')) {
+                                return;
+                            }
+                            props.onDelete();
+                        }}
+                    >
+                        <XIcon className='size-3 text-muted-foreground' />
+                    </Button>
+                </div>
             </div>
         </div>
 
@@ -150,7 +159,7 @@ export const OptionsEditor = (props: {
                 : null}
         >
 
-            <ol className='px-1 space-y-2 py-2'>
+            <ol className='px-1 space-y-1 py-2'>
                 {props.options.length === 0 && <p className='text-sm text-primary'>
                     No options defined.
                 </p>}
