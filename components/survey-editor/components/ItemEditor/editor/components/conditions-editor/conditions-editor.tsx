@@ -108,8 +108,7 @@ export function extractSurveyKeys(surveyData?: Survey): {
 
     // Start processing from the survey definition
     if (surveyData.surveyDefinition && surveyData.surveyDefinition.items) {
-        processSurveyItem(surveyData.surveyDefinition)
-        // surveyData.surveyDefinition.items.forEach(processSurveyItem);
+        processSurveyItem(surveyData.surveyDefinition);
     }
 
     return {

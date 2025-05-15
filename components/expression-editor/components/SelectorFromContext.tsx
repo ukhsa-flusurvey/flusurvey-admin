@@ -22,6 +22,12 @@ const SelectorFromContext: React.FC<SelectorFromContextProps> = (props) => {
         contextValues = contextValues.filter((cv) => cv.type === props.slotTypeDef.filterForItemType)
     }
 
+    if (props.currentValue !== undefined && props.currentValue !== '' && !contextValues?.find(cv => cv.key === props.currentValue)) {
+        contextValues?.push({
+            key: props.currentValue,
+            label: props.currentValue,
+        })
+    }
 
     return (
         <BuiltInSlotWrapper
