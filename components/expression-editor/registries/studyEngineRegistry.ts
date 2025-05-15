@@ -57,6 +57,10 @@ export const studyEngineCategories = [
     {
         id: 'participant-state-checkers',
         label: 'Participant state checkers'
+    },
+    {
+        id: 'incoming-participant-state-checkers',
+        label: 'Incoming participant state checkers (for merge events)'
     }
 ]
 
@@ -1393,6 +1397,7 @@ const participantStateActions: ExpressionDef[] = [
         },
     },
 ]
+
 
 const advancedExpressions: ExpressionDef[] = [
     {
@@ -3294,6 +3299,442 @@ const participantStateCheckers: ExpressionDef[] = [
     }
 ]
 
+const mergeParticipantStateCheckers: ExpressionDef[] = [
+    {
+        id: 'incomingState:getStudyEntryTime',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming study entry time',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getStudyEntryTime',
+                data: []
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasSurveyKeyAssigned',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Incoming state has survey with key assigned (Merge event)',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasSurveyKeyAssigned',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getSurveyKeyAssignedFrom',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming survey key assigned from timestamp (Merge event)',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getSurveyKeyAssignedFrom',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getSurveyKeyAssignedUntil',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming survey key assigned until timestamp (Merge event)',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getSurveyKeyAssignedUntil',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasStudyStatus',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming study status (Merge event)',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Study status',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'study-status-picker',
+                        type: 'list-selector',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasStudyStatus',
+                data: [],
+                metadata: {
+                    slotTypes: ['study-status-picker']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasParticipantFlagKeyAndValue',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming participant flag key and value (Merge event)',
+        returnType: 'boolean',
+        icon: 'tag',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key and value',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-selector',
+                        type: 'list-selector',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasParticipantFlagKeyAndValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasParticipantFlagKey',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming participant flag key (Merge event)',
+        returnType: 'boolean',
+        icon: 'tag',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasParticipantFlagKey',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getParticipantFlagValue',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming participant flag value (Merge event)',
+        returnType: 'str',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getParticipantFlagValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['participant-flag-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getLastSubmissionDate',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming last submission date (Merge event)',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Survey key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getLastSubmissionDate',
+                data: [],
+                metadata: {
+                    slotTypes: ['survey-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:lastSubmissionDateOlderThan',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Incoming last submission date is older than (Merge event)',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Reference date',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Survey key',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'survey-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:lastSubmissionDateOlderThan',
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasMessageTypeAssigned',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming message type assigned (Merge event)',
+        returnType: 'boolean',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasMessageTypeAssigned',
+                data: [],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getMessageNextTime',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming message next time (Merge event)',
+        returnType: 'num',
+        icon: 'function',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getMessageNextTime',
+                data: [],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            }
+        }
+    }
+]
+
 
 export const studyEngineRegistry: ExpressionDef[] = [
     ...controlFlowOperators,
@@ -3306,29 +3747,5 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...logicAndComparisionExpressions,
     ...eventCheckers,
     ...dateHelpers,
+    ...mergeParticipantStateCheckers,
 ]
-
-
-/*
-  // Participant state:
-  participantState: {
-    incomingParticipantState: {
-      // for merge event
-      getStudyEntryTime: getStudyEntryTimeForIncoming,
-      hasSurveyKeyAssigned: hasSurveyKeyAssignedForIncoming,
-      getSurveyKeyAssignedFrom: getSurveyKeyAssignedFromForIncoming,
-      getSurveyKeyAssignedUntil: getSurveyKeyAssignedUntilForIncoming,
-      hasStudyStatus: hasStudyStatusForIncoming,
-      hasParticipantFlagKeyAndValue: hasParticipantFlagKeyAndValueForIncoming,
-      hasParticipantFlagKey: hasParticipantFlagKeyForIncoming,
-      getParticipantFlagValue: getParticipantFlagValueForIncoming,
-      getLastSubmissionDate: getLastSubmissionDateForIncoming,
-      lastSubmissionDateOlderThan: lastSubmissionDateOlderThanForIncoming,
-      hasMessageTypeAssigned: hasMessageTypeAssignedForIncoming,
-      getMessageNextTime: getMessageNextTimeForIncoming,
-    }
-  },
-
-
-}
-*/
