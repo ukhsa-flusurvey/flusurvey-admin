@@ -96,7 +96,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             context={props.context}
             currentSlotValues={currentSlotValues}
             onChangeValues={(newValues, newSlotTypes) => {
-                const currentData = [...props.availableExpData] || [];
+                const currentData = [...(props.availableExpData ?? [])];
                 const updatedData = updateEntriesAfterIndex(currentData, props.currentIndex, newValues)
 
                 const currentSlotTypes = props.availableMetadata?.slotTypes || []
