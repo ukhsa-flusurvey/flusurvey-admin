@@ -68,6 +68,7 @@ const StudyActionEditor: React.FC = () => {
                     onChange={(newValue) => {
                         updateCurrentRules(newValue.filter(e => e !== undefined).map(d => (d as ExpArg).exp))
                     }}
+                    useMergeStateCheckers={false}
                     isListSlot={true}
                 />
             </Card>

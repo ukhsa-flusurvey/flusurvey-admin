@@ -2,12 +2,13 @@ import React from 'react';
 import { useStudyExpressionEditor } from '../../study-expression-editor-context';
 import { ContextObjectItem, ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
-import { studyEngineCategories, studyEngineRegistry, supportedBuiltInSlotTypes } from '@/components/expression-editor/registries/studyEngineRegistry';
+import { categoryForMergeStateCheckers, mergeParticipantStateCheckers, studyEngineCategories, studyEngineRegistry, supportedBuiltInSlotTypes } from '@/components/expression-editor/registries/studyEngineRegistry';
 
 interface ExpEditorWrapperProps {
     label: string;
     value: Array<ExpressionArg | undefined>;
     isListSlot: boolean;
+    useMergeStateCheckers: boolean;
     onChange: (newValue: Array<ExpressionArg | undefined>) => void;
 }
 
@@ -99,8 +100,8 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                 }}
                 expRegistry={{
                     builtInSlotTypes: supportedBuiltInSlotTypes,
-                    categories: studyEngineCategories,
-                    expressionDefs: studyEngineRegistry,
+                    categories: props.useMergeStateCheckers ? [...studyEngineCategories, categoryForMergeStateCheckers] : studyEngineCategories,
+                    expressionDefs: props.useMergeStateCheckers ? [...studyEngineRegistry, ...mergeParticipantStateCheckers] : studyEngineRegistry,
                 }}
                 context={{
                     studyStatusValues: [

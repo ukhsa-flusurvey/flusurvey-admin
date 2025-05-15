@@ -67,6 +67,7 @@ const HandlerEditor: React.FC<HandlerEditorProps> = (props) => {
                         })
                     }}
                     isListSlot={props.selection.type !== 'timer-event' ? true : false}
+                    useMergeStateCheckers={props.selection.type === 'merge'}
                 />
             </Card>
 

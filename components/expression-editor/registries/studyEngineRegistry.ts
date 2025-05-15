@@ -57,12 +57,13 @@ export const studyEngineCategories = [
     {
         id: 'participant-state-checkers',
         label: 'Participant state checkers'
-    },
-    {
-        id: 'incoming-participant-state-checkers',
-        label: 'Incoming participant state checkers (for merge events)'
     }
 ]
+
+export const categoryForMergeStateCheckers = {
+    id: 'incoming-participant-state-checkers',
+    label: 'Incoming participant state checkers (for merge events)'
+}
 
 const slotKeyValueListSlotEditors: SlotInputDef[] = [
     {
@@ -3299,7 +3300,7 @@ const participantStateCheckers: ExpressionDef[] = [
     }
 ]
 
-const mergeParticipantStateCheckers: ExpressionDef[] = [
+export const mergeParticipantStateCheckers: ExpressionDef[] = [
     {
         id: 'incomingState:getStudyEntryTime',
         categories: ['incoming-participant-state-checkers'],
@@ -3747,5 +3748,4 @@ export const studyEngineRegistry: ExpressionDef[] = [
     ...logicAndComparisionExpressions,
     ...eventCheckers,
     ...dateHelpers,
-    ...mergeParticipantStateCheckers,
 ]
