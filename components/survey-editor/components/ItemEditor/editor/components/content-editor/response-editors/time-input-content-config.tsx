@@ -11,6 +11,7 @@ import { ExpArg } from '@/components/expression-editor/utils';
 interface TimeInputContentConfigProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
+    hideLabel?: boolean;
 }
 
 const TimeInputContentConfig: React.FC<TimeInputContentConfigProps> = (props) => {
@@ -23,7 +24,7 @@ const TimeInputContentConfig: React.FC<TimeInputContentConfigProps> = (props) =>
 
     return (
         <div className='space-y-4'>
-            <div className='space-y-1.5'>
+            {!props.hideLabel && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'label'}
                 >
@@ -41,53 +42,55 @@ const TimeInputContentConfig: React.FC<TimeInputContentConfigProps> = (props) =>
                     }}
                     placeholder='Enter label...'
                 />
-            </div>
+            </div>}
 
-            <div className='space-y-1.5'>
-                <Label
-                    htmlFor={props.component.key + 'min'}
-                >
-                    Min
-                </Label>
-                <Input
-                    id={props.component.key + 'min'}
-                    type='time'
-                    value={currentMin}
-                    onChange={(e) => {
-                        props.onChange({
-                            ...props.component,
-                            style: [
-                                ...(props.component.style || []).filter(s => s.key !== 'minTime'),
-                                ...(e.target.value === '' ? [] : [{ key: 'minTime', value: e.target.value }])
-                            ]
-                        })
-                    }}
-                    placeholder='Enter min time...'
-                />
-            </div>
+            <div className='grid grid-cols-2 gap-4'>
+                <div className='space-y-1.5'>
+                    <Label
+                        htmlFor={props.component.key + 'min'}
+                    >
+                        Earliest
+                    </Label>
+                    <Input
+                        id={props.component.key + 'min'}
+                        type='time'
+                        value={currentMin}
+                        onChange={(e) => {
+                            props.onChange({
+                                ...props.component,
+                                style: [
+                                    ...(props.component.style || []).filter(s => s.key !== 'minTime'),
+                                    ...(e.target.value === '' ? [] : [{ key: 'minTime', value: e.target.value }])
+                                ]
+                            })
+                        }}
+                        placeholder='Enter min time...'
+                    />
+                </div>
 
-            <div className='space-y-1.5'>
-                <Label
-                    htmlFor={props.component.key + 'max'}
-                >
-                    Max
-                </Label>
-                <Input
-                    id={props.component.key + 'max'}
-                    type='time'
-                    value={currentMax}
-                    onChange={(e) => {
-                        props.onChange({
-                            ...props.component,
-                            style: [
-                                ...(props.component.style || []).filter(s => s.key !== 'maxTime'),
-                                ...(e.target.value === '' ? [] : [{ key: 'maxTime', value: e.target.value }])
-                            ]
-                        })
-                    }}
-                    placeholder='Enter max time...'
-                />
+                <div className='space-y-1.5'>
+                    <Label
+                        htmlFor={props.component.key + 'max'}
+                    >
+                        Latest
+                    </Label>
+                    <Input
+                        id={props.component.key + 'max'}
+                        type='time'
+                        value={currentMax}
+                        onChange={(e) => {
+                            props.onChange({
+                                ...props.component,
+                                style: [
+                                    ...(props.component.style || []).filter(s => s.key !== 'maxTime'),
+                                    ...(e.target.value === '' ? [] : [{ key: 'maxTime', value: e.target.value }])
+                                ]
+                            })
+                        }}
+                        placeholder='Enter max time...'
+                    />
 
+                </div>
             </div>
 
             <div>

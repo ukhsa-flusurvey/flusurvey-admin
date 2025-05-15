@@ -42,7 +42,7 @@ const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
                 required: false,
                 allowedTypes: [
                     {
-                        id: 'numeric-input',
+                        id: 'number-input',
                         type: 'num',
                     },
                     {

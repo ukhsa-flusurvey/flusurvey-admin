@@ -12,6 +12,7 @@ import { ExpArg } from '@/components/expression-editor/utils';
 interface DateInputContentConfigProps {
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
+    hideLabel?: boolean;
 }
 
 const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) => {
@@ -60,13 +61,13 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
                         <SelectValue placeholder="Select a date input mode..." />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="YMD">YMD</SelectItem>
-                        <SelectItem value="YM">YM</SelectItem>
-                        <SelectItem value="Y">Y</SelectItem>
+                        <SelectItem value="YMD">Year, Month & Day</SelectItem>
+                        <SelectItem value="YM">Year & Month</SelectItem>
+                        <SelectItem value="Y">Year</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
-            <div className='space-y-1.5'>
+            {!props.hideLabel && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'label'}
                 >
@@ -84,7 +85,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
                     }}
                     placeholder='Enter label...'
                 />
-            </div>
+            </div>}
 
             <div className='space-y-1.5'>
                 <Label
@@ -108,7 +109,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Min'
+                    label='Earliest'
                     expArg={currentMin as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};
@@ -126,7 +127,7 @@ const DateInputContentConfig: React.FC<DateInputContentConfigProps> = (props) =>
 
             <div>
                 <ExpArgEditorForDate
-                    label='Max'
+                    label='Latest'
                     expArg={currentMax as ExpArg}
                     onChange={(argValue) => {
                         const currentData = props.component.properties || {};

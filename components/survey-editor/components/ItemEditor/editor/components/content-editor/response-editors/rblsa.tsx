@@ -4,7 +4,6 @@ import AddDropdown from "@/components/survey-editor/components/general/add-dropd
 import TabCard from "@/components/survey-editor/components/general/tab-card";
 import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { localisedObjectToMap } from "@/components/survey-editor/utils/localeUtils";
-import { updateLocalizedString } from '@/utils/localizedStrings';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,11 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { ResponsiveBipolarLikertArrayVariant } from "case-editor-tools/surveys/types";
 import { generateLocStrings } from "case-editor-tools/surveys/utils/simple-generators";
-import { Check, Circle, Cog, GripHorizontal, GripVertical, Languages, Rows, ToggleLeft, Trash2, X } from "lucide-react";
-import React from "react";
-import { ItemComponent, ItemGroupComponent, LocalizedString, SurveySingleItem } from "survey-engine/data_types";
+import { Cog, GripVertical, Languages, Rows, ToggleLeft, Trash2 } from "lucide-react";
+import { ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
+import { PopoverKeyBadge } from "../../KeyBadge";
+import { StyleClassNameEditor } from "./style-class-name-editor";
+import { OptionsEditor } from "./rsca";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from "react";
 
 // TODO: Expected name would collide with existing def. Should be ...EditorProps to avoid conflicts, but wouldn't be consistent with others atm.
 interface RblsaProps {
@@ -28,24 +31,6 @@ enum RblsaStyleKeys {
     tableModeClassName = 'tableModeClassName',
     labelRowModeClassName = 'withLabelRowModeClassName',
     verticalModeClassName = 'verticalModeClassName',
-}
-
-const StyleClassNameEditor = (props: {
-    styles: { key: string, value: string }[],
-    styleKey: string,
-    label: string,
-    onChange: (key: string, value: string | undefined) => void
-}) => {
-    return <div className="flex items-center gap-2" data-no-dnd="true">
-        <Label htmlFor={'input-' + props.styleKey} className="text-xs">
-            {props.label}
-        </Label>
-        <Input
-            id={'input-' + props.styleKey}
-            value={props.styles?.find(st => st.key === props.styleKey)?.value ?? ""}
-            onChange={(e) => { props.onChange(props.styleKey, e.target.value) }}
-        />
-    </div>
 }
 
 const ModeSelector = (props: {
@@ -73,236 +58,21 @@ const ModeSelector = (props: {
     </div>
 }
 
-const KeyEditor = (props: {
-    currentKey: string;
-    existingKeys?: string[];
-    onChange: (newKey: string) => void;
-}) => {
-    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
-
-    const hasValidKey = (key: string): boolean => {
-        if (key.length < 1) {
-            return false;
-        }
-        if (props.existingKeys?.includes(key)) {
-            return false;
-        }
-        return true;
-    }
-
-
-    return <div className='flex items-center gap-2'
-        data-no-dnd="true"
-    >
-        <Label htmlFor={'item-key-' + props.currentKey}>
-            Key
-        </Label>
-        <Input
-            id={'item-key-' + props.currentKey}
-            className='w-32'
-            value={editedKey}
-            onChange={(e) => {
-                const value = e.target.value;
-
-                setEditedKey(value);
-            }}
-        />
-        {editedKey !== props.currentKey &&
-            <div className='flex items-center'>
-                <Button
-                    variant='ghost'
-                    className='text-destructive'
-                    size='icon'
-                    onClick={() => {
-                        setEditedKey(props.currentKey);
-                    }}
-                >
-                    <X className='size-4' />
-                </Button>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-primary'
-                    disabled={!hasValidKey(editedKey)}
-                    onClick={() => {
-                        props.onChange(editedKey);
-                    }}
-                >
-                    <Check className='size-4' />
-                </Button>
-            </div>}
-    </div>
-}
-
-const OptionEditor = (props: {
-    option: ItemComponent;
-    existingKeys?: string[];
-    onChange: (newOption: ItemComponent) => void;
-    onDelete: () => void;
-}) => {
-    const { selectedLanguage } = useSurveyEditorCtx();
-    const optionLabel = localisedObjectToMap(props.option.content).get(selectedLanguage) || '';
-
-    return <SortableItem
-        id={props.option.key!}
-    >
-        <div className='border border-border rounded-md p-2 relative space-y-2 bg-slate-50'>
-            <div className='absolute left-1/2 top-0'>
-                <GripHorizontal className='size-4' />
-            </div>
-            <div className='flex items-center gap-2 w-full'>
-                <div className='grow'>
-                    <KeyEditor
-                        currentKey={props.option.key || ''}
-                        existingKeys={props.existingKeys}
-                        onChange={(newKey) => {
-                            props.onChange({
-                                ...props.option,
-                                key: newKey
-                            })
-                        }}
-                    />
-                </div>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => {
-                        if (!confirm('Are you sure you want to delete this option?')) {
-                            return;
-                        }
-                        props.onDelete();
-                    }}
-                >
-                    <Trash2 className='size-4' />
-                </Button>
-            </div>
-            <div
-                data-no-dnd="true"
-                // incase we want to allow for different label than the key, remove hidden?
-                className='gap-2 items-center hidden' >
-                <Label htmlFor={'option-key-' + props.option.key}>
-                    Label
-                </Label>
-                <Input
-                    id={'option-key-' + props.option.key}
-                    className='w-32'
-                    value={optionLabel}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        const updatedContent = updateLocalizedString(props.option.content as LocalizedString[] || [], selectedLanguage, value);
-                        props.onChange({
-                            ...props.option,
-                            content: updatedContent,
-                        })
-                    }}
-                />
-            </div>
-        </div>
-    </SortableItem>
-}
-
-const OptionsEditor = (props: {
-    options: ItemComponent[],
-    onChange: (newOptions: ItemComponent[]) => void
-}) => {
-    const [draggedId, setDraggedId] = React.useState<string | null>(null);
-
-    const draggedItem = props.options.find(option => option.key === draggedId);
-
-    return <div>
-        <p className='font-semibold'>
-            Options ({props.options.length})
-        </p>
-        <p className='text-sm text-muted-foreground'>
-            These options will be used for each row
-            (drag and drop to reorder)
-        </p>
-
-        <SortableWrapper
-            sortableID={`options-for-rsca`}
-            items={props.options.map((option, index) => {
-                return {
-                    id: option.key || index.toString(),
-                }
-            })}
-            onDraggedIdChange={(id) => {
-                setDraggedId(id);
-            }}
-            onReorder={(activeIndex, overIndex) => {
-                const newItems = [...props.options];
-                newItems.splice(activeIndex, 1);
-                newItems.splice(overIndex, 0, props.options[activeIndex]);
-                props.onChange(newItems);
-
-            }}
-            dragOverlayItem={(draggedId && draggedItem) ?
-                <OptionEditor
-                    option={draggedItem}
-                    onChange={() => { }}
-                    onDelete={() => { }}
-                />
-                : null}
-        >
-
-            <ol className='px-1 space-y-2 py-4'>
-                {props.options.length === 0 && <p className='text-sm text-primary'>
-                    No options defined.
-                </p>}
-                {props.options.map((option, index) => {
-                    return <OptionEditor
-                        key={option.key || index}
-                        option={option}
-                        existingKeys={props.options.map(o => o.key || index.toString())}
-                        onChange={(newOption) => {
-                            const newOptions = props.options.map((o) => {
-                                if (o.key === option.key) {
-                                    return newOption;
-                                }
-                                return o;
-                            });
-                            props.onChange(newOptions);
-                        }}
-                        onDelete={() => {
-                            const newOptions = props.options.filter((o) => {
-                                return o.key !== option.key;
-                            });
-                            props.onChange(newOptions);
-                        }}
-                    />
-                })}
-            </ol>
-        </SortableWrapper>
-
-        <div className="flex justify-center w-full">
-            <AddDropdown
-                options={[
-                    { key: 'option', label: 'Option', icon: <Circle className='size-4 text-neutral-500 me-2' /> },
-                ]}
-                onAddItem={(type) => {
-                    if (type === 'option') {
-                        const newOption: ItemComponent = {
-                            key: Math.random().toString(36).substring(9),
-                            role: 'option',
-                        }
-                        props.onChange([...props.options, newOption]);
-                    }
-                }}
-            />
-        </div>
-    </div>
-}
-
 const RowEditor = (props: {
     row: ItemGroupComponent;
     existingKeys?: string[];
     onChange: (newRow: ItemGroupComponent) => void;
     onDelete: () => void;
+    isBeingDragged?: boolean;
+    preSelectedTab?: string;
+    onTabSelect?: (tabLabel: string) => void;
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const rowStartLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.StartLabel);
     const rowStartLabel = localisedObjectToMap(rowStartLabelItem?.content).get(selectedLanguage) || '';
     const rowEndLabelItem = props.row.items.find(comp => comp.role == ItemComponentRole.EndLabel);
     const rowEndLabel = localisedObjectToMap(rowEndLabelItem?.content).get(selectedLanguage) || '';
+
 
     const onRowStyleChange = (key: string, newValue: string | undefined) => {
         const existingStyles = [...props.row.style || []];
@@ -323,28 +93,32 @@ const RowEditor = (props: {
 
     return <SortableItem
         id={props.row.key!}
+        className={props.isBeingDragged ? 'invisible' : ''}
     >
         <div className='relative'>
             <div className='absolute left-0 top-1/2'>
                 <GripVertical className='size-4' />
             </div>
             <TabCard
+                selectedTab={props.preSelectedTab ?? 'General'}
+                onTabSelect={(label) => props.onTabSelect?.(label)}
                 tabs={[
                     {
                         label: 'General',
                         icon: <Languages className='me-1 size-3 text-muted-foreground' />,
                         content: <TabWrapper>
-                            <div className='flex justify-between gap-2 items-center space-y-4'>
-                                <KeyEditor
-                                    currentKey={props.row.key || ''}
-                                    existingKeys={props.existingKeys}
-                                    onChange={(newKey) => {
+                            <div className='flex justify-between gap-2 items-center'>
+                                <PopoverKeyBadge
+                                    headerText="Row Key"
+                                    allOtherKeys={props.existingKeys?.filter(k => k !== props.row.key) ?? []}
+                                    isHighlighted={true}
+                                    itemKey={props.row.key ?? ''}
+                                    onKeyChange={(newKey) => {
                                         props.onChange({
                                             ...props.row,
                                             key: newKey
                                         })
-                                    }}
-                                />
+                                    }} />
                                 <Button
                                     variant='ghost'
                                     size='sm'
@@ -412,25 +186,26 @@ const RowEditor = (props: {
                     {
                         label: 'Extras',
                         icon: <Cog className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            <StyleClassNameEditor
-                                styles={props.row.style || []}
-                                styleKey={RblsaStyleKeys.tableModeClassName}
-                                label={RblsaStyleKeys.tableModeClassName}
-                                onChange={onRowStyleChange} />
-                            <Separator />
-                            <StyleClassNameEditor
-                                styles={props.row.style || []}
-                                styleKey={RblsaStyleKeys.labelRowModeClassName}
-                                label={RblsaStyleKeys.labelRowModeClassName}
-                                onChange={onRowStyleChange} />
-                            <Separator />
-                            <StyleClassNameEditor
-                                styles={props.row.style || []}
-                                styleKey={RblsaStyleKeys.verticalModeClassName}
-                                label={RblsaStyleKeys.verticalModeClassName}
-                                onChange={onRowStyleChange} />
-                        </TabWrapper>
+                        content:
+                            <TabWrapper>
+                                <StyleClassNameEditor
+                                    styles={props.row.style || []}
+                                    styleKey={RblsaStyleKeys.tableModeClassName}
+                                    label={"Table Mode Class Name"}
+                                    onChange={onRowStyleChange} />
+                                <Separator />
+                                <StyleClassNameEditor
+                                    styles={props.row.style || []}
+                                    styleKey={RblsaStyleKeys.labelRowModeClassName}
+                                    label={"Label Row Mode Class Name"}
+                                    onChange={onRowStyleChange} />
+                                <Separator />
+                                <StyleClassNameEditor
+                                    styles={props.row.style || []}
+                                    styleKey={RblsaStyleKeys.verticalModeClassName}
+                                    label={"Vertical Mode Class Name"}
+                                    onChange={onRowStyleChange} />
+                            </TabWrapper>
                     }
                 ]}
             />
@@ -444,9 +219,8 @@ const RowsEditor = (props: {
     onChange: (newRows: ItemGroupComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
-
     const draggedItem = props.rows.find(row => row.key === draggedId);
-
+    const [selectedTabsMap, setSelectedTabsMap] = React.useState<Record<string, string>>({});
 
     return <div>
         <p className='font-semibold'>
@@ -478,6 +252,7 @@ const RowsEditor = (props: {
                     row={draggedItem}
                     onChange={() => { }}
                     onDelete={() => { }}
+                    preSelectedTab={selectedTabsMap[draggedId]}
                 />
                 : null}
         >
@@ -491,6 +266,7 @@ const RowsEditor = (props: {
                         key={row.key || index}
                         row={row}
                         existingKeys={props.rows.map(o => o.key || index.toString())}
+                        isBeingDragged={draggedId === row.key}
                         onChange={(newRow) => {
                             const newOptions = props.rows.map((o) => {
                                 if (o.key === row.key) {
@@ -505,6 +281,11 @@ const RowsEditor = (props: {
                                 return o.key !== row.key;
                             });
                             props.onChange(newOptions);
+                        }}
+                        onTabSelect={(tabLabel) => {
+                            const newSelectedTabsMap = { ...selectedTabsMap };
+                            newSelectedTabsMap[row.key || index.toString()] = tabLabel;
+                            setSelectedTabsMap(newSelectedTabsMap);
                         }}
                     />
                 })}
@@ -621,100 +402,118 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
         onChangeRBLSA(rblsaGroup);
     }
 
+    const triggerClassName = "text-sm data-[state=active]:bg-white data-[state=active]:font-bold data-[state=active]:border data-[state=active]:border-slate-200 data-[state=active]:text-accent-foreground data-[state=active]:[box-shadow:none]";
+
     return (
         <div className="space-y-4">
-            <OptionsEditor
-                options={options}
-                onChange={(newOptions) => {
-                    const optionsIndex = rblsaGroup.items.findIndex(comp => comp.role === ItemComponentRole.Options);
-                    if (optionsIndex === -1) {
-                        rblsaGroup.items.push({
-                            role: ItemComponentRole.Options,
-                            items: newOptions
-                        });
-                    } else {
-                        rblsaGroup.items[optionsIndex] = {
-                            role: ItemComponentRole.Options,
-                            items: newOptions
-                        };
-                    }
-                    onChangeRBLSA(rblsaGroup);
-                }}
-            />
-            <RowsEditor
-                rows={rows}
-                onChange={(r) => {
-                    const newRows = rblsaGroup.items.filter(comp => comp.role !== ItemComponentRole.Row);
-                    newRows.push(...r);
-                    rblsaGroup.items = newRows;
-                    onChangeRBLSA(rblsaGroup);
-                }}
-            />
-            <div className='space-y-2'>
-                <p className='font-semibold'>
-                    Render mode for screen sizes:
-                </p>
-                <ModeSelector
-                    size='default'
-                    mode={defaultMode}
-                    onChange={onModeChange}
-                />
+            <Tabs defaultValue="options-rows" className="mt-2">
+                <div className="flex flex-row justify-end items-center">
+                    <TabsList className="bg-muted p-0.5 rounded-md border border-neutral-200 gap-1">
+                        <TabsTrigger className={triggerClassName} value="options-rows">Options & Rows</TabsTrigger>
+                        <TabsTrigger className={triggerClassName} value="extras">Extras</TabsTrigger>
+                        {/* Use Badge here to indicate if there are any conditions */}
+                    </TabsList>
+                </div>
+                <TabsContent value="options-rows">
+                    <OptionsEditor
+                        options={options}
+                        hideLabel={true}
+                        onChange={(newOptions) => {
+                            const optionsIndex = rblsaGroup.items.findIndex(comp => comp.role === ItemComponentRole.Options);
+                            if (optionsIndex === -1) {
+                                rblsaGroup.items.push({
+                                    role: ItemComponentRole.Options,
+                                    items: newOptions
+                                });
+                            } else {
+                                rblsaGroup.items[optionsIndex] = {
+                                    role: ItemComponentRole.Options,
+                                    items: newOptions
+                                };
+                            }
+                            onChangeRBLSA(rblsaGroup);
+                        }}
+                    />
+                    <RowsEditor
+                        rows={rows}
+                        onChange={(r) => {
+                            const newRows = rblsaGroup.items.filter(comp => comp.role !== ItemComponentRole.Row);
+                            newRows.push(...r);
+                            rblsaGroup.items = newRows;
+                            onChangeRBLSA(rblsaGroup);
+                        }}
+                    />
+                </TabsContent>
+                <TabsContent value="extras" className='space-y-4'>
+                    <div className='space-y-2'>
+                        <p className='font-semibold'>
+                            Render mode for screen sizes:
+                        </p>
+                        <ModeSelector
+                            size='default'
+                            mode={defaultMode}
+                            onChange={onModeChange}
+                        />
 
-                <ModeSelector
-                    size='sm'
-                    mode={smMode}
-                    onChange={onModeChange}
-                />
+                        <ModeSelector
+                            size='sm'
+                            mode={smMode}
+                            onChange={onModeChange}
+                        />
 
-                <ModeSelector
-                    size='md'
-                    mode={mdMode}
-                    onChange={onModeChange}
-                />
+                        <ModeSelector
+                            size='md'
+                            mode={mdMode}
+                            onChange={onModeChange}
+                        />
 
-                <ModeSelector
-                    size='lg'
-                    mode={lgMode}
-                    onChange={onModeChange}
-                />
+                        <ModeSelector
+                            size='lg'
+                            mode={lgMode}
+                            onChange={onModeChange}
+                        />
 
-                <ModeSelector
-                    size='xl'
-                    mode={xlMode}
-                    onChange={onModeChange}
-                />
-            </div>
+                        <ModeSelector
+                            size='xl'
+                            mode={xlMode}
+                            onChange={onModeChange}
+                        />
+                    </div>
 
-            <div className='space-y-2'>
-                <p className='font-semibold'>
-                    Styling attributes:
-                </p>
-                <StyleClassNameEditor
-                    styles={styles}
-                    styleKey="labelRowPosition"
-                    label="labelRowPosition"
-                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
-                <StyleClassNameEditor
-                    styles={styles}
-                    styleKey="labelRowMaxLabelWidth"
-                    label="labelRowMaxLabelWidth"
-                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
-                <StyleClassNameEditor
-                    styles={styles}
-                    styleKey="tableModeLayout"
-                    label="tableModeLayout"
-                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
-                <StyleClassNameEditor
-                    styles={styles}
-                    styleKey="tableModeLabelColWidth"
-                    label="tableModeLabelColWidth"
-                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
-                <StyleClassNameEditor
-                    styles={styles}
-                    styleKey="tableModeClassName"
-                    label="tableModeClassName"
-                    onChange={(key, newValue) => onStyleChange(key, newValue)} />
-            </div>
+                    <div className='space-y-2'>
+                        <p className='font-semibold'>
+                            Styling attributes:
+                        </p>
+                        <StyleClassNameEditor
+                            styles={styles}
+                            styleKey="labelRowPosition"
+                            label="labelRowPosition"
+                            onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                        <StyleClassNameEditor
+                            styles={styles}
+                            styleKey="labelRowMaxLabelWidth"
+                            label="labelRowMaxLabelWidth"
+                            onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                        <StyleClassNameEditor
+                            styles={styles}
+                            styleKey="tableModeLayout"
+                            label="tableModeLayout"
+                            onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                        <StyleClassNameEditor
+                            styles={styles}
+                            styleKey="tableModeLabelColWidth"
+                            label="tableModeLabelColWidth"
+                            onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                        <StyleClassNameEditor
+                            styles={styles}
+                            styleKey="tableModeClassName"
+                            label="tableModeClassName"
+                            onChange={(key, newValue) => onStyleChange(key, newValue)} />
+                    </div>
+                </TabsContent>
+            </Tabs>
+
+
         </div>
 
     );

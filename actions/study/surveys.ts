@@ -12,7 +12,7 @@ export const createNewSurvey = async (studyKey: string, survey: Survey) => {
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies/${studyKey}/surveys`;
+    const url = `/v1/studies/${studyKey}/surveys`;
 
     survey.id = undefined;
     survey.published = undefined;
@@ -38,7 +38,7 @@ export const uploadSurvey = async (studyKey: string, surveyKey: string, survey: 
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies/${studyKey}/surveys/${surveyKey}`;
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}`;
     survey.id = undefined;
     survey.unpublished = undefined;
     survey.published = undefined;
@@ -64,7 +64,7 @@ export const deleteSurveyVersion = async (studyKey: string, surveyKey: string, v
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions/${versionId}`;
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}/versions/${versionId}`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
@@ -85,7 +85,7 @@ export const unpublishSurvey = async (studyKey: string, surveyKey: string) => {
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies/${studyKey}/surveys/${surveyKey}/unpublish`;
+    const url = `/v1/studies/${studyKey}/surveys/${surveyKey}/unpublish`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,
