@@ -1,0 +1,219 @@
+import SortableItem from "@/components/survey-editor/components/general/SortableItem";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { ArrowLeftIcon, ClipboardCopy, ClipboardPaste, Copy, GripVertical, Maximize2Icon, Minimize2Icon, SettingsIcon, Trash, XIcon } from "lucide-react";
+import { useState } from "react";
+import { ItemComponent } from "survey-engine/data_types";
+
+interface CompontentEditorGenericProps {
+    component: ItemComponent;
+    onChange?: (comp: ItemComponent) => void;
+    onDelete?: () => void;
+}
+
+interface ComponentEditorProps extends CompontentEditorGenericProps {
+    isSortable?: boolean;
+    isDragged?: boolean;
+    previewContent: React.ComponentType<CompontentEditorGenericProps>;
+    quickEditorContent: React.ComponentType<CompontentEditorGenericProps>;
+    advancedEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
+}
+
+const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
+    const [editorMode, setEditorMode] = useState<'quick' | 'advanced'>('quick');
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [isPreviewMenuOpen, setIsPreviewMenuOpen] = useState(false);
+    const onDialogOpenChange = (open: boolean) => {
+        setIsDialogOpen(open);
+        if (open) {
+            setIsPopoverOpen(false);
+        }
+    }
+
+    const onDelete = () => { }
+    const onDuplicate = () => { }
+    const onCopy = () => { }
+    const onPaste = () => { }
+
+    let preview: React.ReactNode = <PopoverTrigger asChild>
+        <button className={cn("relative w-full bg-background border border-border rounded-md px-3 py-2 group focus:outline focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30", {
+            "outline outline-2 outline-primary/50": isPopoverOpen || isPreviewMenuOpen
+        })}
+            onContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsPopoverOpen(false);
+                setIsPreviewMenuOpen(true);
+            }}
+        >
+            {(props.isSortable || props.isDragged) && <span className='absolute -left-4 top-0 hidden group-hover:flex items-center h-full'>
+                <GripVertical className='size-4 text-muted-foreground' />
+            </span>}
+
+            {props.previewContent && <props.previewContent {...props} />}
+
+            <DropdownMenu open={isPreviewMenuOpen && !props.isDragged && !isPopoverOpen} onOpenChange={setIsPreviewMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                    <div className='absolute right-0 bottom-0 opacity-0'>
+                    </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                    <DropdownMenuItem
+                        onSelect={onDuplicate} onClick={(e) => e.stopPropagation()}>
+                        <span className="text-muted-foreground mr-2" >
+                            <Copy size={16} /></span>
+                        Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={onCopy} onClick={(e) => e.stopPropagation()}>
+                        <span className="text-muted-foreground mr-2" >
+                            <ClipboardCopy size={16} /></span>
+                        Copy Contents
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={onPaste} onClick={(e) => e.stopPropagation()}>
+                        <span className="text-muted-foreground mr-2" >
+                            <ClipboardPaste size={16} />
+                        </span>
+                        Paste Contents
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={onDelete} onClick={(e) => e.preventDefault()}>
+                        <span className="text-muted-foreground mr-2" ><Trash size={16} /></span>
+                        Delete
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </button>
+    </PopoverTrigger>
+
+    if (props.isSortable) {
+        preview = <SortableItem
+            id={props.component.key!}
+            className={props.isDragged ? 'invisible' : ''}
+        >
+            {preview}
+        </SortableItem>
+    }
+
+    const content = <div>
+        <Popover open={isPopoverOpen && !props.isDragged} onOpenChange={setIsPopoverOpen}>
+            {preview}
+
+            <PopoverContent
+                className={cn("p-2", editorMode === 'advanced' && "w-fit max-w-[95vw] max-h-96 overflow-auto")}
+                side="bottom"
+                align="center"
+            >
+                {editorMode === 'quick' && <div className="space-y-1">
+                    {props.quickEditorContent && <props.quickEditorContent {...props} />}
+
+                    {props.advancedEditorContent &&
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setEditorMode('advanced');
+                            }}
+                            className="text-xs w-full h-fit"
+                        >
+                            <span className="text-muted-foreground mr-1">
+                                <SettingsIcon className="!size-3" />
+                            </span> Show more settings...
+                        </Button>
+                    }
+                </div>}
+                {editorMode === 'advanced' && <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setEditorMode('quick');
+                            }}
+                        >
+                            <span className="text-muted-foreground mr-1">
+                                <ArrowLeftIcon className="!size-3" />
+                            </span>
+                            Back to quick editor
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                onDialogOpenChange(true);
+                            }}
+                        >
+                            <Maximize2Icon className="size-4" />
+                        </Button>
+                    </div>
+
+                    <Separator />
+
+                    {props.advancedEditorContent && <props.advancedEditorContent {...props} />}
+                </div>}
+            </PopoverContent>
+        </Popover>
+
+    </div>
+
+    const dialog = <Dialog
+        open={isDialogOpen && !props.isDragged} onOpenChange={onDialogOpenChange}
+    >
+        <DialogContent
+            className="max-w-full w-[calc(100%-1rem)] h-[calc(100%-1rem)]"
+            hideCloseBtn={true}
+        >
+            <DialogHeader>
+                <DialogTitle className="flex justify-between items-center">
+                    <span>
+                        Component Editor
+                    </span>
+                    <div>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                                setIsDialogOpen(false);
+                                setIsPopoverOpen(true);
+                            }}
+                        >
+                            <Minimize2Icon className="size-4" />
+                        </Button>
+                        <DialogClose asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+
+                            >
+                                <XIcon className="size-4" />
+                            </Button>
+                        </DialogClose>
+                    </div>
+                </DialogTitle>
+                <Separator />
+                <div className="grow">
+                    {props.advancedEditorContent && <props.advancedEditorContent {...props} />}
+                    {!props.advancedEditorContent && <div className="flex h-full py-8 justify-center items-center">
+                        <p className="text-muted-foreground">No advanced editor content</p>
+                    </div>}
+                </div>
+            </DialogHeader>
+        </DialogContent>
+    </Dialog>
+
+
+    if (props.isSortable) {
+        return <>
+            {content}
+            {dialog}
+        </>
+    }
+
+    return <>
+        {content}
+        {dialog}
+    </>
+};
+export default ComponentEditor;
