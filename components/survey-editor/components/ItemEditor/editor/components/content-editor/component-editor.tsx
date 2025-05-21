@@ -5,14 +5,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { ArrowLeftIcon, ClipboardCopy, ClipboardPaste, Copy, GripVertical, Maximize2Icon, Minimize2Icon, SettingsIcon, Trash, XIcon } from "lucide-react";
+import { ArrowLeftIcon, EllipsisVertical, GripVertical, Maximize2Icon, Minimize2Icon, SettingsIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { ItemComponent } from "survey-engine/data_types";
 
 interface CompontentEditorGenericProps {
     component: ItemComponent;
     onChange?: (comp: ItemComponent) => void;
-    onDelete?: () => void;
 }
 
 interface ComponentEditorProps extends CompontentEditorGenericProps {
@@ -21,6 +20,14 @@ interface ComponentEditorProps extends CompontentEditorGenericProps {
     previewContent: React.ComponentType<CompontentEditorGenericProps>;
     quickEditorContent: React.ComponentType<CompontentEditorGenericProps>;
     advancedEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
+    contextMenuItems?: Array<{
+        type: 'item';
+        label: string;
+        icon: React.ReactNode;
+        onClick: (item?: ItemComponent) => void;
+    } | {
+        type: 'separator';
+    }>;
 }
 
 const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
@@ -36,10 +43,23 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
         }
     }
 
-    const onDelete = () => { }
-    const onDuplicate = () => { }
-    const onCopy = () => { }
-    const onPaste = () => { }
+    const contentMenuContent = <DropdownMenuContent align='end'>
+        {props.contextMenuItems?.map((item, index) => {
+            if (item.type === 'separator') {
+                return <DropdownMenuSeparator key={index} />
+            }
+            return <DropdownMenuItem key={index} onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                item.onClick(props.component);
+            }}>
+                {item.icon && <span className="text-muted-foreground mr-2 size-4" >
+                    {item.icon}
+                </span>}
+                {item.label}
+            </DropdownMenuItem>
+        })}
+    </DropdownMenuContent>
 
     let preview: React.ReactNode = <PopoverTrigger asChild>
         <button className={cn("relative w-full bg-background border border-border rounded-md px-3 py-2 group focus:outline focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30", {
@@ -58,36 +78,13 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
 
             {props.previewContent && <props.previewContent {...props} />}
 
-            <DropdownMenu open={isPreviewMenuOpen && !props.isDragged && !isPopoverOpen} onOpenChange={setIsPreviewMenuOpen}>
+            {props.contextMenuItems && <DropdownMenu open={isPreviewMenuOpen && !props.isDragged && !isPopoverOpen} onOpenChange={setIsPreviewMenuOpen}>
                 <DropdownMenuTrigger asChild>
                     <div className='absolute right-0 bottom-0 opacity-0'>
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                    <DropdownMenuItem
-                        onSelect={onDuplicate} onClick={(e) => e.stopPropagation()}>
-                        <span className="text-muted-foreground mr-2" >
-                            <Copy size={16} /></span>
-                        Duplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={onCopy} onClick={(e) => e.stopPropagation()}>
-                        <span className="text-muted-foreground mr-2" >
-                            <ClipboardCopy size={16} /></span>
-                        Copy Contents
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={onPaste} onClick={(e) => e.stopPropagation()}>
-                        <span className="text-muted-foreground mr-2" >
-                            <ClipboardPaste size={16} />
-                        </span>
-                        Paste Contents
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={onDelete} onClick={(e) => e.preventDefault()}>
-                        <span className="text-muted-foreground mr-2" ><Trash size={16} /></span>
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                {contentMenuContent}
+            </DropdownMenu>}
         </button>
     </PopoverTrigger>
 
@@ -110,6 +107,18 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                 align="center"
             >
                 {editorMode === 'quick' && <div className="space-y-1">
+                    {props.contextMenuItems && <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <div className="bg-white rounded-md p-0 absolute -right-9 top-0 border border-border">
+                                <Button variant="ghost" size="icon"
+                                    className="h-8 w-7"
+                                >
+                                    <EllipsisVertical className="size-4" />
+                                </Button>
+                            </div>
+                        </DropdownMenuTrigger>
+                        {contentMenuContent}
+                    </DropdownMenu>}
                     {props.quickEditorContent && <props.quickEditorContent {...props} />}
 
                     {props.advancedEditorContent &&
@@ -139,14 +148,24 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                             </span>
                             Back to quick editor
                         </Button>
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                onDialogOpenChange(true);
-                            }}
-                        >
-                            <Maximize2Icon className="size-4" />
-                        </Button>
+                        <div className="flex items-center">
+                            {props.contextMenuItems && <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <EllipsisVertical className="size-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                {contentMenuContent}
+                            </DropdownMenu>}
+                            <Button
+                                variant="ghost"
+                                onClick={() => {
+                                    onDialogOpenChange(true);
+                                }}
+                            >
+                                <Maximize2Icon className="size-4" />
+                            </Button>
+                        </div>
                     </div>
 
                     <Separator />
@@ -170,7 +189,15 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                     <span>
                         Component Editor
                     </span>
-                    <div>
+                    <div className="flex items-center">
+                        {props.contextMenuItems && <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <EllipsisVertical className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            {contentMenuContent}
+                        </DropdownMenu>}
                         <Button
                             variant="ghost"
                             size="icon"
