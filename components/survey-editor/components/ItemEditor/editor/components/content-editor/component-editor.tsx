@@ -9,8 +9,10 @@ import { ArrowLeftIcon, EllipsisVertical, GripVertical, Maximize2Icon, Minimize2
 import { useState } from "react";
 import { ItemComponent } from "survey-engine/data_types";
 
-interface CompontentEditorGenericProps {
+export interface CompontentEditorGenericProps {
     component: ItemComponent;
+    isSelected?: boolean;
+    usedKeys?: string[];
     onChange?: (comp: ItemComponent) => void;
 }
 
@@ -18,7 +20,7 @@ interface ComponentEditorProps extends CompontentEditorGenericProps {
     isSortable?: boolean;
     isDragged?: boolean;
     previewContent: React.ComponentType<CompontentEditorGenericProps>;
-    quickEditorContent: React.ComponentType<CompontentEditorGenericProps>;
+    quickEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
     advancedEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
     contextMenuItems?: Array<{
         type: 'item';
@@ -76,7 +78,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                 <GripVertical className='size-4 text-muted-foreground' />
             </span>}
 
-            {props.previewContent && <props.previewContent {...props} />}
+            {props.previewContent && <props.previewContent {...props} isSelected={props.isSelected || isPopoverOpen || isPreviewMenuOpen} />}
 
             {props.contextMenuItems && <DropdownMenu open={isPreviewMenuOpen && !props.isDragged && !isPopoverOpen} onOpenChange={setIsPreviewMenuOpen}>
                 <DropdownMenuTrigger asChild>
