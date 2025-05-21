@@ -14,7 +14,7 @@ export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, highl
         <Badge
             onClick={props.onClick}
             variant={props.isHighlighted ? 'default' : 'outline'}
-            className={cn("h-auto border-2 py-0", {
+            className={cn("h-auto border-2 py-0 w-full flex justify-center", {
                 "hover:opacity-80": props.isHighlighted,
             })}
             style={{ backgroundColor: props.highlightColor }}
@@ -39,6 +39,7 @@ export const PopoverKeyBadge: React.FC<{
     isHighlighted?: boolean,
     highlightColor?: string,
     headerText?: string,
+    className?: string,
     onClick?: MouseEventHandler<HTMLDivElement> | undefined,
     onKeyChange?: (newKey: string) => void,
 }> = (props) => {
@@ -84,7 +85,7 @@ export const PopoverKeyBadge: React.FC<{
             }
         }}
     >
-        <PopoverTrigger className="flex items-center justify-center"
+        <PopoverTrigger className={cn("flex items-center justify-center", props.className)}
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

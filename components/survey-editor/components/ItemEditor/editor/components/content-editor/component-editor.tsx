@@ -54,6 +54,8 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                 e.stopPropagation();
                 e.preventDefault();
                 item.onClick(props.component);
+                setIsPopoverOpen(false);
+                setIsDialogOpen(false);
             }}>
                 {item.icon && <span className="text-muted-foreground mr-2 size-4" >
                     {item.icon}
