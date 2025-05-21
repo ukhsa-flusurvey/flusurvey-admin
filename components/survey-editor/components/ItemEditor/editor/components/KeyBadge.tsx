@@ -43,13 +43,13 @@ export const PopoverKeyBadge: React.FC<{
     onKeyChange?: (newKey: string) => void,
 }> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
-    const [isSelected, setIsSelected] = React.useState(props.isHighlighted ?? false);
     const [currentKey, setCurrentKey] = React.useState<string>(props.itemKey);
     const [error, setError] = React.useState<string | null>(null);
     const isValidKey = error === null;
-    const externalIsSelected = props.isHighlighted != undefined;
     const hasChanges = currentKey !== props.itemKey;
     const headerText = props.headerText ?? 'Item Key';
+
+    const [isOpen, setIsOpen] = React.useState(false);
 
     useEffect(() => {
         if (currentKey.length <= 0) {
@@ -70,24 +70,33 @@ export const PopoverKeyBadge: React.FC<{
     const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
         if (!isValidKey) return;
         e.stopPropagation();
+        e.preventDefault();
         if (currentKey !== props.itemKey && props.onKeyChange) props.onKeyChange(currentKey);
         popoverCloseRef.current?.click();
     }
 
     return <Popover
+        open={isOpen}
         onOpenChange={(open) => {
+            setIsOpen(open);
             if (open) {
                 setCurrentKey(props.itemKey)
             }
         }}
     >
-        <PopoverTrigger className="flex items-center justify-center">
-            <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} highlightColor={props.highlightColor}
+        <PopoverTrigger className="flex items-center justify-center"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsOpen(prev => !prev);
+            }}
+        >
+            <KeyBadge itemKey={props.itemKey}
+                isHighlighted={props.isHighlighted || isOpen}
+                highlightColor={props.highlightColor}
                 onClick={(e) => {
                     if (props.onClick != undefined) {
                         props.onClick(e);
-                    } else {
-                        setIsSelected(externalIsSelected ? props.isHighlighted! : true)
                     }
                 }} />
         </PopoverTrigger>
@@ -95,7 +104,12 @@ export const PopoverKeyBadge: React.FC<{
             side='right'
             align="start"
             alignOffset={12}
-            data-no-dnd="true" >
+            data-no-dnd="true"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }}
+        >
             <div className="flex flex-col gap-2 w-full">
 
                 <PopoverClose
@@ -122,6 +136,7 @@ export const PopoverKeyBadge: React.FC<{
                             }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
+                                    e.preventDefault();
                                     handleKeyChange(e);
                                 }
                             }}
