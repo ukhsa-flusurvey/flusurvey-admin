@@ -1,14 +1,12 @@
-import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { generateLocStrings } from 'case-editor-tools/surveys/utils/simple-generators';
-import { Circle, Copy, GripVertical, Rows, Trash2, XIcon } from 'lucide-react';
+import { Circle, Copy, Rows, Trash2 } from 'lucide-react';
 import React from 'react';
 import { Expression, ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import { Separator } from '@/components/ui/separator';
@@ -52,68 +50,75 @@ const ModeSelector = (props: {
     </div>
 }
 
+
+const RscaCompPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+    const { selectedLanguage } = useSurveyEditorCtx();
+
+    const rowLabel = localisedObjectToMap(props.component.content).get(selectedLanguage);
+
+    return <div className='flex items-center gap-4'>
+        <div className='min-w-14 flex justify-center'>
+            <PopoverKeyBadge
+                headerText='Row Key'
+                className='w-full'
+                allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
+                isHighlighted={props.isSelected}
+                itemKey={props.component.key ?? ''}
+                onKeyChange={(newKey) => {
+                    props.onChange?.({
+                        ...props.component,
+                        key: newKey
+                    })
+                }} />
+        </div>
+        {rowLabel && <p className='text-sm text-start'>
+            {rowLabel}
+        </p>}
+        {!rowLabel && <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
+            {'- No label defined -'}
+        </p>}
+    </div>
+}
+
+const OptionQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+    return <div>
+        <SimpleTextViewContentEditor
+            component={props.component}
+            onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
+            hideLabel={false}
+            label='Option Label'
+            placeholder='Enter option label...'
+        />
+    </div>
+}
+
+
 const OptionEditor = (props: {
     option: ItemComponent;
     existingKeys?: string[];
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
     isBeingDragged?: boolean;
-    hideLabel?: boolean;
 }) => {
-    return <SortableItem
-        id={props.option.key!}
-        className={props.isBeingDragged ? 'opacity-0' : ''}
-    >
-        <div className='border border-border rounded-md py-2 px-3 relative bg-white group'>
-            <div className='flex items-center gap-2 w-full'>
-                <div className='absolute -left-4 top-0 hidden group-hover:flex items-center h-full'>
-                    <GripVertical className='size-4 text-muted-foreground' />
-                </div>
-                <span className='text-muted-foreground text-xs'>
-                    Option:
-                </span>
 
-                <div className='flex items-center basis-1/4'>
-                    <PopoverKeyBadge
-                        headerText='Option Key'
-                        allOtherKeys={props.existingKeys?.filter(k => k !== props.option.key) ?? []}
-                        isHighlighted={false}
-                        itemKey={props.option.key ?? ''}
-                        onKeyChange={(newKey) => {
-                            props.onChange({
-                                ...props.option,
-                                key: newKey
-                            })
-                        }} />
-                </div>
-                {!props.hideLabel && <div className='grow'>
-                    <SimpleTextViewContentEditor
-                        component={props.option}
-                        onChange={(updatedComponent) => props.onChange(updatedComponent)}
-                        hideLabel={true}
-                        placeholder='Enter option label...'
-                    />
-                </div>}
-                {props.hideLabel && <div className='grow' />}
-                <div className=''>
-                    <Button
-                        variant='ghost'
-                        size='icon'
-                        className='size-7'
-                        onClick={() => {
-                            if (!confirm('Are you sure you want to delete this option?')) {
-                                return;
-                            }
-                            props.onDelete();
-                        }}
-                    >
-                        <XIcon className='size-3 text-muted-foreground' />
-                    </Button>
-                </div>
-            </div>
-        </div>
+    return <ComponentEditor
+        isSortable={true}
+        isDragged={props.isBeingDragged}
+        previewContent={RscaCompPreview}
+        component={props.option}
+        usedKeys={props.existingKeys}
+        onChange={(newOption) => props.onChange(newOption)}
+        quickEditorContent={OptionQuickEditor}
+        contextMenuItems={[
+            {
+                type: 'item',
+                label: 'Delete',
+                icon: <Trash2 className='size-4' />,
+                onClick: props.onDelete
+            }
+        ]}
 
-    </SortableItem>
+    />
 }
 
 export const OptionsEditor = (props: {
@@ -129,9 +134,9 @@ export const OptionsEditor = (props: {
         <p className='font-semibold'>
             Options ({props.options.length})
         </p>
-        <p className='text-sm text-muted-foreground'>
+        <p className='text-xs text-muted-foreground'>
             These options will be used for each row
-            (drag and drop to reorder)
+            (drag items to reorder)
         </p>
 
         <SortableWrapper
@@ -156,7 +161,6 @@ export const OptionsEditor = (props: {
                     option={draggedItem}
                     onChange={() => { }}
                     onDelete={() => { }}
-                    hideLabel={props.hideLabel}
                 />
                 : null}
         >
@@ -186,7 +190,6 @@ export const OptionsEditor = (props: {
                             props.onChange(newOptions);
                         }}
                         isBeingDragged={draggedId === option.key}
-                        hideLabel={props.hideLabel}
                     />
                 })}
             </ol>
@@ -220,34 +223,6 @@ enum RscaStyleKeys {
 }
 
 
-const RowPreview: React.FC<CompontentEditorGenericProps> = (props) => {
-    const { selectedLanguage } = useSurveyEditorCtx();
-
-    const rowLabel = localisedObjectToMap(props.component.content).get(selectedLanguage);
-
-    return <div className='flex items-center gap-4'>
-        <div className='min-w-14 flex justify-center'>
-            <PopoverKeyBadge
-                headerText='Row Key'
-                className='w-full'
-                allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
-                isHighlighted={props.isSelected}
-                itemKey={props.component.key ?? ''}
-                onKeyChange={(newKey) => {
-                    props.onChange?.({
-                        ...props.component,
-                        key: newKey
-                    })
-                }} />
-        </div>
-        {rowLabel && <p className='text-sm text-start'>
-            {rowLabel}
-        </p>}
-        {!rowLabel && <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
-            {'- No row label defined -'}
-        </p>}
-    </div>
-}
 
 const RowQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
     return <div>
@@ -447,8 +422,8 @@ const RowsEditor = (props: {
         <p className='font-semibold'>
             Rows ({props.rows.length})
         </p>
-        <p className='text-sm text-muted-foreground'>
-            (drag to reorder)
+        <p className='text-xs text-muted-foreground'>
+            Drag items to reorder
         </p>
 
         <SortableWrapper
@@ -472,7 +447,7 @@ const RowsEditor = (props: {
                 <ComponentEditor
                     isDragged={true}
                     component={draggedItem}
-                    previewContent={RowPreview}
+                    previewContent={RscaCompPreview}
                 />
                 : null}
         >
@@ -506,7 +481,7 @@ const RowsEditor = (props: {
                                 onClick: onDeleteRow
                             }
                         ]}
-                        previewContent={RowPreview}
+                        previewContent={RscaCompPreview}
                         quickEditorContent={RowQuickEditor}
                         advancedEditorContent={RowAdvancedEditor}
                     />
