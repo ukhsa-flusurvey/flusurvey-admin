@@ -72,8 +72,10 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
             onContextMenu={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setIsPopoverOpen(false);
-                setIsPreviewMenuOpen(true);
+                if (props.contextMenuItems) {
+                    setIsPopoverOpen(false);
+                    setIsPreviewMenuOpen(true);
+                }
             }}
         >
             {(props.isSortable || props.isDragged) && <span className='absolute -left-4 top-0 hidden group-hover:flex items-center h-full'>
