@@ -7,6 +7,7 @@ import { ItemGroupComponent } from "survey-engine/data_types";
 import { supportedBuiltInSlotTypes, surveyEngineRegistry, surveyExpressionCategories } from '@/components/expression-editor/registries/surveyEngineRegistry';
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 import { Expression as CaseExpression } from 'survey-engine/data_types';
+import React from "react";
 
 interface SurveyExpressionEditorProps {
     label: string;
@@ -122,6 +123,7 @@ const SurveyExpressionEditor: React.FC<SurveyExpressionEditorProps> = (props) =>
     const { survey } = useSurveyEditorCtx();
 
     const { singleChoiceKeys, multipleChoiceKeys, allItemKeys } = extractSurveyKeys(survey);
+    const [isHidden, setIsHidden] = React.useState(false);
 
 
     return <ExpArgEditor
@@ -152,7 +154,7 @@ const SurveyExpressionEditor: React.FC<SurveyExpressionEditorProps> = (props) =>
         }}
         currentIndex={0}
         slotDef={{
-            label: 'Condition',
+            label: props.label,
             required: false,
             allowedTypes: [
                 {
@@ -171,6 +173,8 @@ const SurveyExpressionEditor: React.FC<SurveyExpressionEditorProps> = (props) =>
                 props.onChange((newArgs[0] as ExpArg).exp as CaseExpression);
             }
         }}
+        isHidden={isHidden}
+        onToggleHide={setIsHidden}
     />
 }
 
