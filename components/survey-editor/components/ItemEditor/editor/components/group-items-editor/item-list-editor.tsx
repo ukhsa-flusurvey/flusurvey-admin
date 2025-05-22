@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ClipboardCopyIcon, GripVertical, Plus, Shield, TrashIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
-import { getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
+import { ItemTypeKey, getItemColor, getItemTypeInfos, isValidSurveyItemGroup } from '@/components/survey-editor/utils/utils';
 import { cn } from '@/lib/utils';
 import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import { generateNewItemForType } from '@/components/survey-editor/utils/new-item-init';
@@ -63,7 +63,7 @@ const ItemListEditor: React.FC<ItemListEditorProps> = (props) => {
     const onAddNewSurveyItem = (newItemInfos: { itemType: string; parentKey: string; }) => {
 
         const newSurveyItem = generateNewItemForType({
-            itemType: newItemInfos.itemType,
+            itemType: newItemInfos.itemType as ItemTypeKey,
             parentGroup: groupItem,
         });
 

@@ -24,6 +24,9 @@ export enum ItemComponentRole {
     SingleChoiceGroup = 'singleChoiceGroup',
     MultipleChoiceGroup = 'multipleChoiceGroup',
     Markdown = 'markdown',
+    Error = 'error',
+    Warning = 'warning',
+    Root = 'root',
 }
 
 export enum EditorMode { Properties = 'properties', ItemEditor = 'itemEditor', Simulator = 'simulator' }

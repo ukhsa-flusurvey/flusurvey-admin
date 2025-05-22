@@ -1,15 +1,21 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { useEffect } from 'react';
-import { SpecialSurveyItemTypeInfos, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
+import React, { useEffect, useRef } from 'react';
+import { ItemTypeKey, SpecialSurveyItemTypeInfos, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { SurveyItem } from 'survey-engine/data_types';
-import { SurveyItemFeatures, surveyItemFeatureLookup } from './item-transformations';
+import { SurveyItemFeatures, supportedSurveyItemFeaturesByType, surveyItemFeatureLookup, surveyItemFeaturesLables, surveyItemFeaturesList } from './item-transformations';
+import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PopoverKeyBadge } from './KeyBadge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface ConvertItemDialogProps {
     open: boolean;
     surveyItem: SurveyItem;
+    surveyItemList: Array<{ key: string, isGroup: boolean }>;
     onClose: () => void;
     onItemConverted?: (newConvertedItem: string) => void;
 }
@@ -27,13 +33,121 @@ const allSurveyItemTypes = [
     }))
 ];
 
+const lookupValidation = (result: unknown) => {
+    if (result === undefined) {
+        return false;
+    }
+    if (Array.isArray(result)) {
+        return result.length > 0;
+    }
+    return true;
+}
+
+const KeyConfigCell: React.FC<{ sourceItem: SurveyItem, otherKeys: string[] }> = (props) => {
+    const [newKey, setNewKey] = React.useState<string>(getItemKeyFromFullKey(props.sourceItem.key) + "_conv");
+    return (
+        <div className='flex flex-row items-center justify-center'>
+            <PopoverKeyBadge allOtherKeys={props.otherKeys} itemKey={newKey} onKeyChange={(key) => setNewKey(key)} isHighlighted={true} />
+        </div>
+    );
+}
+
+const FeatureConfigCell: React.FC<{ sourceItem: SurveyItem, feature: SurveyItemFeatures, otherKeys: string[] }> = (props) => {
+    const ref = useRef<HTMLButtonElement>(null);
+    const validationResult = lookupValidation(surveyItemFeatureLookup[props.feature](props.sourceItem));
+    const [checked, setChecked] = React.useState<boolean>(validationResult);
+
+    switch (props.feature) {
+        default:
+            return (<div
+                className='flex flex-row justify-center items-center h-12 gap-2'
+                onClick={(e) => {
+                    setChecked(!checked);
+                    e.stopPropagation();
+                }}
+            >
+                <Checkbox
+                    id={'check-' + props.feature}
+                    ref={ref}
+                    checked={checked}
+                    onCheckedChange={(v) => setChecked(v === true)}
+                />
+                <Label className="text-sm font-normal" htmlFor={'check-' + props.feature} onClick={(e) => { e.preventDefault(); }}>
+                    Copy
+                </Label>
+            </div>);
+    }
+}
+
+const ConvertFeaturesTable: React.FC<{
+    sourceItem: SurveyItem,
+    sourceType: ItemTypeKey,
+    targetType: ItemTypeKey,
+    onChange?: (newItem: SurveyItem) => void,
+    otherKeys: string[],
+}> = (props) => {
+    console.log('ConvertFeaturesTable', props.sourceItem, props.sourceType, props.targetType);
+    let availableFeatures = surveyItemFeaturesList().filter(
+        (feature) => supportedSurveyItemFeaturesByType[props.sourceType].includes(feature)
+            && supportedSurveyItemFeaturesByType[props.targetType].includes(feature)
+            && lookupValidation(surveyItemFeatureLookup[feature](props.sourceItem)));
+
+    if (props.sourceType != props.targetType) {
+        availableFeatures = availableFeatures.filter((feature) => feature != SurveyItemFeatures.ResponseGroup);
+    } else {
+        availableFeatures = availableFeatures.filter(
+            (feature) => !([SurveyItemFeatures.ChoiceOptions,
+            SurveyItemFeatures.InputLabel,
+            SurveyItemFeatures.InputPlaceholder,
+            SurveyItemFeatures.InputProperties,
+            SurveyItemFeatures.InputStyling].includes(feature)));
+    }
+
+
+    return (<Table>
+        <TableHeader>
+            <TableRow>
+                <TableHead className="text-center">Feature</TableHead>
+                <TableHead className="text-center">Use</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            <TableRow key={'key'}>
+                <TableCell className="text-center w-1/2">{"Item Key"}</TableCell>
+                <TableCell className="text-center p-0">
+                    <KeyConfigCell
+                        sourceItem={props.sourceItem}
+                        otherKeys={props.otherKeys}
+                    />
+                </TableCell>
+            </TableRow>
+            {availableFeatures.map((feature) => {
+                return (
+                    <TableRow key={feature}>
+                        <TableCell className="text-center w-1/2">{surveyItemFeaturesLables[feature]}</TableCell>
+                        <TableCell className="text-center p-0">
+                            <FeatureConfigCell
+                                sourceItem={props.sourceItem}
+                                feature={feature}
+                                otherKeys={props.otherKeys}
+                            />
+                        </TableCell>
+                    </TableRow>
+                );
+            })}
+        </TableBody>
+    </Table>);
+}
+
 const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
     const itemTypeInfos = getItemTypeInfos(props.surveyItem);
-    const [targetType, setTargetType] = React.useState<string>(itemTypeInfos.key);
+    const [targetType, setTargetType] = React.useState<ItemTypeKey>(itemTypeInfos.key);
+
+    const relevantKeys = props.surveyItemList.filter(i => getParentKeyFromFullKey(i.key) == getParentKeyFromFullKey(props.surveyItem.key)).map(i => getItemKeyFromFullKey(i.key));
 
     useEffect(() => {
         setTargetType(itemTypeInfos.key);
-    }, [props.surveyItem]);
+    }, [itemTypeInfos.key, props.surveyItem]);
 
     return (
         <Dialog
@@ -49,56 +163,62 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
                     <DialogTitle>
                         Convert item:
                         <span className='ms-2 font-mono'>
-                            {String(surveyItemFeatureLookup[SurveyItemFeatures.ItemKey](props.surveyItem) || '')}
+                            {String(props.surveyItem.key || '')}
                         </span>
                     </DialogTitle>
                 </DialogHeader>
-                <div className='flex flex-row items-center justify-center'>
-                    <div className=''>
-                        <p className='text-sm mb-1'>
-                            From
-                        </p>
-                        <div className='flex flex-row items-center gap-2 border rounded-lg px-3 h-10 w-64 text-sm'>
-                            <itemTypeInfos.icon
-                                className='size-4'
-                            />
-                            {itemTypeInfos.label}
+                <div className='flex flex-col gap-4'>
+                    <div className='flex flex-row items-center justify-center'>
+                        <div className='w-64'>
+                            <p className='text-sm mb-1'>
+                                From
+                            </p>
+                            <div className='flex flex-row items-center gap-2 border rounded-lg px-3 h-10 text-sm'>
+                                <itemTypeInfos.icon
+                                    className='size-4'
+                                />
+                                {itemTypeInfos.label}
+                            </div>
+                        </div>
+                        <div className='self-end flex flex-col items-center justify-center h-10 grow'>
+                            <ArrowRight className='size-6' />
+                        </div>
+                        <div className='w-64'>
+                            <p className='text-sm mb-1'>
+                                To
+                            </p>
+                            <Select
+                                value={targetType}
+                                onValueChange={(value) => {
+                                    setTargetType(value as ItemTypeKey);
+                                }}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allSurveyItemTypes.map(typeInfo => (
+                                        <SelectItem
+                                            key={typeInfo.key}
+                                            value={typeInfo.key}
+                                        >
+                                            <div className='flex flex-row items-center gap-2'>
+                                                <typeInfo.icon
+                                                    className='size-4'
+                                                />
+                                                {typeInfo.label}
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
-                    <div className='self-end flex flex-col items-center justify-center h-10 grow'>
-                        <ArrowRight className='size-6' />
-                    </div>
-                    <div className='w-64'>
-                        <p className='text-sm mb-1'>
-                            To
-                        </p>
-                        <Select
-                            value={targetType}
-                            onValueChange={(value) => {
-                                setTargetType(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {allSurveyItemTypes.map(typeInfo => (
-                                    <SelectItem
-                                        key={typeInfo.key}
-                                        value={typeInfo.key}
-                                    >
-                                        <div className='flex flex-row items-center gap-2'>
-                                            <typeInfo.icon
-                                                className='size-4'
-                                            />
-                                            {typeInfo.label}
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <Separator />
+                    <p className='text-sm'>Configure features:</p>
+                    <ConvertFeaturesTable sourceItem={props.surveyItem} sourceType={itemTypeInfos.key} targetType={targetType} otherKeys={relevantKeys} />
                 </div>
+
                 <DialogFooter>
                     <Button
                         variant={'outline'}

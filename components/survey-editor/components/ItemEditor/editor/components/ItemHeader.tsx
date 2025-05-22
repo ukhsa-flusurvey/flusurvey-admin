@@ -1,6 +1,6 @@
 import React from 'react';
 import { SurveyItem, SurveySingleItem } from 'survey-engine/data_types';
-import { builtInItemColors, getItemColor, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
+import { ItemTypeKey, builtInItemColors, getItemColor, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { PopoverClose, PopoverTrigger } from '@radix-ui/react-popover';
@@ -74,6 +74,8 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
     }
 
     const hideColorPicker = item.typeInfos.key === 'pageBreak' || item.typeInfos.key === 'surveyEnd';
+    const hiddenConvertTypes: ItemTypeKey[] = ['surveyEnd', 'pageBreak', 'group'];
+    const hideConvertItem = hiddenConvertTypes.includes(item.typeInfos.key);
 
     const confidentialSymbol = () => {
         const confidentialMode = (props.surveyItem as SurveySingleItem).confidentialMode;
@@ -206,6 +208,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                     </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                    disabled={hideConvertItem}
                     onClick={() => setConvertItemDialogOpen(true)}
                 >
                     <div className='flex items-center gap-2'>
@@ -314,6 +317,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
             <ConvertItemDialog open={convertItemDialogOpen}
                 surveyItem={props.surveyItem}
                 onClose={() => setConvertItemDialogOpen(false)}
+                surveyItemList={props.surveyItemList}
             />
 
         </TooltipProvider>
