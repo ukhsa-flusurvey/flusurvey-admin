@@ -96,6 +96,7 @@ const OptionQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
 const OptionEditor = (props: {
     option: ItemComponent;
     existingKeys?: string[];
+    hideEditor?: boolean;
     onChange: (newOption: ItemComponent) => void;
     onDelete: () => void;
     isBeingDragged?: boolean;
@@ -108,7 +109,7 @@ const OptionEditor = (props: {
         component={props.option}
         usedKeys={props.existingKeys}
         onChange={(newOption) => props.onChange(newOption)}
-        quickEditorContent={OptionQuickEditor}
+        quickEditorContent={props.hideEditor ? undefined : OptionQuickEditor}
         contextMenuItems={[
             {
                 type: 'item',
@@ -123,7 +124,7 @@ const OptionEditor = (props: {
 
 export const OptionsEditor = (props: {
     options: ItemComponent[],
-    hideLabel?: boolean,
+    hideEditor?: boolean,
     onChange: (newOptions: ItemComponent[]) => void
 }) => {
     const [draggedId, setDraggedId] = React.useState<string | null>(null);
@@ -173,6 +174,7 @@ export const OptionsEditor = (props: {
                     return <OptionEditor
                         key={option.key || index}
                         option={option}
+                        hideEditor={props.hideEditor}
                         existingKeys={props.options.map(o => o.key || index.toString())}
                         onChange={(newOption) => {
                             const newOptions = props.options.map((o) => {

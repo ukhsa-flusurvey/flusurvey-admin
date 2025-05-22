@@ -417,7 +417,7 @@ const Rblsa: React.FC<RblsaProps> = (props) => {
                 <TabsContent value="options-rows">
                     <OptionsEditor
                         options={options}
-                        hideLabel={true}
+                        hideEditor={true}
                         onChange={(newOptions) => {
                             const optionsIndex = rblsaGroup.items.findIndex(comp => comp.role === ItemComponentRole.Options);
                             if (optionsIndex === -1) {
