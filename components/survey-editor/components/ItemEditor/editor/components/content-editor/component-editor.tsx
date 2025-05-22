@@ -69,6 +69,8 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
         })}
     </DropdownMenuContent>
 
+    const hasNoQuickEditor = props.quickEditorContent === undefined;
+
     let preview: React.ReactNode = <PopoverTrigger asChild>
         <button className={cn("relative w-full bg-background border border-border rounded-md px-3 py-2 group focus:outline focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30", {
             "outline outline-2 outline-primary/50": isPopoverOpen || isPreviewMenuOpen
@@ -108,7 +110,6 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
     }
 
     const popoverOpenChange = (open: boolean) => {
-        const hasNoQuickEditor = props.quickEditorContent === undefined;
         const hasNoAdvancedEditor = props.advancedEditorContent === undefined;
         const noPopoverContent = hasNoQuickEditor && hasNoAdvancedEditor;
         if (noPopoverContent) {
@@ -161,7 +162,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                 </div>}
                 {editorMode === 'advanced' && <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                        <Button
+                        {hasNoQuickEditor ? <span></span> : <Button
                             variant="ghost"
                             onClick={() => {
                                 setEditorMode('quick');
@@ -171,7 +172,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                                 <ArrowLeftIcon className="!size-3" />
                             </span>
                             Back to quick editor
-                        </Button>
+                        </Button>}
                         <div className="flex items-center">
                             {props.contextMenuItems && <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
