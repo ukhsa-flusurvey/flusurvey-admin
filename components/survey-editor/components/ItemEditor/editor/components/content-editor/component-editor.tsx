@@ -56,6 +56,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
                 onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
+                    setIsPreviewMenuOpen(false);
                     item.onClick(props.component);
                     setIsPopoverOpen(false);
                     setIsDialogOpen(false);
