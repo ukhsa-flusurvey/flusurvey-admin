@@ -26,6 +26,7 @@ interface ComponentEditorProps extends CompontentEditorGenericProps {
         type: 'item';
         label: string;
         icon: React.ReactNode;
+        disabled?: boolean;
         onClick: (item?: ItemComponent) => void;
     } | {
         type: 'separator';
@@ -50,13 +51,15 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
             if (item.type === 'separator') {
                 return <DropdownMenuSeparator key={index} />
             }
-            return <DropdownMenuItem key={index} onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                item.onClick(props.component);
-                setIsPopoverOpen(false);
-                setIsDialogOpen(false);
-            }}>
+            return <DropdownMenuItem key={index}
+                disabled={item.disabled}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    item.onClick(props.component);
+                    setIsPopoverOpen(false);
+                    setIsDialogOpen(false);
+                }}>
                 {item.icon && <span className="text-muted-foreground mr-2 size-4" >
                     {item.icon}
                 </span>}
