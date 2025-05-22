@@ -101,8 +101,22 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
         </SortableItem>
     }
 
+    const popoverOpenChange = (open: boolean) => {
+        const hasNoQuickEditor = props.quickEditorContent === undefined;
+        const hasNoAdvancedEditor = props.advancedEditorContent === undefined;
+        const noPopoverContent = hasNoQuickEditor && hasNoAdvancedEditor;
+        if (noPopoverContent) {
+            setIsPopoverOpen(false);
+            return;
+        }
+        if (open && hasNoQuickEditor) {
+            setEditorMode('advanced');
+        }
+        setIsPopoverOpen(open);
+    }
+
     const content = <div>
-        <Popover open={isPopoverOpen && !props.isDragged} onOpenChange={setIsPopoverOpen}>
+        <Popover open={isPopoverOpen && !props.isDragged} onOpenChange={popoverOpenChange}>
             {preview}
 
             <PopoverContent
