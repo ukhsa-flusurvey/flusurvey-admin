@@ -84,7 +84,6 @@ const mcgItemDescriptiveTextLookup = (item: ItemComponent, lang: string): React.
                 {'- cloze items -'}
             </p>
     }
-
 }
 
 const OptionPreview: React.FC<CompontentEditorGenericProps> = (props) => {
