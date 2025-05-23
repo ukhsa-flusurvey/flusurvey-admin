@@ -9,7 +9,7 @@ import { Circle, Trash2 } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 import { ItemComponent, ItemGroupComponent } from 'survey-engine/data_types';
-import ComponentEditor, { CompontentEditorGenericProps } from '../component-editor';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
 import { PopoverKeyBadge } from '../../KeyBadge';
 
 interface DropdownContentConfigProps {
@@ -19,7 +19,7 @@ interface DropdownContentConfigProps {
     onChange: (newComp: ItemComponent) => void;
 }
 
-const DropdownOptionPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+const DropdownOptionPreview: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';
 

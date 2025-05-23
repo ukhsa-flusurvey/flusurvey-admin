@@ -9,19 +9,19 @@ import { ArrowLeftIcon, EllipsisVertical, GripVertical, Maximize2Icon, Minimize2
 import { useState } from "react";
 import { ItemComponent } from "survey-engine/data_types";
 
-export interface CompontentEditorGenericProps {
+export interface ComponentEditorGenericProps {
     component: ItemComponent;
     isSelected?: boolean;
     usedKeys?: string[];
     onChange?: (comp: ItemComponent) => void;
 }
 
-interface ComponentEditorProps extends CompontentEditorGenericProps {
+interface ComponentEditorProps extends ComponentEditorGenericProps {
     isSortable?: boolean;
     isDragged?: boolean;
-    previewContent: React.ComponentType<CompontentEditorGenericProps>;
-    quickEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
-    advancedEditorContent?: React.ComponentType<CompontentEditorGenericProps>;
+    previewContent: React.ComponentType<ComponentEditorGenericProps>;
+    quickEditorContent?: React.ComponentType<ComponentEditorGenericProps>;
+    advancedEditorContent?: React.ComponentType<ComponentEditorGenericProps>;
     contextMenuItems?: Array<{
         type: 'item';
         label: string;

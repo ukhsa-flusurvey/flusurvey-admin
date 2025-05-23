@@ -16,7 +16,7 @@ import { StyleClassNameEditor } from "./style-class-name-editor";
 import { OptionsEditor } from "./rsca";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import ComponentEditor, { CompontentEditorGenericProps } from "../component-editor";
+import ComponentEditor, { ComponentEditorGenericProps } from "../component-editor";
 import SurveyLanguageToggle from "@/components/survey-editor/components/general/SurveyLanguageToggle";
 import SurveyExpressionEditor from "../../survey-expression-editor";
 
@@ -57,7 +57,7 @@ const ModeSelector = (props: {
     </div>
 }
 
-const RowPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+const RowPreview: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const rowStartLabelItem = (props.component as ItemGroupComponent).items.find(comp => comp.role == ItemComponentRole.StartLabel);
@@ -104,7 +104,7 @@ const RowPreview: React.FC<CompontentEditorGenericProps> = (props) => {
     </div>
 }
 
-const RowQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const RowQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const rowStartLabelItem = (props.component as ItemGroupComponent).items.find(comp => comp.role == ItemComponentRole.StartLabel);
@@ -164,7 +164,7 @@ const RowQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
     </div>
 }
 
-const RowAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const RowAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const rowStartLabelItem = (props.component as ItemGroupComponent).items.find(comp => comp.role == ItemComponentRole.StartLabel);

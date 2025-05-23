@@ -14,7 +14,7 @@ import MarkdownContentEditor from './markdown-content-editor';
 import { SimpleTextViewContentEditor } from './response-editors/text-view-content-editor';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { PopoverKeyBadge } from '../KeyBadge';
-import ComponentEditor, { CompontentEditorGenericProps } from './component-editor';
+import ComponentEditor, { ComponentEditorGenericProps } from './component-editor';
 import SurveyExpressionEditor from '../survey-expression-editor';
 
 
@@ -31,7 +31,7 @@ const CONTENT_TYPE_OPTIONS = [
 ];
 
 
-const ContentPreview: React.FC<CompontentEditorGenericProps> = ({ component }) => {
+const ContentPreview: React.FC<ComponentEditorGenericProps> = ({ component }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const currentContent = localisedObjectToMap(component.content).get(selectedLanguage) || '';
@@ -61,7 +61,7 @@ const ContentPreview: React.FC<CompontentEditorGenericProps> = ({ component }) =
     </div>
 }
 
-const ContentQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const ContentQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     return <div>
         <SimpleTextViewContentEditor
             component={props.component}
@@ -80,7 +80,7 @@ const getQuickEditor = (component: ItemComponent) => {
     return ContentQuickEditor;
 }
 
-const ContentAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const ContentAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const currentContent = localisedObjectToMap(props.component.content).get(selectedLanguage) || '';

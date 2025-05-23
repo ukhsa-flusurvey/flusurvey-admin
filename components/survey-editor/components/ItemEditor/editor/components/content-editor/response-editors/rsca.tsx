@@ -16,7 +16,7 @@ import { ItemComponentRole } from '@/components/survey-editor/components/types';
 import { SimpleTextViewContentEditor } from './text-view-content-editor';
 import { StyleClassNameEditor } from './style-class-name-editor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ComponentEditor, { CompontentEditorGenericProps } from '../component-editor';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import SurveyExpressionEditor from '../../survey-expression-editor';
 
@@ -51,7 +51,7 @@ const ModeSelector = (props: {
 }
 
 
-const RscaCompPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+const RscaCompPreview: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
     const rowLabel = localisedObjectToMap(props.component.content).get(selectedLanguage);
@@ -59,7 +59,7 @@ const RscaCompPreview: React.FC<CompontentEditorGenericProps> = (props) => {
     return <div className='flex items-center gap-4'>
         <div className='min-w-14 flex justify-center'>
             <PopoverKeyBadge
-                headerText='Row Key'
+                headerText='Key'
                 className='w-full'
                 allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
                 isHighlighted={props.isSelected}
@@ -80,7 +80,7 @@ const RscaCompPreview: React.FC<CompontentEditorGenericProps> = (props) => {
     </div>
 }
 
-const OptionQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const OptionQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     return <div>
         <SimpleTextViewContentEditor
             component={props.component}
@@ -226,7 +226,7 @@ enum RscaStyleKeys {
 
 
 
-const RowQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const RowQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     return <div>
         <SimpleTextViewContentEditor
             component={props.component}
@@ -238,7 +238,7 @@ const RowQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
     </div>
 }
 
-const RowAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const RowAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
 
     const horizontalModeLabelPlacement = props.component.style?.find(s => s.key === RscaStyleKeys.horizontalModeLabelPlacement)?.value || 'bottom';
 

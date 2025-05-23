@@ -15,7 +15,7 @@ import DropdownContentConfig from "./dropdown-content-config";
 import { SimpleTextViewContentEditor } from "./text-view-content-editor";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
 import { Separator } from "@/components/ui/separator";
-import ComponentEditor, { CompontentEditorGenericProps } from '../component-editor';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
 import { PopoverKeyBadge } from '../../KeyBadge';
 import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 import SurveyExpressionEditor from '../../survey-expression-editor';
@@ -65,7 +65,7 @@ const getItemPreviewLabel = (item: ItemComponent, lang: string): React.ReactNode
     }
 }
 
-const ClozeItemPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+const ClozeItemPreview: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
 
@@ -93,7 +93,7 @@ const ClozeItemPreview: React.FC<CompontentEditorGenericProps> = (props) => {
     </div>
 }
 
-const ClozeItemQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const ClozeItemQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const clozeItemType = getClozeItemType(props.component);
 
@@ -140,7 +140,7 @@ const ClozeItemQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => 
     return <div>{renderQuickEditor()}</div>
 }
 
-const ClozeItemAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const ClozeItemAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const clozeItemType = getClozeItemType(props.component);
 

@@ -14,7 +14,7 @@ import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUti
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { ItemComponentRole } from '@/components/survey-editor/components/types';
 import { useCopyToClipboard } from 'usehooks-ts';
-import ComponentEditor, { CompontentEditorGenericProps } from '../component-editor';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
 import { PopoverKeyBadge } from '../../KeyBadge';
 import SurveyExpressionEditor from '../../survey-expression-editor';
 import { Separator } from '@/components/ui/separator';
@@ -86,7 +86,7 @@ const mcgItemDescriptiveTextLookup = (item: ItemComponent, lang: string): React.
     }
 }
 
-const OptionPreview: React.FC<CompontentEditorGenericProps> = (props) => {
+const OptionPreview: React.FC<ComponentEditorGenericProps> = (props) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
 
@@ -115,7 +115,7 @@ const OptionPreview: React.FC<CompontentEditorGenericProps> = (props) => {
 }
 
 
-const OptionQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const OptionQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const itemType = getOptionType(props.component);
 
     switch (itemType) {
@@ -145,7 +145,7 @@ const getQuickEditor = (component: ItemComponent) => {
 
 }
 
-const OptionAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) => {
+const OptionAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
     const itemType = getOptionType(props.component);
 
     let typeSpecificEditorContent: React.ReactNode;
