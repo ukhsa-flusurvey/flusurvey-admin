@@ -6,6 +6,14 @@ import { ItemComponentRole } from '@/components/survey-editor/components/types';
 import DropdownContentConfig from './dropdown-content-config';
 import TextInputContentConfig from './text-input-content-config';
 import NumberInputContentConfig from './number-input-content-config';
+import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
+import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
+import { PopoverKeyBadge } from '../../KeyBadge';
+import { SimpleTextViewContentEditor } from './text-view-content-editor';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
+import { Columns, Trash2, Copy } from 'lucide-react';
 
 interface ResponsiveMatrixEditorProps {
     surveyItem: SurveySingleItem;
@@ -63,6 +71,172 @@ const ResponseTypeSelector: React.FC<{
             </p>
         </div>
     );
+};
+
+const ColumnPreview: React.FC<ComponentEditorGenericProps> = (props) => {
+    const { selectedLanguage } = useSurveyEditorCtx();
+    const columnLabel = localisedObjectToMap(props.component.content).get(selectedLanguage);
+
+    return <div className='flex items-center gap-4'>
+        <div className='min-w-14 flex justify-center'>
+            <PopoverKeyBadge
+                headerText='Column Key'
+                className='w-full'
+                allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
+                isHighlighted={props.isSelected}
+                itemKey={props.component.key ?? ''}
+                onKeyChange={(newKey) => {
+                    props.onChange?.({
+                        ...props.component,
+                        key: newKey
+                    })
+                }} />
+        </div>
+        {columnLabel && <p className='text-sm text-start'>
+            {columnLabel}
+        </p>}
+        {!columnLabel && <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
+            {'- No label defined -'}
+        </p>}
+    </div>
+};
+
+const ColumnQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
+    return (
+        <div className='space-y-4 pt-2 pb-4'>
+            <SimpleTextViewContentEditor
+                component={props.component}
+                onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
+                hideLabel={false}
+                label='Column Label'
+                placeholder='Enter column label...'
+            />
+        </div>
+    );
+};
+
+const ColumnsEditor = (props: {
+    columns: ItemComponent[],
+    onChange: (newColumns: ItemComponent[]) => void
+}) => {
+    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+
+    const draggedItem = props.columns.find(column => column.key === draggedId);
+
+    const onChangeColumn = (columnKey: string, newColumn: ItemComponent) => {
+        const newColumns = props.columns.map(col => {
+            if (col.key === columnKey) {
+                return newColumn;
+            }
+            return col;
+        });
+        props.onChange(newColumns);
+    };
+
+    const onDeleteColumn = (columnToDelete: ItemComponent) => {
+        if (confirm('Are you sure you want to delete this column?')) {
+            const newColumns = props.columns.filter(col => col.key !== columnToDelete.key);
+            props.onChange(newColumns);
+        }
+    };
+
+    const onDuplicateColumn = (columnToDuplicate: ItemComponent, index: number) => {
+        const duplicatedColumn = {
+            ...columnToDuplicate,
+            key: Math.random().toString(36).substring(9),
+        };
+        const newColumns = [...props.columns];
+        newColumns.splice(index + 1, 0, duplicatedColumn);
+        props.onChange(newColumns);
+    };
+
+    return <div>
+        <p className='font-semibold'>
+            Columns ({props.columns.length})
+        </p>
+        <p className='text-xs text-muted-foreground mb-2'>
+            Drag items to reorder columns.
+        </p>
+
+        <SortableWrapper
+            sortableID={`columns-for-responsive-matrix`}
+            items={props.columns.map((column, index) => {
+                return {
+                    id: column.key || index.toString(),
+                }
+            })}
+            onDraggedIdChange={(id) => {
+                setDraggedId(id);
+            }}
+            onReorder={(activeIndex, overIndex) => {
+                const newItems = [...props.columns];
+                newItems.splice(activeIndex, 1);
+                newItems.splice(overIndex, 0, props.columns[activeIndex]);
+                props.onChange(newItems);
+            }}
+            dragOverlayItem={(draggedId && draggedItem) ?
+                <ComponentEditor
+                    component={draggedItem}
+                    onChange={() => { }}
+                    isDragged={true}
+                    previewContent={ColumnPreview}
+                />
+                : null}
+        >
+            <ol className='px-1 space-y-1 py-2'>
+                {props.columns.length === 0 && <p className='text-sm text-primary'>
+                    No columns defined.
+                </p>}
+                {props.columns.map((column, index) => {
+                    return <ComponentEditor
+                        key={column.key || index}
+                        isSortable={true}
+                        component={column}
+                        isDragged={draggedId === column.key}
+                        usedKeys={props.columns.map(o => o.key!)}
+                        previewContent={ColumnPreview}
+                        quickEditorContent={ColumnQuickEditor}
+                        onChange={(newColumn) => onChangeColumn(column.key!, newColumn)}
+                        contextMenuItems={[
+                            {
+                                type: 'item',
+                                label: 'Duplicate',
+                                icon: <Copy className='size-4' />,
+                                onClick: () => onDuplicateColumn(column, index)
+                            },
+                            {
+                                type: 'separator'
+                            },
+                            {
+                                type: 'item',
+                                label: 'Delete',
+                                icon: <Trash2 className='size-4' />,
+                                onClick: () => onDeleteColumn(column)
+                            },
+                        ]}
+                    />
+                })}
+            </ol>
+        </SortableWrapper>
+
+        <div className="flex justify-center w-full">
+            <AddDropdown
+                options={[
+                    { key: 'column', label: 'New column', icon: <Columns className='size-4 text-muted-foreground me-2' /> },
+                ]}
+                onAddItem={(type) => {
+                    if (type === 'column') {
+                        const newColumn: ItemComponent = {
+                            key: Math.random().toString(36).substring(9),
+                            role: 'category',
+                            content: []
+                        }
+                        props.onChange([...props.columns, newColumn]);
+                    }
+                }}
+            />
+        </div>
+    </div>
 };
 
 const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyItem, onUpdateSurveyItem }) => {
@@ -159,6 +333,28 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
         return newResponsiveMatrixComponent;
     };
 
+    // Get current columns from the matrix component
+    const colsItems = responsiveMatrixComponent.items?.find(item => item.role === 'columns');
+    const currentColumns = colsItems ? (colsItems as ItemGroupComponent).items : [];
+
+    const handleColumnsChange = (newColumns: ItemComponent[]) => {
+        const updatedResponsiveMatrix = { ...responsiveMatrixComponent };
+
+        if (!updatedResponsiveMatrix.items) {
+            updatedResponsiveMatrix.items = [];
+        }
+
+        // Remove existing columns and add new ones
+        updatedResponsiveMatrix.items = updatedResponsiveMatrix.items.filter(item => item.role !== 'columns');
+        updatedResponsiveMatrix.items.push({
+            key: 'cols',
+            role: 'columns',
+            items: newColumns
+        });
+
+        updateSurveyItemWithNewRg(updatedResponsiveMatrix);
+    };
+
     const renderTypeSpecificEditor = () => {
         switch (currentResponseType) {
             case 'dropdown': {
@@ -173,7 +369,7 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
                         onChange={(updatedComponent) => updateConfigComponent('dropdownOptions', updatedComponent)}
                         contentInputLabel='Placeholder text'
                         contentInputPlaceholder='Enter placeholder...'
-                        descriptionInputLabel='Clear option'
+                        descriptionInputLabel='Clear option text'
                         descriptionInputPlaceholder='Enter clear option...'
                     />
                 );
@@ -263,20 +459,18 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
                     onChange={handleResponseTypeChange}
                 />
 
-
-
-                {/* Placeholder content for future implementation */}
+                {/* Matrix structure editors */}
                 <div className="space-y-3 pt-4 border-t">
-                    <div>
-                        TODO: matrix cols
-                    </div>
+                    <ColumnsEditor
+                        columns={currentColumns}
+                        onChange={handleColumnsChange}
+                    />
 
                     <div>
                         TODO: matrix rows
                     </div>
                 </div>
             </div>
-
 
             <div className="space-y-3 pt-4 border-t">
                 <div>
@@ -288,8 +482,6 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
                     {renderTypeSpecificEditor()}
                 </div>
             </div>
-
-
 
         </div>
     );
