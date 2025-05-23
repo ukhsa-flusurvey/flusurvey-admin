@@ -189,7 +189,7 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
 
         // Get current value for this cell
         const currentValue = getSlotValue(responseSlotKey);
-        const prefill = currentValue !== 'undefined' ? { key: responseSlotKey, value: currentValue } : undefined;
+        const prefill = currentValue !== '' ? { key: responseSlotKey, value: currentValue } : undefined;
 
         return <TextInput
             compDef={mockCompDef}
