@@ -13,8 +13,12 @@ import ComponentEditor, { ComponentEditorGenericProps } from '../component-edito
 import { PopoverKeyBadge } from '../../KeyBadge';
 
 interface DropdownContentConfigProps {
-    hideLabel?: boolean;
-    hidePlaceholder?: boolean;
+    hideContentInput?: boolean;
+    contentInputLabel?: string;
+    contentInputPlaceholder?: string;
+    hideDescriptionInput?: boolean;
+    descriptionInputLabel?: string;
+    descriptionInputPlaceholder?: string;
     component: ItemComponent;
     onChange: (newComp: ItemComponent) => void;
 }
@@ -60,7 +64,7 @@ const DropdownOptionPreview: React.FC<ComponentEditorGenericProps> = (props) => 
                     };
                     props.onChange?.(updatedComponent);
                 }}
-                placeholder='Enter option content...'
+                placeholder={'Enter option content...'}
             />
         </div>
     );
@@ -81,11 +85,11 @@ const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
 
     return (
         <div className='space-y-4'>
-            {!props.hideLabel && <div className='space-y-1.5'>
+            {!props.hideContentInput && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'label'}
                 >
-                    Label
+                    {props.contentInputLabel || 'Label'}
                 </Label>
                 <Input
                     id={props.component.key + 'label'}
@@ -97,15 +101,15 @@ const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
                         updatedComponent.content = generateLocStrings(updatedContent);
                         props.onChange(updatedComponent);
                     }}
-                    placeholder='Enter label...'
+                    placeholder={props.contentInputPlaceholder || 'Enter label...'}
                 />
             </div>}
 
-            {!props.hidePlaceholder && <div className='space-y-1.5'>
+            {!props.hideDescriptionInput && <div className='space-y-1.5'>
                 <Label
                     htmlFor={props.component.key + 'placeholder'}
                 >
-                    Placeholder text
+                    {props.descriptionInputLabel || 'Placeholder text'}
                 </Label>
                 <Input
                     id={props.component.key + 'placeholder'}
@@ -117,7 +121,7 @@ const DropdownContentConfig: React.FC<DropdownContentConfigProps> = (props) => {
                         updatedComponent.description = generateLocStrings(updatedContent);
                         props.onChange(updatedComponent);
                     }}
-                    placeholder='Enter placeholder...'
+                    placeholder={props.descriptionInputPlaceholder || 'Enter placeholder...'}
                 />
             </div>}
 
