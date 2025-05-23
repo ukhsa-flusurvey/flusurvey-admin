@@ -5,8 +5,8 @@ import { renderFormattedContent } from '../../renderUtils';
 import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode, getStyleValueByKey } from '../../utils';
 import { getBreakpointValue } from './responsiveUtils';
 import { cn } from '@/lib/utils';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DotIcon } from 'lucide-react';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CircleXIcon, DotIcon } from 'lucide-react';
 import { useSurveyItemCtx } from '../../survey-item-context';
 import TextInput from './TextInput';
 import NumberInput from './NumberInput';
@@ -108,11 +108,11 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
 
     const getSlotValue = (responseSlotKey: string): string => {
         if (!response || !response.items) {
-            return 'undefined';
+            return '';
         }
 
         const resp = response.items.find(item => item.key === responseSlotKey);
-        return resp?.value ? resp.value : 'undefined';
+        return resp?.value ? resp.value : '';
     }
 
     const renderDropdown = (rowKey: string, colKey: string, prefix: string) => {
@@ -123,8 +123,9 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
 
         const id = `${prefix}-${rowKey}-${colKey}`;
         const responseSlotKey = `${rowKey}-${colKey}`;
+        const currentValue = getSlotValue(responseSlotKey);
         return <Select
-            value={getSlotValue(responseSlotKey)}
+            value={currentValue}
             onValueChange={(value: string) => {
                 if (value === 'undefined') {
                     handleResponseChange(responseSlotKey, undefined);
@@ -145,7 +146,19 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
                     <span className='flex justify-center bg-muted/50 rounded-sm'>
                         <DotIcon className='size-3 text-muted-foreground' />
                     </span>
-                    <SelectItem value='undefined'>{getLocaleStringTextByCode(dropdownOptions?.content, props.languageCode)}</SelectItem>
+                    {currentValue && <SelectItem
+                        value='undefined'
+                        className='text-muted-foreground'
+                    >
+                        <span className='flex items-center gap-2'>
+                            <span className='flex-shrink-0'>
+                                <CircleXIcon className='size-3' />
+                            </span>
+                            {getLocaleStringTextByCode(dropdownOptions?.description, props.languageCode)}
+                        </span>
+
+                    </SelectItem>}
+                    <SelectSeparator />
                     {
                         dropdownOptions.items.map((option, index) => {
                             return <SelectItem key={option.key} value={option.key || index.toString()}>{getLocaleStringTextByCode(option.content, props.languageCode)}</SelectItem>
@@ -156,7 +169,7 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
                     </span>
                 </SelectGroup>
             </SelectContent>
-        </Select>
+        </Select >
     }
 
     const renderTextInput = (rowKey: string, colKey: string) => {
