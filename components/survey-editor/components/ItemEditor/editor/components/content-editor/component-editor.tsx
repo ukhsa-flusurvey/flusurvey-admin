@@ -122,7 +122,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = (props) => {
         setIsPopoverOpen(open);
     }
 
-    const content = <div>
+    const content = <div className="w-full">
         <Popover open={isPopoverOpen && !props.isDragged} onOpenChange={popoverOpenChange}>
             {preview}
 

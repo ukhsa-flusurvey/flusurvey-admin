@@ -107,12 +107,14 @@ const ClozeItemQuickEditor: React.FC<CompontentEditorGenericProps> = (props) => 
                     placeholder='Enter text content...'
                 />;
             case ClozeItemType.Dropdown:
-                return <DropdownContentConfig
-                    component={props.component}
-                    onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
-                    hideLabel={false}
-                    hidePlaceholder={false}
-                />;
+                return <div className="px-1">
+                    <DropdownContentConfig
+                        component={props.component}
+                        onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
+                        hideLabel={false}
+                        hidePlaceholder={false}
+                    />
+                </div>;
             case ClozeItemType.TextInput:
             case ClozeItemType.NumberInput:
             case ClozeItemType.DateInput:
@@ -158,7 +160,7 @@ const ClozeItemAdvancedEditor: React.FC<CompontentEditorGenericProps> = (props) 
                     onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
                     hideLabel={false}
                     hidePlaceholder={false}
-                />;
+                />
             case ClozeItemType.TextInput:
                 return <TextInputContentConfig
                     component={props.component}
