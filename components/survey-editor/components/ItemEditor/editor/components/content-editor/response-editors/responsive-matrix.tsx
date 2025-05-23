@@ -13,7 +13,8 @@ import { PopoverKeyBadge } from '../../KeyBadge';
 import { SimpleTextViewContentEditor } from './text-view-content-editor';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
-import { Columns, Trash2, Copy } from 'lucide-react';
+import { Columns, Trash2, Copy, Rows, Tag } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface ResponsiveMatrixEditorProps {
     surveyItem: SurveySingleItem;
@@ -239,6 +240,205 @@ const ColumnsEditor = (props: {
     </div>
 };
 
+const RowPreview: React.FC<ComponentEditorGenericProps> = (props) => {
+    const { selectedLanguage } = useSurveyEditorCtx();
+    const rowLabel = localisedObjectToMap(props.component.content).get(selectedLanguage);
+
+    return <div className='flex items-center gap-4'>
+        <span>
+            {props.component.role === 'category' ? <Tag className='size-4 text-blue-600' /> : <Rows className='size-4 text-green-600' />}
+        </span>
+        <div className='min-w-14 flex justify-center'>
+            <PopoverKeyBadge
+                headerText='Row Key'
+                className='w-full'
+                allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
+                isHighlighted={props.isSelected}
+                itemKey={props.component.key ?? ''}
+                onKeyChange={(newKey) => {
+                    props.onChange?.({
+                        ...props.component,
+                        key: newKey
+                    })
+                }} />
+        </div>
+        {rowLabel && <p className='text-sm text-start'>
+            {rowLabel}
+        </p>}
+        {!rowLabel && <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
+            {'- No label defined -'}
+        </p>}
+    </div>
+};
+
+const RowQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
+    const classNameIndex = props.component.style?.findIndex(style => style.key === 'className');
+    const className = (props.component.style !== undefined && classNameIndex !== undefined && classNameIndex > -1) ? props.component.style[classNameIndex].value : '';
+
+    const handleClassNameChange = (newClassName: string) => {
+        const newStyle = [...props.component.style || []];
+        const index = newStyle.findIndex(s => s.key === 'className');
+        if (index > -1) {
+            newStyle[index] = { key: 'className', value: newClassName };
+        } else {
+            newStyle.push({ key: 'className', value: newClassName });
+        }
+
+        props.onChange?.({
+            ...props.component,
+            style: newStyle,
+        });
+    };
+
+    return (
+        <div className='space-y-4 pt-2 pb-4'>
+            <SimpleTextViewContentEditor
+                component={props.component}
+                onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
+                hideLabel={false}
+                label='Row Label'
+                placeholder='Enter row label...'
+            />
+            <div className='space-y-1.5'>
+                <Label htmlFor={props.component.key + 'className'}>
+                    CSS Classes
+                </Label>
+                <Input
+                    id={props.component.key + 'className'}
+                    value={className}
+                    onChange={(e) => handleClassNameChange(e.target.value)}
+                    placeholder='Enter optional CSS classes...'
+                />
+            </div>
+        </div>
+    );
+};
+
+const RowsEditor = (props: {
+    rows: ItemComponent[],
+    onChange: (newRows: ItemComponent[]) => void
+}) => {
+    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+
+    const draggedItem = props.rows.find(row => row.key === draggedId);
+
+    const onChangeRow = (rowKey: string, newRow: ItemComponent) => {
+        const newRows = props.rows.map(row => {
+            if (row.key === rowKey) {
+                return newRow;
+            }
+            return row;
+        });
+        props.onChange(newRows);
+    };
+
+    const onDeleteRow = (rowToDelete: ItemComponent) => {
+        if (confirm('Are you sure you want to delete this row?')) {
+            const newRows = props.rows.filter(row => row.key !== rowToDelete.key);
+            props.onChange(newRows);
+        }
+    };
+
+    const onDuplicateRow = (rowToDuplicate: ItemComponent, index: number) => {
+        const duplicatedRow = {
+            ...rowToDuplicate,
+            key: Math.random().toString(36).substring(9),
+        };
+        const newRows = [...props.rows];
+        newRows.splice(index + 1, 0, duplicatedRow);
+        props.onChange(newRows);
+    };
+
+    return <div>
+        <p className='font-semibold'>
+            Rows ({props.rows.length})
+        </p>
+        <p className='text-xs text-muted-foreground mb-2'>
+            Drag items to reorder rows.
+        </p>
+
+        <SortableWrapper
+            sortableID={`rows-for-responsive-matrix`}
+            items={props.rows.map((row, index) => {
+                return {
+                    id: row.key || index.toString(),
+                }
+            })}
+            onDraggedIdChange={(id) => {
+                setDraggedId(id);
+            }}
+            onReorder={(activeIndex, overIndex) => {
+                const newItems = [...props.rows];
+                newItems.splice(activeIndex, 1);
+                newItems.splice(overIndex, 0, props.rows[activeIndex]);
+                props.onChange(newItems);
+            }}
+            dragOverlayItem={(draggedId && draggedItem) ?
+                <ComponentEditor
+                    component={draggedItem}
+                    onChange={() => { }}
+                    isDragged={true}
+                    previewContent={RowPreview}
+                />
+                : null}
+        >
+            <ol className='px-1 space-y-1 py-2'>
+                {props.rows.length === 0 && <p className='text-sm text-primary'>
+                    No rows defined.
+                </p>}
+                {props.rows.map((row, index) => {
+                    return <ComponentEditor
+                        key={row.key || index}
+                        isSortable={true}
+                        component={row}
+                        isDragged={draggedId === row.key}
+                        usedKeys={props.rows.map(o => o.key!)}
+                        previewContent={RowPreview}
+                        quickEditorContent={RowQuickEditor}
+                        onChange={(newRow) => onChangeRow(row.key!, newRow)}
+                        contextMenuItems={[
+                            {
+                                type: 'item',
+                                label: 'Duplicate',
+                                icon: <Copy className='size-4' />,
+                                onClick: () => onDuplicateRow(row, index)
+                            },
+                            {
+                                type: 'separator'
+                            },
+                            {
+                                type: 'item',
+                                label: 'Delete',
+                                icon: <Trash2 className='size-4' />,
+                                onClick: () => onDeleteRow(row)
+                            },
+                        ]}
+                    />
+                })}
+            </ol>
+        </SortableWrapper>
+
+        <div className="flex justify-center w-full">
+            <AddDropdown
+                options={[
+                    { key: 'category', label: 'New category', icon: <Tag className='size-4 text-muted-foreground me-2' /> },
+                    { key: 'row', label: 'New row', icon: <Rows className='size-4 text-muted-foreground me-2' /> },
+                ]}
+                onAddItem={(type) => {
+                    if (type === 'category' || type === 'row') {
+                        const newRow: ItemComponent = {
+                            key: Math.random().toString(36).substring(9),
+                            role: type,
+                            content: []
+                        }
+                        props.onChange([...props.rows, newRow]);
+                    }
+                }}
+            />
+        </div>
+    </div>
+};
+
 const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyItem, onUpdateSurveyItem }) => {
     const rgIndex = surveyItem.components?.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
     if (rgIndex === undefined || rgIndex === -1) {
@@ -355,6 +555,28 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
         updateSurveyItemWithNewRg(updatedResponsiveMatrix);
     };
 
+    // Get current rows from the matrix component
+    const rowsItems = responsiveMatrixComponent.items?.find(item => item.role === 'rows');
+    const currentRows = rowsItems ? (rowsItems as ItemGroupComponent).items : [];
+
+    const handleRowsChange = (newRows: ItemComponent[]) => {
+        const updatedResponsiveMatrix = { ...responsiveMatrixComponent };
+
+        if (!updatedResponsiveMatrix.items) {
+            updatedResponsiveMatrix.items = [];
+        }
+
+        // Remove existing rows and add new ones
+        updatedResponsiveMatrix.items = updatedResponsiveMatrix.items.filter(item => item.role !== 'rows');
+        updatedResponsiveMatrix.items.push({
+            key: 'rows',
+            role: 'rows',
+            items: newRows
+        });
+
+        updateSurveyItemWithNewRg(updatedResponsiveMatrix);
+    };
+
     const renderTypeSpecificEditor = () => {
         switch (currentResponseType) {
             case 'dropdown': {
@@ -466,9 +688,11 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
                         onChange={handleColumnsChange}
                     />
 
-                    <div>
-                        TODO: matrix rows
-                    </div>
+                    <RowsEditor
+                        rows={currentRows}
+                        onChange={handleRowsChange}
+                    />
+
                 </div>
             </div>
 
