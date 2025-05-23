@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DotIcon } from 'lucide-react';
 import { useSurveyItemCtx } from '../../survey-item-context';
+import TextInput from './TextInput';
+import NumberInput from './NumberInput';
 
 type ResponsiveMatrixProps = CommonResponseComponentProps
 
@@ -29,7 +31,10 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
     const className = getClassName(props.compDef.style);
     const breakpoint = getStyleValueByKey(props.compDef.style, 'breakpoint');
     const responseType = getStyleValueByKey(props.compDef.style, 'responseType');
+
     const getDropdownOptionsDef = () => (props.compDef as ItemGroupComponent).items?.find(item => item.role === 'dropdownOptions');
+    const getInputOptionsDef = () => (props.compDef as ItemGroupComponent).items?.find(item => item.role === 'inputOptions');
+    const getNumberInputOptionsDef = () => (props.compDef as ItemGroupComponent).items?.find(item => item.role === 'numberInputOptions');
 
     const getColumns = () => {
         if (!isItemGroupComponent(props.compDef)) {
@@ -42,7 +47,7 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
 
     const getRows = (): ItemGroupComponent | undefined => {
         if (!isItemGroupComponent(props.compDef)) {
-            console.warn('ResponsiveSingleChoiceArray: no components found.');
+            console.warn('responsive matrix: no components found.');
             return;
         }
         const rows = props.compDef.items.find(item => item.role === 'rows') as ItemGroupComponent;
@@ -154,12 +159,93 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
         </Select>
     }
 
+    const renderTextInput = (rowKey: string, colKey: string) => {
+        const inputOptions = getInputOptionsDef();
+
+        const responseSlotKey = `${rowKey}-${colKey}`;
+
+        // Create a mock component definition for the TextInput
+        const mockCompDef: ItemComponent = {
+            key: responseSlotKey,
+            role: 'input',
+            content: inputOptions?.content,
+            description: inputOptions?.description,
+            style: inputOptions?.style,
+            disabled: inputOptions?.disabled,
+        };
+
+        // Get current value for this cell
+        const currentValue = getSlotValue(responseSlotKey);
+        const prefill = currentValue !== 'undefined' ? { key: responseSlotKey, value: currentValue } : undefined;
+
+        return <TextInput
+            compDef={mockCompDef}
+            prefill={prefill}
+            responseChanged={(response) => {
+                if (!response || !response.value) {
+                    handleResponseChange(responseSlotKey, undefined);
+                } else {
+                    handleResponseChange(responseSlotKey, response.value);
+                }
+            }}
+            languageCode={props.languageCode}
+            dateLocales={props.dateLocales}
+            embedded={true}
+            hideLabel={true}
+            nonFullWidth={true}
+            parentKey={`${props.parentKey}`}
+            updateDelay={200}
+        />
+    }
+
+    const renderNumberInput = (rowKey: string, colKey: string) => {
+        const numberInputOptions = getNumberInputOptionsDef();
+        const responseSlotKey = `${rowKey}-${colKey}`;
+
+        // Create a mock component definition for the NumberInput
+        const mockCompDef: ItemComponent = {
+            key: responseSlotKey,
+            role: 'numberInput',
+            content: numberInputOptions?.content,
+            description: numberInputOptions?.description,
+            style: numberInputOptions?.style,
+            disabled: numberInputOptions?.disabled,
+            properties: {
+                min: getStyleValueByKey(numberInputOptions?.style, 'min') ? parseFloat(getStyleValueByKey(numberInputOptions?.style, 'min')!) : undefined,
+                max: getStyleValueByKey(numberInputOptions?.style, 'max') ? parseFloat(getStyleValueByKey(numberInputOptions?.style, 'max')!) : undefined,
+                stepSize: getStyleValueByKey(numberInputOptions?.style, 'step') ? parseFloat(getStyleValueByKey(numberInputOptions?.style, 'step')!) : undefined,
+            }
+        };
+
+        // Get current value for this cell
+        const currentValue = getSlotValue(responseSlotKey);
+        const prefill = currentValue !== 'undefined' ? { key: responseSlotKey, value: currentValue, dtype: 'number' } : undefined;
+
+        return <NumberInput
+            compDef={mockCompDef}
+            prefill={prefill}
+            responseChanged={(response) => {
+                if (!response || !response.value) {
+                    handleResponseChange(responseSlotKey, undefined);
+                } else {
+                    handleResponseChange(responseSlotKey, response.value);
+                }
+            }}
+            languageCode={props.languageCode}
+            dateLocales={props.dateLocales}
+            embedded={true}
+            hideLabel={true}
+            nonFullWidth={true}
+            parentKey={`${props.parentKey}`}
+        />
+    }
+
     const renderMatrixResponseCell = (rowKey: string, colKey: string, prefix: string) => {
         switch (responseType) {
             case 'input':
-                return <p>input not implemented yet</p>
+                return renderTextInput(rowKey, colKey);
             case 'numberInput':
-                return <p>number input not implemented yet</p>
+                return renderNumberInput(rowKey, colKey);
             case 'dropdown':
             default:
                 return renderDropdown(rowKey, colKey, prefix);
