@@ -111,8 +111,8 @@ const ClozeItemQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
                     <DropdownContentConfig
                         component={props.component}
                         onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
-                        hideLabel={false}
-                        hidePlaceholder={false}
+                        hideContentInput={false}
+                        hideDescriptionInput={false}
                     />
                 </div>;
             case ClozeItemType.TextInput:
@@ -158,8 +158,8 @@ const ClozeItemAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) =
                 return <DropdownContentConfig
                     component={props.component}
                     onChange={(updatedComponent) => props.onChange?.(updatedComponent)}
-                    hideLabel={false}
-                    hidePlaceholder={false}
+                    hideContentInput={false}
+                    hideDescriptionInput={false}
                 />
             case ClozeItemType.TextInput:
                 return <TextInputContentConfig
