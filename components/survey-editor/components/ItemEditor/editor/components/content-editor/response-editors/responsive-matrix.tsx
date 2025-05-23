@@ -152,9 +152,9 @@ const ColumnsEditor = (props: {
     };
 
     return <div>
-        <p className='font-semibold'>
+        <h3 className='font-semibold'>
             Columns ({props.columns.length})
-        </p>
+        </h3>
         <p className='text-xs text-muted-foreground mb-2'>
             Drag items to reorder columns.
         </p>
@@ -350,9 +350,9 @@ const RowsEditor = (props: {
     };
 
     return <div>
-        <p className='font-semibold'>
+        <h3 className='font-semibold'>
             Rows ({props.rows.length})
-        </p>
+        </h3>
         <p className='text-xs text-muted-foreground mb-2'>
             Drag items to reorder rows.
         </p>
@@ -698,11 +698,11 @@ const ResponsiveMatrixEditor: React.FC<ResponsiveMatrixEditorProps> = ({ surveyI
 
             <div className="space-y-3 pt-4 border-t">
                 <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-3">
+                    <h3 className="font-semibold mb-3">
                         {currentResponseType === 'dropdown' && 'Dropdown Configuration'}
                         {currentResponseType === 'input' && 'Text Input Configuration'}
                         {currentResponseType === 'numberInput' && 'Number Input Configuration'}
-                    </h4>
+                    </h3>
                     {renderTypeSpecificEditor()}
                 </div>
             </div>
