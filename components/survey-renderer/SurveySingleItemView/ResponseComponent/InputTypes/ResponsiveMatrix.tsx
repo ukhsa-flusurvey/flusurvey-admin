@@ -232,9 +232,7 @@ const ResponsiveMatrix: React.FC<ResponsiveMatrixProps> = (props) => {
 
         // Get current value for this cell
         const currentValue = getSlotValue(responseSlotKey);
-        const prefill = currentValue !== '' && !isNaN(Number(currentValue)) && isFinite(Number(currentValue))
-            ? { key: responseSlotKey, value: Number(currentValue), dtype: 'number' }
-            : undefined;
+        const prefill = currentValue !== 'undefined' ? { key: responseSlotKey, value: currentValue, dtype: 'number' } : undefined;
 
         return <NumberInput
             compDef={mockCompDef}
