@@ -1,23 +1,24 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { useEffect, useRef } from 'react';
+import React, { use, useContext, useEffect, useRef } from 'react';
 import { ItemTypeKey, SpecialSurveyItemTypeInfos, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { SurveyItem } from 'survey-engine/data_types';
-import { SurveyItemFeatures, supportedSurveyItemFeaturesByType, surveyItemFeatureLookup, surveyItemFeaturesLables, surveyItemFeaturesList } from './item-transformations';
+import { SurveyItemFeatures, createAndApplyFeatures, supportedSurveyItemFeaturesByType, surveyItemFeatureLookup, surveyItemFeaturesLables, surveyItemFeaturesList } from './item-transformations';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PopoverKeyBadge } from './KeyBadge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
+
 interface ConvertItemDialogProps {
     open: boolean;
     surveyItem: SurveyItem;
     surveyItemList: Array<{ key: string, isGroup: boolean }>;
     onClose: () => void;
-    onItemConverted?: (newConvertedItem: string) => void;
+    onItemConverted?: (newConvertedItem: SurveyItem) => void;
 }
 
 const allSurveyItemTypes = [
@@ -43,26 +44,29 @@ const lookupValidation = (result: unknown) => {
     return true;
 }
 
-const KeyConfigCell: React.FC<{ sourceItem: SurveyItem, otherKeys: string[] }> = (props) => {
-    const [newKey, setNewKey] = React.useState<string>(getItemKeyFromFullKey(props.sourceItem.key) + "_conv");
+const KeyConfigCell: React.FC<{ sourceItem: SurveyItem, otherKeys: string[], initialKey: string, onKeyChange: (key: string) => void }> = (props) => {
     return (
         <div className='flex flex-row items-center justify-center'>
-            <PopoverKeyBadge allOtherKeys={props.otherKeys} itemKey={newKey} onKeyChange={(key) => setNewKey(key)} isHighlighted={true} />
+            <PopoverKeyBadge allOtherKeys={props.otherKeys} itemKey={props.initialKey} onKeyChange={(key) => { props.onKeyChange(key) }} isHighlighted={true} />
         </div>
     );
 }
 
-const FeatureConfigCell: React.FC<{ sourceItem: SurveyItem, feature: SurveyItemFeatures, otherKeys: string[] }> = (props) => {
+const FeatureConfigCell: React.FC<{ sourceItem: SurveyItem, feature: SurveyItemFeatures, otherKeys: string[], initiallyIsConfigured: boolean, onConfigChange: (isConfigured: boolean) => void }> = (props) => {
     const ref = useRef<HTMLButtonElement>(null);
-    const validationResult = lookupValidation(surveyItemFeatureLookup[props.feature](props.sourceItem));
-    const [checked, setChecked] = React.useState<boolean>(validationResult);
+    const [checked, setChecked] = React.useState<boolean>(props.initiallyIsConfigured);
+
+    const checkedChange = (value: boolean) => {
+        setChecked(value);
+        props.onConfigChange(value);
+    }
 
     switch (props.feature) {
         default:
             return (<div
                 className='flex flex-row justify-center items-center h-12 gap-2'
                 onClick={(e) => {
-                    setChecked(!checked);
+                    checkedChange(!checked);
                     e.stopPropagation();
                 }}
             >
@@ -70,7 +74,7 @@ const FeatureConfigCell: React.FC<{ sourceItem: SurveyItem, feature: SurveyItemF
                     id={'check-' + props.feature}
                     ref={ref}
                     checked={checked}
-                    onCheckedChange={(v) => setChecked(v === true)}
+                    onCheckedChange={(v) => checkedChange(v === true)}
                 />
                 <Label className="text-sm font-normal" htmlFor={'check-' + props.feature} onClick={(e) => { e.preventDefault(); }}>
                     Copy
@@ -79,30 +83,46 @@ const FeatureConfigCell: React.FC<{ sourceItem: SurveyItem, feature: SurveyItemF
     }
 }
 
-const ConvertFeaturesTable: React.FC<{
-    sourceItem: SurveyItem,
-    sourceType: ItemTypeKey,
-    targetType: ItemTypeKey,
-    onChange?: (newItem: SurveyItem) => void,
-    otherKeys: string[],
-}> = (props) => {
-    console.log('ConvertFeaturesTable', props.sourceItem, props.sourceType, props.targetType);
-    let availableFeatures = surveyItemFeaturesList().filter(
-        (feature) => supportedSurveyItemFeaturesByType[props.sourceType].includes(feature)
-            && supportedSurveyItemFeaturesByType[props.targetType].includes(feature)
-            && lookupValidation(surveyItemFeatureLookup[feature](props.sourceItem)));
+const getInitialNewKey = (sourceKey: string, otherKeys: string[]): string => {
+    let newKey = getItemKeyFromFullKey(sourceKey) + "_conv";
+    let i = 1;
+    while (otherKeys.includes(newKey)) {
+        newKey = getItemKeyFromFullKey(sourceKey) + "_conv_" + i;
+        i++;
+    }
+    return newKey;
+}
 
-    if (props.sourceType != props.targetType) {
+const getInitialConfig = (sourceItem: SurveyItem, sourceType: ItemTypeKey, targetType: ItemTypeKey): Record<SurveyItemFeatures, boolean> => {
+    let availableFeatures = surveyItemFeaturesList().filter(
+        (feature) => supportedSurveyItemFeaturesByType[sourceType].includes(feature)
+            && supportedSurveyItemFeaturesByType[targetType].includes(feature)
+            && lookupValidation(surveyItemFeatureLookup[feature](sourceItem)));
+
+    if (sourceType != targetType) {
         availableFeatures = availableFeatures.filter((feature) => feature != SurveyItemFeatures.ResponseGroup);
     } else {
         availableFeatures = availableFeatures.filter(
             (feature) => !([SurveyItemFeatures.ChoiceOptions,
+            SurveyItemFeatures.ChoiceRows,
             SurveyItemFeatures.InputLabel,
             SurveyItemFeatures.InputPlaceholder,
             SurveyItemFeatures.InputProperties,
             SurveyItemFeatures.InputStyling].includes(feature)));
     }
+    return Object.fromEntries(availableFeatures.map((feature) => [feature, true])) as Record<SurveyItemFeatures, boolean>;
+}
 
+const ConvertFeaturesTable: React.FC<{
+    sourceItem: SurveyItem,
+    sourceType: ItemTypeKey,
+    targetType: ItemTypeKey,
+    targetKey: string,
+    targetConfig: Record<SurveyItemFeatures, boolean>,
+    onTargetKeyChange?: (key: string) => void,
+    onTargetConfigChange?: (newRecords: Record<SurveyItemFeatures, boolean>) => void,
+    otherKeys: string[],
+}> = (props) => {
 
     return (<Table>
         <TableHeader>
@@ -118,19 +138,32 @@ const ConvertFeaturesTable: React.FC<{
                     <KeyConfigCell
                         sourceItem={props.sourceItem}
                         otherKeys={props.otherKeys}
+                        initialKey={props.targetKey}
+                        onKeyChange={(key) => {
+                            if (props.onTargetKeyChange) {
+                                props.onTargetKeyChange(key);
+                            }
+                        }}
                     />
                 </TableCell>
             </TableRow>
-            {availableFeatures.map((feature) => {
+            {Object.entries(props.targetConfig).map(([key, value]) => {
                 return (
-                    <TableRow key={feature}>
-                        <TableCell className="text-center w-1/2">{surveyItemFeaturesLables[feature]}</TableCell>
+                    <TableRow key={key}>
+                        <TableCell className="text-center w-1/2">{surveyItemFeaturesLables[key as SurveyItemFeatures]}</TableCell>
                         <TableCell className="text-center p-0">
                             <FeatureConfigCell
                                 sourceItem={props.sourceItem}
-                                feature={feature}
+                                feature={key as SurveyItemFeatures}
                                 otherKeys={props.otherKeys}
-                            />
+                                onConfigChange={(isConfigured) => {
+                                    if (props.onTargetConfigChange) {
+                                        let config = { ...props.targetConfig };
+                                        config[key as SurveyItemFeatures] = isConfigured;
+                                        props.onTargetConfigChange(config);
+                                    }
+                                }}
+                                initiallyIsConfigured={value} />
                         </TableCell>
                     </TableRow>
                 );
@@ -140,14 +173,17 @@ const ConvertFeaturesTable: React.FC<{
 }
 
 const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
-    const itemTypeInfos = getItemTypeInfos(props.surveyItem);
-    const [targetType, setTargetType] = React.useState<ItemTypeKey>(itemTypeInfos.key);
-
     const relevantKeys = props.surveyItemList.filter(i => getParentKeyFromFullKey(i.key) == getParentKeyFromFullKey(props.surveyItem.key)).map(i => getItemKeyFromFullKey(i.key));
+    const itemTypeInfos = getItemTypeInfos(props.surveyItem);
+
+    const [targetType, setTargetType] = React.useState<ItemTypeKey>(itemTypeInfos.key);
+    const [targetKey, setTargetKey] = React.useState<string>(getInitialNewKey(props.surveyItem.key, relevantKeys));
+    const [targetConfig, setTargetConfig] = React.useState<Record<SurveyItemFeatures, boolean>>(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
 
     useEffect(() => {
-        setTargetType(itemTypeInfos.key);
-    }, [itemTypeInfos.key, props.surveyItem]);
+        setTargetKey(getInitialNewKey(props.surveyItem.key, relevantKeys));
+        setTargetConfig(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
+    }, [props.surveyItem, itemTypeInfos.key, targetType]);
 
     return (
         <Dialog
@@ -216,7 +252,21 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
                     </div>
                     <Separator />
                     <p className='text-sm'>Configure features:</p>
-                    <ConvertFeaturesTable sourceItem={props.surveyItem} sourceType={itemTypeInfos.key} targetType={targetType} otherKeys={relevantKeys} />
+                    <ConvertFeaturesTable
+                        sourceItem={props.surveyItem}
+                        sourceType={itemTypeInfos.key}
+                        targetType={targetType}
+                        otherKeys={relevantKeys}
+                        targetKey={targetKey}
+                        targetConfig={targetConfig}
+                        onTargetKeyChange={(key) => {
+                            setTargetKey(key);
+                        }}
+                        onTargetConfigChange={(newRecords) => {
+                            setTargetConfig(newRecords);
+                        }
+                        }
+                    />
                 </div>
 
                 <DialogFooter>
@@ -230,6 +280,13 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
                     </Button>
                     <Button
                         onClick={() => {
+                            const newItem = createAndApplyFeatures(
+                                props.surveyItem,
+                                [...Object.keys(targetConfig).filter((key) => targetConfig[key as SurveyItemFeatures] == true).map((key) => key as SurveyItemFeatures)],
+                                targetType,
+                                targetKey,
+                            );
+                            if (newItem) props.onItemConverted?.(newItem);
                             props.onClose();
                         }}
                     >

@@ -58,7 +58,8 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
 
         const newSurveyItem = generateNewItemForType({
             itemType: newItemInfos.itemType as ItemTypeKey,
-            parentGroup: parentItem as SurveyGroupItem,
+            parentKey: parentItem.key,
+            otherKeys: parentItem.items?.map(item => item.key) ?? [],
         });
 
         if (newSurveyItem) {

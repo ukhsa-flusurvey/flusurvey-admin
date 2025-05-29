@@ -1,6 +1,6 @@
 import { ItemComponent, SurveyItem, SurveySingleItem, ItemGroupComponent, isItemGroupComponent, LocalizedObject, ComponentProperties, SurveyGroupItem, Expression } from "survey-engine/data_types"
 import { ItemComponentRole } from "../../../types"
-import { ItemTypeKey } from "@/components/survey-editor/utils/utils";
+import { ItemTypeKey, getParentKeyFromFullKey } from "@/components/survey-editor/utils/utils";
 import { generateNewItemForType } from "@/components/survey-editor/utils/new-item-init";
 
 export enum SurveyItemFeatures {
@@ -19,6 +19,7 @@ export enum SurveyItemFeatures {
     WarningTexts = 'warningTexts',
     SimpleTexts = 'simpleTexts',
     ChoiceOptions = 'choiceOptions',
+    ChoiceRows = 'choiceRows',
     InputLabel = 'inputLabel',
     InputPlaceholder = 'inputPlaceholder',
     InputProperties = 'inputProperties',
@@ -41,6 +42,7 @@ export const surveyItemFeaturesLables: Record<SurveyItemFeatures, string> = {
     [SurveyItemFeatures.WarningTexts]: 'Warning Texts',
     [SurveyItemFeatures.SimpleTexts]: 'Simple Texts',
     [SurveyItemFeatures.ChoiceOptions]: "Choice Options",
+    [SurveyItemFeatures.ChoiceRows]: "Choice Rows",
     [SurveyItemFeatures.InputLabel]: "Input Label",
     [SurveyItemFeatures.InputPlaceholder]: "Input Placeholder",
     [SurveyItemFeatures.InputProperties]: "Input Properties (Min/Max/Step)",
@@ -65,6 +67,7 @@ export const possibleSurveyItemFeatureConversions: Record<SurveyItemFeatures, Su
     [SurveyItemFeatures.WarningTexts]: [SurveyItemFeatures.WarningTexts],
     [SurveyItemFeatures.SimpleTexts]: [SurveyItemFeatures.SimpleTexts],
     [SurveyItemFeatures.ChoiceOptions]: [SurveyItemFeatures.ChoiceOptions],
+    [SurveyItemFeatures.ChoiceRows]: [SurveyItemFeatures.ChoiceRows],
     [SurveyItemFeatures.InputLabel]: [SurveyItemFeatures.InputLabel, SurveyItemFeatures.InputPlaceholder, SurveyItemFeatures.Title, SurveyItemFeatures.Subtitle, SurveyItemFeatures.Footnote],
     [SurveyItemFeatures.InputPlaceholder]: [SurveyItemFeatures.InputPlaceholder, SurveyItemFeatures.InputLabel, SurveyItemFeatures.Title, SurveyItemFeatures.Subtitle, SurveyItemFeatures.Footnote],
     [SurveyItemFeatures.InputProperties]: [SurveyItemFeatures.InputProperties],
@@ -99,13 +102,15 @@ export const supportedSurveyItemFeaturesByType: Record<ItemTypeKey, SurveyItemFe
     'codeValidator': [...commonSurveyItemFeatures, SurveyItemFeatures.InputLabel],
     'matrix': [...commonSurveyItemFeatures],
     'responsiveMatrix': [...commonSurveyItemFeatures],
-    'responsiveBipolarLikertScaleArray': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions],
-    'responsiveSingleChoiceArray': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions],
+    'responsiveBipolarLikertScaleArray': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions, SurveyItemFeatures.ChoiceRows],
+    'responsiveSingleChoiceArray': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions, SurveyItemFeatures.ChoiceRows],
     'clozeQuestion': [...commonSurveyItemFeatures],
     'consent': [...commonSurveyItemFeatures, SurveyItemFeatures.InputLabel],
     'validatedRandomQuestion': [...commonSurveyItemFeatures],
     'contact': [...commonSurveyItemFeatures, SurveyItemFeatures.InputLabel],
 }
+
+const topBottomContentRoles = [ItemComponentRole.TextContent, ItemComponentRole.Warning, ItemComponentRole.Error, ItemComponentRole.Markdown];
 
 
 const findItemComponentsWithRole = (surveyItem: SurveySingleItem, role: ItemComponentRole): ItemComponent[] => {
@@ -121,13 +126,18 @@ const findItemComponentsWithRole = (surveyItem: SurveySingleItem, role: ItemComp
 
 const applyItemComponentByRole = (surveyItem: SurveySingleItem, role: ItemComponentRole, newComponent: ItemComponent) => {
     if (surveyItem.components !== undefined && surveyItem.components.items.length > 0) {
+        let overwrite = false;
         surveyItem.components.items = surveyItem.components.items.map(item => {
             if (item.role === role) {
+                overwrite = true;
                 return newComponent;
             } else {
                 return item;
             }
         });
+        if (!overwrite) {
+            surveyItem.components.items.push(newComponent);
+        }
     } else {
         surveyItem.components = {
             items: [newComponent],
@@ -137,7 +147,7 @@ const applyItemComponentByRole = (surveyItem: SurveySingleItem, role: ItemCompon
     return surveyItem;
 }
 
-const findTextContent = (surveyItem: SurveySingleItem, textType: SurveyItemFeatures.TopContent | SurveyItemFeatures.BottomContent): ItemComponent | undefined => {
+const findTextContent = (surveyItem: SurveySingleItem, textType: SurveyItemFeatures.TopContent | SurveyItemFeatures.BottomContent): ItemComponent[] => {
     if (surveyItem.components !== undefined && surveyItem.components.items.length > 0) {
         const rgIndex = surveyItem.components.items.findIndex(item => {
             return item.role === ItemComponentRole.ResponseGroup;
@@ -145,11 +155,48 @@ const findTextContent = (surveyItem: SurveySingleItem, textType: SurveyItemFeatu
         const beforeResponseGroup = surveyItem.components.items.slice(0, rgIndex);
         const afterResponseGroup = surveyItem.components.items.slice(rgIndex + 1);
         const relevantGroupSlice = textType === SurveyItemFeatures.TopContent ? beforeResponseGroup : afterResponseGroup;
-        return relevantGroupSlice.find(item => {
-            return item.role === ItemComponentRole.TextContent;
+        return relevantGroupSlice.filter(item => {
+            return topBottomContentRoles.includes(item.role as ItemComponentRole);
         });
     } else {
-        return undefined;
+        return [];
+    }
+}
+
+const applyTextContent = (targetItem: SurveySingleItem, textType: SurveyItemFeatures.TopContent | SurveyItemFeatures.BottomContent, sourceItem: SurveySingleItem): SurveySingleItem => {
+    const textContent = surveyItemFeatureLookup[textType](sourceItem);
+    if (targetItem.components !== undefined && targetItem.components.items.length > 0) {
+        const rgIndex = targetItem.components.items.findIndex(item => {
+            return item.role === ItemComponentRole.ResponseGroup;
+        });
+        let beforeResponseGroup = targetItem.components.items.slice(0, rgIndex);
+        const rg = targetItem.components.items[rgIndex];
+        let afterResponseGroup = targetItem.components.items.slice(rgIndex + 1);
+        if (textType === SurveyItemFeatures.TopContent) {
+            beforeResponseGroup = beforeResponseGroup.filter(item => {
+                return !topBottomContentRoles.includes(item.role as ItemComponentRole);
+            });
+            beforeResponseGroup.push(...textContent);
+        }
+        if (textType === SurveyItemFeatures.BottomContent) {
+            afterResponseGroup = afterResponseGroup.filter(item => {
+                return !topBottomContentRoles.includes(item.role as ItemComponentRole);
+            });
+            afterResponseGroup.push(...textContent);
+        }
+        return {
+            ...targetItem,
+            components: {
+                ...targetItem.components,
+                items: [
+                    ...beforeResponseGroup,
+                    rg,
+                    ...afterResponseGroup,
+                ],
+            },
+        } as SurveyItem;
+    } else {
+        return targetItem;
     }
 }
 
@@ -161,16 +208,43 @@ const findComponentGroup = (surveyItem: SurveySingleItem): ItemGroupComponent | 
     }
 }
 
-const findSCMCOptions = (surveyItem: SurveySingleItem): ItemComponent[] | ItemComponent | undefined => {
+const findOptions = (surveyItem: SurveySingleItem): ItemComponent[] | undefined => {
     const rg = findItemComponentsWithRole(surveyItem, ItemComponentRole.ResponseGroup);
     const firstRg = rg != undefined ? (Array.isArray(rg) ? rg[0] : rg) as ItemGroupComponent : undefined;
     if (firstRg !== undefined && firstRg.items !== undefined && firstRg.items.length > 0) {
+        // Find the first choice group or dropdown group
         const cg = firstRg.items.find(item => {
-            return item.role === ItemComponentRole.SingleChoiceGroup || item.role === ItemComponentRole.MultipleChoiceGroup || ItemComponentRole.DropdownGroup;
+            return item.role === ItemComponentRole.SingleChoiceGroup || item.role === ItemComponentRole.MultipleChoiceGroup || item.role === ItemComponentRole.DropdownGroup;
         });
         if (cg != undefined && isItemGroupComponent(cg)) {
             return cg.items;
         }
+
+        // If no choice group found, check for responsive single choice or bipolar likert scale array
+        const sg = firstRg.items.find(item => {
+            return item.role === ItemComponentRole.ResponsiveSingleChoiceArray || item.role === ItemComponentRole.ResponsiveBipolarLikertScaleArray;
+        });
+        if (sg != undefined && isItemGroupComponent(sg)) {
+            const options = sg.items.find(i => i.role === ItemComponentRole.Options) as ItemGroupComponent | undefined;
+            return options ? options.items : [];
+        }
+
+    }
+    return undefined;
+}
+
+const findRows = (surveyItem: SurveySingleItem): ItemComponent[] | undefined => {
+    const rg = findItemComponentsWithRole(surveyItem, ItemComponentRole.ResponseGroup);
+    const firstRg = rg != undefined ? (Array.isArray(rg) ? rg[0] : rg) as ItemGroupComponent : undefined;
+    if (firstRg !== undefined && firstRg.items !== undefined && firstRg.items.length > 0) {
+        const sg = firstRg.items.find(item => {
+            return item.role === ItemComponentRole.ResponsiveSingleChoiceArray || item.role === ItemComponentRole.ResponsiveBipolarLikertScaleArray;
+        });
+        if (sg != undefined && isItemGroupComponent(sg)) {
+            const rows = sg.items.filter(i => i.role === ItemComponentRole.Row) as ItemComponent[];
+            return rows;
+        }
+
     }
     return undefined;
 }
@@ -215,7 +289,7 @@ const findInputStyling = (surveyItem: SurveySingleItem) => {
     return undefined;
 }
 
-export const surveyItemFeatureLookup: Record<SurveyItemFeatures, (surveyItem: SurveyItem) => LocalizedObject[] | ItemComponent[] | Array<{ key: string; value: string; }> | ComponentProperties | ItemComponent | ItemGroupComponent | string | Expression | undefined> = {
+export const surveyItemFeatureLookup = {
     [SurveyItemFeatures.Title]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Title),
     [SurveyItemFeatures.Subtitle]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Subtitle),
     [SurveyItemFeatures.TopContent]: (surveyItem: SurveyItem) => findTextContent(surveyItem, SurveyItemFeatures.TopContent),
@@ -230,7 +304,8 @@ export const surveyItemFeatureLookup: Record<SurveyItemFeatures, (surveyItem: Su
     [SurveyItemFeatures.ErrorTexts]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Error),
     [SurveyItemFeatures.WarningTexts]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Warning),
     [SurveyItemFeatures.SimpleTexts]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.TextContent),
-    [SurveyItemFeatures.ChoiceOptions]: (surveyItem: SurveyItem) => findSCMCOptions(surveyItem),
+    [SurveyItemFeatures.ChoiceOptions]: (surveyItem: SurveyItem) => findOptions(surveyItem),
+    [SurveyItemFeatures.ChoiceRows]: (surveyItem: SurveyItem) => findRows(surveyItem),
     [SurveyItemFeatures.InputLabel]: (surveyItem: SurveyItem) => findInputLabel(surveyItem),
     [SurveyItemFeatures.InputPlaceholder]: (surveyItem: SurveyItem) => findInputPlaceholder(surveyItem),
     [SurveyItemFeatures.InputProperties]: (surveyItem: SurveyItem) => findInputProperties(surveyItem),
@@ -238,22 +313,22 @@ export const surveyItemFeatureLookup: Record<SurveyItemFeatures, (surveyItem: Su
 }
 
 export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: SurveyItem, sourceItem: SurveyItem) => SurveyItem> = {
-    [SurveyItemFeatures.Title]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Title, surveyItemFeatureLookup[SurveyItemFeatures.Title](sourceItem) as ItemComponent),
-    [SurveyItemFeatures.Subtitle]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Subtitle, surveyItemFeatureLookup[SurveyItemFeatures.Subtitle](sourceItem) as ItemComponent),
-    [SurveyItemFeatures.TopContent]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.TextContent, surveyItemFeatureLookup[SurveyItemFeatures.TopContent](sourceItem) as ItemComponent),
-    [SurveyItemFeatures.BottomContent]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.TextContent, surveyItemFeatureLookup[SurveyItemFeatures.BottomContent](sourceItem) as ItemComponent),
-    [SurveyItemFeatures.Footnote]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Footnote, surveyItemFeatureLookup[SurveyItemFeatures.Footnote](sourceItem) as ItemComponent),
-    [SurveyItemFeatures.HelpGroup]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.HelpGroup, surveyItemFeatureLookup[SurveyItemFeatures.HelpGroup](sourceItem) as ItemComponent),
+    [SurveyItemFeatures.Title]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Title, (surveyItemFeatureLookup[SurveyItemFeatures.Title](sourceItem) as ItemComponent[])[0]),
+    [SurveyItemFeatures.Subtitle]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Subtitle, (surveyItemFeatureLookup[SurveyItemFeatures.Subtitle](sourceItem) as ItemComponent[])[0]),
+    [SurveyItemFeatures.TopContent]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyTextContent(surveyItem as SurveySingleItem, SurveyItemFeatures.TopContent, sourceItem as SurveySingleItem),
+    [SurveyItemFeatures.BottomContent]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyTextContent(surveyItem as SurveySingleItem, SurveyItemFeatures.BottomContent, sourceItem as SurveySingleItem),
+    [SurveyItemFeatures.Footnote]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.Footnote, (surveyItemFeatureLookup[SurveyItemFeatures.Footnote](sourceItem) as ItemComponent[])[0]),
+    [SurveyItemFeatures.HelpGroup]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.HelpGroup, (surveyItemFeatureLookup[SurveyItemFeatures.HelpGroup](sourceItem) as ItemComponent[])[0]),
     [SurveyItemFeatures.EditorItemColor]: (surveyItem: SurveyItem, sourceItem: SurveyItem) => {
         surveyItem.metadata = {
             ...surveyItem.metadata,
-            editorItemColor: surveyItemFeatureLookup[SurveyItemFeatures.EditorItemColor](sourceItem) as string,
+            editorItemColor: surveyItemFeatureLookup[SurveyItemFeatures.EditorItemColor](sourceItem)!,
         }
         return sourceItem;
     },
     [SurveyItemFeatures.ComponentOrdering]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
-            const order = surveyItemFeatureLookup[SurveyItemFeatures.ComponentOrdering](sourceItem) as Expression;
+            const order = surveyItemFeatureLookup[SurveyItemFeatures.ComponentOrdering](sourceItem);
             surveyItem.components.order = order;
             return surveyItem;
         } else {
@@ -261,12 +336,12 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         }
     },
     [SurveyItemFeatures.DisplayCondition]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        surveyItem.condition = surveyItemFeatureLookup[SurveyItemFeatures.DisplayCondition](sourceItem) as Expression;
+        surveyItem.condition = surveyItemFeatureLookup[SurveyItemFeatures.DisplayCondition](sourceItem);
         return surveyItem;
     },
     [SurveyItemFeatures.ResponseGroup]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => applyItemComponentByRole(surveyItem, ItemComponentRole.ResponseGroup, (surveyItemFeatureLookup[SurveyItemFeatures.ResponseGroup](sourceItem) as ItemComponent[])[0]),
     [SurveyItemFeatures.MarkdownTexts]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const markdown = surveyItemFeatureLookup[SurveyItemFeatures.MarkdownTexts](sourceItem) as ItemComponent[];
+        const markdown = surveyItemFeatureLookup[SurveyItemFeatures.MarkdownTexts](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.filter(item => item.role !== ItemComponentRole.Markdown);
             surveyItem.components.items.push(...markdown);
@@ -274,7 +349,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.ErrorTexts]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const error = surveyItemFeatureLookup[SurveyItemFeatures.ErrorTexts](sourceItem) as ItemComponent[];
+        const error = surveyItemFeatureLookup[SurveyItemFeatures.ErrorTexts](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.filter(item => item.role !== ItemComponentRole.Error);
             surveyItem.components.items.push(...error);
@@ -282,7 +357,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.WarningTexts]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const warning = surveyItemFeatureLookup[SurveyItemFeatures.WarningTexts](sourceItem) as ItemComponent[];
+        const warning = surveyItemFeatureLookup[SurveyItemFeatures.WarningTexts](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.filter(item => item.role !== ItemComponentRole.Warning);
             surveyItem.components.items.push(...warning);
@@ -290,7 +365,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.SimpleTexts]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const simpleText = surveyItemFeatureLookup[SurveyItemFeatures.SimpleTexts](sourceItem) as ItemComponent[];
+        const simpleText = surveyItemFeatureLookup[SurveyItemFeatures.SimpleTexts](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.filter(item => item.role !== ItemComponentRole.TextContent);
             surveyItem.components.items.push(...simpleText);
@@ -298,21 +373,93 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.ChoiceOptions]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const options = surveyItemFeatureLookup[SurveyItemFeatures.ChoiceOptions](sourceItem) as ItemComponent[];
+        const options = surveyItemFeatureLookup[SurveyItemFeatures.ChoiceOptions](sourceItem)!;
+        const simpleOptions = options.map(option => {
+            return {
+                role: ItemComponentRole.Option,
+                key: option.key,
+                content: option.content ?? []
+            }
+        });
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
                     const rg = item as ItemGroupComponent;
-                    rg.items = rg.items.map(i => {
-                        if (i.role === ItemComponentRole.SingleChoiceGroup || i.role === ItemComponentRole.MultipleChoiceGroup || i.role === ItemComponentRole.DropdownGroup) {
-                            const cg = i as ItemGroupComponent;
-                            cg.items = options;
-                            return cg;
-                        } else {
-                            return i;
+                    rg.items = rg.items.map(rgItem => {
+                        if (rgItem.role === ItemComponentRole.SingleChoiceGroup || rgItem.role === ItemComponentRole.MultipleChoiceGroup || rgItem.role === ItemComponentRole.DropdownGroup) {
+                            const cg = rgItem as ItemGroupComponent;
+                            if (rgItem.role === ItemComponentRole.DropdownGroup) {
+                                cg.items = simpleOptions;
+                            } else {
+                                cg.items = options;
+                            }
+                        } if (rgItem.role == ItemComponentRole.ResponsiveSingleChoiceArray || rgItem.role == ItemComponentRole.ResponsiveBipolarLikertScaleArray) {
+                            const scaleItem = rgItem as ItemGroupComponent;
+                            scaleItem.items = scaleItem.items.map(i => {
+                                if (i.role === ItemComponentRole.Options) {
+                                    (i as ItemGroupComponent).items = simpleOptions;
+                                }
+                                return i;
+                            });
                         }
+                        return rgItem;
                     });
-                    return rg;
+                    return rg
+                } else {
+                    return item;
+                }
+            });
+        }
+        return surveyItem;
+    },
+    [SurveyItemFeatures.ChoiceRows]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
+        let rows = surveyItemFeatureLookup[SurveyItemFeatures.ChoiceRows](sourceItem);
+        if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
+            surveyItem.components.items = surveyItem.components.items.map(item => {
+                if (item.role === ItemComponentRole.ResponseGroup) {
+                    const rg = item as ItemGroupComponent;
+                    rg.items = rg.items.map(rgItem => {
+                        if (rgItem.role === ItemComponentRole.ResponsiveSingleChoiceArray || rgItem.role === ItemComponentRole.ResponsiveBipolarLikertScaleArray) {
+                            const scaleItem = rgItem as ItemGroupComponent;
+                            scaleItem.items = scaleItem.items.filter(i => i.role !== ItemComponentRole.Row);
+                            if (rows) {
+                                if (rgItem.role === ItemComponentRole.ResponsiveBipolarLikertScaleArray) {
+                                    console.log("Applying rows to ResponsiveBipolarLikertScaleArray");
+                                    const convertedRows = rows.map(row => {
+                                        return {
+                                            role: ItemComponentRole.Row,
+                                            key: row.key,
+                                            content: [],
+                                            items: [{
+                                                role: ItemComponentRole.StartLabel,
+                                                content: row.content ?? [],
+                                            }, {
+                                                role: ItemComponentRole.EndLabel,
+                                                content: [],
+                                            }],
+                                            displayCondition: row.displayCondition,
+                                        }
+                                    });
+                                    scaleItem.items.push(...convertedRows);
+                                } else if (rgItem.role === ItemComponentRole.ResponsiveSingleChoiceArray) {
+                                    console.log("Applying rows to ResponsiveSingleChoiceArray");
+                                    const convertedRows = rows.map(row => {
+                                        const groupRow = row as ItemGroupComponent;
+                                        let label = groupRow.items.find(i => i.role === ItemComponentRole.StartLabel);
+                                        return {
+                                            role: ItemComponentRole.Row,
+                                            key: row.key,
+                                            content: label?.content ?? [],
+                                            displayCondition: groupRow.displayCondition,
+                                        };
+                                    });
+                                    scaleItem.items.push(...convertedRows);
+                                }
+                            }
+                        }
+                        return rgItem;
+                    });
+                    return rg
                 } else {
                     return item;
                 }
@@ -321,7 +468,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.InputLabel]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const label = surveyItemFeatureLookup[SurveyItemFeatures.InputLabel](sourceItem) as LocalizedObject[];
+        const label = surveyItemFeatureLookup[SurveyItemFeatures.InputLabel](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
@@ -339,7 +486,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.InputPlaceholder]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const placeholder = surveyItemFeatureLookup[SurveyItemFeatures.InputPlaceholder](sourceItem) as LocalizedObject[];
+        const placeholder = surveyItemFeatureLookup[SurveyItemFeatures.InputPlaceholder](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
@@ -357,7 +504,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.InputProperties]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const properties = surveyItemFeatureLookup[SurveyItemFeatures.InputProperties](sourceItem) as ComponentProperties;
+        const properties = surveyItemFeatureLookup[SurveyItemFeatures.InputProperties](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
@@ -375,7 +522,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.InputStyling]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        const styling = surveyItemFeatureLookup[SurveyItemFeatures.InputStyling](sourceItem) as Array<{ key: string; value: string; }>;
+        const styling = surveyItemFeatureLookup[SurveyItemFeatures.InputStyling](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
@@ -394,10 +541,13 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
     }
 }
 
-export const createAndApplyFeatures = (parentGroup: SurveyGroupItem, sourceItem: SurveyItem, featuresToApply: SurveyItemFeatures[], targetType: ItemTypeKey, targetKey: string) => {
+export const createAndApplyFeatures = (sourceItem: SurveyItem, featuresToApply: SurveyItemFeatures[], targetType: ItemTypeKey, targetKey: string): SurveyItem | null => {
+    const parentKey = getParentKeyFromFullKey(sourceItem.key);
+
     let newItem = generateNewItemForType({
         itemType: targetType,
-        parentGroup: parentGroup,
+        parentKey: parentKey,
+        otherKeys: [],
     });
 
     if (newItem) {
@@ -405,7 +555,11 @@ export const createAndApplyFeatures = (parentGroup: SurveyGroupItem, sourceItem:
         newItem.key = targetKey;
         // Apply Features
         for (const feature of featuresToApply) {
+            //console.log("Applying feature: ", feature);
+            //console.log("New Item before applying feature: ", JSON.stringify(newItem, null, 2));
             newItem = applySurveyItemFeature[feature](newItem, sourceItem);
+            //console.log("New Item after applying feature: ", JSON.stringify(newItem, null, 2));
         }
     }
+    return newItem;
 }

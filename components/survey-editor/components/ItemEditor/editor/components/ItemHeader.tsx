@@ -318,6 +318,12 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                 surveyItem={props.surveyItem}
                 onClose={() => setConvertItemDialogOpen(false)}
                 surveyItemList={props.surveyItemList}
+                onItemConverted={(newItem) => {
+                    const surveyItemJSON = JSON.stringify(newItem, null, 2);
+                    copy(surveyItemJSON);
+                    toast('Coverted item copied to clipboard');
+                    setConvertItemDialogOpen(false);
+                }}
             />
 
         </TooltipProvider>

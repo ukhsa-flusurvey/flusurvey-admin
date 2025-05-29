@@ -36,15 +36,13 @@ class SimpleGroup extends Group {
 
 export const generateNewItemForType = (props: {
     itemType: ItemTypeKey;
-    parentGroup: SurveyGroupItem;
+    parentKey: string;
+    otherKeys: string[];
 }): SurveyItem | null => {
-    const keysInGroupAlready = props.parentGroup.items.map(i => i.key);
-
-    const parentKey = props.parentGroup.key;
     const newItemType = props.itemType as ItemTypeKey;
-
-    const newItemKey = getUniqueRandomKey(keysInGroupAlready, parentKey);
-
+    const parentKey = props.parentKey;
+    console.log(props.otherKeys, parentKey);
+    const newItemKey = getUniqueRandomKey(props.otherKeys, parentKey);
     const editorItemColor = getItemColorFromID(newItemKey);
 
     let newSurveyItem: SurveyItem | null = null;
