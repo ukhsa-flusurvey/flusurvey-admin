@@ -1,4 +1,4 @@
-import { ItemComponent, SurveyItem, SurveySingleItem, ItemGroupComponent, isItemGroupComponent, LocalizedObject, ComponentProperties, SurveyGroupItem, Expression } from "survey-engine/data_types"
+import { ItemComponent, SurveyItem, SurveySingleItem, ItemGroupComponent, isItemGroupComponent, LocalizedObject, ComponentProperties, SurveyGroupItem, Expression, ConfidentialMode } from "survey-engine/data_types"
 import { ItemComponentRole } from "../../../types"
 import { ItemTypeKey, getParentKeyFromFullKey } from "@/components/survey-editor/utils/utils";
 import { generateNewItemForType } from "@/components/survey-editor/utils/new-item-init";
@@ -24,6 +24,8 @@ export enum SurveyItemFeatures {
     InputPlaceholder = 'inputPlaceholder',
     InputProperties = 'inputProperties',
     InputStyling = 'inputStyling',
+    ValidationRules = 'validationRules',
+    ConfidentialityMode = 'confidentialityMode',
 }
 
 export const surveyItemFeaturesLables: Record<SurveyItemFeatures, string> = {
@@ -47,6 +49,8 @@ export const surveyItemFeaturesLables: Record<SurveyItemFeatures, string> = {
     [SurveyItemFeatures.InputPlaceholder]: "Input Placeholder",
     [SurveyItemFeatures.InputProperties]: "Input Properties (Min/Max/Step)",
     [SurveyItemFeatures.InputStyling]: "Input Styling (Width)",
+    [SurveyItemFeatures.ValidationRules]: "Validation Rules",
+    [SurveyItemFeatures.ConfidentialityMode]: "Confidentiality Mode",
 }
 
 export const surveyItemFeaturesList: () => Array<SurveyItemFeatures> = () => Object.values(SurveyItemFeatures);
@@ -72,6 +76,8 @@ export const possibleSurveyItemFeatureConversions: Record<SurveyItemFeatures, Su
     [SurveyItemFeatures.InputPlaceholder]: [SurveyItemFeatures.InputPlaceholder, SurveyItemFeatures.InputLabel, SurveyItemFeatures.Title, SurveyItemFeatures.Subtitle, SurveyItemFeatures.Footnote],
     [SurveyItemFeatures.InputProperties]: [SurveyItemFeatures.InputProperties],
     [SurveyItemFeatures.InputStyling]: [SurveyItemFeatures.InputStyling],
+    [SurveyItemFeatures.ValidationRules]: [SurveyItemFeatures.ValidationRules],
+    [SurveyItemFeatures.ConfidentialityMode]: [SurveyItemFeatures.ConfidentialityMode],
 }
 
 const commonSurveyItemFeatures = [
@@ -83,6 +89,8 @@ const commonSurveyItemFeatures = [
     SurveyItemFeatures.HelpGroup,
     SurveyItemFeatures.DisplayCondition,
     SurveyItemFeatures.ResponseGroup,
+    SurveyItemFeatures.ValidationRules,
+    SurveyItemFeatures.ConfidentialityMode,
 ];
 
 export const supportedSurveyItemFeaturesByType: Record<ItemTypeKey, SurveyItemFeatures[]> = {
@@ -289,6 +297,34 @@ const findInputStyling = (surveyItem: SurveySingleItem) => {
     return undefined;
 }
 
+const findConfidentialityMode = (surveyItem: SurveySingleItem): ConfidentialMode | undefined => surveyItem.confidentialMode;
+const findValidationRules = (surveyItem: SurveySingleItem) => surveyItem.validations;
+
+const applyConfidentialityMode = (surveyItem: SurveySingleItem, sourceItem: SurveyItem): SurveySingleItem => {
+    const mode = findConfidentialityMode(sourceItem as SurveySingleItem);
+    if (mode !== undefined) {
+        return {
+            ...surveyItem,
+            confidentialMode: mode,
+        };
+    } else {
+        return surveyItem;
+    }
+}
+
+const applyValidationRules = (surveyItem: SurveySingleItem, sourceItem: SurveyItem): SurveySingleItem => {
+    const rules = findValidationRules(sourceItem as SurveySingleItem);
+    if (rules !== undefined) {
+        return {
+            ...surveyItem,
+            validations: rules,
+        };
+    } else {
+        return surveyItem;
+    }
+}
+
+
 export const surveyItemFeatureLookup = {
     [SurveyItemFeatures.Title]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Title),
     [SurveyItemFeatures.Subtitle]: (surveyItem: SurveyItem) => findItemComponentsWithRole(surveyItem, ItemComponentRole.Subtitle),
@@ -310,6 +346,8 @@ export const surveyItemFeatureLookup = {
     [SurveyItemFeatures.InputPlaceholder]: (surveyItem: SurveyItem) => findInputPlaceholder(surveyItem),
     [SurveyItemFeatures.InputProperties]: (surveyItem: SurveyItem) => findInputProperties(surveyItem),
     [SurveyItemFeatures.InputStyling]: (surveyItem: SurveyItem) => findInputStyling(surveyItem),
+    [SurveyItemFeatures.ValidationRules]: (surveyItem: SurveyItem) => findValidationRules(surveyItem as SurveySingleItem),
+    [SurveyItemFeatures.ConfidentialityMode]: (surveyItem: SurveyItem) => findConfidentialityMode(surveyItem as SurveySingleItem),
 }
 
 export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: SurveyItem, sourceItem: SurveyItem) => SurveyItem> = {
@@ -538,7 +576,9 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
             });
         }
         return surveyItem;
-    }
+    },
+    [SurveyItemFeatures.ValidationRules]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => applyValidationRules(surveyItem, sourceItem),
+    [SurveyItemFeatures.ConfidentialityMode]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => applyConfidentialityMode(surveyItem, sourceItem),
 }
 
 export const createAndApplyFeatures = (sourceItem: SurveyItem, featuresToApply: SurveyItemFeatures[], targetType: ItemTypeKey, targetKey: string): SurveyItem | null => {
