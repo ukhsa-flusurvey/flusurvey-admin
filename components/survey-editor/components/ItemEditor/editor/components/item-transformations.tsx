@@ -98,7 +98,7 @@ export const supportedSurveyItemFeaturesByType: Record<ItemTypeKey, SurveyItemFe
     'pageBreak': [],
     'surveyEnd': [],
     'group': [SurveyItemFeatures.ComponentOrdering, SurveyItemFeatures.DisplayCondition],
-    'display': [SurveyItemFeatures.DisplayCondition, SurveyItemFeatures.MarkdownTexts, SurveyItemFeatures.ErrorTexts, SurveyItemFeatures.WarningTexts, SurveyItemFeatures.SimpleTexts],
+    'display': [SurveyItemFeatures.DisplayCondition, SurveyItemFeatures.MarkdownTexts, SurveyItemFeatures.ErrorTexts, SurveyItemFeatures.WarningTexts, SurveyItemFeatures.SimpleTexts, SurveyItemFeatures.ConfidentialityMode],
     'singleChoice': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions],
     'multipleChoice': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions],
     'dropdown': [...commonSurveyItemFeatures, SurveyItemFeatures.ChoiceOptions, SurveyItemFeatures.InputLabel, SurveyItemFeatures.InputPlaceholder],
