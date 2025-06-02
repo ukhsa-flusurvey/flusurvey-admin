@@ -21,6 +21,7 @@ interface ItemHeaderProps {
     surveyItem: SurveyItem;
     surveyItemList: Array<{ key: string, isGroup: boolean }>;
     currentMode: 'source' | 'normal';
+    hideMoveToOtherGroup: boolean;
     onChangeMode: (mode: 'source' | 'normal') => void;
     onChangeItemColor: (newColor: string) => void;
     onMoveItem: (newParentKey: string, oldItemKey: string) => void;
@@ -75,7 +76,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
 
     const hideColorPicker = item.typeInfos.key === 'pageBreak' || item.typeInfos.key === 'surveyEnd';
     const hiddenConvertTypes: ItemTypeKey[] = ['surveyEnd', 'pageBreak', 'group'];
-    const hideConvertItem = hiddenConvertTypes.includes(item.typeInfos.key);
+    const disableConvertItem = hiddenConvertTypes.includes(item.typeInfos.key);
 
     const confidentialSymbol = () => {
         const confidentialMode = (props.surveyItem as SurveySingleItem).confidentialMode;
@@ -199,16 +200,16 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                         <p>Copy</p>
                     </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {!props.hideMoveToOtherGroup && <DropdownMenuItem
                     onClick={() => setMoveItemDialogOpen(true)}
                 >
                     <div className='flex items-center gap-2'>
                         <Move className='text-neutral-500 size-5' />
                         <p>Move to other group</p>
                     </div>
-                </DropdownMenuItem>
+                </DropdownMenuItem>}
                 <DropdownMenuItem
-                    disabled={hideConvertItem}
+                    disabled={disableConvertItem}
                     onClick={() => setConvertItemDialogOpen(true)}
                 >
                     <div className='flex items-center gap-2'>
