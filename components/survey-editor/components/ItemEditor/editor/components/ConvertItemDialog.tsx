@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { SurveyItem } from 'survey-engine/data_types';
-import { SurveyItemFeatures, createAndApplyFeatures, supportedSurveyItemFeaturesByType, surveyItemFeatureLookup, surveyItemFeaturesLables, surveyItemFeaturesList } from './item-transformations';
+import { SurveyItemFeatures, createAndApplyFeatures, supportedSurveyItemFeaturesByType, surveyItemFeatureLookup, surveyItemFeaturesLabels, surveyItemFeaturesList } from './item-transformations';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PopoverKeyBadge } from './KeyBadge';
@@ -150,7 +150,7 @@ const ConvertFeaturesTable: React.FC<{
             {Object.entries(props.targetConfig).map(([key, value]) => {
                 return (
                     <TableRow key={key}>
-                        <TableCell className="text-center w-1/2">{surveyItemFeaturesLables[key as SurveyItemFeatures]}</TableCell>
+                        <TableCell className="text-center w-1/2">{surveyItemFeaturesLabels[key as SurveyItemFeatures]}</TableCell>
                         <TableCell className="text-center p-0">
                             <FeatureConfigCell
                                 sourceItem={props.sourceItem}
@@ -158,7 +158,7 @@ const ConvertFeaturesTable: React.FC<{
                                 otherKeys={props.otherKeys}
                                 onConfigChange={(isConfigured) => {
                                     if (props.onTargetConfigChange) {
-                                        let config = { ...props.targetConfig };
+                                        const config = { ...props.targetConfig };
                                         config[key as SurveyItemFeatures] = isConfigured;
                                         props.onTargetConfigChange(config);
                                     }

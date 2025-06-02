@@ -28,7 +28,7 @@ export enum SurveyItemFeatures {
     ConfidentialityMode = 'confidentialityMode',
 }
 
-export const surveyItemFeaturesLables: Record<SurveyItemFeatures, string> = {
+export const surveyItemFeaturesLabels: Record<SurveyItemFeatures, string> = {
     [SurveyItemFeatures.Title]: 'Title',
     [SurveyItemFeatures.Subtitle]: 'Subtitle',
     [SurveyItemFeatures.TopContent]: 'Top Content',
@@ -454,7 +454,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
         return surveyItem;
     },
     [SurveyItemFeatures.ChoiceRows]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
-        let rows = surveyItemFeatureLookup[SurveyItemFeatures.ChoiceRows](sourceItem);
+        const rows = surveyItemFeatureLookup[SurveyItemFeatures.ChoiceRows](sourceItem);
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {
             surveyItem.components.items = surveyItem.components.items.map(item => {
                 if (item.role === ItemComponentRole.ResponseGroup) {
@@ -465,7 +465,6 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
                             scaleItem.items = scaleItem.items.filter(i => i.role !== ItemComponentRole.Row);
                             if (rows) {
                                 if (rgItem.role === ItemComponentRole.ResponsiveBipolarLikertScaleArray) {
-                                    console.log("Applying rows to ResponsiveBipolarLikertScaleArray");
                                     const convertedRows = rows.map(row => {
                                         return {
                                             role: ItemComponentRole.Row,
@@ -483,10 +482,9 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
                                     });
                                     scaleItem.items.push(...convertedRows);
                                 } else if (rgItem.role === ItemComponentRole.ResponsiveSingleChoiceArray) {
-                                    console.log("Applying rows to ResponsiveSingleChoiceArray");
                                     const convertedRows = rows.map(row => {
                                         const groupRow = row as ItemGroupComponent;
-                                        let label = groupRow.items.find(i => i.role === ItemComponentRole.StartLabel);
+                                        const label = groupRow.items.find(i => i.role === ItemComponentRole.StartLabel);
                                         return {
                                             role: ItemComponentRole.Row,
                                             key: row.key,
