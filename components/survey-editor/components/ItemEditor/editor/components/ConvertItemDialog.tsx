@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { use, useContext, useEffect, useRef } from 'react';
-import { ItemTypeKey, SpecialSurveyItemTypeInfos, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
+import React, { useEffect, useRef } from 'react';
+import { ItemTypeKey, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -99,7 +99,7 @@ const getInitialConfig = (sourceItem: SurveyItem, sourceType: ItemTypeKey, targe
             && supportedSurveyItemFeaturesByType[targetType].includes(feature)
             && lookupValidation(surveyItemFeatureLookup[feature](sourceItem)));
 
-    if (sourceType != targetType) {
+    if (sourceType !== targetType) {
         availableFeatures = availableFeatures.filter((feature) => feature != SurveyItemFeatures.ResponseGroup);
     } else {
         availableFeatures = availableFeatures.filter(

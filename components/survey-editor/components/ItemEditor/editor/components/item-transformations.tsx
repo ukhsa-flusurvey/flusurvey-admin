@@ -1,4 +1,4 @@
-import { ItemComponent, SurveyItem, SurveySingleItem, ItemGroupComponent, isItemGroupComponent, LocalizedObject, ComponentProperties, SurveyGroupItem, Expression, ConfidentialMode } from "survey-engine/data_types"
+import { ItemComponent, SurveyItem, SurveySingleItem, ItemGroupComponent, isItemGroupComponent, LocalizedObject, ComponentProperties, Expression, ConfidentialMode } from "survey-engine/data_types"
 import { ItemComponentRole } from "../../../types"
 import { ItemTypeKey, getParentKeyFromFullKey } from "@/components/survey-editor/utils/utils";
 import { generateNewItemForType } from "@/components/survey-editor/utils/new-item-init";
@@ -160,6 +160,9 @@ const findTextContent = (surveyItem: SurveySingleItem, textType: SurveyItemFeatu
         const rgIndex = surveyItem.components.items.findIndex(item => {
             return item.role === ItemComponentRole.ResponseGroup;
         });
+        if (rgIndex === -1) {
+            return [];
+        }
         const beforeResponseGroup = surveyItem.components.items.slice(0, rgIndex);
         const afterResponseGroup = surveyItem.components.items.slice(rgIndex + 1);
         const relevantGroupSlice = textType === SurveyItemFeatures.TopContent ? beforeResponseGroup : afterResponseGroup;
@@ -362,7 +365,7 @@ export const applySurveyItemFeature: Record<SurveyItemFeatures, (newSurveyItem: 
             ...surveyItem.metadata,
             editorItemColor: surveyItemFeatureLookup[SurveyItemFeatures.EditorItemColor](sourceItem)!,
         }
-        return sourceItem;
+        return surveyItem;
     },
     [SurveyItemFeatures.ComponentOrdering]: (surveyItem: SurveySingleItem, sourceItem: SurveyItem) => {
         if (surveyItem.components !== undefined && isItemGroupComponent(surveyItem.components)) {

@@ -41,7 +41,6 @@ export const generateNewItemForType = (props: {
 }): SurveyItem | null => {
     const newItemType = props.itemType as ItemTypeKey;
     const parentKey = props.parentKey;
-    console.log(props.otherKeys, parentKey);
     const newItemKey = getUniqueRandomKey(props.otherKeys, parentKey);
     const editorItemColor = getItemColorFromID(newItemKey);
 

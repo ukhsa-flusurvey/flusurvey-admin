@@ -322,7 +322,7 @@ const ItemHeader: React.FC<ItemHeaderProps> = (props) => {
                 onItemConverted={(newItem) => {
                     const surveyItemJSON = JSON.stringify(newItem, null, 2);
                     copy(surveyItemJSON);
-                    toast('Coverted item copied to clipboard');
+                    toast('Converted item copied to clipboard');
                     setConvertItemDialogOpen(false);
                 }}
             />
