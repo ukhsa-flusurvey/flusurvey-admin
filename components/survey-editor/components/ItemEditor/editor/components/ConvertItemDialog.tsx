@@ -183,7 +183,7 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
     useEffect(() => {
         setTargetKey(getInitialNewKey(props.surveyItem.key, relevantKeys));
         setTargetConfig(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
-    }, [props.surveyItem, itemTypeInfos.key, targetType]);
+    }, [props.surveyItem, itemTypeInfos.key, targetType, relevantKeys]);
 
     return (
         <Dialog

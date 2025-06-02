@@ -1,4 +1,4 @@
-import { SurveyGroupItem, SurveyItem } from "survey-engine/data_types";
+import { SurveyItem } from "survey-engine/data_types";
 import { ItemTypeKey, getItemColorFromID } from "./utils";
 import { generatePageBreak, generateTitleComponent } from "case-editor-tools/surveys/utils/simple-generators";
 import { Group } from "case-editor-tools/surveys/types";
