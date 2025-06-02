@@ -21,10 +21,10 @@ interface ConvertItemDialogProps {
     onItemConverted?: (newConvertedItem: SurveyItem) => void;
 }
 
-const allSurveyItemTypes = [
-    SpecialSurveyItemTypeInfos.groupItem,
-    SpecialSurveyItemTypeInfos.pageBreak,
-    SpecialSurveyItemTypeInfos.surveyEnd,
+const allSurveyItemTargetTypes = [
+    //SpecialSurveyItemTypeInfos.groupItem,
+    //SpecialSurveyItemTypeInfos.pageBreak,
+    //SpecialSurveyItemTypeInfos.surveyEnd,
     ...SurveyItemTypeRegistry.map((re) => ({
         key: re.key,
         label: re.label,
@@ -233,7 +233,7 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {allSurveyItemTypes.map(typeInfo => (
+                                    {allSurveyItemTargetTypes.map(typeInfo => (
                                         <SelectItem
                                             key={typeInfo.key}
                                             value={typeInfo.key}
