@@ -180,7 +180,7 @@ const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
     const [targetKey, setTargetKey] = React.useState<string>(getInitialNewKey(props.surveyItem.key, relevantKeys));
     const [targetConfig, setTargetConfig] = React.useState<Record<SurveyItemFeatures, boolean>>(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
 
-    // Should run when source or target Tape changes
+    // Should run when source or target types change
     useEffect(() => {
         setTargetConfig(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
     }, [props.surveyItem, itemTypeInfos, targetType]);
