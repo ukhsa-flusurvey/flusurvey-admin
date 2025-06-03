@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ItemTypeKey, SurveyItemTypeRegistry, getItemKeyFromFullKey, getItemTypeInfos, getParentKeyFromFullKey } from '../../../../utils/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -173,17 +173,23 @@ const ConvertFeaturesTable: React.FC<{
 }
 
 const ConvertItemDialog: React.FC<ConvertItemDialogProps> = (props) => {
-    const relevantKeys = props.surveyItemList.filter(i => getParentKeyFromFullKey(i.key) == getParentKeyFromFullKey(props.surveyItem.key)).map(i => getItemKeyFromFullKey(i.key));
-    const itemTypeInfos = getItemTypeInfos(props.surveyItem);
+    const relevantKeys = useMemo(() => props.surveyItemList.filter(i => getParentKeyFromFullKey(i.key) == getParentKeyFromFullKey(props.surveyItem.key)).map(i => getItemKeyFromFullKey(i.key)), [props.surveyItemList, props.surveyItem.key]);
+    const itemTypeInfos = useMemo(() => getItemTypeInfos(props.surveyItem), [props.surveyItem]);
 
     const [targetType, setTargetType] = React.useState<ItemTypeKey>(itemTypeInfos.key);
     const [targetKey, setTargetKey] = React.useState<string>(getInitialNewKey(props.surveyItem.key, relevantKeys));
     const [targetConfig, setTargetConfig] = React.useState<Record<SurveyItemFeatures, boolean>>(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
 
+    // Should run when source or target Tape changes
     useEffect(() => {
-        setTargetKey(getInitialNewKey(props.surveyItem.key, relevantKeys));
         setTargetConfig(getInitialConfig(props.surveyItem, itemTypeInfos.key, targetType));
-    }, [props.surveyItem, itemTypeInfos.key, targetType, relevantKeys]);
+    }, [props.surveyItem, itemTypeInfos, targetType]);
+
+    // Should run when the item changes
+    useEffect(() => {
+        setTargetType(itemTypeInfos.key);
+        setTargetKey(getInitialNewKey(props.surveyItem.key, relevantKeys));
+    }, [props.surveyItem.key, relevantKeys, itemTypeInfos.key]);
 
     return (
         <Dialog
