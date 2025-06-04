@@ -24,15 +24,6 @@ export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, highl
     );
 }
 
-export const KeyBadgeAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between w-full'>
-        <KeyBadge itemKey={props.compKey ?? ''} isHighlighted={false} />
-        <span className='text-muted-foreground'>
-            {props.type}
-        </span>
-    </div>
-}
-
 export const PopoverKeyBadge: React.FC<{
     allOtherKeys: string[],
     itemKey: string,
@@ -89,7 +80,8 @@ export const PopoverKeyBadge: React.FC<{
             }
         }}
     >
-        <PopoverTrigger className={cn("flex items-center justify-center", props.className)}
+        <PopoverTrigger
+            className={cn("flex items-center justify-center", props.className)}
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
