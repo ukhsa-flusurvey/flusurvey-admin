@@ -31,7 +31,6 @@ export const PopoverKeyBadge: React.FC<{
     highlightColor?: string,
     headerText?: string,
     className?: string,
-    onClick?: MouseEventHandler<HTMLDivElement> | undefined,
     onKeyChange?: (newKey: string) => void,
 }> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
@@ -81,21 +80,33 @@ export const PopoverKeyBadge: React.FC<{
         }}
     >
         <PopoverTrigger
-            className={cn("flex items-center justify-center", props.className)}
-            onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsOpen(prev => !prev);
-            }}
+            asChild
         >
-            <KeyBadge itemKey={props.itemKey}
-                isHighlighted={props.isHighlighted || isOpen}
-                highlightColor={props.highlightColor}
+            <div
+                tabIndex={0}
+                className={cn(
+                    'flex items-center justify-center',
+                    'rounded-full focus:outline focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30',
+                    props.className
+                )}
                 onClick={(e) => {
-                    if (props.onClick != undefined) {
-                        props.onClick(e);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsOpen(prev => !prev);
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsOpen(prev => !prev);
                     }
-                }} />
+                }}
+            >
+                <KeyBadge itemKey={props.itemKey}
+                    isHighlighted={props.isHighlighted || isOpen}
+                    highlightColor={props.highlightColor}
+                />
+            </div>
         </PopoverTrigger>
         <PopoverContent className="max-w-80 relative"
             side='right'
