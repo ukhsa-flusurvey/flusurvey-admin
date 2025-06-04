@@ -53,6 +53,10 @@ export const PopoverKeyBadge: React.FC<{
     const [isOpen, setIsOpen] = React.useState(false);
 
     useEffect(() => {
+        setCurrentKey(props.itemKey);
+    }, [props.itemKey]);
+
+    useEffect(() => {
         if (currentKey.length <= 0) {
             setError("Key must not be empty.");
             return;
