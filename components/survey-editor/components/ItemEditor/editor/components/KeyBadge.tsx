@@ -86,7 +86,7 @@ export const PopoverKeyBadge: React.FC<{
                 tabIndex={0}
                 className={cn(
                     'flex items-center justify-center',
-                    'rounded-full focus:outline focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30',
+                    'rounded-full focus:outline focus:outline-offset-0.5 focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30',
                     props.className
                 )}
                 onClick={(e) => {
