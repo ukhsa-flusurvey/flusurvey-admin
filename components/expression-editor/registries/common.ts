@@ -245,7 +245,7 @@ export const comparisonOperators: ExpressionDef[] = [
         id: 'lte',
         label: 'Less than or equal (L <= R)',
         returnType: 'boolean',
-        icon: 'chevrons-left',
+        icon: 'less-than-or-equal',
         color: 'teal',
         slots: [
             {
@@ -309,7 +309,7 @@ export const comparisonOperators: ExpressionDef[] = [
         id: 'lt',
         label: 'Less than (L < R)',
         returnType: 'boolean',
-        icon: 'chevron-left',
+        icon: 'less-than',
         color: 'teal',
         slots: [
             {
@@ -373,7 +373,7 @@ export const comparisonOperators: ExpressionDef[] = [
         id: 'gte',
         label: 'Greater than or equal (L >= R)',
         returnType: 'boolean',
-        icon: 'chevrons-right',
+        icon: 'greater-than-or-equal',
         color: 'teal',
         slots: [
             {
@@ -437,7 +437,7 @@ export const comparisonOperators: ExpressionDef[] = [
         id: 'gt',
         label: 'Greater than (L > R)',
         returnType: 'boolean',
-        icon: 'chevron-right',
+        icon: 'greater-than',
         color: 'blue',
         slots: [
             {

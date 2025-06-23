@@ -77,7 +77,7 @@ export type ColorVariant = 'blue' | 'green' | 'yellow' | 'purple' | 'teal' | 'cy
 export type IconVariant = 'braces' | 'function' | 'code' | 'box' | 'variable' | 'brackets' | 'regex' | 'square-code' | 'terminal' | 'signpost' | 'layout-list' |
     'tag' | 'calendar' | 'text-cursor' | 'form-input' | 'parentheses' | 'pyramid' | 'triangle' | 'square' | 'diamond' | 'database' | 'split' | 'circle-slash' | 'blocks' |
     'ampersands' | 'tally' | 'clipboard-check' | 'tags' | 'user-check' | 'badge-check' | 'package-check' | 'copy-check' | 'copy-x' | 'copy-plus' | 'circle-check-big'
-    | 'chevron-left' | 'chevrons-left' | 'chevron-right' | 'chevrons-right' | 'equal'
+    | 'less-than' | 'less-than-or-equal' | 'greater-than' | 'greater-than-or-equal' | 'equal'
 
 
 interface SlotInputDefBase {

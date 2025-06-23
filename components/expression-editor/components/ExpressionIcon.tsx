@@ -79,14 +79,14 @@ const getIconNode = (icon?: IconVariant) => {
             return <CopyPlus />;
         case 'circle-check-big':
             return <CircleCheckBig />;
-        case 'chevron-left':
-            return <ChevronLeft />;
-        case 'chevrons-left':
-            return <ChevronsLeft />;
-        case 'chevron-right':
-            return <ChevronRight />;
-        case 'chevrons-right':
-            return <ChevronsRight />;
+        case 'less-than':
+            return <LessThanIcon />;
+        case 'less-than-or-equal':
+            return <LessThanOrEqualIcon />;
+        case 'greater-than':
+            return <GreaterThanIcon />;
+        case 'greater-than-or-equal':
+            return <GreaterThanOrEqualIcon />;
         case 'equal':
             return <Equal />;
         case 'box':
@@ -115,5 +115,40 @@ const ExpressionIcon: React.FC<ExpressionIconProps> = (props) => {
         </span>
     );
 };
+
+const LessThanOrEqualIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg">
+        <polyline points="16 6 8 12 16 18" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+    </svg>
+);
+
+const LessThanIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg">
+        <polyline points="16 6 8 12 16 18" />
+    </svg>
+);
+
+const GreaterThanOrEqualIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg">
+        <polyline points="8 6 16 12 8 18" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+    </svg>
+);
+
+const GreaterThanIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg">
+        <polyline points="8 6 16 12 8 18" />
+    </svg>
+);
+
 
 export default ExpressionIcon;
