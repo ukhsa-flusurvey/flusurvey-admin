@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
 import { ColorVariant, IconVariant } from '../utils';
-import { Ampersands, BadgeCheck, Blocks, Box, Braces, Brackets, Calendar, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CircleCheckBig, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, Database, Diamond, Equal, FormInput, FunctionSquare, LayoutList, PackageCheck, Parentheses, Pyramid, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Terminal, TextCursor, Triangle, UserCheck, Variable } from 'lucide-react';
+import { Ampersands, BadgeCheck, Blocks, Box, Braces, Brackets, Calendar, CircleCheckBig, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, Database, Diamond, Equal, FormInput, FunctionSquare, LayoutList, PackageCheck, Parentheses, Pyramid, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Terminal, TextCursor, Triangle, UserCheck, Variable } from 'lucide-react';
 
 interface ExpressionIconProps {
     icon?: IconVariant;
