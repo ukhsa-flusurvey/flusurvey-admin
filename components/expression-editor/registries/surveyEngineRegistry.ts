@@ -290,7 +290,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'A specific response is present',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'circle-check-big',
+        icon: 'list-check',
         slots: [
             {
                 label: 'Item key',
@@ -334,7 +334,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Response contains any of these keys',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'copy-plus',
+        icon: 'list-todo',
         slots: [
             {
                 label: 'Item and option references:',
@@ -369,7 +369,7 @@ const responseDependencies: ExpressionDef[] = [
         id: 'responseHasKeysAll',
         label: 'Response contains all of these keys',
         returnType: 'boolean',
-        icon: 'copy-check',
+        icon: 'list-checks',
         slots: [
             {
                 label: 'Item and option references:',
@@ -401,7 +401,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Has response but none of these keys:',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'copy-x',
+        icon: 'list-x',
         slots: [
             {
                 label: 'Item and option references:',
@@ -521,7 +521,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Count response items',
         returnType: 'num',
         color: 'lime',
-        icon: 'function',
+        icon: 'tally-5',
         slots: [
             {
                 label: 'Item key',
@@ -614,7 +614,7 @@ const responseDependencies: ExpressionDef[] = [
         categories: ['response-dependencies'],
         label: 'Get date response diff from now',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-range',
         slots: [
             {
                 label: 'Item key',
@@ -743,7 +743,7 @@ const templates: ExpressionDef[] = [
         id: 'multipleChoiceSelectionCount',
         label: 'Count number of selected options in multiple choice',
         returnType: 'num',
-        icon: 'function',
+        icon: 'tally-5',
         slots: [],
         defaultValue: {
             dtype: 'exp',
