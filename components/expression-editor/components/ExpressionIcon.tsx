@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
 import { ColorVariant, IconVariant } from '../utils';
-import { Ampersands, BadgeCheck, Blocks, Box, Braces, Brackets, Calendar, CircleCheckBig, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, Database, Diamond, Equal, FormInput, FunctionSquare, LayoutList, PackageCheck, Parentheses, Pyramid, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Terminal, TextCursor, Triangle, UserCheck, Variable } from 'lucide-react';
+import { Ampersands, BadgeCheck, Blocks, BookCheck, Box, Braces, Brackets, Calendar, CalendarClock, CalendarDays, CalendarRange, CalendarX2, CircleCheckBig, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, CornerDownRight, Database, Diamond, Equal, ExternalLink, FormInput, FunctionSquare, LayoutList, Link, Link2, Link2Off, ListX, Mail, PackageCheck, Parentheses, SquarePlay, Play, Plus, Pyramid, RefreshCcw, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Tally5, Terminal, TextCursor, Trash2, Triangle, UserCheck, Variable, FilePlus2, FileX, FilePen, FileKey, ListChecks, ListTodo, ListCheck } from 'lucide-react';
 
 interface ExpressionIconProps {
     icon?: IconVariant;
@@ -77,8 +77,8 @@ const getIconNode = (icon?: IconVariant) => {
             return <CopyX />;
         case 'copy-plus':
             return <CopyPlus />;
-        case 'circle-check-big':
-            return <CircleCheckBig />;
+        case 'list-check':
+            return <ListCheck />;
         case 'less-than':
             return <LessThanIcon />;
         case 'less-than-or-equal':
@@ -89,6 +89,52 @@ const getIconNode = (icon?: IconVariant) => {
             return <GreaterThanOrEqualIcon />;
         case 'equal':
             return <Equal />;
+        case 'corner-down-right':
+            return <CornerDownRight />;
+        case 'tally-5':
+            return <Tally5 />;
+        case 'calendar-days':
+            return <CalendarDays />;
+        case 'calendar-range':
+            return <CalendarRange />;
+        case 'refresh-ccw':
+            return <RefreshCcw />;
+        case 'book-check':
+            return <BookCheck />;
+        case 'play':
+            return <Play />;
+        case 'list-x':
+            return <ListX />;
+        case 'list-checks':
+            return <ListChecks />;
+        case 'list-todo':
+            return <ListTodo />;
+        case 'mail':
+            return <Mail />;
+        case 'plus':
+            return <Plus />;
+        case 'trash':
+            return <Trash2 />;
+        case 'calendar-clock':
+            return <CalendarClock />;
+        case 'calendar-x-2':
+            return <CalendarX2 />;
+        case 'link-2':
+            return <Link2 />;
+        case 'link-2-off':
+            return <Link2Off />;
+        case 'link':
+            return < Link />;
+        case 'external-link':
+            return <ExternalLink />;
+        case 'file-plus':
+            return <FilePlus2 />;
+        case 'file-x':
+            return <FileX />;
+        case 'file-pen':
+            return <FilePen />;
+        case 'file-key':
+            return <FileKey />;
         case 'box':
         default:
             return <Box />;

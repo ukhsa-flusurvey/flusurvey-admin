@@ -76,8 +76,10 @@ export interface SlotDef {
 export type ColorVariant = 'blue' | 'green' | 'yellow' | 'purple' | 'teal' | 'cyan' | 'dark' | 'lime' | 'orange';
 export type IconVariant = 'braces' | 'function' | 'code' | 'box' | 'variable' | 'brackets' | 'regex' | 'square-code' | 'terminal' | 'signpost' | 'layout-list' |
     'tag' | 'calendar' | 'text-cursor' | 'form-input' | 'parentheses' | 'pyramid' | 'triangle' | 'square' | 'diamond' | 'database' | 'split' | 'circle-slash' | 'blocks' |
-    'ampersands' | 'tally' | 'clipboard-check' | 'tags' | 'user-check' | 'badge-check' | 'package-check' | 'copy-check' | 'copy-x' | 'copy-plus' | 'circle-check-big'
-    | 'less-than' | 'less-than-or-equal' | 'greater-than' | 'greater-than-or-equal' | 'equal'
+    'ampersands' | 'tally' | 'clipboard-check' | 'tags' | 'user-check' | 'badge-check' | 'package-check' | 'copy-check' | 'copy-x' | 'copy-plus' | 'list-check' |
+    'less-than' | 'less-than-or-equal' | 'greater-than' | 'greater-than-or-equal' | 'equal' | 'corner-down-right' | 'tally-5' | 'calendar-days' | 'calendar-range' | 'refresh-ccw' |
+    'book-check' | 'play' | 'list-x' | 'list-checks' | 'list-todo' | 'mail' | 'plus' | 'trash' | 'calendar-clock' | 'calendar-x-2' | 'link' | 'link-2' | 'link-2-off' | 'external-link' |
+    'file-plus' | 'file-x' | 'file-pen' | 'file-key'
 
 
 interface SlotInputDefBase {

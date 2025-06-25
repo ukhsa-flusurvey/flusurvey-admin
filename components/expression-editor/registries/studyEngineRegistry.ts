@@ -288,7 +288,7 @@ const controlFlowOperators: ExpressionDef[] = [
         categories: ['control-flow'],
         label: 'Conditional action set (IF-THEN)',
         returnType: 'action',
-        icon: "signpost",
+        icon: "corner-down-right",
         color: 'blue',
         slots: [
             {
@@ -361,7 +361,7 @@ const generalStudyActions: ExpressionDef[] = [
         categories: ['general-study-actions'],
         label: 'Update study status',
         returnType: 'action',
-        icon: "tag",
+        icon: "refresh-ccw",
         color: 'blue',
         slots: [
             {
@@ -426,7 +426,7 @@ const generalStudyActions: ExpressionDef[] = [
         isTemplateFor: 'UPDATE_STUDY_STATUS',
         label: 'Finish participation',
         returnType: 'action',
-        icon: "pyramid",
+        icon: "book-check",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -450,7 +450,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Start New Study Session',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "code",
+        icon: "play",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -466,7 +466,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Remove Entry from Study Wide Code List',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "list-x",
         color: 'blue',
         slots: [
             {
@@ -517,7 +517,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Notify Researchers (Email)',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "diamond",
+        icon: "mail",
         color: 'blue',
         slots: [
             {
@@ -572,7 +572,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Update participant flag',
         returnType: 'action',
-        icon: "tag",
+        icon: "refresh-ccw",
         color: 'blue',
         slots: [
             {
@@ -611,7 +611,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Remove participant flag',
         returnType: 'action',
-        icon: "tag",
+        icon: "list-x",
         color: 'blue',
         slots: [
             {
@@ -646,7 +646,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Add new survey',
         returnType: 'action',
-        icon: "calendar",
+        icon: "plus",
         color: 'blue',
         slots: [
             {
@@ -752,7 +752,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all assigned surveys',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -768,7 +768,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove one assigned survey',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [
             {
@@ -832,7 +832,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all surveys of a specific key',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [
             {
@@ -871,7 +871,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Schedule a message',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "calendar",
+        icon: "calendar-clock",
         color: 'blue',
         slots: [
             {
@@ -937,7 +937,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all scheduled messages',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "calendar-x-2",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -953,7 +953,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove scheduled messages of a specific type',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "calendar-x-2",
         color: 'blue',
         slots: [
             {
@@ -991,7 +991,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'SET_LINKING_CODE',
         label: 'Set linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link-2",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1050,7 +1050,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'DELETE_LINKING_CODE',
         label: 'Delete linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link-2-off",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1086,7 +1086,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'DRAW_STUDY_CODE_AS_LINKING_CODE',
         label: 'Draw study code as linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1144,7 +1144,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
         label: 'Remove confidential response by key',
         returnType: 'action',
-        icon: "triangle",
+        icon: "trash",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1179,7 +1179,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
         label: 'Remove all confidential responses',
         returnType: 'action',
-        icon: "triangle",
+        icon: "trash",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [],
@@ -1195,7 +1195,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'EXTERNAL_EVENT_HANDLER',
         label: 'External event handler',
         returnType: 'action',
-        icon: "code",
+        icon: "external-link",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1226,7 +1226,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Initialize report',
         returnType: 'action',
-        icon: "calendar",
+        icon: "file-plus",
         color: 'blue',
         slots: [
             {
@@ -1262,7 +1262,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Cancel report',
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "file-x",
         color: 'blue',
         slots: [
             {
@@ -1298,7 +1298,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Update report data',
         returnType: 'action',
-        icon: "tag",
+        icon: "file-pen",
         color: 'blue',
         slots: [
             {
@@ -1371,7 +1371,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_REPORT_DATA',
         label: 'Remove report data by attribute key',
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "file-key",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -2428,7 +2428,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'Count response items',
         returnType: 'num',
-        icon: 'code',
+        icon: 'tally-5',
         color: 'blue',
         slots: [
             {
@@ -2578,7 +2578,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'Consent accepted',
         returnType: 'boolean',
-        icon: 'form-input',
+        icon: 'clipboard-check',
         slots: [],
         isTemplateFor: 'hasResponseKey',
         defaultValue: {
