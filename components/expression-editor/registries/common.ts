@@ -4,9 +4,9 @@ export const miscExpressions: ExpressionDef[] = [
     {
         categories: ['misc'],
         id: 'timestampWithOffset',
-        label: 'GET TIMESTAMP',
+        label: 'Get timestamp',
         returnType: 'num',
-        icon: 'calendar',
+        icon: 'calendar-days',
         color: 'lime',
         slots: [
             {
