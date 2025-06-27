@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
 import { ColorVariant, IconVariant } from '../utils';
-import { Ampersands, BadgeCheck, Blocks, BookCheck, Box, Braces, Brackets, Calendar, CalendarClock, CalendarDays, CalendarRange, CalendarX2, CircleCheckBig, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, CornerDownRight, Database, Diamond, Equal, ExternalLink, FormInput, FunctionSquare, LayoutList, Link, Link2, Link2Off, ListX, Mail, PackageCheck, Parentheses, SquarePlay, Play, Plus, Pyramid, RefreshCcw, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Tally5, Terminal, TextCursor, Trash2, Triangle, UserCheck, Variable, FilePlus2, FileX, FilePen, FileKey, ListChecks, ListTodo, ListCheck } from 'lucide-react';
+import { Ampersands, BadgeCheck, Blocks, BookCheck, Box, Braces, Brackets, Calendar, CalendarClock, CalendarDays, CalendarRange, CalendarX2, CircleSlash2, ClipboardCheck, Code, CopyCheck, CopyPlus, CopyX, CornerDownRight, Database, Diamond, Equal, ExternalLink, FormInput, FunctionSquare, LayoutList, Link, Link2, Link2Off, ListX, Mail, PackageCheck, Parentheses, Play, Plus, Pyramid, RefreshCcw, Regex, Signpost, Split, Square, SquareCode, Tag, Tags, Tally2, Tally5, Terminal, TextCursor, Trash2, Triangle, UserCheck, Variable, FilePlus2, FileX, FilePen, FileKey, ListChecks, ListTodo, ListCheck, Sigma, Minus, Clock4, Dice6, KeyRound, ListPlus, CircleQuestionMark, MailQuestionMark, AppWindow, Package, PackageSearch, SendHorizonal, PackageOpen } from 'lucide-react';
 
 interface ExpressionIconProps {
     icon?: IconVariant;
@@ -89,6 +89,12 @@ const getIconNode = (icon?: IconVariant) => {
             return <GreaterThanOrEqualIcon />;
         case 'equal':
             return <Equal />;
+        case 'sigma':
+            return <Sigma />;
+        case 'dice':
+            return <Dice6 />;
+        case 'minus':
+            return <Minus />;
         case 'corner-down-right':
             return <CornerDownRight />;
         case 'tally-5':
@@ -109,6 +115,8 @@ const getIconNode = (icon?: IconVariant) => {
             return <ListChecks />;
         case 'list-todo':
             return <ListTodo />;
+        case 'list-plus':
+            return <ListPlus />;
         case 'mail':
             return <Mail />;
         case 'plus':
@@ -135,6 +143,24 @@ const getIconNode = (icon?: IconVariant) => {
             return <FilePen />;
         case 'file-key':
             return <FileKey />;
+        case 'clock':
+            return <Clock4 />;
+        case 'key-round':
+            return <KeyRound />;
+        case 'circle-question-mark':
+            return <CircleQuestionMark />;
+        case 'mail-question-mark':
+            return <MailQuestionMark />;
+        case 'send-horizontal':
+            return <SendHorizonal />;
+        case 'app-window':
+            return <AppWindow />;
+        case 'package':
+            return <Package />;
+        case 'package-search':
+            return <PackageSearch />;
+        case 'package-open':
+            return <PackageOpen />;
         case 'box':
         default:
             return <Box />;
