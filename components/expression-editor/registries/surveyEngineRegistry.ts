@@ -769,7 +769,7 @@ const templates: ExpressionDef[] = [
         id: 'datePickerResponseValue',
         label: 'Get date picker response value',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-days',
         slots: [],
         defaultValue: {
             dtype: 'exp',
