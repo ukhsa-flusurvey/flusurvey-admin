@@ -1,5 +1,5 @@
 import { Study } from "@/utils/server/types/studyInfos";
-import { ManagementUserPermission } from "./data/userManagementAPI";
+import { ManagementUserPermission, getPermissionsForCurrentUser } from "./data/userManagementAPI";
 
 export const filterStudiesWithPermissions = (
     permissionInfos: {
@@ -25,4 +25,23 @@ export const filterStudiesWithPermissions = (
             return permission.resourceKey === study.key || permission.resourceKey === '*';
         })
     });
+}
+
+
+export const hasPermission = async (
+    resourceType: string,
+    resourceKey: string,
+    permission: string,
+) => {
+    const currentUserPermissions = await getPermissionsForCurrentUser();
+    if (currentUserPermissions.error) {
+        throw new Error(currentUserPermissions.error);
+    }
+
+    if (currentUserPermissions.isAdmin) {
+        return true;
+    }
+
+    return currentUserPermissions.permissions?.some((p) =>
+        p.resourceType === resourceType && p.resourceKey === resourceKey && p.action === permission);
 }

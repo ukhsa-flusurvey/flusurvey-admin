@@ -11,7 +11,8 @@ export const PUBLIC_ROUTES = [
 ]
 
 export const ADMIN_ROUTES = [
-    { path: '/tools/user-management', exact: false },
+    { path: '/tools/user-management/management-users', exact: false },
+    { path: '/tools/user-management/service-accounts', exact: false },
 ]
 
 export const AuthPages = ['/auth/login']
