@@ -132,7 +132,7 @@ const getIconNode = (icon?: IconVariant) => {
         case 'link-2-off':
             return <Link2Off />;
         case 'link':
-            return < Link />;
+            return <Link />;
         case 'external-link':
             return <ExternalLink />;
         case 'file-plus':
