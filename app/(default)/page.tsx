@@ -138,7 +138,7 @@ export default async function Page() {
                         <ToolCard
                             title='Documentation'
                             description='Learn how to use the tools'
-                            href='/docs'
+                            href='https://case-framework.github.io/case-docs'
                             icon={<DocumentationIcon size="lg" />}
                         />
                     </div>
