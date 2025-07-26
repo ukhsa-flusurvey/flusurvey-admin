@@ -8,13 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface DeletionTask {
+    id: string;
     email: string;
     error?: string;
-    inProgress: boolean;
-    ready?: boolean;
 }
 
 const DeleteUsersFormAndFeedback: React.FC = () => {
@@ -22,51 +22,55 @@ const DeleteUsersFormAndFeedback: React.FC = () => {
     const [inputValue, setInputValue] = React.useState<string>('');
 
     const [deletionTasks, setDeletionTasks] = React.useState<DeletionTask[]>([]);
+    const [finishedTasks, setFinishedTasks] = React.useState<string[]>([]);
 
 
 
     useEffect(() => {
-        const jobToStart = deletionTasks.findIndex(task => !task.inProgress && !task.ready);
+        const jobToStart = deletionTasks.findIndex(task => !finishedTasks.includes(task.id));
         if (jobToStart < 0) {
             return;
         }
 
-        const onDeletion = async (task: DeletionTask, index: number) => {
-            if (task.inProgress || task.ready) {
-                return;
-            }
-            setDeletionTasks(prev => {
-                const newTasks = [...prev];
-                newTasks[index].inProgress = true;
-                return newTasks;
-            });
+        const onDeletion = async (index: number) => {
+
+            const task = deletionTasks[index];
             try {
                 const resp = await requestDeletionForParticipantUser(task.email);
-                task.ready = true;
-                task.inProgress = false;
-                if (resp.error) {
-                    task.error = resp.error;
-                }
-                const newTasks = [...deletionTasks];
-                newTasks[index] = task;
-                setDeletionTasks(newTasks);
+
+                // Update task with results
+                setDeletionTasks(prev => {
+                    const newTasks = [...prev];
+                    newTasks[index] = {
+                        ...newTasks[index],
+                        error: resp.error || undefined
+                    };
+                    return newTasks;
+                });
             } catch (error) {
                 console.error(error);
-                task.ready = true;
-                task.inProgress = false;
-                task.error = 'Failed to delete user';
-                const newTasks = [...deletionTasks];
-                newTasks[index] = task;
-                setDeletionTasks(newTasks);
+
+                // Update task with error
+                setDeletionTasks(prev => {
+                    const newTasks = [...prev];
+                    newTasks[index] = {
+                        ...newTasks[index],
+                        error: 'Failed to delete user'
+                    };
+                    return newTasks;
+                });
+            } finally {
+                setFinishedTasks(prev => [...prev, task.id]);
             }
+
         }
 
         startTransition(async () => {
-            onDeletion(deletionTasks[jobToStart], jobToStart);
-        })
-    }, [deletionTasks])
+            await onDeletion(jobToStart);
+        });
+    }, [deletionTasks, finishedTasks])
 
-    const hasAnyTaskInProgress = deletionTasks.some(task => task.inProgress);
+    const hasAnyTaskInProgress = deletionTasks.some(task => !finishedTasks.includes(task.id));
 
     return (
         <div
@@ -112,6 +116,7 @@ const DeleteUsersFormAndFeedback: React.FC = () => {
                             const uniqueEmails = Array.from(new Set(emails));
                             const tasks: DeletionTask[] = uniqueEmails.map(email => {
                                 return {
+                                    id: uuidv4(),
                                     email: email.trim().toLowerCase(),
                                     inProgress: false,
                                     error: undefined
@@ -138,11 +143,12 @@ const DeleteUsersFormAndFeedback: React.FC = () => {
                         if (!task || !task.email) {
                             return
                         }
-                        const showSuccess = task.ready && task.error === undefined;
-                        const showError = task.ready && task.error !== undefined;
+                        const isLoading = !finishedTasks.includes(task.id);
+                        const showSuccess = !isLoading && task.error === undefined;
+                        const showError = !isLoading && task.error !== undefined;
 
                         return <div
-                            key={task.email}
+                            key={task.id}
                             className={cn(
                                 'space-y-2 border border-border p-2 rounded-md',
                                 {
@@ -151,7 +157,7 @@ const DeleteUsersFormAndFeedback: React.FC = () => {
                                 }
                             )}>
                             <div className='flex items-center gap-2'>
-                                {!task.ready && <Loader2 className='animate-spin text-primary me-2' />}
+                                {isLoading && <Loader2 className='animate-spin text-primary me-2' />}
                                 <p className='font-semibold text-sm'>
                                     {task.email}
                                 </p>
