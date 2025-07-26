@@ -2077,6 +2077,48 @@ const dateHelpers: ExpressionDef[] = [
             }
         }
     },
+    {
+        id: 'dateToStr',
+        categories: ['date-helpers'],
+        label: 'Convert date to string',
+        returnType: 'str',
+        icon: 'clock',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Timestamp',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Format',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'dateToStr',
+                data: [
+
+
+                ]
+            }
+        }
+    }
 ]
 
 const responseCheckers: ExpressionDef[] = [
