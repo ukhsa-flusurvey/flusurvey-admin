@@ -11,14 +11,7 @@ import { Eraser, Pencil } from 'lucide-react';
 import SurveyLanguageToggle from './general/SurveyLanguageToggle';
 import { SurveyContextTable } from './SurveyContextTable';
 import { SurveyContextEditorDialog } from './simulator/SimulatorContextEditorDialog';
-
-
-interface SurveyTexts {
-    nextBtnText?: string;
-    backBtnText?: string;
-    submitBtnText?: string;
-    invalidResponseText?: string;
-}
+import { useSimulatorConfigStore, SurveyTexts } from '@/components/survey-editor/stores/simulatorConfigStore';
 export interface SimulatorConfig {
     survey?: Survey;
     texts?: SurveyTexts;
@@ -46,18 +39,18 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
     const { survey, selectedLanguage } = useContext(SurveyEditorContext);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
-    const [showKeys, setShowKeys] = React.useState<boolean>(false);
-    const [currentResponses, setCurrentResponses] = React.useState<SurveySingleItemResponse[]>([]);
-    const [surveyTexts, setSurveyTexts] = React.useState<SurveyTexts>({
-        nextBtnText: 'Next',
-        backBtnText: 'Back',
-        submitBtnText: 'Submit',
-        invalidResponseText: 'Invalid response',
-    });
-    const [contextValues, setContextValues] = React.useState<ContextValues>({
-        isLoggedIn: false,
-        participantFlags: {}
-    });
+    const {
+        showKeys,
+        currentResponses,
+        surveyTexts,
+        contextValues,
+        setShowKeys,
+        setCurrentResponses,
+        updateSurveyText,
+        setContextValues,
+        clearResponses
+    } = useSimulatorConfigStore();
+
     const [isContextEditorOpen, setIsContextEditorOpen] = React.useState(false);
 
 
@@ -182,7 +175,7 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                         variant={'outline'}
                         size={'sm'}
                         onClick={() => {
-                            setCurrentResponses([]);
+                            clearResponses();
                             sendSimulatorConfig(
                                 iframeRef,
                                 {
@@ -242,10 +235,7 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                             className='w-full'
                             value={surveyTexts.nextBtnText || ''}
                             onChange={(e) => {
-                                setSurveyTexts({
-                                    ...surveyTexts,
-                                    nextBtnText: e.target.value
-                                });
+                                updateSurveyText('nextBtnText', e.target.value);
                                 sendSimulatorConfig(
                                     iframeRef,
                                     {
@@ -259,7 +249,6 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                                         }
                                     }
                                 );
-
                             }}
                         />
                     </div>
@@ -272,11 +261,7 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                             className='w-full'
                             value={surveyTexts.backBtnText || ''}
                             onChange={(e) => {
-                                setSurveyTexts({
-                                    ...surveyTexts,
-                                    backBtnText: e.target.value
-                                });
-
+                                updateSurveyText('backBtnText', e.target.value);
                                 sendSimulatorConfig(
                                     iframeRef,
                                     {
@@ -299,11 +284,7 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                             className='w-full'
                             value={surveyTexts.submitBtnText || ''}
                             onChange={(e) => {
-                                setSurveyTexts({
-                                    ...surveyTexts,
-                                    submitBtnText: e.target.value
-                                });
-
+                                updateSurveyText('submitBtnText', e.target.value);
                                 sendSimulatorConfig(
                                     iframeRef,
                                     {
@@ -326,11 +307,7 @@ const SurveySimulator: React.FC<{ simulatorUrl: string }> = ({
                             className='w-full'
                             value={surveyTexts.invalidResponseText || ''}
                             onChange={(e) => {
-                                setSurveyTexts({
-                                    ...surveyTexts,
-                                    invalidResponseText: e.target.value
-                                });
-
+                                updateSurveyText('invalidResponseText', e.target.value);
                                 sendSimulatorConfig(
                                     iframeRef,
                                     {
