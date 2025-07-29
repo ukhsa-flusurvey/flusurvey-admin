@@ -1,24 +1,24 @@
-import SortableItem from '@/components/survey-editor/components/general/SortableItem';
 import SortableWrapper from '@/components/survey-editor/components/general/SortableWrapper';
 import AddDropdown from '@/components/survey-editor/components/general/add-dropdown';
-import TabCard from '@/components/survey-editor/components/general/tab-card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Binary, Calendar, CheckSquare, ChevronDown, Clock, Cog, FormInput, GripVertical, Heading, Languages, SquareStack, ToggleLeft } from 'lucide-react';
+import { Binary, Calendar, Check, CheckSquare, ClipboardCopyIcon, ClipboardPasteIcon, Clock, Copy, FormInput, Heading, SquareStack, Trash2 } from 'lucide-react';
 import React from 'react';
-import { ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
+import { Expression, ItemComponent, ItemGroupComponent, SurveySingleItem } from 'survey-engine/data_types';
 import TextViewContentEditor, { SimpleTextViewContentEditor } from './text-view-content-editor';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import TextInputContentConfig from './text-input-content-config';
 import NumberInputContentConfig from './number-input-content-config';
 import DateInputContentConfig from './date-input-content-config';
 import ClozeContentConfig from './cloze-content-config';
 import TimeInputContentConfig from './time-input-content-config';
 import { ChoiceResponseOptionType } from '@/components/survey-renderer/SurveySingleItemView/ResponseComponent/InputTypes/MultipleChoiceGroup';
-import { TabWrapper } from "@/components/survey-editor/components/ItemEditor/editor/components/TabWrapper";
+import { localisedObjectToMap } from '@/components/survey-editor/utils/localeUtils';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { ItemComponentRole } from '@/components/survey-editor/components/types';
+import { useCopyToClipboard } from 'usehooks-ts';
+import ComponentEditor, { ComponentEditorGenericProps } from '../component-editor';
+import { PopoverKeyBadge } from '../../KeyBadge';
+import SurveyExpressionEditor from '../../survey-expression-editor';
+import { Separator } from '@/components/ui/separator';
+import SurveyLanguageToggle from '@/components/survey-editor/components/general/SurveyLanguageToggle';
 
 interface MultipleChoiceProps {
     surveyItem: SurveySingleItem;
@@ -31,273 +31,259 @@ const getOptionType = (option: ItemComponent): ChoiceResponseOptionType => {
     return optionType as ChoiceResponseOptionType;
 }
 
-export const KeyAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between w-full'>
-        <Badge className='h-auto py-0'>
-            {props.compKey}
-        </Badge>
-        <span className='text-muted-foreground'>
-            {props.type}
+const icons = {
+    [ChoiceResponseOptionType.SimpleText]: <CheckSquare className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.FormattedText]: <CheckSquare className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.TextInput]: <FormInput className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.NumberInput]: <Binary className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.TimeInput]: <Clock className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.DateInput]: <Calendar className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.Cloze]: <SquareStack className='size-4 text-muted-foreground' />,
+    [ChoiceResponseOptionType.DisplayText]: <Heading className='size-4 text-muted-foreground' />,
+};
+
+const mcgItemIconLookup = (item: ItemComponent): React.ReactNode => {
+    return icons[getOptionType(item)] || <Check className='size-4 text-muted-foreground' />;
+}
+
+const typeHints = {
+    [ChoiceResponseOptionType.SimpleText]: 'With simple label',
+    [ChoiceResponseOptionType.FormattedText]: 'With formatted label',
+    [ChoiceResponseOptionType.TextInput]: 'With text input',
+    [ChoiceResponseOptionType.NumberInput]: 'With number input',
+    [ChoiceResponseOptionType.TimeInput]: 'With time input',
+    [ChoiceResponseOptionType.DateInput]: 'With date input',
+    [ChoiceResponseOptionType.Cloze]: 'With embedded cloze items',
+    [ChoiceResponseOptionType.DisplayText]: 'Subheading',
+};
+
+const mcgItemDescriptiveTextLookup = (item: ItemComponent, lang: string): React.ReactNode => {
+    const itemType = getOptionType(item);
+
+    const content = localisedObjectToMap(item.content).get(lang);
+
+    switch (itemType) {
+        case ChoiceResponseOptionType.SimpleText:
+        case ChoiceResponseOptionType.TextInput:
+        case ChoiceResponseOptionType.NumberInput:
+        case ChoiceResponseOptionType.TimeInput:
+        case ChoiceResponseOptionType.DateInput:
+        case ChoiceResponseOptionType.DisplayText:
+            return <p className='text-sm text-start'>
+                {content}
+                {!content && <span className='text-muted-foreground text-xs text-start font-mono uppercase'>
+                    {'- No label defined -'}
+                </span>}
+            </p>
+        case ChoiceResponseOptionType.FormattedText:
+            return <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
+                {'- formatted text -'}
+            </p>
+        case ChoiceResponseOptionType.Cloze:
+            return <p className='text-muted-foreground text-xs text-start font-mono uppercase'>
+                {'- cloze items -'}
+            </p>
+    }
+}
+
+const OptionPreview: React.FC<ComponentEditorGenericProps> = (props) => {
+    const { selectedLanguage } = useSurveyEditorCtx();
+
+
+    return <div className='flex items-center gap-4'>
+        <span>
+            {mcgItemIconLookup(props.component)}
         </span>
+
+        <div className='min-w-14 flex justify-center'>
+            <PopoverKeyBadge
+                headerText='Row Key'
+                className='w-full'
+                allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
+                isHighlighted={props.isSelected}
+                itemKey={props.component.key ?? ''}
+                onKeyChange={(newKey) => {
+                    props.onChange?.({
+                        ...props.component,
+                        key: newKey
+                    })
+                }} />
+        </div>
+        {mcgItemDescriptiveTextLookup(props.component, selectedLanguage)}
+
     </div>
 }
 
-export const OptionContentTabCollapsible = (props: { compKey?: string, type: string, children: React.ReactNode, defaultOpen: boolean }) => {
-    return <div className='space-y-4'>
-        <Collapsible defaultOpen={props.defaultOpen}
-            className='group'
-        >
-            <CollapsibleTrigger asChild>
-                <div className='flex w-full gap-2'>
-                    <KeyAndType compKey={props.compKey} type={props.type} />
-                    <span>
-                        <ChevronDown className="size-4 group-data-[state=open]:rotate-180 transition-transform duration-500" />
-                    </span>
-                </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className='pt-4'>
-                {props.children}
-            </CollapsibleContent>
-        </Collapsible>
-    </div>
+
+const OptionQuickEditor: React.FC<ComponentEditorGenericProps> = (props) => {
+    const itemType = getOptionType(props.component);
+
+    switch (itemType) {
+        case ChoiceResponseOptionType.Cloze:
+        case ChoiceResponseOptionType.Cloze:
+            return null;
+        default:
+            return <div>
+                <SimpleTextViewContentEditor
+                    component={props.component}
+                    onChange={(newComp) => props.onChange?.(newComp)}
+                    label='Option label'
+                />
+            </div>
+    }
 }
 
-
-export const ContentItem = (props: {
-    index: number, component: ItemComponent,
-    onUpdateComponent: (component: ItemComponent) => void,
-    onDeleteComponent: () => void,
-    existingKeys?: string[]
-
-}) => {
-    const [currentKey, setCurrentKey] = React.useState(props.component.key || '');
-
-    const optionType = getOptionType(props.component);
-
-    const renderContent = () => {
-        switch (optionType) {
-            case ChoiceResponseOptionType.SimpleText:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='SIMPLE OPTION'
-                    defaultOpen={props.index > -1}
-                >
-                    <SimpleTextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        label='Option label'
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.FormattedText:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='FORMATTED OPTION'
-                    defaultOpen={props.index > -1}
-                >
-                    <TextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        hideToggle={true}
-                        useAdvancedMode={true}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.TextInput:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='TEXT INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <TextInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        allowMultipleLines={false}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.NumberInput:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='NUMBER INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <NumberInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.DateInput:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='DATE INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <DateInputContentConfig
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.Cloze:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='CLOZE'
-                    defaultOpen={props.index > -1}
-                >
-                    <ClozeContentConfig
-                        component={props.component as ItemGroupComponent}
-                        onChange={props.onUpdateComponent}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.TimeInput:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='TIME INPUT'
-                    defaultOpen={props.index > -1}
-                >
-                    <TimeInputContentConfig
-                        component={props.component as ItemGroupComponent}
-                        onChange={props.onUpdateComponent}
-                    />
-                </OptionContentTabCollapsible>;
-            case ChoiceResponseOptionType.DisplayText:
-                return <OptionContentTabCollapsible
-                    compKey={props.component.key}
-                    type='DISPLAY TEXT'
-                    defaultOpen={props.index > -1}
-                >
-                    <SimpleTextViewContentEditor
-                        component={props.component}
-                        onChange={props.onUpdateComponent}
-                        label='Display text'
-                        hideStyling={false}
-                    />
-                </OptionContentTabCollapsible>;
-            default:
-                console.warn('Unknown / unimplemented choice option type:', optionType);
-                return <div>Unknown option type</div>;
-        }
+const getQuickEditor = (component: ItemComponent) => {
+    const itemType = getOptionType(component);
+    if (itemType === ChoiceResponseOptionType.Cloze
+        || itemType === ChoiceResponseOptionType.FormattedText
+    ) {
+        return undefined;
     }
 
-    return (<SortableItem
-        id={props.component.key || props.index.toString()}
-    >
-        <div className='relative'>
-            <div className='absolute left-0 top-1/2'>
-                <GripVertical className='size-4' />
-            </div>
-            <TabCard
-                tabs={[
-                    {
-                        label: 'Content',
-                        icon: <Languages className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            {renderContent()}
-                        </TabWrapper>
-                    },
-                    {
-                        label: 'Conditions',
-                        icon: <ToggleLeft className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            TODO: display and disabled condition editor - for section header, disabled part is not relevant
+    return OptionQuickEditor;
 
-                        </TabWrapper>
-                    },
-                    {
-                        label: 'Settings',
-                        icon: <Cog className='me-1 size-3 text-muted-foreground' />,
-                        content: <TabWrapper>
-                            <div className='space-y-1.5'
-                                data-no-dnd="true"
-                            >
-                                <Label
-                                    htmlFor='key'
-                                >
-                                    Key
-                                </Label>
-                                <div className='flex gap-2'>
-                                    <Input
-                                        id='key'
-                                        value={currentKey}
-                                        onChange={(e) => {
-                                            setCurrentKey(e.target.value);
-                                        }}
-                                    />
+}
 
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key}
-                                        onClick={() => {
-                                            setCurrentKey(props.component.key || '');
-                                        }}
-                                    >
-                                        Reset
-                                    </Button>
-                                    <Button
-                                        variant={'outline'}
-                                        disabled={currentKey === props.component.key || !currentKey || props.existingKeys?.includes(currentKey)}
-                                        onClick={() => {
-                                            props.onUpdateComponent({
-                                                ...props.component,
-                                                key: currentKey,
-                                            });
-                                        }}
-                                    >
-                                        Apply
-                                    </Button>
-                                </div>
-                                {(props.existingKeys?.includes(currentKey || '') && currentKey !== props.component.key) && <p className='text-danger-600 text-sm font-semibold'>Key already in use</p>}
+const OptionAdvancedEditor: React.FC<ComponentEditorGenericProps> = (props) => {
+    const itemType = getOptionType(props.component);
 
-                            </div>
-                            <Separator />
-                            <Button
-                                data-no-dnd="true"
-                                variant={'outline'}
-                                className='hover:bg-danger-100'
-                                onClick={() => {
-                                    if (!confirm('Are you sure you want to delete this component?')) {
-                                        return;
-                                    }
-                                    props.onDeleteComponent();
-                                }}
-                            >
-                                Delete component
-                            </Button>
-                        </TabWrapper>
-                    },
-                ]}
+    let typeSpecificEditorContent: React.ReactNode;
+    switch (itemType) {
+        case ChoiceResponseOptionType.SimpleText:
+            typeSpecificEditorContent = <SimpleTextViewContentEditor
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+                label='Option label'
             />
+            break;
+        case ChoiceResponseOptionType.DisplayText:
+            typeSpecificEditorContent = <SimpleTextViewContentEditor
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+                label='Option label'
+                hideStyling={false}
+            />
+            break;
+        case ChoiceResponseOptionType.FormattedText:
+            typeSpecificEditorContent = <TextViewContentEditor
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+                label='Option label'
+            />
+            break;
+        case ChoiceResponseOptionType.TextInput:
+            typeSpecificEditorContent = <TextInputContentConfig
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+            />
+            break;
+        case ChoiceResponseOptionType.NumberInput:
+            typeSpecificEditorContent = <NumberInputContentConfig
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+            />
+            break;
+        case ChoiceResponseOptionType.TimeInput:
+            typeSpecificEditorContent = <TimeInputContentConfig
+                component={props.component as ItemGroupComponent}
+                onChange={(newComp) => props.onChange?.(newComp)}
+            />
+            break;
+        case ChoiceResponseOptionType.DateInput:
+            typeSpecificEditorContent = <DateInputContentConfig
+                component={props.component}
+                onChange={(newComp) => props.onChange?.(newComp)}
+            />
+            break;
+        case ChoiceResponseOptionType.Cloze:
+            typeSpecificEditorContent = <ClozeContentConfig
+                component={props.component as ItemGroupComponent}
+                onChange={(newComp) => props.onChange?.(newComp)}
+            />
+            break;
+        default:
+            typeSpecificEditorContent = <p>Option Advanced Editor</p>;
+            break;
+    }
+
+
+    return <div className='space-y-4 pt-2 pb-8 min-w-[600px]'>
+        <div className='flex justify-between'>
+            <div className='min-w-14 w-fit flex justify-center'>
+                <PopoverKeyBadge
+                    headerText='Row Key'
+                    className='w-full'
+                    allOtherKeys={props.usedKeys?.filter(k => k !== props.component.key) ?? []}
+                    isHighlighted={props.isSelected}
+                    itemKey={props.component.key ?? ''}
+                    onKeyChange={(newKey) => {
+                        props.onChange?.({
+                            ...props.component,
+                            key: newKey
+                        })
+                    }} />
+            </div>
+            <div className='flex justify-end'>
+                <SurveyLanguageToggle />
+            </div>
         </div>
-    </SortableItem>)
+        <Separator />
+
+        <div className='space-y-4'>
+            <h3 className='font-semibold'>Config for option  <span className='text-primary lowercase'>{typeHints[itemType]}</span></h3>
+            {typeSpecificEditorContent}
+        </div>
+
+        <Separator />
+
+        <div className='space-y-4'>
+            <h3 className='font-semibold'>Conditions</h3>
+
+            <div>
+                <SurveyExpressionEditor
+                    label='Display condition'
+                    expression={props.component.displayCondition as Expression | undefined}
+                    onChange={(newExpression) => {
+                        props.onChange?.({ ...props.component, displayCondition: newExpression });
+                    }}
+                />
+            </div>
+            <Separator />
+            <div>
+                <SurveyExpressionEditor
+                    label='Disabled condition'
+                    expression={props.component.disabled as Expression | undefined}
+                    onChange={(newExpression) => {
+                        props.onChange?.({ ...props.component, disabled: newExpression });
+                    }}
+                />
+            </div>
+        </div>
+    </div>
 }
 
 const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
-    const [draggedId, setDraggedId] = React.useState<string | null>(null);
+    const [draggedKey, setDraggedKey] = React.useState<string | null>();
+    const [clipboardContent, setClipboardContent] = useCopyToClipboard();
 
-    // TODO: remove magic strings
-    const relevantResponseGroupRoleString = props.isSingleChoice ? 'singleChoiceGroup' : 'multipleChoiceGroup';
-
-    const rgIndex = props.surveyItem.components?.items.findIndex(comp => comp.role === 'responseGroup');
-    if (rgIndex === undefined || rgIndex === -1) {
-        return <p>Response group not found</p>;
-    }
-    const rg = props.surveyItem.components?.items[rgIndex] as ItemGroupComponent;
-    if (!rg || !rg.items) {
-        return <p>Response group not found</p>;
-    }
-
+    const relevantResponseGroupRoleString = props.isSingleChoice ? ItemComponentRole.SingleChoiceGroup : ItemComponentRole.MultipleChoiceGroup;
+    const rgIndex = props.surveyItem.components!.items.findIndex(comp => comp.role === ItemComponentRole.ResponseGroup);
+    const rg = props.surveyItem.components!.items[rgIndex ?? 0] as ItemGroupComponent;
     const choiceGroupIndex = rg.items.findIndex(comp => comp.role === relevantResponseGroupRoleString);
-    if (choiceGroupIndex === undefined || choiceGroupIndex === -1) {
-        return <p>Multiple / Single choice group not found</p>;
-    }
     const choiceGroup = rg.items[choiceGroupIndex] as ItemGroupComponent;
-    if (!choiceGroup || !choiceGroup.items) {
-        return <p>Multiple / Single choice group not found</p>;
-    }
-
-
     const responseItems: ItemComponent[] = choiceGroup.items || [];
+
+    const draggedItem = responseItems.find(item => item.key === draggedKey);
+
+    const sortableResponseItems = responseItems.map((component, index) => {
+        return {
+            id: component.key || index.toString()
+        }
+    });
 
     const onAddItem = (keyOfSelectedOption: string) => {
         const randomKey = Math.random().toString(36).substring(9);
-        //console.log('keyOfSelectedOption:', keyOfSelectedOption);
         const optionType = keyOfSelectedOption as keyof typeof ChoiceResponseOptionType;
 
         // Create empty option of given type.
@@ -309,8 +295,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
         const newItems = [...responseItems, newOption];
         updateSurveyItemWithNewOptions(newItems);
     };
-
-    const draggedItem = responseItems.find(comp => comp.key === draggedId);
 
     const updateSurveyItemWithNewOptions = (options: ItemComponent[]) => {
         const newChoiceGroup = {
@@ -341,79 +325,159 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = (props) => {
         props.onUpdateSurveyItem(newSurveyItem);
     }
 
-    const usedKeys = responseItems.map(comp => comp.key || '');
+    const onChange = (key: string, updatedComponent: ItemComponent) => {
+        const newItems = responseItems.map(item => {
+            if (item.key === key) {
+                return updatedComponent;
+            }
+            return item;
+        });
+        updateSurveyItemWithNewOptions(newItems);
+    }
+
+    const onDuplicate = (responseItem: ItemComponent, index: number) => {
+        const newItems = [...responseItems];
+        const newItem = {
+            ...responseItem,
+            key: Math.random().toString(36).substring(9),
+        }
+        newItems.splice(index + 1, 0, newItem);
+        updateSurveyItemWithNewOptions(newItems);
+    }
+
+    const onCopyItem = (responseItem: ItemComponent) => {
+        setClipboardContent(JSON.stringify(responseItem));
+    }
+
+    const hasValidClipboardContent = () => {
+        const clipboardValue = clipboardContent?.toString() ?? "";
+        if (clipboardValue.length === 0) {
+            return false;
+        }
+        try {
+            const parsedItem = JSON.parse(clipboardValue) as ItemComponent;
+            return parsedItem.role !== undefined;
+        } catch {
+            return false;
+        }
+    }
+
+    const onPasteContent = (responseItem: ItemComponent) => {
+        if (!hasValidClipboardContent()) {
+            return;
+        }
+        const clipboardValue = clipboardContent?.toString() ?? "";
+        const copiedItem = JSON.parse(clipboardValue) as ItemComponent;
+
+        const newItems = responseItems.map(item => {
+            if (item.key === responseItem.key) {
+                return {
+                    ...copiedItem,
+                    key: item.key
+                }
+            }
+            return item;
+        });
+        updateSurveyItemWithNewOptions(newItems);
+    }
+
+    const onDelete = (responseItem: ItemComponent) => {
+        if (!confirm('Are you sure you want to delete this option?')) {
+            return;
+        }
+        const newItems = responseItems.filter(item => item.key !== responseItem.key);
+        updateSurveyItemWithNewOptions(newItems);
+    }
 
     return (
-        <div className='mt-4'>
-            <p className='font-semibold mb-2'>Options: <span className='text-muted-foreground'>({responseItems.length})</span></p>
-            <SortableWrapper
-                sortableID={'response-group-editor'}
-                direction='vertical'
-                items={responseItems.map((component, index) => {
-                    return {
-                        id: component.key || index.toString(),
+        <div className='space-y-6'>
+            <div>
+                <h3 className='font-semibold pb-2'>Options: <span className='text-muted-foreground'>({sortableResponseItems.length})</span></h3>
+
+                <SortableWrapper
+                    sortableID={'response-group-editor'}
+                    items={sortableResponseItems}
+                    onDraggedIdChange={(id) => {
+                        setDraggedKey(id);
+                    }}
+                    onReorder={(activeIndex, overIndex) => {
+                        const newItems = [...responseItems];
+                        newItems.splice(activeIndex, 1);
+                        newItems.splice(overIndex, 0, responseItems[activeIndex]);
+                        updateSurveyItemWithNewOptions(newItems);
+                    }}
+                    dragOverlayItem={(draggedKey && draggedItem) &&
+                        <ComponentEditor
+                            isSortable={true}
+                            component={draggedItem}
+                            previewContent={OptionPreview}
+                        />
                     }
-                })}
-                onDraggedIdChange={(id) => {
-                    setDraggedId(id);
-                }}
-                onReorder={(activeIndex, overIndex) => {
-                    const newItems = [...responseItems];
-                    newItems.splice(overIndex, 0, newItems.splice(activeIndex, 1)[0]);
-                    updateSurveyItemWithNewOptions(newItems);
-                }}
-                dragOverlayItem={(draggedId && draggedItem) ?
-                    <ContentItem
-                        index={-1}
-                        component={draggedItem}
-                        onDeleteComponent={() => { }}
-                        onUpdateComponent={() => { }}
-                    />
-                    : null}
-            >
-                <div className='overflow-y-auto'>
-                    <ol className='flex flex-col gap-4 min-w-full'>
-                        {responseItems.map((component, index) => {
-                            return <ContentItem
-                                key={component.key || index}
-                                index={index}
-                                component={component}
-                                existingKeys={usedKeys}
-                                onDeleteComponent={() => {
-                                    const newItems = responseItems.filter(comp => comp.key !== component.key);
-                                    updateSurveyItemWithNewOptions(newItems);
-                                }}
-                                onUpdateComponent={(updatedItem) => {
-                                    const newItems = responseItems.map((comp => {
-                                        if (comp.key === component.key) {
-                                            return updatedItem;
-                                        }
-                                        return comp;
-                                    }))
-                                    updateSurveyItemWithNewOptions(newItems);
-                                }}
-                            />
-                        })}
-
-                        <div className='flex justify-center w-full'>
-                            <AddDropdown
-                                options={[
-                                    { key: ChoiceResponseOptionType.SimpleText, label: 'Option with simple label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.FormattedText, label: 'Option with formatted label', icon: <CheckSquare className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.TextInput, label: 'Option with text input', icon: <FormInput className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.NumberInput, label: 'Option with number input', icon: <Binary className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.Cloze, label: 'Option with cloze', icon: <SquareStack className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.TimeInput, label: 'Option with time input', icon: <Clock className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.DateInput, label: 'Option with date input', icon: <Calendar className='size-4 text-muted-foreground me-2' /> },
-                                    { key: ChoiceResponseOptionType.DisplayText, label: 'Display text (section header)', icon: <Heading className='size-4 text-muted-foreground me-2' /> },
-                                ]}
-                                onAddItem={onAddItem}
-                            />
-                        </div>
+                >
+                    <ol className='space-y-1'>
+                        {responseItems.map((responseItem, index) => (<ComponentEditor
+                            key={responseItem.key}
+                            isSortable={true}
+                            component={responseItem}
+                            isDragged={draggedKey === responseItem.key}
+                            previewContent={OptionPreview}
+                            quickEditorContent={getQuickEditor(responseItem)}
+                            advancedEditorContent={OptionAdvancedEditor}
+                            usedKeys={responseItems.map(item => item.key!)}
+                            onChange={(updatedComponent) => onChange(responseItem.key!, updatedComponent)}
+                            contextMenuItems={[
+                                {
+                                    type: 'item',
+                                    label: 'Duplicate',
+                                    icon: <Copy className='size-4' />,
+                                    onClick: () => onDuplicate(responseItem, index)
+                                },
+                                {
+                                    type: 'separator'
+                                },
+                                {
+                                    type: 'item',
+                                    label: 'Copy content',
+                                    icon: <ClipboardCopyIcon className='size-4' />,
+                                    onClick: () => onCopyItem(responseItem)
+                                },
+                                {
+                                    type: 'item',
+                                    label: 'Paste content',
+                                    disabled: !hasValidClipboardContent(),
+                                    icon: <ClipboardPasteIcon className='size-4' />,
+                                    onClick: () => onPasteContent(responseItem)
+                                },
+                                {
+                                    type: 'separator'
+                                },
+                                {
+                                    type: 'item',
+                                    label: 'Delete',
+                                    icon: <Trash2 className='size-4' />,
+                                    onClick: () => onDelete(responseItem)
+                                }
+                            ]}
+                        />
+                        ))}
                     </ol>
-                </div>
-
-            </SortableWrapper>
+                    <div className='flex justify-center w-full mt-2'>
+                        <AddDropdown
+                            options={[
+                                { key: ChoiceResponseOptionType.SimpleText, label: typeHints[ChoiceResponseOptionType.SimpleText], icon: icons[ChoiceResponseOptionType.SimpleText] },
+                                { key: ChoiceResponseOptionType.FormattedText, label: typeHints[ChoiceResponseOptionType.FormattedText], icon: icons[ChoiceResponseOptionType.FormattedText] },
+                                { key: ChoiceResponseOptionType.TextInput, label: typeHints[ChoiceResponseOptionType.TextInput], icon: icons[ChoiceResponseOptionType.TextInput] },
+                                { key: ChoiceResponseOptionType.NumberInput, label: typeHints[ChoiceResponseOptionType.NumberInput], icon: icons[ChoiceResponseOptionType.NumberInput] },
+                                { key: ChoiceResponseOptionType.TimeInput, label: typeHints[ChoiceResponseOptionType.TimeInput], icon: icons[ChoiceResponseOptionType.TimeInput] },
+                                { key: ChoiceResponseOptionType.DateInput, label: typeHints[ChoiceResponseOptionType.DateInput], icon: icons[ChoiceResponseOptionType.DateInput] },
+                                { key: ChoiceResponseOptionType.Cloze, label: typeHints[ChoiceResponseOptionType.Cloze], icon: icons[ChoiceResponseOptionType.Cloze] },
+                                { key: ChoiceResponseOptionType.DisplayText, label: typeHints[ChoiceResponseOptionType.DisplayText], icon: icons[ChoiceResponseOptionType.DisplayText] },
+                            ]}
+                            onAddItem={onAddItem}
+                        />
+                    </div>
+                </SortableWrapper>
+            </div>
         </div>
     );
 };

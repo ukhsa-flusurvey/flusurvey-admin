@@ -1,5 +1,5 @@
 import { ExpressionDef, SlotInputDef } from "../utils";
-import { logicalOperators, miscExpressions } from "./common";
+import { comparisonOperators, logicalOperators, miscExpressions } from "./common";
 
 export const surveyExpressionCategories = [
     {
@@ -137,7 +137,7 @@ const advancedExpressions: ExpressionDef[] = [
         categories: ['advanced'],
         label: 'Is value defined',
         returnType: 'boolean',
-        icon: 'blocks',
+        icon: 'package-check',
         color: 'teal',
         slots: [
             {
@@ -225,7 +225,7 @@ const advancedExpressions: ExpressionDef[] = [
         categories: ['advanced'],
         label: 'Is user logged in',
         returnType: 'boolean',
-        icon: 'blocks',
+        icon: 'user-check',
         slots: [],
         defaultValue: {
             dtype: 'exp',
@@ -284,328 +284,13 @@ const advancedExpressions: ExpressionDef[] = [
 ]
 
 
-const comparisonOperators: ExpressionDef[] = [
-    {
-        categories: ['comparison'],
-        id: 'eq',
-        label: 'Equals (L == R)',
-        returnType: 'boolean',
-        icon: 'code',
-        color: 'teal',
-        slots: [
-            {
-                label: 'Left side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'text-input',
-                        type: 'str',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num', 'str']
-                    }
-                ]
-            },
-            {
-                label: 'Right side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'text-input',
-                        type: 'str',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num', 'str']
-                    }
-                ]
-            }
-        ],
-        defaultValue: {
-            dtype: 'exp',
-            exp: {
-                name: 'eq',
-                data: []
-            }
-        }
-    },
-    {
-        categories: ['comparison'],
-        id: 'lte',
-        label: 'Less than or equal (L <= R)',
-        returnType: 'boolean',
-        icon: 'code',
-        color: 'teal',
-        slots: [
-            {
-                label: 'Left side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            },
-            {
-                label: 'Right side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ],
-        defaultValue: {
-            dtype: 'exp',
-            exp: {
-                name: 'lte',
-                data: [
-                    {
-                        dtype: 'num',
-                        num: 0
-                    },
-                    {
-                        dtype: 'num',
-                        num: 1
-                    }
-                ]
-            }
-        }
-    },
-    {
-        categories: ['comparison'],
-        id: 'lt',
-        label: 'Less than (L < R)',
-        returnType: 'boolean',
-        icon: 'code',
-        color: 'teal',
-        slots: [
-            {
-                label: 'Left side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            },
-            {
-                label: 'Right side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ],
-        defaultValue: {
-            dtype: 'exp',
-            exp: {
-                name: 'lt',
-                data: [
-                    {
-                        dtype: 'num',
-                        num: 0
-                    },
-                    {
-                        dtype: 'num',
-                        num: 1
-                    }
-                ]
-            }
-        }
-    },
-    {
-        categories: ['comparison'],
-        id: 'gte',
-        label: 'Greater than or equal (L >= R)',
-        returnType: 'boolean',
-        icon: 'code',
-        color: 'teal',
-        slots: [
-            {
-                label: 'Left side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            },
-            {
-                label: 'Right side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ],
-        defaultValue: {
-            dtype: 'exp',
-            exp: {
-                name: 'gte',
-                data: [
-                    {
-                        dtype: 'num',
-                        num: 1
-                    },
-                    {
-                        dtype: 'num',
-                        num: 0
-                    }
-                ]
-            }
-        }
-    },
-    {
-        categories: ['comparison'],
-        id: 'gt',
-        label: 'Greater than (L > R)',
-        returnType: 'boolean',
-        icon: 'code',
-        color: 'blue',
-        slots: [
-            {
-                label: 'Left side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            },
-            {
-                label: 'Right side',
-                required: true,
-                allowedTypes: [
-                    {
-                        id: 'number-input',
-                        type: 'num',
-                    },
-                    {
-                        id: 'date-input',
-                        type: 'date',
-                    },
-                    {
-                        id: 'exp-slot',
-                        type: 'expression',
-                        allowedExpressionTypes: ['num']
-                    }
-                ]
-            }
-        ],
-        defaultValue: {
-            dtype: 'exp',
-            exp: {
-                name: 'gt',
-                data: [
-                    {
-                        dtype: 'num',
-                        num: 1
-                    },
-                    {
-                        dtype: 'num',
-                        num: 0
-                    }
-                ]
-            }
-        }
-    },
-
-]
-
-
 const responseDependencies: ExpressionDef[] = [
     {
         id: 'hasResponse',
         label: 'A specific response is present',
         returnType: 'boolean',
         color: 'yellow',
+        icon: 'list-check',
         slots: [
             {
                 label: 'Item key',
@@ -649,7 +334,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Response contains any of these keys',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'layout-list',
+        icon: 'list-todo',
         slots: [
             {
                 label: 'Item and option references:',
@@ -684,7 +369,7 @@ const responseDependencies: ExpressionDef[] = [
         id: 'responseHasKeysAll',
         label: 'Response contains all of these keys',
         returnType: 'boolean',
-        icon: 'layout-list',
+        icon: 'list-checks',
         slots: [
             {
                 label: 'Item and option references:',
@@ -716,7 +401,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Has response but none of these keys:',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'layout-list',
+        icon: 'list-x',
         slots: [
             {
                 label: 'Item and option references:',
@@ -836,7 +521,7 @@ const responseDependencies: ExpressionDef[] = [
         label: 'Count response items',
         returnType: 'num',
         color: 'lime',
-        icon: 'function',
+        icon: 'tally-5',
         slots: [
             {
                 label: 'Item key',
@@ -929,7 +614,7 @@ const responseDependencies: ExpressionDef[] = [
         categories: ['response-dependencies'],
         label: 'Get date response diff from now',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-range',
         slots: [
             {
                 label: 'Item key',
@@ -980,7 +665,7 @@ const templates: ExpressionDef[] = [
         id: 'consent-given',
         label: 'Consent question accepted',
         returnType: 'boolean',
-        icon: 'signpost',
+        icon: 'clipboard-check',
         slots: [],
         defaultValue: {
             dtype: 'exp',
@@ -1058,7 +743,7 @@ const templates: ExpressionDef[] = [
         id: 'multipleChoiceSelectionCount',
         label: 'Count number of selected options in multiple choice',
         returnType: 'num',
-        icon: 'function',
+        icon: 'tally-5',
         slots: [],
         defaultValue: {
             dtype: 'exp',
@@ -1084,7 +769,7 @@ const templates: ExpressionDef[] = [
         id: 'datePickerResponseValue',
         label: 'Get date picker response value',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-days',
         slots: [],
         defaultValue: {
             dtype: 'exp',
@@ -1146,7 +831,7 @@ const participantFlags: ExpressionDef[] = [
         id: 'hasParticipantFlagKeyAndValue',
         label: 'Participant flag with key and value exists',
         returnType: 'boolean',
-        icon: 'tag',
+        icon: 'tags',
         color: 'dark',
         slots: [
             {
@@ -1266,7 +951,7 @@ export const surveyEngineRegistry: ExpressionDef[] = [
         id: 'getSurveyItemValidation',
         label: 'Is survey item validation true',
         returnType: 'boolean',
-        icon: 'terminal',
+        icon: 'badge-check',
         color: 'cyan',
         slots: [
             {
@@ -1300,7 +985,3 @@ export const surveyEngineRegistry: ExpressionDef[] = [
         }
     }
 ]
-
-/*
-    TODO: getSecondsSince,
-*/

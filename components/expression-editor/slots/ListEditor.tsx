@@ -9,6 +9,7 @@ import ExpressionPreview from './ExpressionPreview';
 import ExpressionEditor from '../ExpressionEditor';
 import Block from '../components/Block';
 import { toast } from 'sonner';
+import SlotFormEditor from './SlotFormEditor';
 
 
 interface ListEditorProps {
@@ -42,6 +43,79 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
 
     </span>
 
+    const renderItemEditor = (index: number, currentSlot: {
+        slotType: string | undefined,
+        value: ExpressionArg | undefined,
+    }, isHidden: boolean) => {
+        const currentSlotType = currentSlot.slotType || '';
+        const expressionDef = props.expRegistry.expressionDefs.find((expDef) => expDef.id === currentSlotType)
+        const currentArgValue = currentSlot.value;
+        const isExpression = expressionDef !== undefined;
+
+        if (!isExpression) {
+            return <SlotFormEditor
+                currentSlotType={currentSlotType}
+                slotDef={{
+                    label: '',
+                    required: false,
+                }}
+                expRegistry={props.expRegistry}
+                context={props.context}
+                depth={props.depth}
+                slotIndex={0}
+                currentArgs={[currentArgValue]}
+                onArgsChange={(newArgs) => {
+                    const newValues = [...props.currentSlotValues].map((val) => val.value);
+                    newValues[index] = newArgs[0];
+                    props.onChangeValues(
+                        newValues,
+                        props.currentSlotValues.map((val) => val.slotType)
+                    );
+
+                }}
+                onClearSlot={() => {
+                }}
+            />
+        }
+
+        let currentExpression: Expression;
+        if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
+            currentExpression = currentArgValue.exp;
+        } else {
+            // create empty expression
+            currentExpression = { name: expressionDef.id }
+        }
+
+        return (
+            <>
+                {isHidden && <ExpressionPreview
+                    expRegistry={props.expRegistry}
+                    expressionValue={currentExpression}
+                    depth={props.depth}
+                />}
+                {!isHidden && <Block depth={props.depth}>
+                    <ExpressionEditor
+                        expRegistry={props.expRegistry}
+                        expressionValue={currentExpression}
+                        depth={(props.depth || 0) + 1}
+                        context={props.context}
+                        onChange={(newExpression) => {
+                            const newValues = [...props.currentSlotValues].map((val) => val.value);
+                            newValues[index] = {
+                                exp: newExpression,
+                                dtype: 'exp'
+                            }
+                            props.onChangeValues(
+                                newValues,
+                                props.currentSlotValues.map((val) => val.slotType)
+                            );
+                        }}
+                    />
+                </Block>}
+            </>
+        )
+    }
+
     return (
         <div>
             <SlotLabel label={props.slotDef.label} required={props.slotDef.required} />
@@ -54,25 +128,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                             </div>
                         }
 
-                        const currentSlotType = currentSlot.slotType;
-                        const expressionDef = props.expRegistry.expressionDefs.find((expDef) => expDef.id === currentSlotType)
-                        const currentArgValue = currentSlot.value;
-                        const isExpression = expressionDef !== undefined;
-                        if (!isExpression) {
-                            return <div key={index}>
-                                <p>unknown expression: {JSON.stringify(currentSlot)}</p>
-                            </div>
-                        }
-
                         const isHidden = hideSlotContent.includes(index);
-
-                        let currentExpression: Expression;
-                        if (currentArgValue?.dtype === 'exp' && currentArgValue.exp !== undefined) {
-                            currentExpression = currentArgValue.exp;
-                        } else {
-                            // create empty expression
-                            currentExpression = { name: expressionDef.id }
-                        }
 
                         return (
                             <li className="ml-[36px] relative" key={index.toFixed()}>
@@ -94,8 +150,8 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                             <ContextMenuItem
                                                 onClick={() => {
                                                     const cbContent = {
-                                                        slotType: currentSlotType,
-                                                        value: currentArgValue
+                                                        slotType: currentSlot.slotType,
+                                                        value: currentSlot.value
                                                     }
                                                     navigator.clipboard.writeText(JSON.stringify(cbContent));
                                                     toast(
@@ -158,30 +214,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         </>
                                     }
                                 />
-                                {isHidden && <ExpressionPreview
-                                    expRegistry={props.expRegistry}
-                                    expressionValue={currentExpression}
-                                    depth={props.depth}
-                                />}
-                                {!isHidden && <Block depth={props.depth}>
-                                    <ExpressionEditor
-                                        expRegistry={props.expRegistry}
-                                        expressionValue={currentExpression}
-                                        depth={(props.depth || 0) + 1}
-                                        context={props.context}
-                                        onChange={(newExpression) => {
-                                            const newValues = [...props.currentSlotValues].map((val) => val.value);
-                                            newValues[index] = {
-                                                exp: newExpression,
-                                                dtype: 'exp'
-                                            }
-                                            props.onChangeValues(
-                                                newValues,
-                                                props.currentSlotValues.map((val) => val.slotType)
-                                            );
-                                        }}
-                                    />
-                                </Block>}
+                                {renderItemEditor(index, currentSlot, isHidden)}
                             </li>
                         )
                     })}
@@ -214,6 +247,7 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         currentSlotTypes.push(content.slotType);
                                         currentValues.push(content.value);
                                     } catch (error) {
+                                        toast.error('Error reading clipboard content');
                                         console.error(error)
                                         return;
                                     }
@@ -227,7 +261,6 @@ const ListEditor: React.FC<ListEditorProps> = (props) => {
                                         }
                                         isTemplateFor = expressionDef?.isTemplateFor || '';
                                     }
-
                                     currentSlotTypes.push(!isTemplateFor ? slotTypeId : isTemplateFor);
                                     currentValues.push(newArg);
                                 }

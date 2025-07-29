@@ -75,7 +75,7 @@ const SlotTypeSelector: React.FC<SlotTypeSelectorProps> = (props) => {
                     </>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-0" side="bottom" align="start">
+            <PopoverContent className="p-0" side="bottom" align="center">
                 <Command>
                     <CommandInput placeholder="Select type..." />
                     <CommandList>

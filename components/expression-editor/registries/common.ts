@@ -4,9 +4,9 @@ export const miscExpressions: ExpressionDef[] = [
     {
         categories: ['misc'],
         id: 'timestampWithOffset',
-        label: 'GET TIMESTAMP',
+        label: 'Get timestamp',
         returnType: 'num',
-        icon: 'calendar',
+        icon: 'calendar-days',
         color: 'lime',
         slots: [
             {
@@ -101,7 +101,7 @@ export const logicalOperators: ExpressionDef[] = [
         id: 'and',
         label: 'and',
         returnType: 'boolean',
-        icon: 'brackets',
+        icon: 'ampersands',
         color: 'blue',
         slots: [
             {
@@ -130,7 +130,7 @@ export const logicalOperators: ExpressionDef[] = [
         id: 'or',
         label: 'or',
         returnType: 'boolean',
-        icon: 'braces',
+        icon: 'tally',
         color: 'blue',
         slots: [
             {
@@ -182,4 +182,318 @@ export const logicalOperators: ExpressionDef[] = [
             }
         }
     }
+]
+
+export const comparisonOperators: ExpressionDef[] = [
+    {
+        categories: ['comparison'],
+        id: 'eq',
+        label: 'Equals (L == R)',
+        returnType: 'boolean',
+        icon: 'equal',
+        color: 'teal',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num', 'str']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num', 'str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'eq',
+                data: []
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'lte',
+        label: 'Less than or equal (L <= R)',
+        returnType: 'boolean',
+        icon: 'less-than-or-equal',
+        color: 'teal',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lte',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    },
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'lt',
+        label: 'Less than (L < R)',
+        returnType: 'boolean',
+        icon: 'less-than',
+        color: 'teal',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'lt',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 0
+                    },
+                    {
+                        dtype: 'num',
+                        num: 1
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'gte',
+        label: 'Greater than or equal (L >= R)',
+        returnType: 'boolean',
+        icon: 'greater-than-or-equal',
+        color: 'teal',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'gte',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['comparison'],
+        id: 'gt',
+        label: 'Greater than (L > R)',
+        returnType: 'boolean',
+        icon: 'greater-than',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Left side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Right side',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num',
+                    },
+                    {
+                        id: 'date-input',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'gt',
+                data: [
+                    {
+                        dtype: 'num',
+                        num: 1
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ]
+            }
+        }
+    },
 ]
