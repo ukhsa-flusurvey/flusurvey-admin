@@ -81,7 +81,8 @@
 		"typescript": "5.4.5",
 		"usehooks-ts": "^3.0.2",
 		"uuid": "^11.1.0",
-		"zod": "^3.22.4"
+		"zod": "^3.22.4",
+		"zustand": "^5.0.6"
 	},
 	"devDependencies": {
 		"@tailwindcss/container-queries": "^0.1.1",
