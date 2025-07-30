@@ -3777,6 +3777,79 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
                 }
             }
         }
+    },
+    {
+        id: 'incomingState:hasLinkingCode',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming linking code (Merge event)',
+        returnType: 'boolean',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasLinkingCode',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getLinkingCodeValue',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming linking code value (Merge event)',
+        returnType: 'str',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getLinkingCodeValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
     }
 ]
 
