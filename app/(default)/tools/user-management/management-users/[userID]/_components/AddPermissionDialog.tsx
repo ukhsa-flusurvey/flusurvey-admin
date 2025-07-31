@@ -103,6 +103,7 @@ export const permissionInfos: PermissionInfos = {
                     "get-participant-states": { hideLimiter: true },
                     "edit-participant-data": { hideLimiter: true },
                     "create-virtual-participant": { hideLimiter: true },
+                    "merge-participants": { hideLimiter: true },
                     "get-reports": {
                         limiterHint: 'To specify which reports the user can access, use the format [{"reportKey": "<rk1>"}]'
                     },
