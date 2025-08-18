@@ -14,6 +14,7 @@ interface AppbarBaseForToolsProps {
     ignoreAuth?: boolean;
 }
 
+
 const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
 
@@ -32,7 +33,7 @@ const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
                         className="flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-3"
                     >
                         <p className='font-normal text-cyan-800 text-xs'>CASE ADMIN</p>
-                        <p className='font-semibold tracking-wider text-sm'>{appName}</p>
+                        <p className='font-semibold tracking-wider text-sm'>{appName} {process.env.NAME_SUFFIX}</p>
                     </div>
 
                     <div className='flex grow gap-3 justify-center items-center'>

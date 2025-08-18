@@ -59,8 +59,7 @@ export default async function Page() {
                         className="grow flex flex-col items-start justify-center border-l-2 border-cyan-800 ps-2"
                     >
                         <p className='font-normal text-cyan-800 text-xs'>CASE ADMIN</p>
-                        <p className='font-semibold tracking-wider text-sm'>{appName}</p>
-
+                        <p className='font-semibold tracking-wider text-sm'>{appName} {process.env.NAME_SUFFIX}</p>
                     </div>
 
                     <div>
@@ -85,9 +84,7 @@ export default async function Page() {
                         >
                             <div className=" p-8 h-full my-auto flex flex-col justify-center">
                                 <div>
-                                    <CaseAdminHeader
-                                        appName={appName}
-                                    />
+                                    <CaseAdminHeader />
                                     <p className='mt-4'>This is the admin tool, to manage studies, surveys, messages and participants.</p>
                                 </div>
                             </div>
