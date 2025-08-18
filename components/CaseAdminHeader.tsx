@@ -1,9 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = false;
-
 
 const CaseAdminHeader: React.FC = async () => {
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';

@@ -14,8 +14,6 @@ interface AppbarBaseForToolsProps {
     ignoreAuth?: boolean;
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = false;
 
 const AppbarBaseForTools: React.FC<AppbarBaseForToolsProps> = (props) => {
     const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
