@@ -2,6 +2,8 @@ import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
 import { supportedBuiltInSlotTypes, surveyExpressionCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
 import { ExpressionArg } from '@/components/expression-editor/utils';
 import React, { useEffect } from 'react';
+import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
+import { extractSurveyKeys } from '../../survey-expression-editor';
 
 interface ExpArgEditorForNumProps {
     label: string;
@@ -11,6 +13,8 @@ interface ExpArgEditorForNumProps {
 
 const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
     const [currentExpArgSlot, setCurrentExpArgSlot] = React.useState<string | undefined>(undefined)
+    const { survey } = useSurveyEditorCtx();
+    const { singleChoiceKeys, multipleChoiceKeys, allItemKeys } = extractSurveyKeys(survey);
 
     useEffect(() => {
         if (props.expArg) {
@@ -28,6 +32,19 @@ const ExpArgEditorForNum: React.FC<ExpArgEditorForNumProps> = (props) => {
             availableExpData={[
                 props.expArg
             ]}
+            context={{
+                singleChoiceOptions: singleChoiceKeys,
+                multipleChoiceOptions: multipleChoiceKeys,
+                allItemKeys: allItemKeys,
+                dateUnitPicker: [
+                    { key: 'years', label: 'Years' },
+                    { key: 'months', label: 'Months' },
+                    { key: 'days', label: 'Days' },
+                    { key: 'hours', label: 'Hours' },
+                    { key: 'minutes', label: 'Minutes' },
+                    { key: 'seconds', label: 'Seconds' },
+                ],
+            }}
             availableMetadata={{
                 slotTypes: currentExpArgSlot ? [currentExpArgSlot] : []
             }}
