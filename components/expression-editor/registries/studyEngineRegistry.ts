@@ -883,6 +883,11 @@ const participantStateActions: ExpressionDef[] = [
                         type: 'list-selector',
                     },
                     {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    },
+                    {
                         id: 'text-input',
                         type: 'str',
                     }
