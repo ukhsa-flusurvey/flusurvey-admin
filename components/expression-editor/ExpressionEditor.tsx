@@ -110,13 +110,13 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                 const argIndex = hasArgIndex ? slotDef.argIndexes![0] : index;
 
                 return <ExpArgEditor
-                    key={index}
+                    key={`${slotDef.label}:${argIndex}`}
                     depth={props.depth}
                     slotDef={slotDef}
                     currentIndex={argIndex}
                     availableExpData={props.expressionValue.data || []}
                     availableMetadata={{
-                        ...props.expressionValue.metadata,
+                        ...(props.expressionValue.metadata || {}),
                         slotTypes: slotTypes
                     }}
                     expRegistry={props.expRegistry}
@@ -133,7 +133,7 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = (props) => {
                         props.onChange?.({
                             ...props.expressionValue!,
                             metadata: {
-                                ...props.expressionValue!.metadata,
+                                ...(props.expressionValue!.metadata || {}),
                                 slotTypes: newSlotTypes
                             },
                             data: newArgs
