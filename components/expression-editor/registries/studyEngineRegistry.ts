@@ -867,6 +867,61 @@ const participantStateActions: ExpressionDef[] = [
         }
     },
     {
+        id: 'SEND_MESSAGE_NOW',
+        label: 'Send message now (immediately)',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "mail",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Use language',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'SEND_MESSAGE_NOW',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    undefined,
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
+    },
+    {
         id: 'ADD_MESSAGE',
         label: 'Schedule a message',
         categories: ['participant-state-actions'],
