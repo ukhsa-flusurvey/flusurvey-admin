@@ -899,7 +899,7 @@ const participantStateActions: ExpressionDef[] = [
                     {
                         id: 'exp-slot',
                         type: 'expression',
-                        allowedExpressionTypes: ['num']
+                        allowedExpressionTypes: ['str']
                     }
                 ]
             }
