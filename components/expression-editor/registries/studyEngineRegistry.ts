@@ -867,6 +867,66 @@ const participantStateActions: ExpressionDef[] = [
         }
     },
     {
+        id: 'SEND_MESSAGE_NOW',
+        label: 'Send message now (immediately)',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "mail",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Use language',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'SEND_MESSAGE_NOW',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    undefined,
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
+    },
+    {
         id: 'ADD_MESSAGE',
         label: 'Schedule a message',
         categories: ['participant-state-actions'],
@@ -3774,6 +3834,79 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
                 data: [],
                 metadata: {
                     slotTypes: ['message-type-picker']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasLinkingCode',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming linking code (Merge event)',
+        returnType: 'boolean',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasLinkingCode',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getLinkingCodeValue',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming linking code value (Merge event)',
+        returnType: 'str',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getLinkingCodeValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
                 }
             }
         }

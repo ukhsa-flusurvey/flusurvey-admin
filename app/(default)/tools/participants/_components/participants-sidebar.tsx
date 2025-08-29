@@ -15,8 +15,12 @@ import { logout } from '@/actions/auth/logout';
 interface ParticipantsSidebarProps {
     user?: User;
     expires?: number;
-}
 
+    appName: {
+        name: string;
+        suffix: string;
+    }
+}
 
 
 const ParticipantsSidebar: React.FC<ParticipantsSidebarProps> = (props) => {
@@ -79,8 +83,6 @@ const ParticipantsSidebar: React.FC<ParticipantsSidebarProps> = (props) => {
         }
     ]
 
-    const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Editor Tools';
-
     const disableNavs = params.studyKey === undefined;
 
     return (
@@ -105,7 +107,7 @@ const ParticipantsSidebar: React.FC<ParticipantsSidebarProps> = (props) => {
                         <p className="font-bold text-cyan-800">
                             Participants
                         </p>
-                        <span className='font-semibold tracking-wider text-xs'>{appName}</span>
+                        <span className='font-semibold tracking-wider text-xs'>{props.appName.name} {props.appName.suffix}</span>
                     </div>
                 </div>
             </SidebarHeader>
