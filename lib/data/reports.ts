@@ -18,6 +18,47 @@ export interface Report {
     }>
 }
 
+export const getReportKeys = async (
+    studyKey: string,
+    participantID?: string,
+    fromDate?: Date,
+    toDate?: Date,
+): Promise<{
+    error?: string,
+    reportKeys?: Array<string>
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+
+    const queryParams = new URLSearchParams();
+    if (participantID) {
+        queryParams.append('pid', participantID);
+    }
+    if (fromDate) {
+        queryParams.append('from', Math.floor(fromDate.getTime() / 1000).toFixed(0));
+    }
+    if (toDate) {
+        queryParams.append('until', Math.floor(toDate.getTime() / 1000).toFixed(0));
+    }
+
+    const queryString = queryParams.toString();
+    const url = `/v1/studies/${studyKey}/data-explorer/reports/keys?${queryString}`;
+
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch report keys: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body;
+}
+
 export const getReports = async (
     studyKey: string,
     page: number,
