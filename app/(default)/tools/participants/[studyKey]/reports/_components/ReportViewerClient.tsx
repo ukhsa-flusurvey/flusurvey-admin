@@ -19,6 +19,58 @@ interface ReportViewerClientProps {
     until?: Date;
 }
 
+interface FlattenedReport {
+    id: string;
+    key: string;
+    participantID: string;
+    timestamp: number;
+    responseID: string;
+    [dataKey: string]: string | number | undefined;
+}
+
+const dataKeyPrefix = 'data_';
+
+const fixReportColKeys = [
+    'id',
+    'key',
+    'participantID',
+    'timestamp',
+    'responseID',
+]
+
+const flattenReports = (reports: Array<Report>): { uniqueDataKeys: Set<string>, flattenedReports: Array<FlattenedReport> } => {
+    const uniqueDataKeys = new Set<string>();
+    const flattenedReports: Array<FlattenedReport> = [];
+    for (const report of reports) {
+        const flattenedReport: FlattenedReport = {
+            id: report.id,
+            key: report.key,
+            participantID: report.participantID,
+            timestamp: report.timestamp,
+            responseID: report.responseID,
+        };
+        for (const data of report.data || []) {
+            const dataKey = `${fixReportColKeys.includes(data.key) ? dataKeyPrefix : ''}${data.key}`;
+            uniqueDataKeys.add(dataKey);
+            switch (data.dtype) {
+                case 'date':
+                case 'float':
+                    flattenedReport[dataKey] = parseFloat(data.value);
+                    break;
+                case 'int':
+                    flattenedReport[dataKey] = parseInt(data.value);
+                    break;
+                default:
+                    flattenedReport[dataKey] = data.value;
+                    break;
+            }
+            flattenedReport[dataKey] = data.value;
+        }
+        flattenedReports.push(flattenedReport);
+    }
+    return { uniqueDataKeys, flattenedReports };
+}
+
 const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
     const [isMounted, setIsMounted] = React.useState(false);
 
@@ -95,6 +147,11 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
         )
     }
 
+    const { uniqueDataKeys, flattenedReports } = flattenReports(reports);
+
+    console.log('uniqueDataKeys', uniqueDataKeys);
+    console.log('flattenedReports', flattenedReports);
+
     return (
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
@@ -102,7 +159,7 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                 <ScrollArea className='block  h-full w-full'>
                     <ul className='p-4 space-y-4 w-full overflow-hidden'>
                         {
-                            reports.map((report, i) => {
+                            flattenedReports.map((report, i) => {
                                 return (
                                     <li key={i}
                                         className='border overflow-hidden border-neutral-300 p-2 rounded-md bg-white space-y-2'
@@ -120,13 +177,13 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                                         </div>
 
                                         <div className='flex gap-2 flex-wrap'>
-                                            {report.data?.map((d, i) => {
+                                            {Array.from(uniqueDataKeys).map((d, i) => {
                                                 return (
                                                     <div key={i}
                                                         className='flex gap-2 rounded-full border border-neutral-300 py-1 px-3 text-xs'
                                                     >
-                                                        <span>{d.key}:</span>
-                                                        <span className='font-bold'>{d.value}</span>
+                                                        <span>{d}:</span>
+                                                        <span className='font-bold'>{report[d]}</span>
                                                     </div>
                                                 )
                                             })}
