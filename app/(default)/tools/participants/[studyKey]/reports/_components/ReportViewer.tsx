@@ -7,17 +7,42 @@ import { List } from 'lucide-react';
 
 interface ReportViewerProps {
     studyKey: string;
-    filter?: string;
+    reportKey?: string;
+    pid?: string;
+    from?: Date;
+    until?: Date;
 }
 
 const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
     const pageSize = 20;
 
+
+    if (!props.reportKey) {
+        return (
+            <div className='w-full p-4 h-full flex items-center justify-center'>
+                <div className='text-center text-xl text-neutral-600'>
+                    <div>
+                        <List className='size-8 mb-2 mx-auto' />
+                    </div>
+                    <p>
+                        No reports found.
+                    </p>
+                    <p className='text-sm mt-3'>
+                        Check back later or try a different filter.
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
+    console.log('ReportViewer', props.reportKey, props.pid, props.from, props.until);
     const resp = await getReports(
         props.studyKey,
         1,
-        undefined,
-        props.filter,
+        props.reportKey,
+        props.pid,
+        props.from,
+        props.until,
         pageSize,
     )
 
@@ -61,9 +86,12 @@ const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
         <ReportViewerClient
             studyKey={props.studyKey}
             reports={reports}
-            filter={props.filter}
             pageSize={pageSize}
             totalCount={pagination?.totalCount || 0}
+            reportKey={props.reportKey}
+            pid={props.pid}
+            from={props.from}
+            until={props.until}
         />
     );
 };

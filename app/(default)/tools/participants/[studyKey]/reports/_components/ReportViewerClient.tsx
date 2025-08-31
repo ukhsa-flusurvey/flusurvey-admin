@@ -10,10 +10,13 @@ import { toast } from 'sonner';
 
 interface ReportViewerClientProps {
     studyKey: string;
-    filter?: string;
     reports: Array<Report>;
     totalCount: number;
     pageSize: number;
+    reportKey?: string;
+    pid?: string;
+    from?: Date;
+    until?: Date;
 }
 
 const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
@@ -59,8 +62,10 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                 const resp = await getReports(
                     props.studyKey,
                     page,
-                    undefined,
-                    props.filter,
+                    props.reportKey,
+                    props.pid,
+                    props.from,
+                    props.until,
                     pageSize,
                 );
                 if (resp.error) {

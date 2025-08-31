@@ -63,13 +63,17 @@ export const getReports = async (
     studyKey: string,
     page: number,
     reportKey?: string,
-    filter?: string,
+    participantID?: string,
+    from?: Date,
+    until?: Date,
     pageSize?: number,
 ): Promise<{
     error?: string,
     reports?: Array<Report>
     pagination?: Pagination
 }> => {
+
+    console.log('getReports', studyKey, page, reportKey, participantID, from, until, pageSize);
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };
@@ -79,8 +83,14 @@ export const getReports = async (
     if (reportKey) {
         queryParams.append('reportKey', reportKey);
     }
-    if (filter) {
-        queryParams.append('filter', filter);
+    if (participantID) {
+        queryParams.append('pid', participantID);
+    }
+    if (from !== undefined) {
+        queryParams.append('from', Math.floor(from.getTime() / 1000).toString());
+    }
+    if (until !== undefined) {
+        queryParams.append('until', Math.floor(until.getTime() / 1000).toString());
     }
     queryParams.append('page', page.toString());
     if (pageSize) queryParams.append('limit', pageSize.toString());
