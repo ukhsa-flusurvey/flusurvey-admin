@@ -25,10 +25,7 @@ const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
                         <List className='size-8 mb-2 mx-auto' />
                     </div>
                     <p>
-                        No reports found.
-                    </p>
-                    <p className='text-sm mt-3'>
-                        Check back later or try a different filter.
+                        Select a report key to view reports.
                     </p>
                 </div>
             </div>

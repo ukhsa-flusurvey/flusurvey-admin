@@ -33,7 +33,6 @@ export default async function ReportsToolbar(props: ReportsToolbarProps) {
             </CardDescription>
 
             <ReportsToolbarClient
-                studyKey={props.studyKey}
                 reportKeys={reportKeys}
                 pid={pid}
                 fromDate={fromDate}

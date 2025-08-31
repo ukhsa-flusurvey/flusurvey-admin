@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Report, getReports } from '@/lib/data/reports';
-import { Check, Copy, Download, Save } from 'lucide-react';
+import { Check, Copy, Download, List, Save } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-import * as Papa from 'papaparse';
+import { unparse } from 'papaparse';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface ReportViewerClientProps {
@@ -59,7 +59,7 @@ const formatRelativeTime = (unixSeconds: number): string => {
     return rtf.format(0, 'second');
 }
 
-const fixReportColKeys = [
+const reservedColumns = [
     'id',
     'key',
     'participantID',
@@ -79,7 +79,7 @@ const flattenReports = (reports: Array<Report>): { uniqueDataKeys: Set<string>, 
             responseID: report.responseID,
         };
         for (const data of report.data || []) {
-            const dataKey = `${fixReportColKeys.includes(data.key) ? dataKeyPrefix : ''}${data.key}`;
+            const dataKey = `${reservedColumns.includes(data.key) ? dataKeyPrefix : ''}${data.key}`;
             uniqueDataKeys.add(dataKey);
             switch (data.dtype) {
                 case 'date':
@@ -143,8 +143,8 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                         }
                         return base;
                     });
-                    const csv = Papa.unparse({ fields: headers, data: rows }, { quotes: false });
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+                    const csv = unparse({ fields: headers, data: rows }, { quotes: false });
+                    const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -209,7 +209,14 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
 
     if (reports.length === 0) {
         return (
-            <div>no reports</div>
+            <div className='w-full p-4 h-full flex items-center justify-center'>
+                <div className='text-center text-xl text-neutral-600'>
+                    <div>
+                        <List className='size-8 mb-2 mx-auto' />
+                    </div>
+                    <p>No reports found.</p>
+                </div>
+            </div>
         )
     }
 

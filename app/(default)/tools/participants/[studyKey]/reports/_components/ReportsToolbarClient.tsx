@@ -12,7 +12,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 interface ReportsToolbarClientProps {
-    studyKey: string;
     reportKeys: Array<string>;
     pid?: string;
     fromDate?: Date;
@@ -35,18 +34,20 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
         // if reportKey in URL is not valid anymore, remove it
         const current = new URLSearchParams(searchParams.toString());
 
+        const before = current.toString();
         if (props.reportKeys.length < 1) {
             current.delete('reportKey');
-            router.replace(`${pathname}?${current.toString()}`);
-            return;
+        } else if (!selectedReportKey || !props.reportKeys.includes(selectedReportKey)) {
+            current.set('reportKey', props.reportKeys[0]);
         }
 
-        if (!selectedReportKey || !props.reportKeys.includes(selectedReportKey)) {
-            current.set('reportKey', props.reportKeys[0]);
-            router.replace(`${pathname}?${current.toString()}`);
+        const after = current.toString();
+        if (before !== after) {
+            const qs = after;
+            router.replace(qs ? `${pathname}?${qs}` : pathname);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.reportKeys.join('|'), selectedReportKey]);
+        return;
+    }, [props.reportKeys, selectedReportKey, pathname, router, searchParams]);
 
     const updateQuery = React.useCallback((updates: Record<string, string | undefined>) => {
         const current = new URLSearchParams(searchParams.toString());
