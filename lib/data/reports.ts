@@ -36,10 +36,10 @@ export const getReportKeys = async (
     if (participantID) {
         queryParams.append('pid', participantID);
     }
-    if (fromDate) {
+    if (fromDate && !isNaN(fromDate.getTime())) {
         queryParams.append('from', Math.floor(fromDate.getTime() / 1000).toFixed(0));
     }
-    if (toDate) {
+    if (toDate && !isNaN(toDate.getTime())) {
         queryParams.append('until', Math.floor(toDate.getTime() / 1000).toFixed(0));
     }
 
@@ -84,10 +84,10 @@ export const getReports = async (
     if (participantID) {
         queryParams.append('pid', participantID);
     }
-    if (from !== undefined) {
+    if (from !== undefined && !isNaN(from.getTime())) {
         queryParams.append('from', Math.floor(from.getTime() / 1000).toString());
     }
-    if (until !== undefined) {
+    if (until !== undefined && !isNaN(until.getTime())) {
         queryParams.append('until', Math.floor(until.getTime() / 1000).toString());
     }
     queryParams.append('page', page.toString());

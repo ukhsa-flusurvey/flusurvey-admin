@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowRight, HardDriveDownload } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { parseUnixSecondsToDate } from "@/lib/parse-unix-seconds-to-date";
 import ReportViewer, { ReportViewerSkeleton } from "./_components/ReportViewer";
 import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
 import { ReportsPageLinkContent } from "../../_components/breacrumbs-contents";
@@ -91,8 +92,8 @@ export default async function Page(props: PageProps) {
                                 studyKey={props.params.studyKey}
                                 reportKey={props.searchParams?.reportKey}
                                 pid={props.searchParams?.pid}
-                                from={props.searchParams?.from ? new Date(Number(props.searchParams?.from) * 1000) : undefined}
-                                until={props.searchParams?.until ? new Date(Number(props.searchParams?.until) * 1000) : undefined}
+                                from={parseUnixSecondsToDate(props.searchParams?.from)}
+                                until={parseUnixSecondsToDate(props.searchParams?.until)}
                             />
                         </Suspense>
                     </div>

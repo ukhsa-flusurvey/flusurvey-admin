@@ -1,6 +1,7 @@
 import { CardDescription } from "@/components/ui/card";
 import { getReportKeys } from "@/lib/data/reports";
 import ReportsToolbarClient from "./ReportsToolbarClient";
+import { parseUnixSecondsToDate } from "@/lib/parse-unix-seconds-to-date";
 
 interface ReportsToolbarProps {
     studyKey: string;
@@ -14,8 +15,9 @@ interface ReportsToolbarProps {
 
 export default async function ReportsToolbar(props: ReportsToolbarProps) {
     const pid = props.searchParams?.pid;
-    const fromDate = props.searchParams?.from ? new Date(Number(props.searchParams?.from) * 1000) : undefined;
-    const untilDate = props.searchParams?.until ? new Date(Number(props.searchParams?.until) * 1000) : undefined;
+
+    const fromDate = parseUnixSecondsToDate(props.searchParams?.from);
+    const untilDate = parseUnixSecondsToDate(props.searchParams?.until);
 
     const reportKeysResp = await getReportKeys(
         props.studyKey,
