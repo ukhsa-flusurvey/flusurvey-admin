@@ -7,6 +7,8 @@ import { Report, getReports } from '@/lib/data/reports';
 import { Check, Copy, Download, Save } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
+import * as Papa from 'papaparse';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface ReportViewerClientProps {
     studyKey: string;
@@ -118,19 +120,56 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
         return null;
     }
 
-    const onDownloadCurrentView = () => {
+    const onDownload = (format: 'csv' | 'json') => {
         startTransition(() => {
-            const blob = new Blob([JSON.stringify({
-                reports: reports,
-            }, undefined, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${props.studyKey}_reports.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const { uniqueDataKeys, flattenedReports } = flattenReports(reports);
+            const dataKeysSorted = Array.from(uniqueDataKeys).sort((a, b) => a.localeCompare(b));
+            const fixedHeaders = ['id', 'key', 'participantID', 'timestamp', 'responseID'];
+            const headers = [...fixedHeaders, ...dataKeysSorted];
+
+            try {
+                if (format === 'csv') {
+                    const rows = flattenedReports.map((r) => {
+                        const base: Record<string, string | number | undefined> = {
+                            id: r.id,
+                            key: r.key,
+                            participantID: r.participantID,
+                            // Use ISO string instead of epoch for CSV
+                            timestamp: new Date(r.timestamp * 1000).toISOString(),
+                            responseID: r.responseID,
+                        };
+                        for (const k of dataKeysSorted) {
+                            base[k] = r[k];
+                        }
+                        return base;
+                    });
+                    const csv = Papa.unparse({ fields: headers, data: rows }, { quotes: false });
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${props.studyKey}_reports.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    return;
+                }
+
+                // JSON export (flattened)
+                const blob = new Blob([JSON.stringify({ reports: flattenedReports }, undefined, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${props.studyKey}_reports.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                console.error(e);
+                toast.error('Failed to download reports');
+            }
         });
     }
 
@@ -279,14 +318,22 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                         </Button>}
 
                         <div className='flex gap-2 items-center max-h-6'>
-                            <Button
-                                variant={'link'}
-                                className='text-xs px-0 h-4'
-                                onClick={onDownloadCurrentView}
-                            >
-                                <Save className='size-3 me-2' />
-                                Download current view
-                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant={'link'}
+                                        className='text-xs px-0 h-4'
+                                    >
+                                        <Save className='size-3 me-2' />
+                                        Download current view
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align='end'>
+                                    <DropdownMenuItem onClick={() => onDownload('csv')}>CSV</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => onDownload('json')}>JSON</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 </div>
