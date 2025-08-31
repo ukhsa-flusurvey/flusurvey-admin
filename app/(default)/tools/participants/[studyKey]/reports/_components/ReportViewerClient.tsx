@@ -148,7 +148,7 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `${props.studyKey}_reports.csv`;
+                    a.download = `${props.studyKey}_${props.reportKey}_reports.csv`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -161,7 +161,7 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${props.studyKey}_reports.json`;
+                a.download = `${props.studyKey}_${props.reportKey}_reports.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
