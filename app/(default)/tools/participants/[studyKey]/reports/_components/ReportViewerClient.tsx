@@ -1,10 +1,10 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Report, getReports } from '@/lib/data/reports';
-import { Download, Save } from 'lucide-react';
+import { Check, Copy, Download, Save } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -29,6 +29,33 @@ interface FlattenedReport {
 }
 
 const dataKeyPrefix = 'data_';
+
+const formatRelativeTime = (unixSeconds: number): string => {
+    const nowMs = Date.now();
+    const thenMs = unixSeconds * 1000;
+    const diff = Math.round((thenMs - nowMs) / 1000); // in seconds, negative if past
+
+    const abs = Math.abs(diff);
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+
+    const divisors: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+        ['year', 60 * 60 * 24 * 365],
+        ['month', 60 * 60 * 24 * 30],
+        ['week', 60 * 60 * 24 * 7],
+        ['day', 60 * 60 * 24],
+        ['hour', 60 * 60],
+        ['minute', 60],
+        ['second', 1],
+    ];
+
+    for (const [unit, seconds] of divisors) {
+        if (abs >= seconds || unit === 'second') {
+            const value = Math.trunc(diff / seconds);
+            return rtf.format(value, unit);
+        }
+    }
+    return rtf.format(0, 'second');
+}
 
 const fixReportColKeys = [
     'id',
@@ -64,7 +91,6 @@ const flattenReports = (reports: Array<Report>): { uniqueDataKeys: Set<string>, 
                     flattenedReport[dataKey] = data.value;
                     break;
             }
-            flattenedReport[dataKey] = data.value;
         }
         flattenedReports.push(flattenedReport);
     }
@@ -77,6 +103,7 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
     const [reports, setReports] = React.useState(props.reports || []);
     const [totalCount, setTotalCount] = React.useState(props.totalCount || 0);
     const [isPending, startTransition] = React.useTransition();
+    const [copiedPID, setCopiedPID] = React.useState<string | null>(null);
 
     const pageSize = props.pageSize || 20;
 
@@ -148,53 +175,87 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
     }
 
     const { uniqueDataKeys, flattenedReports } = flattenReports(reports);
+    const dataKeysSorted = Array.from(uniqueDataKeys).sort((a, b) => a.localeCompare(b));
 
-    console.log('uniqueDataKeys', uniqueDataKeys);
-    console.log('flattenedReports', flattenedReports);
+    const displayLabelForDataKey = (key: string) => key.startsWith(`${dataKeyPrefix}`) ? key.slice(dataKeyPrefix.length) : key;
+
+    const copyParticipantID = async (pid: string) => {
+        try {
+            await navigator.clipboard.writeText(pid);
+            setCopiedPID(pid);
+            toast.success('Participant ID copied');
+            setTimeout(() => setCopiedPID(null), 1500);
+        } catch {
+            toast.error('Failed to copy Participant ID');
+        }
+    }
 
     return (
         <div className='h-full w-full'>
             <div className='overflow-y-scroll h-full pb-6'>
 
-                <ScrollArea className='block  h-full w-full'>
-                    <ul className='p-4 space-y-4 w-full overflow-hidden'>
-                        {
-                            flattenedReports.map((report, i) => {
-                                return (
-                                    <li key={i}
-                                        className='border overflow-hidden border-neutral-300 p-2 rounded-md bg-white space-y-2'
-                                    >
-                                        <div className='flex justify-between'>
-                                            <Badge>
-                                                {report.key}
-                                            </Badge>
-                                            {new Date(report.timestamp * 1000).toLocaleString()}
-                                        </div>
-
-                                        <div className='text-sm'>
-                                            <p className='text-xs'>Participant ID</p>
-                                            <p className='font-mono truncate'>{report.participantID}</p>
-                                        </div>
-
-                                        <div className='flex gap-2 flex-wrap'>
-                                            {Array.from(uniqueDataKeys).map((d, i) => {
-                                                return (
-                                                    <div key={i}
-                                                        className='flex gap-2 rounded-full border border-neutral-300 py-1 px-3 text-xs'
-                                                    >
-                                                        <span>{d}:</span>
-                                                        <span className='font-bold'>{report[d]}</span>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </li>
-                                )
-                            })
-                        }
-                    </ul>
-
-                    <ScrollBar />
+                <ScrollArea className='block h-full w-full'>
+                    <div className='p-4 w-full'>
+                        <Table className='w-max min-w-full'>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className='whitespace-nowrap'>Timestamp</TableHead>
+                                    <TableHead className='whitespace-nowrap'>Participant ID</TableHead>
+                                    <TableHead className='whitespace-nowrap'>Response ID</TableHead>
+                                    {dataKeysSorted.map((key) => (
+                                        <TableHead key={key} className='whitespace-nowrap'>
+                                            {displayLabelForDataKey(key)}
+                                        </TableHead>
+                                    ))}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {flattenedReports.map((report, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell className='whitespace-nowrap py-0'>
+                                            <div className='flex flex-col leading-tight'>
+                                                <div className='text-neutral-900 font-medium'>{formatRelativeTime(report.timestamp)}</div>
+                                                <div className='text-neutral-600 text-xs mt-0.5'>{new Date(report.timestamp * 1000).toLocaleString(
+                                                    undefined, {
+                                                    dateStyle: 'short',
+                                                    timeStyle: 'short',
+                                                }
+                                                )}</div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className='whitespace-nowrap py-0'>
+                                            <div className='flex items-center gap-2'>
+                                                <div className='font-mono max-w-[150px] overflow-x-auto whitespace-nowrap' title={report.participantID}>
+                                                    {report.participantID}
+                                                </div>
+                                                <Button
+                                                    variant={'ghost'}
+                                                    size={'icon'}
+                                                    className='h-6 w-6'
+                                                    onClick={() => copyParticipantID(report.participantID)}
+                                                >
+                                                    {copiedPID === report.participantID ? (
+                                                        <Check className='size-3 text-emerald-600' />
+                                                    ) : (
+                                                        <Copy className='size-3' />
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className='whitespace-nowrap'>
+                                            <span className='font-mono'>{report.responseID}</span>
+                                        </TableCell>
+                                        {dataKeysSorted.map((key) => (
+                                            <TableCell key={key} className='whitespace-nowrap'>
+                                                {String(report[key] ?? '')}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <ScrollBar orientation='horizontal' />
                 </ScrollArea>
 
 

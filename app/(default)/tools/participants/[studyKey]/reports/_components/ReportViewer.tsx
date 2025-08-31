@@ -35,7 +35,6 @@ const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
         )
     }
 
-    console.log('ReportViewer', props.reportKey, props.pid, props.from, props.until);
     const resp = await getReports(
         props.studyKey,
         1,

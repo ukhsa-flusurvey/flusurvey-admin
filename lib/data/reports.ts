@@ -72,8 +72,6 @@ export const getReports = async (
     reports?: Array<Report>
     pagination?: Pagination
 }> => {
-
-    console.log('getReports', studyKey, page, reportKey, participantID, from, until, pageSize);
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };
