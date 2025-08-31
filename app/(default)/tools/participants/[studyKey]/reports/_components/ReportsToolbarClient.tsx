@@ -26,6 +26,9 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
     const [pid, setPid] = React.useState(props.pid || "");
     const [from, setFrom] = React.useState<Date | undefined>(props.fromDate);
     const [until, setUntil] = React.useState<Date | undefined>(props.untilDate);
+    const [fromOpen, setFromOpen] = React.useState(false);
+    const [untilOpen, setUntilOpen] = React.useState(false);
+    const [filtersOpen, setFiltersOpen] = React.useState(false);
 
 
     const selectedReportKey = searchParams.get('reportKey') || undefined;
@@ -71,6 +74,7 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
             from: from ? Math.floor(from.getTime() / 1000).toString() : undefined,
             until: until ? Math.floor(until.getTime() / 1000).toString() : undefined,
         });
+        setFiltersOpen(false);
     };
 
     const onClearFilters = () => {
@@ -78,7 +82,10 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
         setFrom(undefined);
         setUntil(undefined);
         updateQuery({ pid: undefined, from: undefined, until: undefined });
+        setFiltersOpen(false);
     };
+
+    const hasActiveFilters = Boolean(searchParams.get('pid') || searchParams.get('from') || searchParams.get('until'));
 
     return (
         <div className="flex items-center gap-2">
@@ -96,11 +103,14 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                 </SelectContent>
             </Select>
 
-            <Popover>
+            <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="relative">
                         <Filter className="size-4 mr-2" />
                         Filters
+                        {hasActiveFilters && (
+                            <span className="ml-2 inline-block size-2 rounded-full bg-primary" />
+                        )}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80" align="end">
@@ -112,7 +122,7 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                         <div className="grid grid-cols-2 gap-3">
                             <div className="flex flex-col gap-2">
                                 <Label>From</Label>
-                                <Popover>
+                                <Popover open={fromOpen} onOpenChange={setFromOpen}>
                                     <PopoverTrigger asChild>
                                         <Button variant="outline" className="justify-start">
                                             <CalendarDays className="size-4 mr-2" />
@@ -123,7 +133,12 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                         <Calendar
                                             mode="single"
                                             selected={from}
-                                            onSelect={setFrom}
+                                            onSelect={(date) => {
+                                                setFrom(date);
+                                                if (date) {
+                                                    setFromOpen(false);
+                                                }
+                                            }}
                                             initialFocus
                                         />
                                     </PopoverContent>
@@ -131,7 +146,7 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                             </div>
                             <div className="flex flex-col gap-2">
                                 <Label>Until</Label>
-                                <Popover>
+                                <Popover open={untilOpen} onOpenChange={setUntilOpen}>
                                     <PopoverTrigger asChild>
                                         <Button variant="outline" className="justify-start">
                                             <CalendarDays className="size-4 mr-2" />
@@ -142,7 +157,12 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                         <Calendar
                                             mode="single"
                                             selected={until}
-                                            onSelect={setUntil}
+                                            onSelect={(date) => {
+                                                setUntil(date);
+                                                if (date) {
+                                                    setUntilOpen(false);
+                                                }
+                                            }}
                                             initialFocus
                                         />
                                     </PopoverContent>
