@@ -84,10 +84,12 @@ const flattenReports = (reports: Array<Report>): { uniqueDataKeys: Set<string>, 
             switch (data.dtype) {
                 case 'date':
                 case 'float':
-                    flattenedReport[dataKey] = parseFloat(data.value);
+                    const n = Number(data.value);
+                    flattenedReport[dataKey] = Number.isFinite(n) ? n : data.value;
                     break;
                 case 'int':
-                    flattenedReport[dataKey] = parseInt(data.value);
+                    const nInt = parseInt(data.value);
+                    flattenedReport[dataKey] = Number.isFinite(nInt) ? nInt : data.value;
                     break;
                 default:
                     flattenedReport[dataKey] = data.value;
@@ -143,7 +145,7 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
                         }
                         return base;
                     });
-                    const csv = unparse({ fields: headers, data: rows }, { quotes: false });
+                    const csv = unparse({ fields: headers, data: rows });
                     const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
