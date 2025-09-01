@@ -14,8 +14,7 @@ interface ReportViewerProps {
 }
 
 const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
-    const pageSize = 20;
-
+    const pageSize = 100;
 
     if (!props.reportKey) {
         return (
