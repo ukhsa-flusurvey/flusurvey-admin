@@ -85,8 +85,8 @@ const ReportViewer: React.FC<ReportViewerProps> = async (props) => {
             totalCount={pagination?.totalCount || 0}
             reportKey={props.reportKey}
             pid={props.pid}
-            from={props.from}
-            until={props.until}
+            from={props.from ? Math.floor(props.from.getTime() / 1000) : undefined}
+            until={props.until ? Math.floor(props.until.getTime() / 1000) : undefined}
         />
     );
 };

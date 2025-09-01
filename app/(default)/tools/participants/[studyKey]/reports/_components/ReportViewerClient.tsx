@@ -17,8 +17,8 @@ interface ReportViewerClientProps {
     pageSize: number;
     reportKey?: string;
     pid?: string;
-    from?: Date;
-    until?: Date;
+    from?: number;
+    until?: number;
 }
 
 interface FlattenedReport {
@@ -179,13 +179,15 @@ const ReportViewerClient: React.FC<ReportViewerClientProps> = (props) => {
         const page = Math.floor(reports.length / pageSize) + 1;
         startTransition(async () => {
             try {
+                const fromDate = props.from !== undefined ? new Date(props.from * 1000) : undefined;
+                const untilDate = props.until !== undefined ? new Date(props.until * 1000) : undefined;
                 const resp = await getReports(
                     props.studyKey,
                     page,
                     props.reportKey,
                     props.pid,
-                    props.from,
-                    props.until,
+                    fromDate,
+                    untilDate,
                     pageSize,
                 );
                 if (resp.error) {
