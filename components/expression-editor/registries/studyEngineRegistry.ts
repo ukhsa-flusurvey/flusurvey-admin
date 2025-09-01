@@ -562,8 +562,47 @@ const generalStudyActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'RESET_STUDY_COUNTER',
+        categories: ['general-study-actions'],
+        label: 'Reset study counter',
+        returnType: 'action',
+        icon: "refresh-ccw",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'RESET_STUDY_COUNTER',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input']
+                }
+            }
+        }
     }
-
 ]
 
 const participantStateActions: ExpressionDef[] = [
@@ -1252,6 +1291,205 @@ const participantStateActions: ExpressionDef[] = [
         }
     },
     {
+        id: 'GET_NEXT_STUDY_COUNTER_AS_FLAG',
+        categories: ['participant-state-actions'],
+        label: 'Increment and store study counter as flag',
+        returnType: 'action',
+        icon: 'tag',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Prefix (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Padding (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'GET_NEXT_STUDY_COUNTER_AS_FLAG',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input', 'participant-flag-key-selector', 'text-input', 'number-input']
+                }
+            }
+        }
+    },
+    {
+        id: 'GET_NEXT_STUDY_COUNTER_AS_LINKING_CODE',
+        categories: ['participant-state-actions'],
+        label: 'Increment and store study counter as linking code',
+        returnType: 'action',
+        icon: 'link-2',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Store as key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Prefix (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Padding (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'GET_NEXT_STUDY_COUNTER_AS_LINKING_CODE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input', 'linking-code-key-selector', 'text-input', 'number-input']
+                }
+            }
+        }
+    },
+    {
         id: 'EXTERNAL_EVENT_HANDLER',
         label: 'External event handler',
         returnType: 'action',
@@ -1626,6 +1864,80 @@ const advancedExpressions: ExpressionDef[] = [
                     slotTypes: ['linking-code-key-selector']
                 }
             },
+        }
+    },
+    {
+        id: 'getCurrentStudyCounterValue',
+        categories: ['advanced'],
+        label: 'Get current study counter value',
+        returnType: 'num',
+        icon: 'tally-5',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getCurrentStudyCounterValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'getNextStudyCounterValue',
+        categories: ['advanced'],
+        label: 'Increment and get study counter value',
+        returnType: 'num',
+        icon: 'tally-5',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getNextStudyCounterValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
         }
     }
 ]
