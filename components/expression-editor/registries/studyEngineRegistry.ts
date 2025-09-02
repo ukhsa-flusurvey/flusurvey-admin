@@ -3508,7 +3508,7 @@ const participantStateCheckers: ExpressionDef[] = [
         }
     },
     {
-        id: 'getLinkingCode',
+        id: 'getLinkingCodeValue',
         categories: ['participant-state-checkers'],
         label: 'Get linking code',
         returnType: 'str',
@@ -3538,7 +3538,7 @@ const participantStateCheckers: ExpressionDef[] = [
         defaultValue: {
             dtype: 'exp',
             exp: {
-                name: 'getLinkingCode',
+                name: 'getLinkingCodeValue',
                 data: [],
                 metadata: {
                     slotTypes: ['linking-code-key-selector']
