@@ -35,7 +35,7 @@ const PermissionItem: React.FC<{ permission: ManagementUserPermission }> = ({ pe
             <span className='font-mono'>
                 {permission.action}
             </span>
-            <span className='font-mono text-xs pre'>
+            <span className='font-mono text-xs whitespace-pre'>
                 {limiterText}
             </span>
         </div>
@@ -87,7 +87,7 @@ const AssignAppRoleButton: React.FC<AssignAppRoleButtonProps> = (props) => {
                     Assign app role
                 </Button>
             </DialogTrigger>
-            <DialogContent className='sm:max-w-lg'>
+            <DialogContent className='sm:max-w-lg max-h-full overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>Assign app role</DialogTitle>
                     <DialogDescription>
@@ -122,7 +122,7 @@ const AssignAppRoleButton: React.FC<AssignAppRoleButtonProps> = (props) => {
                                 This will add <b>{numPermissions}</b> permission{numPermissions === 1 ? '' : 's'} to the user:
                             </div>
                             <ScrollArea className='h-40 rounded'>
-                                <div className='pr-2 divide-y divide-neutral-200'>
+                                <div className='pr-2 divide-y divide-neutral-400'>
                                     {(selectedTemplate.requiredPermissions || []).map((p) => (
                                         <PermissionItem key={p.id + ':' + p.action} permission={p} />
                                     ))}

@@ -6,7 +6,7 @@ import { FormControl, FormMessage } from "@/components/ui/form";
 
 import { Form, FormItem, FormField, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AppRoleTemplate, ManagementUserPermission } from "@/lib/data/userManagementAPI";
+import { AppRoleTemplate } from "@/lib/data/userManagementAPI";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -60,7 +60,7 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
     });
 
     const onSubmit = async (values: z.infer<typeof baseSchema>) => {
-        const newValues = {
+        const newValues: AppRoleTemplate = {
             appName: values.appName,
             role: values.role,
             requiredPermissions: values.requiredPermissions.map(permission => {
@@ -70,7 +70,7 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
                     action: permission.action,
                     limiter: permission.limiter === "" ? undefined : JSON.parse(permission.limiter),
                 }
-            }) as ManagementUserPermission[],
+            }),
         }
         props.onSubmit(newValues);
     };
@@ -171,10 +171,12 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
                                             {form.getValues(`requiredPermissions.${index}.action`)}
                                         </TableCell>
                                         <TableCell className='text-xs font-mono py-1'>
-                                            {(() => {
-                                                const limiter = form.getValues(`requiredPermissions.${index}.limiter`);
-                                                return limiter ? limiter : '';
-                                            })()}
+                                            <span className='whitespace-pre'>
+                                                {(() => {
+                                                    const limiter = form.getValues(`requiredPermissions.${index}.limiter`);
+                                                    return limiter ? limiter : '';
+                                                })()}
+                                            </span>
                                         </TableCell>
                                         <TableCell className='text-end py-1'>
                                             <Button type='button' variant={'ghost'} size={'icon'} onClick={() => remove(index)}>

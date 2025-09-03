@@ -5,7 +5,7 @@ import AddNewAppRole from './_components/add-new-app-role';
 import AppRolesTemplateList from './_components/app-roles-template-list';
 
 
-const Page = async () => {
+const Page = () => {
     return (
         <div className="space-y-6">
             <TabNav

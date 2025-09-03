@@ -5,9 +5,9 @@ import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 
 export interface ManagementUserPermission {
-    id: string;
-    subjectId: string;
-    subjectType: string;
+    id?: string;
+    subjectId?: string;
+    subjectType?: string;
     resourceType: string;
     resourceKey: string;
     action: string;
