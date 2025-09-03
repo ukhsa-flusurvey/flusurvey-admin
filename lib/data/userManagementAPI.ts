@@ -96,6 +96,93 @@ export const getPermissions = async (userId: string) => {
 }
 
 /*
+ Management user app roles API
+*/
+
+export interface ManagementUserAppRole {
+    id?: string;
+    subjectId?: string;
+    subjectType?: string;
+    appName?: string;
+    role?: string;
+    createdAt?: string;
+}
+
+export interface GetManagementUserAppRolesResponse {
+    error?: string;
+    appRoles?: ManagementUserAppRole[] | null;
+}
+
+export const getManagementUserAppRoles = async (userId: string): Promise<GetManagementUserAppRolesResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch management user's app roles: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as GetManagementUserAppRolesResponse;
+}
+
+export interface DeleteManagementUserAppRoleResponse {
+    message?: string;
+    error?: string;
+}
+
+export const deleteManagementUserAppRole = async (userId: string, appRoleId: string): Promise<DeleteManagementUserAppRoleResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles/${appRoleId}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to delete management user's app role: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as DeleteManagementUserAppRoleResponse;
+}
+
+export interface CreateManagementUserAppRoleFromTemplateResponse {
+    message?: string;
+    error?: string;
+}
+
+export const createManagementUserAppRoleFromTemplate = async (userId: string, appRoleTemplateId: string): Promise<CreateManagementUserAppRoleFromTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles/${appRoleTemplateId}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'POST',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to create management user's app role: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as CreateManagementUserAppRoleFromTemplateResponse;
+}
+
+/*
  App role template API
 */
 
