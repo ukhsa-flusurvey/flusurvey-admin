@@ -22,7 +22,6 @@ const AddNewAppRole = () => {
             const resp = await createAppRoleTemplate(values);
             if (resp.error) {
                 setError(resp.error);
-                console.error(resp.error);
                 return;
             }
             setError(undefined);
