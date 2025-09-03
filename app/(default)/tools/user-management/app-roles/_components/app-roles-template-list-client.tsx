@@ -2,12 +2,13 @@
 
 import React, { useMemo, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Copy as ClipboardIcon, Pencil, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppRoleEditorDialog from './app-role-editor-dialog';
 import { AppRoleTemplate } from '@/lib/data/userManagementAPI';
 import { deleteAppRoleTemplateAction, deleteAppRoleTemplatesForAppAction, updateAppRoleTemplateAction } from '@/actions/user-management/app-role-templates';
+import { createEnvelope } from '@/utils/clipboardEnvelope';
 
 interface AppRolesTemplateListClientProps {
     templates: AppRoleTemplate[];
@@ -70,6 +71,20 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
         });
     };
 
+    const onCopy = async (template: AppRoleTemplate) => {
+        try {
+            const copiedTemplate = {
+                ...template,
+            }
+            delete copiedTemplate.id;
+            const envelope = createEnvelope('app-role-template', copiedTemplate);
+            await navigator.clipboard.writeText(JSON.stringify(envelope, null, 2));
+            toast.success('Copied app role template to clipboard');
+        } catch {
+            toast.error('Failed to copy to clipboard');
+        }
+    };
+
     const onDeleteAll = (appName: string) => {
         if (!confirm(`Delete ALL role templates for ${appName}? This cannot be undone.`)) return;
         startTransition(async () => {
@@ -114,6 +129,9 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
                                     <span className='text-xs text-neutral-600'>({t.requiredPermissions?.length ?? 0} permissions)</span>
                                 </div>
                                 <div className='flex items-center gap-1'>
+                                    <Button type='button' variant={'ghost'} size={'icon'} onClick={() => onCopy(t)} disabled={isPending}>
+                                        <ClipboardIcon className='size-4' />
+                                    </Button>
                                     <Button type='button' variant={'ghost'} size={'icon'} onClick={() => onEdit(t)} disabled={isPending}>
                                         <Pencil className='size-4' />
                                     </Button>

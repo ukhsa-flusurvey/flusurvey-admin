@@ -13,8 +13,11 @@ import { z } from "zod";
 import { permissionSchema } from "../../management-users/[userID]/_components/AddPermissionDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Clipboard, X } from "lucide-react";
 import AddRequiredPermissionDialog, { RequiredPermissionForm } from "./AddRequiredPermissionDialog";
+import { useClipboardValue } from "@/hooks/useClipboardValue";
+import { decodeEnvelope } from "@/utils/clipboardEnvelope";
+import { toast } from "sonner";
 
 
 interface AppRoleEditorFormProps {
@@ -33,6 +36,9 @@ const baseSchema = z.object({
 
 
 const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
+    const [clipboardValue] = useClipboardValue();
+    const clipboardTemplate = clipboardValue ? decodeEnvelope<'app-role-template', AppRoleTemplate>(clipboardValue, 'app-role-template') : null;
+
     const form = useForm<z.infer<typeof baseSchema>>({
         resolver: zodResolver(baseSchema),
         defaultValues: {
@@ -69,9 +75,32 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
         props.onSubmit(newValues);
     };
 
+    const pasteFromClipboard = () => {
+        if (!clipboardTemplate) return;
+        form.reset({
+            appName: clipboardTemplate.appName ?? '',
+            role: clipboardTemplate.role ?? '',
+            requiredPermissions: (clipboardTemplate.requiredPermissions ?? []).map((p) => ({
+                subjectId: 'template',
+                resourceType: p.resourceType as RequiredPermissionForm['resourceType'],
+                resourceId: p.resourceKey,
+                action: p.action,
+                limiter: p.limiter ? JSON.stringify(p.limiter) : "",
+            } satisfies RequiredPermissionForm)),
+        });
+        toast.success('Pasted app role template from clipboard');
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+                {!props.initialValue && clipboardTemplate && (
+                    <div className='flex justify-end'>
+                        <Button type='button' variant='secondary' size='sm' onClick={pasteFromClipboard}>
+                            <Clipboard className='size-4 me-2' /> Paste from clipboard
+                        </Button>
+                    </div>
+                )}
                 <div className='grid gap-4 md:grid-cols-2'>
                     <FormField
                         control={form.control}
