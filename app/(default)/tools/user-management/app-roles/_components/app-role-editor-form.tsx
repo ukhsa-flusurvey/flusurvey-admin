@@ -103,7 +103,9 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
 
                 <div className='space-y-3'>
                     <div>
-                        <h3 className='font-medium'>Required permissions</h3>
+                        <h3 className='font-medium'>Required permissions
+                            <span className='ms-1 text-neutral-600'>({fields.length})</span>
+                        </h3>
                         <p className='text-xs text-neutral-600'>
                             When adding this role to a user, they will be granted all the permissions listed here.
                         </p>
@@ -126,24 +128,26 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
                             <TableBody>
                                 {fields.map((field, index) => (
                                     <TableRow key={field.id}>
-                                        <TableCell>
-                                            <Badge variant={'outline'}>
-                                                {form.getValues(`requiredPermissions.${index}.resourceType`)}
-                                            </Badge>
-                                            <p className='font-bold px-3 mt-1'>
-                                                {form.getValues(`requiredPermissions.${index}.resourceId`)}
-                                            </p>
+                                        <TableCell className="py-1">
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant={'outline'}>
+                                                    {form.getValues(`requiredPermissions.${index}.resourceType`)}
+                                                </Badge>
+                                                <p className='font-bold'>
+                                                    {form.getValues(`requiredPermissions.${index}.resourceId`)}
+                                                </p>
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="py-1">
                                             {form.getValues(`requiredPermissions.${index}.action`)}
                                         </TableCell>
-                                        <TableCell className='text-xs font-mono'>
+                                        <TableCell className='text-xs font-mono py-1'>
                                             {(() => {
                                                 const limiter = form.getValues(`requiredPermissions.${index}.limiter`);
                                                 return limiter ? limiter : '';
                                             })()}
                                         </TableCell>
-                                        <TableCell className='text-end'>
+                                        <TableCell className='text-end py-1'>
                                             <Button type='button' variant={'ghost'} size={'icon'} onClick={() => remove(index)}>
                                                 <X className='size-4' />
                                             </Button>

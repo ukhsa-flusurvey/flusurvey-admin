@@ -19,7 +19,7 @@ interface AppRoleEditorDialogProps {
 const AppRoleEditorDialog: React.FC<AppRoleEditorDialogProps> = (props) => {
     return (
         <Dialog open={props.isOpen} onOpenChange={props.onClose}>
-            <DialogContent>
+            <DialogContent className='max-w-3xl max-h-full overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>{props.title}</DialogTitle>
                     <DialogDescription>{props.description}</DialogDescription>
