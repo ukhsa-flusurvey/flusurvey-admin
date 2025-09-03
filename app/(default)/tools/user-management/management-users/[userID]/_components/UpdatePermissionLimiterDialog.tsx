@@ -52,6 +52,10 @@ const UpdatePermissionLimiterDialog: React.FC<UpdatePermissionLimiterDialogProps
     function onSubmit(values: z.infer<typeof formSchema>) {
         setError(undefined)
         startTransition(async () => {
+            if (!props.permission.id) {
+                toast.error('Permission ID not defined but is required');
+                return;
+            }
             const resp = await updatePermissionLimiterForManagementUser(
                 props.userID,
                 props.permission.id,

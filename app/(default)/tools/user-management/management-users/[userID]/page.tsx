@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import UserDetails, { UserDetailsSkeleton } from "./_components/UserDetails";
 import Permissions, { PermissionsSkeleton } from "./_components/Permissions";
+import UsersAppRoles, { UsersAppRolesSkeleton } from "./_components/UsersAppRoles";
 import DeleteUserCard from "./_components/DeleteUserCard";
 
 
@@ -52,6 +53,14 @@ export default function Page({
                 fallback={<PermissionsSkeleton />}
             >
                 <Permissions
+                    userId={userID}
+                />
+            </Suspense>
+
+            <Suspense
+                fallback={<UsersAppRolesSkeleton />}
+            >
+                <UsersAppRoles
                     userId={userID}
                 />
             </Suspense>

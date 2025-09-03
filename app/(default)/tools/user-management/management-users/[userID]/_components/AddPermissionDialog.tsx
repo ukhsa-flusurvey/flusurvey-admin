@@ -19,7 +19,7 @@ import { createPermissionForServiceAccount } from '@/lib/data/service-accounts';
 
 
 
-interface ResourcePermission {
+export interface ResourcePermission {
     actions: {
         [key: string]: {
             hideLimiter?: boolean;
@@ -28,7 +28,7 @@ interface ResourcePermission {
     };
 };
 
-interface PermissionInfos {
+export interface PermissionInfos {
     [key: string]: {
         resources: {
             [key: string]: ResourcePermission

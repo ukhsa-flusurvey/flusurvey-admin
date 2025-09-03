@@ -23,6 +23,10 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
     const handleOnDelete = () => {
         if (confirm('Are you sure you want to delete this permission?')) {
             startTransition(async () => {
+                if (!props.permission.id) {
+                    toast.error('Permission ID not defined but is required');
+                    return;
+                }
                 if (props.userType === 'service-account') {
                     const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
                     if (resp.error) {
