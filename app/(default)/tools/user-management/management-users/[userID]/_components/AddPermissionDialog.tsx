@@ -19,7 +19,7 @@ import { createPermissionForServiceAccount } from '@/lib/data/service-accounts';
 
 
 
-interface ResourcePermission {
+export interface ResourcePermission {
     actions: {
         [key: string]: {
             hideLimiter?: boolean;
@@ -28,7 +28,7 @@ interface ResourcePermission {
     };
 };
 
-interface PermissionInfos {
+export interface PermissionInfos {
     [key: string]: {
         resources: {
             [key: string]: ResourcePermission
@@ -80,6 +80,7 @@ export const permissionInfos: PermissionInfos = {
                     "update-study-props": { hideLimiter: true },
                     "update-study-status": { hideLimiter: true },
                     "manage-study-code-lists": { hideLimiter: true },
+                    "manage-study-counters": { hideLimiter: true },
                     "delete-study": { hideLimiter: true },
                     "create-survey": { hideLimiter: true },
                     "update-survey": {
