@@ -72,13 +72,23 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
         });
     };
 
+    const buildAppRoleTemplateEnvelope = (template: AppRoleTemplate) => {
+        const cleaned: AppRoleTemplate = {
+            appName: template.appName,
+            role: template.role,
+            requiredPermissions: (template.requiredPermissions ?? []).map((p) => ({
+                resourceType: p.resourceType,
+                resourceKey: p.resourceKey,
+                action: p.action,
+                ...(p.limiter ? { limiter: p.limiter } : {}),
+            })),
+        };
+        return createEnvelope('app-role-template', cleaned);
+    };
+
     const onCopy = async (template: AppRoleTemplate) => {
         try {
-            const copiedTemplate = {
-                ...template,
-            }
-            delete copiedTemplate.id;
-            const envelope = createEnvelope('app-role-template', copiedTemplate);
+            const envelope = buildAppRoleTemplateEnvelope(template);
             await navigator.clipboard.writeText(JSON.stringify(envelope, null, 2));
             toast.success('Copied app role template to clipboard');
         } catch {
@@ -87,26 +97,42 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
     };
 
     const onDownload = async (template: AppRoleTemplate) => {
+        let url: string | undefined;
+        let anchor: HTMLAnchorElement | undefined;
         try {
-            const copiedTemplate = {
-                ...template,
-            }
-            delete copiedTemplate.id;
-            const envelope = createEnvelope('app-role-template', copiedTemplate);
+            const envelope = buildAppRoleTemplateEnvelope(template);
             const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const sanitize = (s: string) => s.replace(/[^a-z0-9-_]+/gi, '-');
-            const fileName = `${sanitize(template.appName || 'app')}-${sanitize(template.role || 'role')}.json`;
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
+            url = URL.createObjectURL(blob);
+            anchor = document.createElement('a');
+            const sanitizeSegment = (s: string, maxLen = 50) => {
+                const base = (s || '').toString();
+                const cleanedSeg = base
+                    .replace(/[^a-z0-9-_]+/gi, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                const truncated = cleanedSeg.slice(0, maxLen);
+                return truncated || 'item';
+            };
+            const appSeg = sanitizeSegment(template.appName || 'app');
+            const roleSeg = sanitizeSegment(template.role || 'role');
+            const fileName = `app-role-template-${appSeg}-${roleSeg}.json`;
+            anchor.href = url;
+            anchor.download = fileName;
+            document.body.appendChild(anchor);
+            anchor.click();
             toast.success('Downloaded app role template');
         } catch {
             toast.error('Failed to download file');
+        } finally {
+            try {
+                if (anchor && anchor.parentNode) {
+                    anchor.remove();
+                }
+            } finally {
+                if (url) {
+                    URL.revokeObjectURL(url);
+                }
+            }
         }
     };
 
