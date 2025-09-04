@@ -17,7 +17,7 @@ export const createEnvelope = <TType extends string, TData>(type: TType, data: T
 export const isEnvelope = (value: unknown): value is ClipboardEnvelope<string, unknown> => {
     if (!value || typeof value !== 'object') return false;
     const v = value as Record<string, unknown>;
-    return v.__caseClipboard === true && typeof v.type === 'string' && v.version === 1 && 'data' in v;
+    return typeof v.type === 'string' && v.version === 1 && 'data' in v;
 };
 
 export const decodeEnvelope = <TType extends string, TData>(text: string, expectedType: TType): TData | null => {
