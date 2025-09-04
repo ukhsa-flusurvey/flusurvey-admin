@@ -1,5 +1,5 @@
 export type ClipboardEnvelope<TType extends string, TData> = {
-    __caseClipboard: true;
+    createdAt: string;
     type: TType;
     version: 1;
     data: TData;
@@ -7,7 +7,7 @@ export type ClipboardEnvelope<TType extends string, TData> = {
 
 export const createEnvelope = <TType extends string, TData>(type: TType, data: TData): ClipboardEnvelope<TType, TData> => {
     return {
-        __caseClipboard: true,
+        createdAt: new Date().toISOString(),
         type,
         version: 1,
         data,
