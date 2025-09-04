@@ -186,35 +186,39 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     function onSubmit(values: z.infer<typeof permissionSchema>) {
         setError(undefined)
         startTransition(async () => {
-            if (props.userType === 'service-account') {
-                const resp = await createPermissionForServiceAccount(
-                    props.userId,
-                    values.resourceType,
-                    values.resourceId,
-                    values.action,
-                    values.limiter === "" ? undefined : JSON.parse(values.limiter),
-                )
-                if (resp.error) {
-                    setError(resp.error)
-                    return
-                }
-                toast.success('Permission added successfully');
-                dialogCloseRef.current?.click();
-                return;
-            } else {
-                const resp = await createPermissionForManagementUser(
-                    props.userId,
-                    values.resourceType,
-                    values.resourceId,
-                    values.action,
-                    values.limiter === "" ? undefined : JSON.parse(values.limiter),
-                )
-                if (resp.error) {
-                    setError(resp.error)
-                    return
-                }
+            try {
+                if (props.userType === 'service-account') {
+                    const resp = await createPermissionForServiceAccount(
+                        props.userId,
+                        values.resourceType,
+                        values.resourceId,
+                        values.action,
+                        values.limiter === "" ? undefined : JSON.parse(values.limiter),
+                    )
+                    if (resp.error) {
+                        setError(resp.error)
+                        return
+                    }
+                    toast.success('Permission added successfully');
+                    dialogCloseRef.current?.click();
+                    return;
+                } else {
+                    const resp = await createPermissionForManagementUser(
+                        props.userId,
+                        values.resourceType,
+                        values.resourceId,
+                        values.action,
+                        values.limiter === "" ? undefined : JSON.parse(values.limiter),
+                    )
+                    if (resp.error) {
+                        setError(resp.error)
+                        return
+                    }
 
-                toast('Permission added')
+                    toast('Permission added')
+                }
+            } catch (error: unknown) {
+                toast.error('Failed to add permission', { description: (error as Error).message });
             }
 
             if (dialogCloseRef.current) {

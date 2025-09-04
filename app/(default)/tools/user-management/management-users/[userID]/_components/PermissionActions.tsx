@@ -27,21 +27,25 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
                     toast.error('Permission ID not defined but is required');
                     return;
                 }
-                if (props.userType === 'service-account') {
-                    const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
-                    if (resp.error) {
-                        toast.error(resp.error);
+                try {
+                    if (props.userType === 'service-account') {
+                        const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            return;
+                        }
+                        toast.success('Permission deleted');
                         return;
+                    } else {
+                        const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            return;
+                        }
+                        toast.success('Permission deleted');
                     }
-                    toast.success('Permission deleted');
-                    return;
-                } else {
-                    const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
-                    if (resp.error) {
-                        toast.error(resp.error);
-                        return;
-                    }
-                    toast.success('Permission deleted');
+                } catch (error: unknown) {
+                    toast.error('Failed to delete permission', { description: (error as Error).message });
                 }
             });
         }
