@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import React from 'react';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 interface IsDefaultStudyToggleProps {
@@ -31,7 +32,7 @@ const IsDefaultStudyToggle: React.FC<IsDefaultStudyToggleProps> = (props) => {
                             }
                             toast.success('Study updated');
                         } catch (error: unknown) {
-                            toast.error('An error occurred', { description: (error as Error).message });
+                            toast.error('An error occurred', { description: getErrorMessage(error) });
                         }
                     });
                 }}

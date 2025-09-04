@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { addStudyPermission } from '@/actions/study/permissions';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 interface AddStudyPermissionsProps {
@@ -79,7 +80,7 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                 form.reset()
                 setEditorOpen(false)
             } catch (error: unknown) {
-                toast.error('Failed to add permission', { description: (error as Error).message });
+                toast.error('Failed to add permission', { description: getErrorMessage(error) });
             }
         });
     }

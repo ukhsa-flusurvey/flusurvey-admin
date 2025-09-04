@@ -6,6 +6,7 @@ import { Trash2 } from 'lucide-react';
 import React from 'react';
 import { BeatLoader } from 'react-spinners';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface NotificationSubsListProps {
     studyKey: string;
@@ -35,7 +36,7 @@ const NotificationSubsList: React.FC<NotificationSubsListProps> = (props) => {
                 }
                 toast.success('Subscription removed');
             } catch (error: unknown) {
-                toast.error('Failed to remove subscription', { description: (error as Error).message });
+                toast.error('Failed to remove subscription', { description: getErrorMessage(error) });
             }
         });
 

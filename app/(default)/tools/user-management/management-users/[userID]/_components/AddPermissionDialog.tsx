@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { createPermissionForManagementUser } from '@/actions/user-management/permissions';
 import { toast } from 'sonner';
 import { createPermissionForServiceAccount } from '@/lib/data/service-accounts';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 
@@ -218,7 +219,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
                     toast('Permission added')
                 }
             } catch (error: unknown) {
-                toast.error('Failed to add permission', { description: (error as Error).message });
+                toast.error('Failed to add permission', { description: getErrorMessage(error) });
             }
 
             if (dialogCloseRef.current) {

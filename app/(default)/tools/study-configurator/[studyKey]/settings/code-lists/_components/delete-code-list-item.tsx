@@ -5,6 +5,7 @@ import LoadingButton from '@/components/loading-button';
 import { XIcon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface DeleteCodeListItemProps {
     studyKey: string;
@@ -28,7 +29,7 @@ const DeleteCodeListItem: React.FC<DeleteCodeListItemProps> = (props) => {
                 }
                 toast.success('Code list entry deleted');
             } catch (error: unknown) {
-                toast.error('Failed to delete code list entry', { description: (error as Error).message });
+                toast.error('Failed to delete code list entry', { description: getErrorMessage(error) });
             }
         });
     }

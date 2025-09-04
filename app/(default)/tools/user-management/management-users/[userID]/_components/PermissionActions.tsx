@@ -10,6 +10,7 @@ import UpdatePermissionLimiterDialog from './UpdatePermissionLimiterDialog';
 import { getIfHideLimiter } from './AddPermissionDialog';
 import { ManagementUserPermission } from '@/lib/data/userManagementAPI';
 import { deletePermissionForServiceAccount } from '@/lib/data/service-accounts';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface PermissionActionsProps {
     userId: string;
@@ -45,7 +46,7 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
                         toast.success('Permission deleted');
                     }
                 } catch (error: unknown) {
-                    toast.error('Failed to delete permission', { description: (error as Error).message });
+                    toast.error('Failed to delete permission', { description: getErrorMessage(error) });
                 }
             });
         }

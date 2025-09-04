@@ -19,6 +19,7 @@ import { Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 const dateToInputStr = (date: Date) => {
@@ -76,7 +77,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                 router.replace('/tools/messaging/schedules');
             } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: (error as Error).message });
+                toast.error('Something went wrong', { description: getErrorMessage(error) });
             }
 
         })
@@ -93,7 +94,7 @@ const ScheduleEditor: React.FC<ScheduleEditorProps> = (props) => {
                     router.replace('/tools/messaging/schedules');
                 } catch (error: unknown) {
                     console.error(error);
-                    toast.error('Something went wrong', { description: (error as Error).message });
+                    toast.error('Something went wrong', { description: getErrorMessage(error) });
                 }
             })
         }
