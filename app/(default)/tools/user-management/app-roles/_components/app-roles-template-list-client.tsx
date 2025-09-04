@@ -2,13 +2,14 @@
 
 import React, { useMemo, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy as ClipboardIcon, Pencil, Trash2 } from 'lucide-react';
+import { Copy as ClipboardIcon, Pencil, Trash2, Download, MoreVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppRoleEditorDialog from './app-role-editor-dialog';
 import { AppRoleTemplate } from '@/lib/data/userManagementAPI';
 import { deleteAppRoleTemplateAction, deleteAppRoleTemplatesForAppAction, updateAppRoleTemplateAction } from '@/actions/user-management/app-role-templates';
 import { createEnvelope } from '@/utils/clipboardEnvelope';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface AppRolesTemplateListClientProps {
     templates: AppRoleTemplate[];
@@ -71,17 +72,67 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
         });
     };
 
+    const buildAppRoleTemplateEnvelope = (template: AppRoleTemplate) => {
+        const cleaned: AppRoleTemplate = {
+            appName: template.appName,
+            role: template.role,
+            requiredPermissions: (template.requiredPermissions ?? []).map((p) => ({
+                resourceType: p.resourceType,
+                resourceKey: p.resourceKey,
+                action: p.action,
+                ...(p.limiter ? { limiter: p.limiter } : {}),
+            })),
+        };
+        return createEnvelope('app-role-template', cleaned);
+    };
+
     const onCopy = async (template: AppRoleTemplate) => {
         try {
-            const copiedTemplate = {
-                ...template,
-            }
-            delete copiedTemplate.id;
-            const envelope = createEnvelope('app-role-template', copiedTemplate);
+            const envelope = buildAppRoleTemplateEnvelope(template);
             await navigator.clipboard.writeText(JSON.stringify(envelope, null, 2));
             toast.success('Copied app role template to clipboard');
         } catch {
             toast.error('Failed to copy to clipboard');
+        }
+    };
+
+    const onDownload = async (template: AppRoleTemplate) => {
+        let url: string | undefined;
+        let anchor: HTMLAnchorElement | undefined;
+        try {
+            const envelope = buildAppRoleTemplateEnvelope(template);
+            const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
+            url = URL.createObjectURL(blob);
+            anchor = document.createElement('a');
+            const sanitizeSegment = (s: string, maxLen = 50) => {
+                const base = (s || '').toString();
+                const cleanedSeg = base
+                    .replace(/[^a-z0-9-_]+/gi, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                const truncated = cleanedSeg.slice(0, maxLen);
+                return truncated || 'item';
+            };
+            const appSeg = sanitizeSegment(template.appName || 'app');
+            const roleSeg = sanitizeSegment(template.role || 'role');
+            const fileName = `app-role-template-${appSeg}-${roleSeg}.json`;
+            anchor.href = url;
+            anchor.download = fileName;
+            document.body.appendChild(anchor);
+            anchor.click();
+            toast.success('Downloaded app role template');
+        } catch {
+            toast.error('Failed to download file');
+        } finally {
+            try {
+                if (anchor && anchor.parentNode) {
+                    anchor.remove();
+                }
+            } finally {
+                if (url) {
+                    URL.revokeObjectURL(url);
+                }
+            }
         }
     };
 
@@ -129,15 +180,35 @@ const AppRolesTemplateListClient: React.FC<AppRolesTemplateListClientProps> = (p
                                     <span className='text-xs text-neutral-600'>({t.requiredPermissions?.length ?? 0} permissions)</span>
                                 </div>
                                 <div className='flex items-center gap-1'>
-                                    <Button type='button' variant={'ghost'} size={'icon'} onClick={() => onCopy(t)} disabled={isPending}>
-                                        <ClipboardIcon className='size-4' />
-                                    </Button>
-                                    <Button type='button' variant={'ghost'} size={'icon'} onClick={() => onEdit(t)} disabled={isPending}>
-                                        <Pencil className='size-4' />
-                                    </Button>
-                                    <Button type='button' variant={'ghost'} size={'icon'} onClick={() => onDelete(t)} disabled={isPending}>
-                                        <Trash2 className='size-4 text-red-600' />
-                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button type='button' variant={'ghost'} size={'icon'} disabled={isPending}>
+                                                <MoreVertical className='size-4' />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align='end'>
+                                            <DropdownMenuItem onClick={() => onCopy(t)}>
+                                                <ClipboardIcon className='mr-2 size-4' />
+                                                Copy
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => onDownload(t)}>
+                                                <Download className='mr-2 size-4' />
+                                                Download JSON
+                                            </DropdownMenuItem>
+
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => onEdit(t)}>
+                                                <Pencil className='mr-2 size-4' />
+                                                Edit
+                                            </DropdownMenuItem>
+
+                                            <DropdownMenuItem onClick={() => onDelete(t)}>
+                                                <Trash2 className='mr-2 size-4 text-red-600' />
+                                                Delete
+                                            </DropdownMenuItem>
+
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             </li>
                         ))}

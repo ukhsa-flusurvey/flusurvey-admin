@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import LoadingButton from '@/components/loading-button';
 import { Button } from '@/components/ui/button';
 import { saveStudyNotifications } from '@/actions/study/saveStudyNotifications';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface NewNotificationSubDialogProps {
     trigger: React.ReactNode;
@@ -59,7 +60,7 @@ const NewNotificationSubDialog: React.FC<NewNotificationSubDialogProps> = (props
                 form.reset();
                 closeBtnRef.current?.click();
             } catch (error: unknown) {
-                toast.error('Failed to add subscription', { description: (error as Error).message });
+                toast.error('Failed to add subscription', { description: getErrorMessage(error) });
             }
         });
 

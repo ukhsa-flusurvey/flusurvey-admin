@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { runStudyActionOnPreviousResponses, runStudyActionOnPreviousResponsesForAllParticipants } from '@/actions/study/runStudyActions';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface StartStudyActionOnPreviousResponsesProps {
     studyKey: string;
@@ -47,7 +48,7 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                 }
                 toast.success('Action performed successfully');
             } catch (error: unknown) {
-                toast.error('Failed to start action', { description: (error as Error).message });
+                toast.error('Failed to start action', { description: getErrorMessage(error) });
             }
         });
     }
@@ -69,7 +70,7 @@ const StartStudyActionOnPreviousResponses: React.FC<StartStudyActionOnPreviousRe
                 toast.success('Action started successfully');
                 router.push(`/tools/participants/${props.studyKey}/actions/on-responses/${resp.task.id}`);
             } catch (error: unknown) {
-                toast.error('Failed to start action', { description: (error as Error).message });
+                toast.error('Failed to start action', { description: getErrorMessage(error) });
             }
         });
     }

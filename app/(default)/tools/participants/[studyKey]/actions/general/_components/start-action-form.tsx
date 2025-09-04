@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { runStudyActionForAllParticipants, runStudyActionForParticipant } from '@/actions/study/runStudyActions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface StartActionFormProps {
     studyKey: string;
@@ -37,7 +38,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                 }
                 toast.success('Action performed successfully');
             } catch (error: unknown) {
-                toast.error('Failed to start action', { description: (error as Error).message });
+                toast.error('Failed to start action', { description: getErrorMessage(error) });
             }
         });
     }
@@ -56,7 +57,7 @@ const StartActionForm: React.FC<StartActionFormProps> = (props) => {
                 toast.success('Action started successfully');
                 router.push(`/tools/participants/${props.studyKey}/actions/general/${resp.task.id}`);
             } catch (error: unknown) {
-                toast.error('Failed to start action', { description: (error as Error).message });
+                toast.error('Failed to start action', { description: getErrorMessage(error) });
             }
         });
     }

@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { addStudyCodeListEntries } from '@/actions/study/studyCodeListEntries';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface AddCodeListEntriesProps {
     studyKey: string;
@@ -45,7 +46,7 @@ const AddCodeListEntries: React.FC<AddCodeListEntriesProps> = (props) => {
 
                 toast.success('Request finished with errors');
             } catch (error: unknown) {
-                toast.error('Failed to add codes', { description: (error as Error).message });
+                toast.error('Failed to add codes', { description: getErrorMessage(error) });
             }
         });
     }
