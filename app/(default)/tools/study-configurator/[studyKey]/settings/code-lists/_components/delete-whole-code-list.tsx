@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreVerticalIcon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface DeleteWholeCodeListProps {
     studyKey: string;
@@ -27,7 +28,7 @@ const DeleteWholeCodeList: React.FC<DeleteWholeCodeListProps> = (props) => {
                 }
                 toast.success('Code list deleted');
             } catch (error: unknown) {
-                toast.error('Failed to delete code list ', { description: (error as Error).message });
+                toast.error('Failed to delete code list ', { description: getErrorMessage(error) });
             }
         });
     }

@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { CircleAlertIcon, CircleCheck, Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { Expression } from 'survey-engine/data_types';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface TaskRunnerProps {
     messageType: string;
@@ -35,7 +36,7 @@ const TaskRunner: React.FC<TaskRunnerProps> = (props) => {
                     return;
                 }
             } catch (error: unknown) {
-                setError((error as Error).message);
+                setError(getErrorMessage(error));
             }
         });
     }, [props.participantID, props.rules, props.studyKey, hasStarted])

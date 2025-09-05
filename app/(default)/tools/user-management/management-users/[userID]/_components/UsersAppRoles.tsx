@@ -66,23 +66,16 @@ const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
     const assignedKeys = new Set(appRoles.map(r => `${r.appName}:${r.role}`));
     const unassignedTemplates = templates.filter(t => !assignedKeys.has(`${t.appName}:${t.role}`));
 
-    if (appRoles.length === 0) {
-        return (
-            <CardWrapper>
+    const renderAssignedAppRoles = () => {
+        if (appRoles.length === 0) {
+            return (
                 <div className='py-3 text-center bg-n-100 rounded-md text-neutral-600'>
                     <h3 className='font-bold'>No app roles assigned</h3>
                 </div>
-                <div className='flex justify-end mt-3'>
-                    {unassignedTemplates.length > 0 && (
-                        <AssignAppRoleButton userId={props.userId} templates={unassignedTemplates} />
-                    )}
-                </div>
-            </CardWrapper>
-        );
-    }
+            );
+        }
 
-    return (
-        <CardWrapper>
+        return (
             <Table className='bg-white rounded-lg overflow-hidden'>
                 <TableHeader>
                     <TableRow className='bg-slate-50'>
@@ -132,6 +125,12 @@ const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
                     ))}
                 </TableBody>
             </Table>
+        )
+    }
+
+    return (
+        <CardWrapper>
+            {renderAssignedAppRoles()}
 
             <div className='flex justify-start mt-6'>
                 {unassignedTemplates.length > 0 && (

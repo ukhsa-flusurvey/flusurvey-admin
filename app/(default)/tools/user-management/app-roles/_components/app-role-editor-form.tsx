@@ -13,11 +13,12 @@ import { z } from "zod";
 import { permissionSchema } from "../../management-users/[userID]/_components/AddPermissionDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Clipboard, X } from "lucide-react";
+import { Clipboard, Upload, X } from "lucide-react";
 import AddRequiredPermissionDialog, { RequiredPermissionForm } from "./AddRequiredPermissionDialog";
 import { useClipboardValue } from "@/hooks/useClipboardValue";
 import { decodeEnvelope } from "@/utils/clipboardEnvelope";
 import { toast } from "sonner";
+import { useRef } from "react";
 
 
 interface AppRoleEditorFormProps {
@@ -37,6 +38,7 @@ const baseSchema = z.object({
 
 const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
     const [clipboardValue] = useClipboardValue();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const clipboardTemplate = clipboardValue ? decodeEnvelope<'app-role-template', AppRoleTemplate>(clipboardValue, 'app-role-template') : null;
 
     const form = useForm<z.infer<typeof baseSchema>>({
@@ -91,13 +93,57 @@ const AppRoleEditorForm = (props: AppRoleEditorFormProps) => {
         toast.success('Pasted app role template from clipboard');
     };
 
+    const onUploadClick = () => fileInputRef.current?.click();
+
+    const onFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            const text = await file.text();
+            const decoded = decodeEnvelope<'app-role-template', AppRoleTemplate>(text, 'app-role-template');
+            if (!decoded) {
+                toast.error('Selected file is not a valid app role template');
+                return;
+            }
+            form.reset({
+                appName: decoded.appName ?? '',
+                role: decoded.role ?? '',
+                requiredPermissions: (decoded.requiredPermissions ?? []).map((p) => ({
+                    subjectId: 'template',
+                    resourceType: p.resourceType as RequiredPermissionForm['resourceType'],
+                    resourceId: p.resourceKey,
+                    action: p.action,
+                    limiter: p.limiter ? JSON.stringify(p.limiter) : "",
+                } satisfies RequiredPermissionForm)),
+            });
+            toast.success('Populated form from uploaded file');
+        } catch {
+            toast.error('Failed to read or parse file');
+        } finally {
+            // allow re-selecting the same file
+            if (e.target) e.target.value = '';
+        }
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-                {!props.initialValue && clipboardTemplate && (
-                    <div className='flex justify-end'>
-                        <Button type='button' variant='secondary' size='sm' onClick={pasteFromClipboard}>
-                            <Clipboard className='size-4 me-2' /> Paste from clipboard
+                {!props.initialValue && (
+                    <div className='flex justify-end gap-2'>
+                        {clipboardTemplate && (
+                            <Button type='button' variant='secondary' size='sm' onClick={pasteFromClipboard}>
+                                <Clipboard className='size-4 me-2' /> Paste from clipboard
+                            </Button>
+                        )}
+                        <input
+                            ref={fileInputRef}
+                            type='file'
+                            accept='application/json,.json'
+                            className='hidden'
+                            onChange={onFileSelected}
+                        />
+                        <Button type='button' variant='secondary' size='sm' onClick={onUploadClick}>
+                            <Upload className='size-4 me-2' /> Upload JSON
                         </Button>
                     </div>
                 )}

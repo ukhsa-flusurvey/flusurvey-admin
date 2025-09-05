@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { BeatLoader } from 'react-spinners';
 import { deleteAppRoleForManagementUserAction } from '@/actions/user-management/app-roles';
 import { useRouter } from 'next/navigation';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface UsersAppRoleActionsProps {
     userId: string;
@@ -29,7 +30,7 @@ const UsersAppRoleActions: React.FC<UsersAppRoleActionsProps> = (props) => {
                     toast.success('App role removed');
                     router.refresh();
                 } catch (error: unknown) {
-                    toast.error('Failed to remove app role', { description: (error as Error).message });
+                    toast.error('Failed to remove app role', { description: getErrorMessage(error) });
                 }
             });
         }
