@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 interface AssignAppRoleButtonProps {
     userId: string;
     templates: Array<AppRoleTemplate>;
+    disabled?: boolean;
 }
 
 const PermissionItem: React.FC<{ permission: ManagementUserPermission }> = ({ permission }) => {
@@ -82,6 +83,7 @@ const AssignAppRoleButton: React.FC<AssignAppRoleButtonProps> = (props) => {
             <DialogTrigger asChild>
                 <Button
                     variant={'outline'}
+                    disabled={props.disabled}
                 >
                     <Plus className='size-4 me-2' />
                     Assign app role

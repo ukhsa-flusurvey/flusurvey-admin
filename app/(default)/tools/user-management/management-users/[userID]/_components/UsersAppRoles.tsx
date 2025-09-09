@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { HelpCircle } from 'lucide-react';
+import { ArrowRight, HelpCircle } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { getAppRoleTemplates, getManagementUserAppRoles, ManagementUserAppRole } from '@/lib/data/userManagementAPI';
 import UsersAppRoleActions from './UsersAppRoleActions';
 import AssignAppRoleButton from './AssignAppRoleButton';
+import { Button } from '@/components/ui/button';
 
 interface UsersAppRolesProps {
     userId: string;
@@ -132,9 +134,25 @@ const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
         <CardWrapper>
             {renderAssignedAppRoles()}
 
-            <div className='flex justify-start mt-6'>
-                {unassignedTemplates.length > 0 && (
-                    <AssignAppRoleButton userId={props.userId} templates={unassignedTemplates} />
+            <div className='flex justify-start mt-6 items-center gap-2'>
+                <AssignAppRoleButton userId={props.userId} templates={unassignedTemplates}
+                    disabled={unassignedTemplates.length === 0}
+                />
+                {unassignedTemplates.length === 0 && (
+                    <div className='text-sm text-muted-foreground'>
+
+                        <span>No further app roles available to assign.</span>
+                        <Button
+                            variant={'link'}
+                            asChild
+                        >
+                            <Link href={`/tools/user-management/app-roles`}>
+                                Manage app role templates
+                                <ArrowRight className='size-4' />
+                            </Link>
+                        </Button>
+
+                    </div>
                 )}
             </div>
         </CardWrapper>
