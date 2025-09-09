@@ -7,6 +7,7 @@ import { getManagementUsers } from '@/lib/data/userManagementAPI';
 import { toast } from 'sonner';
 import PermissionsEditor from './PermissionsEditor';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ManagementUser } from '@/app/(default)/tools/user-management/management-users/_components/ListItem';
 
 interface PermissionsCardProps {
     studyKey: string;
@@ -42,7 +43,10 @@ const PermissionsCard: React.FC<PermissionsCardProps> = async (props) => {
     }
 
     const usersResp = await getManagementUsers();
-    const users = usersResp.users || [];
+    const users = (usersResp.users || []).sort((a: ManagementUser, b: ManagementUser) => {
+        return a.username.localeCompare(b.username);
+    });
+
     if (usersResp.error) {
         toast.error('Failed to fetch users', {
             description: usersResp.error
