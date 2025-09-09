@@ -5,12 +5,12 @@ export const getCASEManagementAPIURL = (path: string): URL => {
 }
 
 
-export const getTokenHeader = (accessToken?: string): object | { Autorization: string } => {
+export const getTokenHeader = (accessToken?: string): object | { Authorization: string } => {
     if (!accessToken) {
         return {};
     }
     return {
-        'Authorization': `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
     }
 }
 
