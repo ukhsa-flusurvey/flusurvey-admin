@@ -44,7 +44,7 @@ const PermissionsCard: React.FC<PermissionsCardProps> = async (props) => {
 
     const usersResp = await getManagementUsers();
     const users = (usersResp.users || []).sort((a: ManagementUser, b: ManagementUser) => {
-        return a.username.localeCompare(b.username);
+        return a.username?.localeCompare(b.username || "") || 0;
     });
 
     if (usersResp.error) {
