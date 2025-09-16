@@ -21,7 +21,6 @@ const EmbeddedMarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
                         prefetch={false}
                         href={props.href as string}
                         {...props}
-
                     />
                 },
                 h1: H1,
