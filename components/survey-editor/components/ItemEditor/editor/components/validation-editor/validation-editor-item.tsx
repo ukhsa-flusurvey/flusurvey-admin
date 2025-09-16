@@ -4,7 +4,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Check, Trash2, X } from 'lucide-react';
 import React from 'react';
-import { Validation } from 'survey-engine/data_types';
+import { Expression, Validation } from 'survey-engine/data_types';
+import ExpArgEditorForExp from '../content-editor/response-editors/exp-arg-editor-for-exp';
+import { ExpArg } from '@/components/expression-editor/utils';
 
 interface ValidationEditorItemProps {
     validation: Validation;
@@ -120,8 +122,22 @@ const ValidationEditorItem: React.FC<ValidationEditorItemProps> = (props) => {
             </div>
 
             <div className='p-4 pt-0'>
-                TODO: expression editor: {JSON.stringify(props.validation.rule)}
+                <ExpArgEditorForExp
+                    label='Rule'
+                    expArg={{
+                        dtype: 'exp',
+                        exp: props.validation.rule,
+                    } as ExpArg}
+                    onChange={(newRule) => {
+                        if (newRule) {
+                            props.onChange({
+                                ...props.validation,
+                                rule: (newRule as ExpArg).exp as Expression,
+                            })
+                        }
+                    }}
 
+                />
             </div>
 
         </div>
