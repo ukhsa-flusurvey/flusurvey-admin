@@ -130,10 +130,10 @@ const ValidationEditorItem: React.FC<ValidationEditorItemProps> = (props) => {
                     } as ExpArg}
                     required={true}
                     onChange={(newRule) => {
-                        if (newRule) {
+                        if (newRule && newRule.exp) {
                             props.onChange({
                                 ...props.validation,
-                                rule: (newRule as ExpArg).exp as Expression,
+                                rule: newRule.exp as Expression,
                             })
                         }
                     }}

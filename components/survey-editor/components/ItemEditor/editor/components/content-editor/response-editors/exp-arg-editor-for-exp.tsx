@@ -1,6 +1,6 @@
 import ExpArgEditor from '@/components/expression-editor/exp-arg-editor';
 import { supportedBuiltInSlotTypes, surveyExpressionCategories, surveyEngineRegistry } from '@/components/expression-editor/registries/surveyEngineRegistry';
-import { ExpressionArg } from '@/components/expression-editor/utils';
+import { ExpArg, ExpressionArg } from '@/components/expression-editor/utils';
 import React, { useEffect } from 'react';
 import { useSurveyEditorCtx } from '@/components/survey-editor/surveyEditorContext';
 import { extractSurveyKeys } from '../../survey-expression-editor';
@@ -9,7 +9,7 @@ interface ExpArgEditorForExpProps {
     label: string;
     expArg?: ExpressionArg;
     required?: boolean;
-    onChange: (newArgs: ExpressionArg | undefined) => void;
+    onChange: (newArgs: ExpArg | undefined) => void;
 }
 
 const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
@@ -20,7 +20,7 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
     useEffect(() => {
         if (props.expArg) {
             if (props.expArg.dtype === 'exp') {
-                setCurrentExpArgSlot(props.expArg.exp.name);
+                setCurrentExpArgSlot(props.expArg.exp?.name);
             }
         }
     }, [props.expArg])
@@ -55,7 +55,7 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
             currentIndex={0}
             slotDef={{
                 label: props.label,
-                required: props.required || false,
+                required: props.required ?? false,
                 allowedTypes: [
                     {
                         id: 'exp-slot',
@@ -71,7 +71,7 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
                     return;
                 }
                 setCurrentExpArgSlot(slotTypes?.[0])
-                props.onChange(newArgs[0]);
+                props.onChange(newArgs[0] as ExpArg);
             }}
         />
     );
