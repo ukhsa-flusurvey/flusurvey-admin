@@ -128,6 +128,7 @@ const ValidationEditorItem: React.FC<ValidationEditorItemProps> = (props) => {
                         dtype: 'exp',
                         exp: props.validation.rule,
                     } as ExpArg}
+                    required={true}
                     onChange={(newRule) => {
                         if (newRule) {
                             props.onChange({

@@ -8,6 +8,7 @@ import { extractSurveyKeys } from '../../survey-expression-editor';
 interface ExpArgEditorForExpProps {
     label: string;
     expArg?: ExpressionArg;
+    required?: boolean;
     onChange: (newArgs: ExpressionArg | undefined) => void;
 }
 
@@ -27,9 +28,9 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
 
     return (
         <ExpArgEditor
-            availableExpData={[
+            availableExpData={props.expArg ? [
                 props.expArg
-            ]}
+            ] : []}
             context={{
                 singleChoiceOptions: singleChoiceKeys,
                 multipleChoiceOptions: multipleChoiceKeys,
@@ -54,7 +55,7 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
             currentIndex={0}
             slotDef={{
                 label: props.label,
-                required: false,
+                required: props.required || false,
                 allowedTypes: [
                     {
                         id: 'exp-slot',
@@ -69,7 +70,7 @@ const ExpArgEditorForExp: React.FC<ExpArgEditorForExpProps> = (props) => {
                     props.onChange(undefined);
                     return;
                 }
-                setCurrentExpArgSlot(slotTypes[0])
+                setCurrentExpArgSlot(slotTypes?.[0])
                 props.onChange(newArgs[0]);
             }}
         />
