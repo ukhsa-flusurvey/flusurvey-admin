@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowRight, HelpCircle } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowRight, HelpCircle, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { getAppRoleTemplates, getManagementUserAppRoles, ManagementUserAppRole } from '@/lib/data/userManagementAPI';
+import { getAppRoleTemplates, getManagementUserAppRoles, ManagementUserAppRole, getPermissions, ManagementUserPermission, AppRoleTemplate } from '@/lib/data/userManagementAPI';
 import UsersAppRoleActions from './UsersAppRoleActions';
 import AssignAppRoleButton from './AssignAppRoleButton';
 import { Button } from '@/components/ui/button';
@@ -46,10 +47,75 @@ const CardWrapper: React.FC<{ children: React.ReactNode; }> = (props) => {
     );
 }
 
+const PermissionWarningPopover: React.FC<{ role: ManagementUserAppRole, templates: AppRoleTemplate[], userPermissions: ManagementUserPermission[] }> = ({ role, templates, userPermissions }) => {
+    const getMissingPermissions = (role: ManagementUserAppRole): ManagementUserPermission[] => {
+        const template = templates.find(t => t.appName === role.appName && t.role === role.role);
+        if (!template) return [];
+
+        return template.requiredPermissions.filter((requiredPerm: ManagementUserPermission) =>
+            !userPermissions.some((userPerm: ManagementUserPermission) =>
+                userPerm.resourceType === requiredPerm.resourceType &&
+                userPerm.resourceKey === requiredPerm.resourceKey &&
+                userPerm.action === requiredPerm.action &&
+                (!userPerm.limiter || JSON.stringify(userPerm.limiter || {}) === JSON.stringify(requiredPerm.limiter || {}))
+            )
+        );
+    };
+    const missingPermissions = getMissingPermissions(role);
+    if (missingPermissions.length === 0) return null;
+
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                    title="Missing permissions for this role"
+                >
+                    <AlertTriangle className="size-4" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+                <div className="space-y-2">
+                    <h4 className="font-semibold text-sm text-amber-800">Missing Permissions</h4>
+                    <p className="text-sm text-gray-600">
+                        This user is missing {missingPermissions.length} permission{missingPermissions.length === 1 ? '' : 's'} required for the <strong>{role.role}</strong> role in <strong>{role.appName}</strong>.
+                    </p>
+                    <div className="space-y-1">
+                        <p className="text-xs font-medium text-gray-700">Missing permissions:</p>
+                        <ul className="text-xs text-gray-600 space-y-1 max-h-32 overflow-y-auto">
+                            {missingPermissions.map((perm, index) => (
+                                <li key={perm.id ?? index} className="flex flex-col bg-gray-100 p-1 rounded-md">
+                                    <span className="font-mono  px-1 py-0.5 rounded">
+                                        {perm.resourceType}:{perm.resourceKey}:{perm.action}
+                                    </span>
+                                    {perm.limiter && Object.keys(perm.limiter).length > 0 && (
+                                        <span className="text-xs text-gray-500 ml-2">
+                                            Limiter:
+                                            <pre className='font-mono p-1'>{JSON.stringify(perm.limiter, undefined, 2)}</pre>
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="pt-2 border-t">
+                        <p className="text-xs text-gray-600">
+                            <strong>Fix:</strong> Remove and re-add this role to grant all required permissions.
+                        </p>
+                    </div>
+                </div>
+            </PopoverContent>
+        </Popover>
+    );
+};
+
 const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
-    const [rolesResp, templatesResp] = await Promise.all([
+    const [rolesResp, templatesResp, permissionsResp] = await Promise.all([
         getManagementUserAppRoles(props.userId),
         getAppRoleTemplates(),
+        getPermissions(props.userId),
     ]);
 
     if (rolesResp.error) {
@@ -65,6 +131,7 @@ const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
 
     const appRoles = rolesResp.appRoles || [];
     const templates = templatesResp.appRoleTemplates || [];
+    const userPermissions = permissionsResp.permissions || [];
     const assignedKeys = new Set(appRoles.map(r => `${r.appName}:${r.role}`));
     const unassignedTemplates = templates.filter(t => !assignedKeys.has(`${t.appName}:${t.role}`));
 
@@ -114,12 +181,18 @@ const UsersAppRoles: React.FC<UsersAppRolesProps> = async (props) => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className='text-end'>
-                                        {role.id && (
-                                            <UsersAppRoleActions
-                                                userId={props.userId}
-                                                appRoleId={role.id}
-                                            />
-                                        )}
+                                        <div className='flex items-center justify-end gap-1'>
+                                            <PermissionWarningPopover
+                                                templates={templates}
+                                                userPermissions={userPermissions}
+                                                role={role} />
+                                            {role.id && (
+                                                <UsersAppRoleActions
+                                                    userId={props.userId}
+                                                    appRoleId={role.id}
+                                                />
+                                            )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

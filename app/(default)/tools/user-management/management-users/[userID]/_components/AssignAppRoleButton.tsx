@@ -20,25 +20,27 @@ interface AssignAppRoleButtonProps {
 }
 
 const PermissionItem: React.FC<{ permission: ManagementUserPermission }> = ({ permission }) => {
-    const limiterText = permission.limiter ? ` limiter=${JSON.stringify(permission.limiter)}` : '';
+    const limiterText = permission.limiter ? ` limiter=${JSON.stringify(permission.limiter, null, 2)}` : '';
     return (
-        <div className='text-sm text-neutral-700 py-1'>
+        <div className='text-sm text-neutral-700 py-2'>
             <Badge variant={'outline'}
-                className='me-2'
+                className='me-2 inline-flex items-center w-fit bg-white'
             >
-                <span className='font-normal'>
-                    {permission.resourceType}
+                <span className='font-normal text-xs'>
+                    {permission.resourceType}/
                 </span>
-                <span className='ps-3 font-bold text-sm'>
+                <span className='font-bold text-xs'>
                     {permission.resourceKey}
                 </span>
             </Badge>
-            <span className='font-mono'>
+            <span className='font-mono text-xs font-semibold'>
                 {permission.action}
             </span>
-            <span className='font-mono text-xs whitespace-pre'>
-                {limiterText}
-            </span>
+            {permission.limiter && (
+                <pre className='font-mono text-xs whitespace-pre ml-4 py-2'>
+                    {limiterText}
+                </pre>
+            )}
         </div>
     );
 }
