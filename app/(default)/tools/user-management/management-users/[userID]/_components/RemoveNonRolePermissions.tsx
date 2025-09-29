@@ -22,16 +22,16 @@ import LoadingButton from '@/components/loading-button';
 
 interface RemoveNonRolePermissionsButtonProps {
     userId: string;
-    permissions: ManagementUserPermission[];
+    nonRolePermissions: ManagementUserPermission[];
 }
 
-const RemoveNonRolePermissionsButton: React.FC<RemoveNonRolePermissionsButtonProps> = ({ userId, permissions }) => {
+const RemoveNonRolePermissionsButton: React.FC<RemoveNonRolePermissionsButtonProps> = ({ userId, nonRolePermissions }) => {
     const [open, setOpen] = React.useState(false);
     const [isPending, startTransition] = React.useTransition();
 
     const removablePermissions = React.useMemo(
-        () => permissions.filter((permission) => permission.id),
-        [permissions],
+        () => nonRolePermissions.filter((permission) => permission.id),
+        [nonRolePermissions],
     );
 
     const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -77,7 +77,7 @@ const RemoveNonRolePermissionsButton: React.FC<RemoveNonRolePermissionsButtonPro
             <AlertDialogTrigger asChild>
                 <Button
                     variant={'outline'}
-                    disabled={permissions.length === 0}
+                    disabled={nonRolePermissions.length === 0}
                 >
                     <EraserIcon className='size-4' />
                     Remove Permissions without App Role
@@ -92,7 +92,7 @@ const RemoveNonRolePermissionsButton: React.FC<RemoveNonRolePermissionsButtonPro
                 </AlertDialogHeader>
                 <div className='max-h-60 overflow-y-auto rounded-md border border-border bg-muted/40 p-3 text-sm'>
                     <ul className='space-y-2'>
-                        {permissions.map((permission) => (
+                        {nonRolePermissions.map((permission) => (
                             <li key={permission.id ?? `${permission.resourceType}-${permission.resourceKey}-${permission.action}`} className='rounded-md border border-border bg-background px-3 py-2 shadow-sm'>
                                 <div className='font-semibold'>
                                     <span className='font-normal'>{permission.resourceType}/</span>

@@ -162,7 +162,7 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                 {orphanPermissions.length > 0 && (
                     <RemoveNonRolePermissionsButton
                         userId={props.userId}
-                        permissions={orphanPermissions}
+                        nonRolePermissions={orphanPermissions}
                     />
                 )}
             </div>
