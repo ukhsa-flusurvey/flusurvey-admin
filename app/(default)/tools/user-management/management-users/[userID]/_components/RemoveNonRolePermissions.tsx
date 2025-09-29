@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { deletePermissionForManagementUser } from '@/actions/user-management/permissions';
 import { toast } from 'sonner';
-import getErrorMessage from '@/utils/getErrorMessage';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { ManagementUserPermission } from '@/lib/data/userManagementAPI';
 import { EraserIcon } from 'lucide-react';
 import LoadingButton from '@/components/loading-button';

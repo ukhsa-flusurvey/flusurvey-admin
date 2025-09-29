@@ -86,7 +86,7 @@ const PermissionWarningPopover: React.FC<{ role: ManagementUserAppRole, template
                         <p className="text-xs font-medium text-gray-700">Missing permissions:</p>
                         <ul className="text-xs text-gray-600 space-y-1 max-h-32 overflow-y-auto">
                             {missingPermissions.map((perm, index) => (
-                                <li key={index} className="flex flex-col bg-gray-100 p-1 rounded-md">
+                                <li key={perm.id ?? index} className="flex flex-col bg-gray-100 p-1 rounded-md">
                                     <span className="font-mono  px-1 py-0.5 rounded">
                                         {perm.resourceType}:{perm.resourceKey}:{perm.action}
                                     </span>
