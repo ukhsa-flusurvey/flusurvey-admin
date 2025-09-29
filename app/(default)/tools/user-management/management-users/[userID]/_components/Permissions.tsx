@@ -7,7 +7,8 @@ import AddPermissionDialog from './AddPermissionDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import PermissionActions from './PermissionActions';
 import { Badge } from '@/components/ui/badge';
-import { ManagementUserPermission, getAppRoleTemplates, getPermissions } from '@/lib/data/userManagementAPI';
+import { ManagementUserPermission, getAppRoleTemplates, getManagementUserAppRoles, getPermissions } from '@/lib/data/userManagementAPI';
+import RemoveNonRolePermissionsButton from './RemoveNonRolePermissions';
 
 
 interface PermissionsProps {
@@ -52,6 +53,7 @@ const CardWrapper: React.FC<{
 const Permissions: React.FC<PermissionsProps> = async (props) => {
     const resp = await getPermissions(props.userId);
     const appRoleTemplatesResp = await getAppRoleTemplates();
+    const userRolesResp = await getManagementUserAppRoles(props.userId);
 
     const permissions = resp.permissions;
     const error = resp.error;
@@ -67,7 +69,9 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
     }
 
     const getAppRolesForPermission = (permission: ManagementUserPermission) => {
-        return appRoleTemplatesResp.appRoleTemplates?.filter(t => t.requiredPermissions.some(p => p.resourceType === permission.resourceType && p.resourceKey === permission.resourceKey && p.action === permission.action && (JSON.stringify(p.limiter) === JSON.stringify(permission.limiter) || !permission.limiter)));
+        const userRoles = userRolesResp.appRoles || [];
+        const templatesUsedOnUser = appRoleTemplatesResp.appRoleTemplates?.filter(t => userRoles.some(r => r.appName === t.appName && r.role === t.role));
+        return templatesUsedOnUser?.filter(t => t.requiredPermissions.some(p => p.resourceType === permission.resourceType && p.resourceKey === permission.resourceKey && p.action === permission.action && (JSON.stringify(p.limiter) === JSON.stringify(permission.limiter) || !permission.limiter)));
     }
 
     if (!permissions || permissions.length === 0) {
@@ -84,6 +88,8 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
         );
     }
 
+
+    const orphanPermissions = permissions.filter((permission: ManagementUserPermission) => (getAppRolesForPermission(permission)?.length ?? 0) === 0);
 
     return (
         <CardWrapper>
@@ -148,10 +154,18 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
                 </TableBody>
             </Table>
 
-            <AddPermissionDialog
-                userId={props.userId}
-                userType='management-user'
-            />
+            <div className='flex justify-between gap-2 mt-6'>
+                <AddPermissionDialog
+                    userId={props.userId}
+                    userType='management-user'
+                />
+                {orphanPermissions.length > 0 && (
+                    <RemoveNonRolePermissionsButton
+                        userId={props.userId}
+                        permissions={orphanPermissions}
+                    />
+                )}
+            </div>
         </CardWrapper >
     );
 };

@@ -388,7 +388,7 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className='mt-6'
+                <Button
                     variant={'outline'}
                 >
                     <Plus className='size-4 me-2' />
