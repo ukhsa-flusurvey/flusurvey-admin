@@ -57,7 +57,7 @@ const PermissionWarningPopover: React.FC<{ role: ManagementUserAppRole, template
                 userPerm.resourceType === requiredPerm.resourceType &&
                 userPerm.resourceKey === requiredPerm.resourceKey &&
                 userPerm.action === requiredPerm.action &&
-                !userPerm.limiter || JSON.stringify(userPerm.limiter || {}) === JSON.stringify(requiredPerm.limiter || {})
+                (!userPerm.limiter || JSON.stringify(userPerm.limiter || {}) === JSON.stringify(requiredPerm.limiter || {}))
             )
         );
     };
