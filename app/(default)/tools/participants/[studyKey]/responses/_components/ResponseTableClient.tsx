@@ -23,6 +23,7 @@ interface ResponseTableClientProps {
         [key: string]: number | string | boolean | object
     }>;
     pagination?: Pagination;
+    extraContextColumns?: string[];
 }
 
 const fixedCols = [
@@ -189,7 +190,14 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
     }
 
     const allColumns = Object.keys(responses[0]);
-    const columns = [...fixedCols, ...allColumns.filter(col => !fixedCols.includes(col))];
+    const startColumns = [
+        ...fixedCols,
+        ...(props.extraContextColumns || [])
+    ];
+    const columns = [
+        ...startColumns,
+        ...allColumns.filter(col => !startColumns.includes(col))
+    ];
 
     return (
         <div className='h-full w-full'>
