@@ -28,8 +28,10 @@ const constructFilter = (laterThan?: number, earlierThan?: number) => {
     return undefined;
 }
 
+
+
 const surveyResponseExtraContextColumns = process.env.SURVEY_RESPONSE_EXTRA_CONTEXT_COLUMNS || undefined;
-const extraContextColumns = surveyResponseExtraContextColumns ? surveyResponseExtraContextColumns.split(',') : [];
+const extraContextColumns = surveyResponseExtraContextColumns ? surveyResponseExtraContextColumns.split(',').map(col => col.trim()).filter(col => col) : [];
 
 const ResponseTable: React.FC<ResponseTableProps> = async (props) => {
     if (!props.searchParams || !props.searchParams.surveyKey) {

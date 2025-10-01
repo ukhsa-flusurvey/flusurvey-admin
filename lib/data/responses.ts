@@ -5,7 +5,7 @@ import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api
 import { Pagination } from "@/utils/server/types/paginationInfo";
 import { Task } from "./tasks";
 
-const surveyResponseExtraContextColumns = process.env.SURVEY_RESPONSE_EXTRA_CONTEXT_COLUMNS || undefined;
+const surveyResponseExtraContextColumns = process.env.SURVEY_RESPONSE_EXTRA_CONTEXT_COLUMNS;
 
 export const getResponses = async (
     studyKey: string,
