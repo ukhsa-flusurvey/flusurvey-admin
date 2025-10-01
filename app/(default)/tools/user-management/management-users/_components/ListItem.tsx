@@ -13,6 +13,7 @@ export interface ManagementUser {
     isAdmin: boolean;
     lastLoginAt?: Date;
     createdAt?: Date;
+    provider?: string;
 }
 
 interface ListItemProps {
@@ -38,6 +39,8 @@ const ListItem: React.FC<ListItemProps> = (props) => {
                         {props.user.isAdmin ? <Badge>
                             Admin
                         </Badge> : null}
+
+                        {props.user.provider ? <Badge variant={"outline"}>{props.user.provider}</Badge> : null}
                     </div>
                     <div className='text-sm flex items-center grow justify-between gap-4'>
                         {props.user.email}

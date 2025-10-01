@@ -63,6 +63,7 @@ export const {
                             name: user.name || undefined,
                             email: user.email || undefined,
                             imageURL: user.image || undefined,
+                            provider: account.provider,
                             roles: user.roles,
                             renewToken: account.refresh_token
                         })
@@ -122,7 +123,8 @@ export const {
                         token.isAdmin = newTokenResp.isAdmin;
 
                         return token;
-                    } catch (e) {
+                    } catch (err: unknown) {
+                        console.error(err)
                         // console.error(e)
                         return token;
                     }

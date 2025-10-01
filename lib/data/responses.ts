@@ -5,6 +5,8 @@ import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api
 import { Pagination } from "@/utils/server/types/paginationInfo";
 import { Task } from "./tasks";
 
+const surveyResponseExtraContextColumns = process.env.SURVEY_RESPONSE_EXTRA_CONTEXT_COLUMNS;
+
 export const getResponses = async (
     studyKey: string,
     surveyKey: string,
@@ -36,6 +38,10 @@ export const getResponses = async (
     queryParams.append('page', page.toString());
     if (pageSize) queryParams.append('limit', pageSize.toString());
     queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
+
+    if (surveyResponseExtraContextColumns) {
+        queryParams.append('extraContextColumns', surveyResponseExtraContextColumns);
+    }
 
 
     const queryString = queryParams.toString();
@@ -89,6 +95,9 @@ export const startResponseExport = async (
     queryParams.append('questionOptionSep', keySeparator);
     queryParams.append('surveyKey', surveyKey);
     queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
+    if (surveyResponseExtraContextColumns) {
+        queryParams.append('extraContextColumns', surveyResponseExtraContextColumns);
+    }
 
     const queryString = queryParams.toString();
     const url = `/v1/studies/${studyKey}/data-exporter/responses?${queryString}`;

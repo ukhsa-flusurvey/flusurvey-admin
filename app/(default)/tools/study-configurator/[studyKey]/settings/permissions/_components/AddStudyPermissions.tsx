@@ -18,6 +18,7 @@ import LoadingButton from '@/components/loading-button';
 import { toast } from 'sonner';
 import { addStudyPermission } from '@/actions/study/permissions';
 import getErrorMessage from '@/utils/getErrorMessage';
+import { Badge } from '@/components/ui/badge';
 
 
 interface AddStudyPermissionsProps {
@@ -27,6 +28,7 @@ interface AddStudyPermissionsProps {
         username?: string;
         email?: string;
         imageUrl?: string;
+        provider?: string;
     }>;
     permissions?: {
         [key: string]: PermissionsInfo
@@ -153,8 +155,11 @@ const AddStudyPermissions: React.FC<AddStudyPermissionsProps> = (props) => {
                                             />
                                             <div className='flex items-center gap-3 grow'>
                                                 <div className='grow'>
-                                                    <p>
-                                                        {user.username}
+                                                    <p className='flex items-center gap-2'>
+                                                        <span>
+                                                            {user.username}
+                                                        </span>
+                                                        {user.provider ? <Badge variant={"outline"}>{user.provider}</Badge> : null}
                                                     </p>
                                                     <p className='text-xs'>
                                                         {user.email}
