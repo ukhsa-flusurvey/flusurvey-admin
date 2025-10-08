@@ -52,9 +52,14 @@ const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
                     setError(resp.error);
                     return;
                 }
+                setError(undefined);
+
                 if (resp.codeList && resp.codeList.length > 0) {
                     setEntries(prev => reload ? resp.codeList! : [...prev, ...resp.codeList!]);
+                } else {
+                    setEntries(prev => reload ? [] : prev);
                 }
+
                 if (resp.pagination) {
                     setTotalCount(resp.pagination.totalCount);
                     setCurrentPage(resp.pagination.currentPage);

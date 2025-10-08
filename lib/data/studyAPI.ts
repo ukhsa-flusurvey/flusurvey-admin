@@ -219,7 +219,12 @@ export const getStudyCodeListEntries = async (
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };
     }
-    const url = `/v1/studies/${studyKey}/study-code-list/codes?listKey=${listKey}&page=${page}&limit=${pageSize}`;
+    const params = new URLSearchParams({
+        listKey,
+        page: page.toString(),
+        limit: pageSize.toString(),
+    });
+    const url = `/v1/studies/${studyKey}/study-code-list/codes?${params.toString()}`;
     const resp = await fetchCASEManagementAPI(
         url,
         session.CASEaccessToken,
