@@ -19,7 +19,7 @@ interface CodeListSectionClientProps {
     pageSize?: number;
 }
 
-const DEFAULT_PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 1000;
 
 const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
     const pageSize = props.pageSize || DEFAULT_PAGE_SIZE;
@@ -29,6 +29,7 @@ const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
     const [totalCount, setTotalCount] = React.useState<number>(props.totalCount || 0);
     const [error, setError] = React.useState<string | undefined>(undefined);
     const [isPending, startTransition] = React.useTransition();
+    const [currentPage, setCurrentPage] = React.useState(1);
 
     const hasMore = totalCount > entries.length;
 
@@ -44,7 +45,7 @@ const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
     }
 
     const onLoadMore = (reload: boolean = false) => {
-        const nextPage = reload ? 1 : Math.floor(entries.length / pageSize) + 1;
+        const nextPage = reload ? 1 : currentPage + 1;
         startTransition(async () => {
             try {
                 const resp = await getStudyCodeListEntries(props.studyKey, props.listKey, nextPage, pageSize);
@@ -57,6 +58,7 @@ const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
                 }
                 if (resp.pagination) {
                     setTotalCount(resp.pagination.totalCount);
+                    setCurrentPage(resp.pagination.currentPage);
                 }
             } catch {
                 setError('Failed to load more codes');

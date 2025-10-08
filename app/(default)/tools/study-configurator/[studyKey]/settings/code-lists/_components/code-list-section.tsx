@@ -29,7 +29,6 @@ const CodeListSection: React.FC<CodeListSectionProps> = async (props) => {
             listKey={props.listKey}
             initialCodeList={codeList || []}
             totalCount={pagination?.totalCount || 0}
-            pageSize={pagination?.pageSize || 100}
         />
     );
 };

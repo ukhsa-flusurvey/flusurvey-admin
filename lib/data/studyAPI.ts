@@ -206,7 +206,7 @@ export const getStudyCodeListEntries = async (
     studyKey: string,
     listKey: string,
     page: number = 1,
-    pageSize: number = 100,
+    pageSize: number = 1000,
 ): Promise<{
     error?: string,
     codeList?: Array<{
