@@ -9,6 +9,8 @@ interface CodeListSectionProps {
     listKey: string;
 }
 
+const DEFAULT_PAGE_SIZE = 1000;
+
 const CodeListSection: React.FC<CodeListSectionProps> = async (props) => {
     const { error, codeList, pagination } = await getStudyCodeListEntries(props.studyKey, props.listKey);
 
@@ -29,6 +31,7 @@ const CodeListSection: React.FC<CodeListSectionProps> = async (props) => {
             listKey={props.listKey}
             initialCodeList={codeList || []}
             totalCount={pagination?.totalCount || 0}
+            pageSize={pagination?.pageSize || DEFAULT_PAGE_SIZE}
         />
     );
 };

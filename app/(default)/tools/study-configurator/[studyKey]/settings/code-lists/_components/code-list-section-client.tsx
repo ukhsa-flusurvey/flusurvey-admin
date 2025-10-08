@@ -19,10 +19,9 @@ interface CodeListSectionClientProps {
     pageSize?: number;
 }
 
-const DEFAULT_PAGE_SIZE = 1000;
 
 const CodeListSectionClient: React.FC<CodeListSectionClientProps> = (props) => {
-    const pageSize = props.pageSize || DEFAULT_PAGE_SIZE;
+    const pageSize = props.pageSize || 10;
     const [mounted, setMounted] = React.useState(false);
 
     const [entries, setEntries] = React.useState(props.initialCodeList || []);
