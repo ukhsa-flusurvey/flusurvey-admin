@@ -4,6 +4,7 @@ import { Study } from '../../utils/server/types/studyInfos';
 import { Expression, Survey } from 'survey-engine/data_types';
 import { auth } from '@/auth';
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
+import { Pagination } from '@/utils/server/types/paginationInfo';
 
 
 export const getStudies = async (): Promise<{ error?: string, studies?: Study[] }> => {
@@ -201,18 +202,24 @@ export const getStudyCodeListKeys = async (studyKey: string): Promise<{
     return resp.body;
 }
 
-export const getStudyCodeListEntries = async (studyKey: string, listKey: string): Promise<{
+export const getStudyCodeListEntries = async (
+    studyKey: string,
+    listKey: string,
+    page: number = 1,
+    pageSize: number = 100,
+): Promise<{
     error?: string,
     codeList?: Array<{
         code: string,
         addedAt: string,
     }>
+    pagination?: Pagination
 }> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };
     }
-    const url = `/v1/studies/${studyKey}/study-code-list/codes?listKey=${listKey}`;
+    const url = `/v1/studies/${studyKey}/study-code-list/codes?listKey=${listKey}&page=${page}&limit=${pageSize}`;
     const resp = await fetchCASEManagementAPI(
         url,
         session.CASEaccessToken,
