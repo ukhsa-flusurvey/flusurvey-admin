@@ -82,6 +82,7 @@ export const permissionInfos: PermissionInfos = {
                     "update-study-status": { hideLimiter: true },
                     "manage-study-code-lists": { hideLimiter: true },
                     "manage-study-counters": { hideLimiter: true },
+                    "manage-study-variables": { hideLimiter: true },
                     "delete-study": { hideLimiter: true },
                     "create-survey": { hideLimiter: true },
                     "update-survey": {
