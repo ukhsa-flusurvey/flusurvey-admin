@@ -95,7 +95,7 @@ export const updateStudyVariableConfigs = async (
     if (!session || !session.CASEaccessToken) {
         return { error: 'Unauthorized' };
     }
-    const url = `/v1/studies/${studyKey}/variables/${variableKey}/configs`;
+    const url = `/v1/studies/${studyKey}/variables/${variableKey}`;
     const resp = await fetchCASEManagementAPI(
         url,
         session.CASEaccessToken,
