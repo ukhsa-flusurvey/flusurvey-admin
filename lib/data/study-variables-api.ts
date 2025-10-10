@@ -2,58 +2,7 @@
 
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
-
-
-export enum StudyVariableType {
-    STRING = 'string',
-    INTEGER = 'int',
-    FLOAT = 'float',
-    BOOLEAN = 'boolean',
-    DATE = 'date',
-}
-
-export interface StudyVariableIntConfig {
-    min?: number;
-    max?: number;
-}
-
-export interface StudyVariableFloatConfig {
-    min?: number;
-    max?: number;
-}
-
-export interface StudyVariableDateConfig {
-    min?: Date;
-    max?: Date;
-}
-
-export interface StudyVariableStringConfig {
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    possibleValues?: string[];
-}
-
-export interface StudyVariable {
-    id?: string;
-    createdAt: string;
-    configUpdatedAt: string;
-    valueUpdatedAt: string;
-
-    studyKey: string;
-
-    key: string;
-    value: string | number | boolean | Date;
-    type: StudyVariableType;
-
-    // Metadata
-    label?: string;
-    description?: string;
-    uiType?: string;
-    uiPriority?: number;
-
-    configs?: StudyVariableIntConfig | StudyVariableFloatConfig | StudyVariableDateConfig | StudyVariableStringConfig;
-}
+import { CreateStudyVariablePayload, StudyVariable, UpdateStudyVariableConfigsPayload } from "@/utils/server/types/study-variables";
 
 export const getStudyVariables = async (
     studyKey: string,
@@ -108,7 +57,7 @@ export const getStudyVariable = async (
 
 export const createStudyVariable = async (
     studyKey: string,
-    variable: StudyVariable,
+    variable: CreateStudyVariablePayload,
 ): Promise<{
     error?: string
 }> => {
@@ -138,7 +87,7 @@ export const createStudyVariable = async (
 export const updateStudyVariableConfigs = async (
     studyKey: string,
     variableKey: string,
-    updatedFields: Partial<StudyVariable>,
+    updatedFields: UpdateStudyVariableConfigsPayload,
 ): Promise<{
     error?: string
 }> => {
