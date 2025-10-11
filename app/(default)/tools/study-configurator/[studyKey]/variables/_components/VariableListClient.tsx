@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MoreVertical, Pencil, Trash2, Plus } from 'lucide-react';
-import { StudyVariable, StudyVariableStringConfig, StudyVariableType } from '@/utils/server/types/study-variables';
+import { StudyVariable, StudyVariableFloatConfig, StudyVariableIntConfig, StudyVariableStringConfig, StudyVariableType } from '@/utils/server/types/study-variables';
 import VariableDefEditDialog from '@/app/(default)/tools/study-configurator/[studyKey]/variables/_components/VariableDefEditDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { BarLoader } from 'react-spinners';
@@ -99,6 +99,97 @@ const StringValuePopover: React.FC<{
     );
 };
 
+const NumberValuePopover: React.FC<{
+    value?: number;
+    configs?: StudyVariableIntConfig | StudyVariableFloatConfig;
+    integer?: boolean;
+    onSave: (newValue: number) => void;
+}> = ({ value, configs, integer, onSave }) => {
+    const [open, setOpen] = React.useState(false);
+    const [draft, setDraft] = React.useState<string>(
+        typeof value === 'number' && !Number.isNaN(value) ? String(value) : ''
+    );
+
+    const parsed = React.useMemo(() => {
+        if (draft === '') return undefined;
+        const n = Number(draft);
+        if (Number.isNaN(n)) return NaN;
+        return integer ? Math.round(n) : n;
+    }, [draft, integer]);
+
+    const validationError = React.useMemo(() => {
+        if (draft === '') return undefined; // allow empty while editing
+        if (parsed === undefined || Number.isNaN(parsed)) return 'Enter a valid number';
+        if (typeof configs?.min === 'number' && parsed < configs.min) {
+            return `Must be ≥ ${configs.min}`;
+        }
+        if (typeof configs?.max === 'number' && parsed > configs.max) {
+            return `Must be ≤ ${configs.max}`;
+        }
+        return undefined;
+    }, [parsed, draft, configs]);
+
+    React.useEffect(() => {
+        if (open) {
+            setDraft(typeof value === 'number' && !Number.isNaN(value) ? String(value) : '');
+        }
+    }, [open, value]);
+
+    const handleCancel = () => {
+        setDraft(typeof value === 'number' && !Number.isNaN(value) ? String(value) : '');
+        setOpen(false);
+    };
+
+    const handleSave = () => {
+        if (parsed === undefined || Number.isNaN(parsed)) return;
+        onSave(parsed);
+        setOpen(false);
+    };
+
+    return (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button variant={'outline'} className='justify-between w-full'>
+                    <span className='truncate text-left grow'>{
+                        typeof value === 'number' && !Number.isNaN(value) ? String(value) : '—'
+                    }</span>
+                    <Pencil className='opacity-70' />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-80' align='start'>
+                <div className='flex flex-col gap-3'>
+                    <Input
+                        type='number'
+                        inputMode='decimal'
+                        step={integer ? 1 : 'any'}
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        min={configs?.min}
+                        max={configs?.max}
+                        aria-invalid={Boolean(validationError) || undefined}
+                    />
+                    {validationError && (
+                        <span className='text-xs text-destructive'>{validationError}</span>
+                    )}
+                    <div className='flex justify-between text-xs text-muted-foreground'>
+                        {(configs?.min !== undefined || configs?.max !== undefined) && (
+                            <span>
+                                {configs?.min !== undefined ? `Min: ${configs.min}` : ''}
+                                {configs?.min !== undefined && configs?.max !== undefined ? ' · ' : ''}
+                                {configs?.max !== undefined ? `Max: ${configs.max}` : ''}
+                            </span>
+                        )}
+                    </div>
+                    <div className='flex justify-end gap-2'>
+                        <Button variant={'ghost'} onClick={handleCancel}>Cancel</Button>
+                        <Button onClick={handleSave} disabled={draft === '' || Boolean(validationError)}>Save</Button>
+                    </div>
+                </div>
+            </PopoverContent>
+        </Popover>
+    );
+};
+
 const VariableListClient: React.FC<VariableListClientProps> = (props) => {
     const router = useRouter();
     const [isPending, startTransition] = React.useTransition();
@@ -173,16 +264,23 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
 
                 break;
             case StudyVariableType.INTEGER:
-                controller = <Input type='number' defaultValue={v.value !== undefined && v.value !== null ? v.value as number : undefined}
-                    onChange={(e) => {
-                        const value = e.target.value === '' ? undefined : Math.round(Number(e.target.value));
-                        if (value === undefined) {
-                            return;
-                        }
-
-                        onValueChange(v.key, type, value);
-                    }}
-                />;
+                controller = (
+                    <NumberValuePopover
+                        value={v.value as number | undefined}
+                        configs={v.configs as StudyVariableIntConfig | undefined}
+                        integer
+                        onSave={(newValue) => onValueChange(v.key, type, newValue)}
+                    />
+                );
+                break;
+            case StudyVariableType.FLOAT:
+                controller = (
+                    <NumberValuePopover
+                        value={v.value as number | undefined}
+                        configs={v.configs as StudyVariableFloatConfig | undefined}
+                        onSave={(newValue) => onValueChange(v.key, type, newValue)}
+                    />
+                );
                 break;
         }
 

@@ -21,23 +21,24 @@ import { Separator } from '@/components/ui/separator';
 type VariableUIType = 'input' | 'select';
 
 // Config schemas used inside the form under `configs`
+// Use passthrough to avoid dropping unknown keys when union matching selects a different branch
 const stringSchema = z.object({
     minLength: z.preprocess(v => (v === '' || v == null ? undefined : Number(v)), z.number().int().min(0).optional()),
     maxLength: z.preprocess(v => (v === '' || v == null ? undefined : Number(v)), z.number().int().min(0).optional()),
     pattern: z.string().optional(),
     // UI helper for string/select
     possibleValuesText: z.string().optional(),
-});
+}).passthrough();
 
 const numberSchema = z.object({
-    min: z.preprocess(v => (v === '' || v == null ? undefined : Number(v)), z.number().optional()),
-    max: z.preprocess(v => (v === '' || v == null ? undefined : Number(v)), z.number().optional()),
-});
+    min: z.number().optional(),
+    max: z.number().optional(),
+}).passthrough();
 
 const dateSchema = z.object({
     min: z.date().optional(),
     max: z.date().optional(),
-});
+}).passthrough();
 
 const baseSchema = z.object({
     label: z.string().optional(),
@@ -49,8 +50,8 @@ const baseSchema = z.object({
 });
 
 const formSchema = baseSchema.and(z.object({
-    // Configs are nested and depend on `type`
-    configs: z.union([stringSchema, numberSchema, dateSchema]).optional(),
+    // Configs are nested and depend on `type`. Prefer number/date branches before string to reduce accidental matches.
+    configs: z.union([numberSchema, dateSchema, stringSchema]).optional(),
 }));
 
 const toValidDateOrUndefined = (input: unknown): Date | undefined => {
@@ -444,7 +445,12 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                                 <FormItem className='sm:col-span-2'>
                                     <FormLabel>Pattern (regex)</FormLabel>
                                     <FormControl>
-                                        <Input placeholder='^.+$' {...field} />
+                                        <Input
+                                            type='text'
+                                            placeholder='^.+$'
+                                            value={(field.value as string | undefined) ?? ''}
+                                            onChange={field.onChange}
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -482,6 +488,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
     const renderStep1Integer = () => {
         return (
             <div className='grid grid-cols-1 gap-4'>
+                {commonStep1()}
 
                 <FormField
                     control={form.control}
@@ -493,7 +500,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                                 <Input
                                     type='number'
                                     placeholder='e.g., 0'
-                                    value={typeof field.value === 'number' ? field.value : ''}
+                                    defaultValue={typeof field.value === 'number' ? field.value : ''}
                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                 />
                             </FormControl>
@@ -510,7 +517,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                                 <Input
                                     type='number'
                                     placeholder='e.g., 100'
-                                    value={typeof field.value === 'number' ? field.value : ''}
+                                    defaultValue={typeof field.value === 'number' ? field.value : ''}
                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                 />
                             </FormControl>
@@ -524,7 +531,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
     const renderStep1Float = () => {
         return (
             <div className='grid grid-cols-1 gap-4'>
-
+                {commonStep1()}
                 <FormField
                     control={form.control}
                     name="configs.min"
@@ -535,7 +542,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                                 <Input
                                     type='number'
                                     placeholder='e.g., 0'
-                                    value={typeof field.value === 'number' ? field.value : ''}
+                                    defaultValue={typeof field.value === 'number' ? field.value : ''}
                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                 />
                             </FormControl>
@@ -552,7 +559,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                                 <Input
                                     type='number'
                                     placeholder='e.g., 100'
-                                    value={typeof field.value === 'number' ? field.value : ''}
+                                    defaultValue={typeof field.value === 'number' ? field.value : ''}
                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                 />
                             </FormControl>
