@@ -160,6 +160,7 @@ const ResponseFilterForm: React.FC<ResponseFilterFormProps> = (props) => {
                                                     submitBtnRef.current?.click();
                                                 }
                                             }}
+                                            maxDate={new Date()}
 
                                         />
                                     </FormControl>
