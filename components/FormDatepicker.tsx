@@ -13,10 +13,14 @@ interface FormDatepickerProps {
         value: Date | undefined;
         onChange: (date?: Date) => void;
     };
+    minDate?: Date;
+    maxDate?: Date;
 }
 
 const FormDatepicker: React.FC<FormDatepickerProps> = ({
-    field
+    field,
+    minDate,
+    maxDate,
 }) => {
     return (
         <Popover>
@@ -44,10 +48,18 @@ const FormDatepicker: React.FC<FormDatepickerProps> = ({
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                        date > new Date() || date < new Date("2020-01-01")
-                    }
+                    disabled={(date) => {
+                        if (minDate && date < minDate) {
+                            return true;
+                        }
+                        if (maxDate && date > maxDate) {
+                            return true;
+                        }
+                        return false;
+                    }}
                     initialFocus
+                    fromDate={minDate}
+                    toDate={maxDate}
                 />
             </PopoverContent>
         </Popover>
