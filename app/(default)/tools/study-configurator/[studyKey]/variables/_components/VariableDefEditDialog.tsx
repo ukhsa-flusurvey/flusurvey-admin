@@ -359,7 +359,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                         <FormItem className='sm:col-span-2'>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Textarea placeholder='Optional description to explain the variable' value={field.value || ''} onChange={field.onChange} />
+                                <Input placeholder='Optional description to explain the variable' value={field.value || ''} onChange={field.onChange} />
                             </FormControl>
                         </FormItem>
                     )}

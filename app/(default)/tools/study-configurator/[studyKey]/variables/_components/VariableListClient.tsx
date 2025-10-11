@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
 
 interface VariableListClientProps {
     studyKey: string;
@@ -280,6 +281,19 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
                         configs={v.configs as StudyVariableFloatConfig | undefined}
                         onSave={(newValue) => onValueChange(v.key, type, newValue)}
                     />
+                );
+                break;
+            case StudyVariableType.BOOLEAN:
+                controller = (
+                    <div className='flex items-center gap-2'>
+                        <Switch
+                            checked={v.value as boolean | undefined}
+                            onCheckedChange={(newValue) => onValueChange(v.key, type, newValue)}
+                        />
+                        <span className='text-xs uppercase font-mono text-muted-foreground'>
+                            {v.value as boolean | undefined ? 'True' : 'False'}
+                        </span>
+                    </div>
                 );
                 break;
         }
