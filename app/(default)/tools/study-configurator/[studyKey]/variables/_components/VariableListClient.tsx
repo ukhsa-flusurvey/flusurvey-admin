@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, Pencil, Trash2, Plus } from 'lucide-react';
-import { StudyVariable, StudyVariableFloatConfig, StudyVariableIntConfig, StudyVariableStringConfig, StudyVariableType } from '@/utils/server/types/study-variables';
+import { MoreVertical, Pencil, Trash2, Plus, CalendarIcon } from 'lucide-react';
+import { StudyVariable, StudyVariableDateConfig, StudyVariableFloatConfig, StudyVariableIntConfig, StudyVariableStringConfig, StudyVariableType } from '@/utils/server/types/study-variables';
 import VariableDefEditDialog from '@/app/(default)/tools/study-configurator/[studyKey]/variables/_components/VariableDefEditDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { BarLoader } from 'react-spinners';
@@ -16,6 +16,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { Calendar } from '@/components/ui/calendar';
 
 interface VariableListClientProps {
     studyKey: string;
@@ -294,6 +297,58 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
                             {v.value as boolean | undefined ? 'True' : 'False'}
                         </span>
                     </div>
+                );
+                break;
+            case StudyVariableType.DATE:
+                const dateConfig = v.configs as StudyVariableDateConfig | undefined;
+                const minDate = dateConfig?.min;
+                const maxDate = dateConfig?.max;
+                controller = (
+                    <Popover>
+                        <PopoverTrigger asChild>
+
+                            <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "min-w-[200px] w-full pl-3 text-left font-normal",
+                                    !v.value && "text-muted-foreground"
+                                )}
+                            >
+                                {v.value ? (
+                                    format(v.value as Date, "PPP")
+                                ) : (
+                                    <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto size-4 opacity-50" />
+                            </Button>
+
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                id={v.key}
+                                mode="single"
+                                selected={v.value as Date | undefined}
+                                onSelect={(date) => {
+                                    if (date) {
+                                        onValueChange(v.key, type, date);
+                                    }
+                                }}
+                                disabled={(date) => {
+                                    if (minDate && date < minDate) {
+                                        return true;
+                                    }
+                                    if (maxDate && date > maxDate) {
+                                        return true;
+                                    }
+                                    return false;
+                                }}
+                                initialFocus
+                                fromDate={minDate}
+                                toDate={maxDate}
+                            />
+                        </PopoverContent>
+                    </Popover>
+
                 );
                 break;
         }
