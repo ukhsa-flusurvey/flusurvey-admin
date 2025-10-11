@@ -2,7 +2,8 @@
 
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
-import { CreateStudyVariablePayload, StudyVariable, UpdateStudyVariableConfigsPayload } from "@/utils/server/types/study-variables";
+import { CreateStudyVariablePayload, StudyVariable, StudyVariableType, UpdateStudyVariableConfigsPayload } from "@/utils/server/types/study-variables";
+import { revalidatePath } from "next/cache";
 
 export const getStudyVariables = async (
     studyKey: string,
@@ -81,6 +82,7 @@ export const createStudyVariable = async (
     if (resp.status !== 200) {
         return { error: `Failed to create study variable: ${resp.status} - ${resp.body.error}` };
     }
+    revalidatePath(`/tools/study-configurator/${studyKey}/variables`);
     return resp.body;
 }
 
@@ -110,12 +112,14 @@ export const updateStudyVariableConfigs = async (
     if (resp.status !== 200) {
         return { error: `Failed to update study variable configs: ${resp.status} - ${resp.body.error}` };
     }
+    revalidatePath(`/tools/study-configurator/${studyKey}/variables`);
     return resp.body;
 }
 
 export const updateStudyVariableValue = async (
     studyKey: string,
     variableKey: string,
+    type: StudyVariableType,
     value: string | number | boolean | Date,
 ): Promise<{
     error?: string
@@ -131,13 +135,14 @@ export const updateStudyVariableValue = async (
         session.CASEaccessToken,
         {
             method: 'PUT',
-            body: JSON.stringify({ variable: { value } }),
+            body: JSON.stringify({ variable: { value, type } }),
             revalidate: 0,
         }
     );
     if (resp.status !== 200) {
         return { error: `Failed to update study variable value: ${resp.status} - ${resp.body.error}` };
     }
+    revalidatePath(`/tools/study-configurator/${studyKey}/variables`);
     return resp.body;
 }
 

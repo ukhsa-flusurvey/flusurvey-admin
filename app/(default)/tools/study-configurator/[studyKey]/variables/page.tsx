@@ -1,14 +1,12 @@
+import { Suspense } from "react";
 import { StudyKeyPageParams } from "../page";
+import VariableList, { VariableListSkeleton } from "./_components/VariableList";
 
 
 export default function Page(props: StudyKeyPageParams) {
-    const studyKey = props.params.studyKey;
-
-    console.log(studyKey);
-
     return (
-        <div>
-            <h1>Variables</h1>
-        </div>
+        <Suspense fallback={<VariableListSkeleton studyKey={props.params.studyKey} />}>
+            <VariableList studyKey={props.params.studyKey} />
+        </Suspense>
     )
 }

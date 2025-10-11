@@ -54,6 +54,8 @@ export interface StudyVariableDefinitionBase {
     type: StudyVariableType;
     uiType?: string;
     uiPriority?: number;
+    label?: string;
+    description?: string;
     configs?: StudyVariableIntConfig | StudyVariableFloatConfig | StudyVariableDateConfig | StudyVariableStringConfig;
 }
 
