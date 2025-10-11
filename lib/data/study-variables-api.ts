@@ -25,7 +25,7 @@ export const getStudyVariables = async (
         }
     );
     if (resp.status !== 200) {
-        return { error: `Failed to fetch study code list entries: ${resp.status} - ${resp.body.error}` };
+        return { error: `Failed to fetch study variables: ${resp.status} - ${resp.body.error}` };
     }
     return resp.body;
 }
@@ -169,5 +169,6 @@ export const deleteStudyVariable = async (
     if (resp.status !== 200) {
         return { error: `Failed to delete study variable: ${resp.status} - ${resp.body.error}` };
     }
+    revalidatePath(`/tools/study-configurator/${studyKey}/variables`);
     return resp.body;
 }
