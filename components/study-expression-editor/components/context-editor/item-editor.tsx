@@ -88,7 +88,7 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
                                     return;
                                 }
                                 props.onChange({
-                                    ...props.selection as KeyValuePairDefs,
+                                    ...props.selection as StudyVariableDef,
                                     key: e.target.value,
                                 });
                             }}

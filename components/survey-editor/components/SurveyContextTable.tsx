@@ -12,7 +12,6 @@ export const SurveyContextTable: React.FC<SurveyContextTableProps> = ({ contextV
         Object.entries(studyVariables || {}).map(([k, v]) => {
             if (v.type === 'date') {
                 const dateVal = v.value instanceof Date ? v.value : new Date(String((v as StudyVariable).value));
-                console.log('dateVal', dateVal);
                 return [k, isNaN(dateVal.getTime()) ? '' : dateVal.toISOString().slice(0, 10)];
             }
             return [k, String((v as StudyVariable).value)];
