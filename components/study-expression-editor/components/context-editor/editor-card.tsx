@@ -34,6 +34,10 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
             return (props.data as KeyValuePairDefs[]).map(kv => kv.key);
         }
 
+        if (props.type === 'study-variable') {
+            return (props.data as StudyVariableDef[]).map(sv => sv.key);
+        }
+
         return [];
     }
     const usedKeys = getUsedKeys();
