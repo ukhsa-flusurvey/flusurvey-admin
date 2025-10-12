@@ -6433,10 +6433,10 @@ survey-engine@^1.2.0:
   dependencies:
     date-fns "^2.29.3"
 
-survey-engine@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.4.0.tgz#afa48aa0473037c39edea254de75bc7e546da516"
-  integrity sha512-Mc/wLqRvJFdfvo/trf5O48+iVIsUrjPq06qKfanASp4ajISLd8QBsNY2PErAdbQdpSZglraJ0Yt+oXKle54HzQ==
+survey-engine@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.4.1.tgz#783cffe145d1b55d55aa77c460618447eb33f846"
+  integrity sha512-2GaV7bCdw4SRg798b9wC6atH0Nk9L2NOdrvEXKnIOiyHap0lLRZGWzgXe5F7bzm/Ujw9EOpySnPPb9E57dI2CA==
   dependencies:
     date-fns "^2.29.3"
 
