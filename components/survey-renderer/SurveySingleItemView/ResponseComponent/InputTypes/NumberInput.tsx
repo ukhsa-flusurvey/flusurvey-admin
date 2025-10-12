@@ -91,6 +91,12 @@ const NumberInput: React.FC<NumberInputProps> = (props) => {
         (event.currentTarget as HTMLInputElement).select();
     };
 
+    const handleBlur = () => {
+        if (!response) {
+            setInputValue('');
+        }
+    }
+
     const minValue = props.compDef.properties?.min;
     const maxValue = props.compDef.properties?.max;
     const stepSize = props.compDef.properties?.stepSize;
@@ -146,6 +152,7 @@ const NumberInput: React.FC<NumberInputProps> = (props) => {
                 e.currentTarget.blur()
             }}
             onChange={handleInputValueChange(props.compDef.key)}
+            onBlur={handleBlur}
             disabled={props.compDef.disabled !== undefined || props.disabled === true}
             min={minValue !== undefined ? minValue as number : undefined}
             max={maxValue !== undefined ? maxValue as number : undefined}

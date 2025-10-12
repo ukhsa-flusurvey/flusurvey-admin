@@ -166,7 +166,9 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                             <FormLabel>From</FormLabel>
 
                                             <div>
-                                                <FormDatepicker field={field} />
+                                                <FormDatepicker field={field}
+                                                    maxDate={new Date()}
+                                                />
                                             </div>
 
                                             <FormDescription className='text-xs'>
@@ -183,7 +185,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                         <FormItem className='grow'>
                                             <FormLabel>Until</FormLabel>
                                             <div className='w-full'>
-                                                <FormDatepicker field={field} />
+                                                <FormDatepicker field={field} maxDate={new Date()} />
                                             </div>
                                             <FormDescription className='text-xs'>
                                                 Download responses until this date.

@@ -54,6 +54,7 @@ const UserDetails: React.FC<UserDetailsProps> = async (props) => {
                                     {user.isAdmin ? <Badge>
                                         Admin
                                     </Badge> : null}
+                                    {user.provider ? <Badge variant={"outline"}>{user.provider}</Badge> : null}
                                 </div>
                                 <p className=''>
                                     {user.email}

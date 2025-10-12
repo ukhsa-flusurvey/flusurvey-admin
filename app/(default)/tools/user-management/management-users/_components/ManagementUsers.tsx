@@ -37,7 +37,9 @@ const ManagementUsers: React.FC = async () => {
             lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : undefined,
             createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
         }
-    })
+    }).sort((a: ManagementUser, b: ManagementUser) => {
+        return a.username.localeCompare(b.username);
+    });
 
     return (
         <CardWrapper>

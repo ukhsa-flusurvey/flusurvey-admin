@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import LoadingButton from '@/components/loading-button';
-
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface DangerZoneProps {
     studyKey: string;
@@ -31,7 +31,7 @@ const StudyDeletionDialog = ({ studyKey }: { studyKey: string }) => {
                 router.refresh();
                 router.replace('/tools/study-configurator');
             } catch (error: unknown) {
-                setError(`failed to delete study: ${(error as Error).message}`);
+                setError(`failed to delete study: ${getErrorMessage(error)}`);
                 console.error(error);
             }
         })

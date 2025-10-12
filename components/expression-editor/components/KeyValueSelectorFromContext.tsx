@@ -166,6 +166,7 @@ const KeyValueSelectorFromContext: React.FC<KeyValueSelectorFromContextProps> = 
                         (props.currentValue as ExpArg)?.exp?.name ? props.currentValue : undefined
                     ]}
                     expRegistry={props.expRegistry}
+                    context={props.context}
                     onChange={(newArgs) => {
                         const newExp = newArgs.at(0);
                         if (newExp === undefined) {

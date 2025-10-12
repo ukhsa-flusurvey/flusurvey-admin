@@ -5,9 +5,9 @@ import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 
 export interface ManagementUserPermission {
-    id: string;
-    subjectId: string;
-    subjectType: string;
+    id?: string;
+    subjectId?: string;
+    subjectType?: string;
     resourceType: string;
     resourceKey: string;
     action: string;
@@ -94,3 +94,264 @@ export const getPermissions = async (userId: string) => {
     }
     return resp.body;
 }
+
+/*
+ Management user app roles API
+*/
+
+export interface ManagementUserAppRole {
+    id?: string;
+    subjectId?: string;
+    subjectType?: string;
+    appName?: string;
+    role?: string;
+    createdAt?: string;
+}
+
+export interface GetManagementUserAppRolesResponse {
+    error?: string;
+    appRoles?: ManagementUserAppRole[] | null;
+}
+
+export const getManagementUserAppRoles = async (userId: string): Promise<GetManagementUserAppRolesResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch management user's app roles: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as GetManagementUserAppRolesResponse;
+}
+
+export interface DeleteManagementUserAppRoleResponse {
+    message?: string;
+    error?: string;
+}
+
+export const deleteManagementUserAppRole = async (userId: string, appRoleId: string): Promise<DeleteManagementUserAppRoleResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles/${appRoleId}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to delete management user's app role: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as DeleteManagementUserAppRoleResponse;
+}
+
+export interface CreateManagementUserAppRoleFromTemplateResponse {
+    message?: string;
+    error?: string;
+}
+
+export const createManagementUserAppRoleFromTemplate = async (userId: string, appRoleTemplateId: string): Promise<CreateManagementUserAppRoleFromTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/user-management/management-users/${userId}/app-roles/${appRoleTemplateId}`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'POST',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to create management user's app role: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as CreateManagementUserAppRoleFromTemplateResponse;
+}
+
+/*
+ App role template API
+*/
+
+
+export interface AppRoleTemplate {
+    id?: string;
+    appName: string;
+    role: string;
+    requiredPermissions: Array<ManagementUserPermission>;
+    createdAt?: string;
+    updatedAt?: string;
+};
+
+export interface GetAppRoleTemplatesResponse {
+    error?: string;
+    appRoleTemplates?: AppRoleTemplate[] | null;
+}
+
+export interface GetAppRoleTemplateResponse {
+    error?: string;
+    appRoleTemplate?: AppRoleTemplate;
+}
+
+export interface CreateAppRoleTemplateResponse {
+    error?: string;
+    appRoleTemplate?: AppRoleTemplate;
+}
+
+export interface UpdateAppRoleTemplateResponse {
+    error?: string;
+    appRoleTemplate?: AppRoleTemplate;
+}
+
+export interface DeleteAppRoleTemplatesForAppResponse {
+    error?: string;
+}
+
+export interface DeleteAppRoleTemplateResponse {
+    error?: string;
+}
+
+export const getAppRoleTemplates = async (): Promise<GetAppRoleTemplatesResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch app role templates: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as GetAppRoleTemplatesResponse;
+}
+
+export const createAppRoleTemplate = async (
+    data: Partial<AppRoleTemplate>
+): Promise<CreateAppRoleTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates/';
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'POST',
+            body: JSON.stringify(data),
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to create app role template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as CreateAppRoleTemplateResponse;
+}
+
+export const getAppRoleTemplate = async (
+    appRoleTemplateID: string
+): Promise<GetAppRoleTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates/' + appRoleTemplateID;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to fetch app role template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as GetAppRoleTemplateResponse;
+}
+
+export const updateAppRoleTemplate = async (
+    appRoleTemplateID: string,
+    data: Partial<AppRoleTemplate>
+): Promise<UpdateAppRoleTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates/' + appRoleTemplateID;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to update app role template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as UpdateAppRoleTemplateResponse;
+}
+
+export const deleteAppRoleTemplatesForApp = async (
+    appName: string
+): Promise<DeleteAppRoleTemplatesForAppResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates/delete-for-app/' + appName;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to delete app role templates for app: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as DeleteAppRoleTemplatesForAppResponse;
+}
+
+export const deleteAppRoleTemplate = async (
+    appRoleTemplateID: string
+): Promise<DeleteAppRoleTemplateResponse> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = '/v1/user-management/app-roles/templates/delete/' + appRoleTemplateID;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'DELETE',
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to delete app role template: ${resp.status} - ${resp.body.error}` };
+    }
+    return resp.body as DeleteAppRoleTemplateResponse;
+}
+

@@ -288,7 +288,7 @@ const controlFlowOperators: ExpressionDef[] = [
         categories: ['control-flow'],
         label: 'Conditional action set (IF-THEN)',
         returnType: 'action',
-        icon: "signpost",
+        icon: "corner-down-right",
         color: 'blue',
         slots: [
             {
@@ -361,7 +361,7 @@ const generalStudyActions: ExpressionDef[] = [
         categories: ['general-study-actions'],
         label: 'Update study status',
         returnType: 'action',
-        icon: "tag",
+        icon: "refresh-ccw",
         color: 'blue',
         slots: [
             {
@@ -426,7 +426,7 @@ const generalStudyActions: ExpressionDef[] = [
         isTemplateFor: 'UPDATE_STUDY_STATUS',
         label: 'Finish participation',
         returnType: 'action',
-        icon: "pyramid",
+        icon: "book-check",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -450,7 +450,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Start New Study Session',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "code",
+        icon: "play",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -466,7 +466,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Remove Entry from Study Wide Code List',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "list-x",
         color: 'blue',
         slots: [
             {
@@ -517,7 +517,7 @@ const generalStudyActions: ExpressionDef[] = [
         label: 'Notify Researchers (Email)',
         categories: ['general-study-actions'],
         returnType: 'action',
-        icon: "diamond",
+        icon: "mail",
         color: 'blue',
         slots: [
             {
@@ -562,8 +562,47 @@ const generalStudyActions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'RESET_STUDY_COUNTER',
+        categories: ['general-study-actions'],
+        label: 'Reset study counter',
+        returnType: 'action',
+        icon: "refresh-ccw",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'RESET_STUDY_COUNTER',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input']
+                }
+            }
+        }
     }
-
 ]
 
 const participantStateActions: ExpressionDef[] = [
@@ -572,7 +611,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Update participant flag',
         returnType: 'action',
-        icon: "tag",
+        icon: "refresh-ccw",
         color: 'blue',
         slots: [
             {
@@ -611,7 +650,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Remove participant flag',
         returnType: 'action',
-        icon: "tag",
+        icon: "list-x",
         color: 'blue',
         slots: [
             {
@@ -646,7 +685,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Add new survey',
         returnType: 'action',
-        icon: "calendar",
+        icon: "plus",
         color: 'blue',
         slots: [
             {
@@ -752,7 +791,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all assigned surveys',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -768,7 +807,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove one assigned survey',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [
             {
@@ -832,7 +871,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all surveys of a specific key',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "trash",
         color: 'blue',
         slots: [
             {
@@ -867,11 +906,71 @@ const participantStateActions: ExpressionDef[] = [
         }
     },
     {
+        id: 'SEND_MESSAGE_NOW',
+        label: 'Send message now (immediately)',
+        categories: ['participant-state-actions'],
+        returnType: 'action',
+        icon: "mail",
+        color: 'blue',
+        slots: [
+            {
+                label: 'Message type',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'message-type-picker',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            },
+            {
+                label: 'Use language',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'SEND_MESSAGE_NOW',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    undefined,
+                ],
+                metadata: {
+                    slotTypes: ['message-type-picker']
+                }
+            },
+        }
+    },
+    {
         id: 'ADD_MESSAGE',
         label: 'Schedule a message',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "calendar",
+        icon: "calendar-clock",
         color: 'blue',
         slots: [
             {
@@ -937,7 +1036,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove all scheduled messages',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "calendar-x-2",
         color: 'blue',
         slots: [],
         defaultValue: {
@@ -953,7 +1052,7 @@ const participantStateActions: ExpressionDef[] = [
         label: 'Remove scheduled messages of a specific type',
         categories: ['participant-state-actions'],
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "calendar-x-2",
         color: 'blue',
         slots: [
             {
@@ -991,7 +1090,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'SET_LINKING_CODE',
         label: 'Set linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link-2",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1050,7 +1149,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'DELETE_LINKING_CODE',
         label: 'Delete linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link-2-off",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1086,7 +1185,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'DRAW_STUDY_CODE_AS_LINKING_CODE',
         label: 'Draw study code as linking code',
         returnType: 'action',
-        icon: "tag",
+        icon: "link",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1144,7 +1243,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_CONFIDENTIAL_RESPONSE_BY_KEY',
         label: 'Remove confidential response by key',
         returnType: 'action',
-        icon: "triangle",
+        icon: "trash",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1179,7 +1278,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_ALL_CONFIDENTIAL_RESPONSES',
         label: 'Remove all confidential responses',
         returnType: 'action',
-        icon: "triangle",
+        icon: "trash",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [],
@@ -1192,10 +1291,209 @@ const participantStateActions: ExpressionDef[] = [
         }
     },
     {
+        id: 'GET_NEXT_STUDY_COUNTER_AS_FLAG',
+        categories: ['participant-state-actions'],
+        label: 'Increment and store study counter as flag',
+        returnType: 'action',
+        icon: 'tag',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Flag key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'participant-flag-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Prefix (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Padding (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'GET_NEXT_STUDY_COUNTER_AS_FLAG',
+                data: [
+                    undefined,
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input', 'participant-flag-key-selector', 'text-input', 'number-input']
+                }
+            }
+        }
+    },
+    {
+        id: 'GET_NEXT_STUDY_COUNTER_AS_LINKING_CODE',
+        categories: ['participant-state-actions'],
+        label: 'Increment and store study counter as linking code',
+        returnType: 'action',
+        icon: 'link-2',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Store as key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Prefix (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            },
+            {
+                label: 'Padding (optional)',
+                required: false,
+                allowedTypes: [
+                    {
+                        id: 'number-input',
+                        type: 'num'
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'GET_NEXT_STUDY_COUNTER_AS_LINKING_CODE',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'str',
+                        str: ''
+                    },
+                    {
+                        dtype: 'num',
+                        num: 0
+                    }
+                ],
+                metadata: {
+                    slotTypes: ['text-input', 'linking-code-key-selector', 'text-input', 'number-input']
+                }
+            }
+        }
+    },
+    {
         id: 'EXTERNAL_EVENT_HANDLER',
         label: 'External event handler',
         returnType: 'action',
-        icon: "code",
+        icon: "external-link",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1226,7 +1524,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Initialize report',
         returnType: 'action',
-        icon: "calendar",
+        icon: "file-plus",
         color: 'blue',
         slots: [
             {
@@ -1262,7 +1560,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Cancel report',
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "file-x",
         color: 'blue',
         slots: [
             {
@@ -1298,7 +1596,7 @@ const participantStateActions: ExpressionDef[] = [
         categories: ['participant-state-actions'],
         label: 'Update report data',
         returnType: 'action',
-        icon: "tag",
+        icon: "file-pen",
         color: 'blue',
         slots: [
             {
@@ -1371,7 +1669,7 @@ const participantStateActions: ExpressionDef[] = [
         id: 'REMOVE_REPORT_DATA',
         label: 'Remove report data by attribute key',
         returnType: 'action',
-        icon: "circle-slash",
+        icon: "file-key",
         color: 'blue',
         categories: ['participant-state-actions'],
         slots: [
@@ -1406,7 +1704,7 @@ const advancedExpressions: ExpressionDef[] = [
         categories: ['advanced'],
         label: 'Use external serivce to evaluate event data',
         returnType: 'str',
-        icon: 'code',
+        icon: 'external-link',
         color: 'lime',
         slots: [
             {
@@ -1436,7 +1734,7 @@ const advancedExpressions: ExpressionDef[] = [
         categories: ['advanced'],
         label: 'Use external serivce to evaluate event data (return float)',
         returnType: 'num',
-        icon: 'code',
+        icon: 'external-link',
         color: 'lime',
         isTemplateFor: 'externalEventEval',
         slots: [],
@@ -1457,7 +1755,7 @@ const advancedExpressions: ExpressionDef[] = [
         categories: ['advanced'],
         label: 'Generate random number',
         returnType: 'num',
-        icon: 'function',
+        icon: 'dice',
         color: 'lime',
         slots: [
             {
@@ -1567,6 +1865,80 @@ const advancedExpressions: ExpressionDef[] = [
                 }
             },
         }
+    },
+    {
+        id: 'getCurrentStudyCounterValue',
+        categories: ['advanced'],
+        label: 'Get current study counter value',
+        returnType: 'num',
+        icon: 'tally-5',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getCurrentStudyCounterValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'getNextStudyCounterValue',
+        categories: ['advanced'],
+        label: 'Increment and get study counter value',
+        returnType: 'num',
+        icon: 'tally-5',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Scope key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getNextStudyCounterValue',
+                data: [
+                    {
+                        dtype: 'str',
+                        str: ''
+                    }
+                ]
+            }
+        }
     }
 ]
 
@@ -1579,7 +1951,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Check event type',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'circle-question-mark',
         color: 'blue',
         slots: [
             {
@@ -1618,7 +1990,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Current event is submission of survey with key',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'send-horizontal',
         color: 'blue',
         slots: [
             {
@@ -1659,7 +2031,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Custom event with key',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'circle-question-mark',
         color: 'blue',
         slots: [
             {
@@ -1699,7 +2071,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Has (any) event payload',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'package',
         color: 'blue',
         slots: [
         ],
@@ -1717,7 +2089,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Has event payload with key',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'package-search',
         color: 'blue',
         slots: [
             {
@@ -1749,7 +2121,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Has event payload with key and value',
         returnType: 'boolean',
-        icon: 'split',
+        icon: 'package-search',
         color: 'blue',
         slots: [
             {
@@ -1800,7 +2172,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Get event payload value as string',
         returnType: 'str',
-        icon: 'split',
+        icon: 'package-open',
         color: 'blue',
         slots: [
             {
@@ -1834,7 +2206,7 @@ const eventCheckers: ExpressionDef[] = [
         categories: ['event-checkers'],
         label: 'Get event payload value as number',
         returnType: 'num',
-        icon: 'split',
+        icon: 'package-open',
         color: 'blue',
         slots: [
             {
@@ -1872,7 +2244,7 @@ const logicAndComparisionExpressions: ExpressionDef[] = [
         categories: ['mathematical-operators'],
         label: 'Sum',
         returnType: 'num',
-        icon: 'function',
+        icon: 'sigma',
         color: 'lime',
         slots: [
             {
@@ -1908,7 +2280,7 @@ const logicAndComparisionExpressions: ExpressionDef[] = [
         categories: ['mathematical-operators'],
         label: 'Negation',
         returnType: 'num',
-        icon: 'function',
+        icon: 'minus',
         color: 'lime',
         slots: [
             {
@@ -1946,7 +2318,7 @@ const dateHelpers: ExpressionDef[] = [
         categories: ['date-helpers'],
         label: 'Get ISO week for timestamp',
         returnType: 'num',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [
             {
@@ -1978,7 +2350,7 @@ const dateHelpers: ExpressionDef[] = [
         categories: ['date-helpers'],
         label: 'Get timestamp for next occurrence of an ISO week',
         returnType: 'num',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [
             {
@@ -2030,7 +2402,7 @@ const dateHelpers: ExpressionDef[] = [
         categories: ['date-helpers'],
         label: 'Get timestamp for next occurrence of a start of month',
         returnType: 'num',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [
             {
@@ -2077,6 +2449,48 @@ const dateHelpers: ExpressionDef[] = [
             }
         }
     },
+    {
+        id: 'dateToStr',
+        categories: ['date-helpers'],
+        label: 'Convert date to string',
+        returnType: 'str',
+        icon: 'clock',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Timestamp',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'date-picker',
+                        type: 'date',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['num']
+                    }
+                ]
+            },
+            {
+                label: 'Format',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str', },
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'dateToStr',
+                data: [
+
+
+                ]
+            }
+        }
+    }
 ]
 
 const responseCheckers: ExpressionDef[] = [
@@ -2086,7 +2500,7 @@ const responseCheckers: ExpressionDef[] = [
         label: 'Response contains any of these keys',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'layout-list',
+        icon: 'list-todo',
         slots: [
             {
                 label: 'Item and option references:',
@@ -2122,7 +2536,7 @@ const responseCheckers: ExpressionDef[] = [
         label: 'Has response but none of these keys',
         returnType: 'boolean',
         color: 'yellow',
-        icon: 'layout-list',
+        icon: 'list-x',
         slots: [
             {
                 label: 'Item and option references:',
@@ -2242,6 +2656,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'A specific response key is present',
         returnType: 'boolean',
+        icon: 'list-check',
         color: 'yellow',
         slots: [
             {
@@ -2297,6 +2712,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'A specific response key is present and has a specific value',
         returnType: 'boolean',
+        icon: 'list-check',
         color: 'yellow',
         slots: [
             {
@@ -2371,7 +2787,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'Get selected keys',
         returnType: 'str',
-        icon: 'code',
+        icon: 'key-round',
         color: 'blue',
         slots: [
             {
@@ -2428,7 +2844,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'Count response items',
         returnType: 'num',
-        icon: 'code',
+        icon: 'tally-5',
         color: 'blue',
         slots: [
             {
@@ -2578,7 +2994,7 @@ const responseCheckers: ExpressionDef[] = [
         categories: ['response-checkers'],
         label: 'Consent accepted',
         returnType: 'boolean',
-        icon: 'form-input',
+        icon: 'clipboard-check',
         slots: [],
         isTemplateFor: 'hasResponseKey',
         defaultValue: {
@@ -2608,7 +3024,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get study entry time',
         returnType: 'num',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [],
         defaultValue: {
@@ -2624,7 +3040,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Has a survey with key assigned',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'key-round',
         color: 'lime',
         slots: [
             {
@@ -2663,7 +3079,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get survey key assigned from timestamp',
         returnType: 'num',
-        icon: 'function',
+        icon: 'key-round',
         color: 'lime',
         slots: [
             {
@@ -2702,7 +3118,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get survey key assigned until timestamp',
         returnType: 'num',
-        icon: 'function',
+        icon: 'key-round',
         color: 'lime',
         slots: [
             {
@@ -2743,7 +3159,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Template: Is survey in active window',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'app-window',
         color: 'lime',
         slots: [],
         defaultValue: {
@@ -2820,7 +3236,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Template: Survey assignment start is before reference time',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [],
         defaultValue: {
@@ -2858,7 +3274,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Template: Survey assignment end is before reference time',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [],
         defaultValue: {
@@ -2897,7 +3313,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Has study status',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'tag',
         color: 'lime',
         slots: [
             {
@@ -2961,7 +3377,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Has participant flag key and value',
         returnType: 'boolean',
-        icon: 'tag',
+        icon: 'tags',
         color: 'lime',
         slots: [
             {
@@ -2991,7 +3407,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get participant flag value',
         returnType: 'str',
-        icon: 'function',
+        icon: 'tag',
         color: 'lime',
         slots: [
             {
@@ -3057,7 +3473,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Has linking code',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'link-2',
         color: 'lime',
         slots: [
             {
@@ -3092,11 +3508,11 @@ const participantStateCheckers: ExpressionDef[] = [
         }
     },
     {
-        id: 'getLinkingCode',
+        id: 'getLinkingCodeValue',
         categories: ['participant-state-checkers'],
         label: 'Get linking code',
         returnType: 'str',
-        icon: 'function',
+        icon: 'link-2',
         color: 'lime',
         slots: [
             {
@@ -3122,7 +3538,7 @@ const participantStateCheckers: ExpressionDef[] = [
         defaultValue: {
             dtype: 'exp',
             exp: {
-                name: 'getLinkingCode',
+                name: 'getLinkingCodeValue',
                 data: [],
                 metadata: {
                     slotTypes: ['linking-code-key-selector']
@@ -3135,7 +3551,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get last submission date',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-days',
         color: 'lime',
         slots: [
             {
@@ -3175,7 +3591,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Last submission date is older than',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [
             {
@@ -3225,7 +3641,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Has message type assigned',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'mail-question-mark',
         color: 'lime',
         slots: [
             {
@@ -3264,7 +3680,7 @@ const participantStateCheckers: ExpressionDef[] = [
         categories: ['participant-state-checkers'],
         label: 'Get message next time',
         returnType: 'num',
-        icon: 'function',
+        icon: 'mail',
         color: 'lime',
         slots: [
             {
@@ -3306,7 +3722,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming study entry time',
         returnType: 'num',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [],
         defaultValue: {
@@ -3322,7 +3738,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Incoming state has survey with key assigned (Merge event)',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'tag',
         color: 'lime',
         slots: [
             {
@@ -3361,7 +3777,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming survey key assigned from timestamp (Merge event)',
         returnType: 'num',
-        icon: 'function',
+        icon: 'key-round',
         color: 'lime',
         slots: [
             {
@@ -3400,7 +3816,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming survey key assigned until timestamp (Merge event)',
         returnType: 'num',
-        icon: 'function',
+        icon: 'key-round',
         color: 'lime',
         slots: [
             {
@@ -3439,7 +3855,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Has incoming study status (Merge event)',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'tag',
         color: 'lime',
         slots: [
             {
@@ -3469,7 +3885,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Has incoming participant flag key and value (Merge event)',
         returnType: 'boolean',
-        icon: 'tag',
+        icon: 'tags',
         color: 'lime',
         slots: [
             {
@@ -3533,7 +3949,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming participant flag value (Merge event)',
         returnType: 'str',
-        icon: 'function',
+        icon: 'tag',
         color: 'lime',
         slots: [
             {
@@ -3572,7 +3988,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming last submission date (Merge event)',
         returnType: 'num',
-        icon: 'function',
+        icon: 'calendar-days',
         color: 'lime',
         slots: [
             {
@@ -3611,7 +4027,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Incoming last submission date is older than (Merge event)',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'clock',
         color: 'lime',
         slots: [
             {
@@ -3661,7 +4077,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Has incoming message type assigned (Merge event)',
         returnType: 'boolean',
-        icon: 'function',
+        icon: 'mail-question-mark',
         color: 'lime',
         slots: [
             {
@@ -3700,7 +4116,7 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
         categories: ['incoming-participant-state-checkers'],
         label: 'Get incoming message next time (Merge event)',
         returnType: 'num',
-        icon: 'function',
+        icon: 'mail',
         color: 'lime',
         slots: [
             {
@@ -3730,6 +4146,79 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
                 data: [],
                 metadata: {
                     slotTypes: ['message-type-picker']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:hasLinkingCode',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Has incoming linking code (Merge event)',
+        returnType: 'boolean',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:hasLinkingCode',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
+                }
+            }
+        }
+    },
+    {
+        id: 'incomingState:getLinkingCodeValue',
+        categories: ['incoming-participant-state-checkers'],
+        label: 'Get incoming linking code value (Merge event)',
+        returnType: 'str',
+        icon: 'link-2',
+        color: 'lime',
+        slots: [
+            {
+                label: 'Linking code key',
+                required: true,
+                allowedTypes: [
+                    {
+                        id: 'linking-code-key-selector',
+                        type: 'list-selector',
+                    },
+                    {
+                        id: 'text-input',
+                        type: 'str',
+                    },
+                    {
+                        id: 'exp-slot',
+                        type: 'expression',
+                        allowedExpressionTypes: ['str']
+                    }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getLinkingCodeValue',
+                data: [],
+                metadata: {
+                    slotTypes: ['linking-code-key-selector']
                 }
             }
         }

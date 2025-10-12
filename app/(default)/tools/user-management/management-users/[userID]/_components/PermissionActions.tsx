@@ -10,6 +10,7 @@ import UpdatePermissionLimiterDialog from './UpdatePermissionLimiterDialog';
 import { getIfHideLimiter } from './AddPermissionDialog';
 import { ManagementUserPermission } from '@/lib/data/userManagementAPI';
 import { deletePermissionForServiceAccount } from '@/lib/data/service-accounts';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface PermissionActionsProps {
     userId: string;
@@ -23,21 +24,29 @@ const PermissionActions: React.FC<PermissionActionsProps> = (props) => {
     const handleOnDelete = () => {
         if (confirm('Are you sure you want to delete this permission?')) {
             startTransition(async () => {
-                if (props.userType === 'service-account') {
-                    const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
-                    if (resp.error) {
-                        toast.error(resp.error);
-                        return;
-                    }
-                    toast.success('Permission deleted');
+                if (!props.permission.id) {
+                    toast.error('Permission ID not defined but is required');
                     return;
-                } else {
-                    const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
-                    if (resp.error) {
-                        toast.error(resp.error);
+                }
+                try {
+                    if (props.userType === 'service-account') {
+                        const resp = await deletePermissionForServiceAccount(props.userId, props.permission.id)
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            return;
+                        }
+                        toast.success('Permission deleted');
                         return;
+                    } else {
+                        const resp = await deletePermissionForManagementUser(props.userId, props.permission.id)
+                        if (resp.error) {
+                            toast.error(resp.error);
+                            return;
+                        }
+                        toast.success('Permission deleted');
                     }
-                    toast.success('Permission deleted');
+                } catch (error: unknown) {
+                    toast.error('Failed to delete permission', { description: getErrorMessage(error) });
                 }
             });
         }

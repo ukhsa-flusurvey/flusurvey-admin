@@ -13,6 +13,7 @@ import ContentEditor from '../../../email-templates/_components/ContentEditor';
 import LanguageSelector from '@/components/LanguageSelector';
 import { decodeTemplate, encodeTemplate } from '../../../schedules/_components/utils';
 import { Separator } from '@/components/ui/separator';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface SmsTemplateConfigFormProps {
     smsTemplateConfig: SMSTemplate;
@@ -54,7 +55,7 @@ const SmsTemplateConfigForm: React.FC<SmsTemplateConfigFormProps> = (props) => {
                 setIsDirty(false);
             } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: (error as Error).message });
+                toast.error('Something went wrong', { description: getErrorMessage(error) });
             }
 
         })

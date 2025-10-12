@@ -208,7 +208,7 @@ export class StudyRulesSet {
                 const currentKey = ((h as ExpArg).exp.data?.at(0) as ExpArg).exp.data?.at(0) as StrArg;
                 return currentKey.str === key;
             })
-            const newHandler = initSurveySubmissionHandler(key);
+            const newHandler = initCustomEventHandler(key);
             if (actions && actions.length > 0) {
                 newHandler.data?.push(...actions);
             }
