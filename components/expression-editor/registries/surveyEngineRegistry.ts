@@ -19,6 +19,10 @@ export const surveyExpressionCategories = [
         label: 'Participant flags'
     },
     {
+        id: 'study-variables',
+        label: 'Study variables'
+    },
+    {
         id: 'response-dependencies',
         label: 'Response dependencies'
     },
@@ -788,6 +792,37 @@ const templates: ExpressionDef[] = [
             },
         },
         isTemplateFor: 'getResponseValueAsNum',
+    },
+
+    {
+        categories: ['templates', 'study-variables'],
+        id: 'study-variable-string-equals',
+        label: 'Study variable string equals',
+        returnType: 'boolean',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'eq',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getStudyVariableString',
+                            data: [
+                                { dtype: 'str', str: '' }
+                            ]
+                        }
+                    },
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: [undefined, 'text-input']
+                }
+            }
+        },
+        isTemplateFor: 'eq',
     }
 ]
 
@@ -938,6 +973,165 @@ const participantFlags: ExpressionDef[] = [
     }
 ]
 
+const studyVariables: ExpressionDef[] = [
+    {
+        categories: ['study-variables'],
+        id: 'hasStudyVariableKey',
+        label: 'Study variable key exists',
+        returnType: 'boolean',
+        icon: 'tag',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'hasStudyVariableKey',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableBoolean',
+        label: 'Get study variable as boolean',
+        returnType: 'boolean',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableBoolean',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableString',
+        label: 'Get study variable as string',
+        returnType: 'str',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableString',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableInt',
+        label: 'Get study variable as integer',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableInt',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableFloat',
+        label: 'Get study variable as float',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableFloat',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableDate',
+        label: 'Get study variable as date (posix seconds)',
+        returnType: 'num',
+        icon: 'calendar-days',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableDate',
+                data: [
+                    { dtype: 'str', str: '' }
+                ]
+            }
+        }
+    },
+]
+
 export const surveyEngineRegistry: ExpressionDef[] = [
     ...logicalOperators,
     ...miscExpressions,
@@ -946,6 +1140,7 @@ export const surveyEngineRegistry: ExpressionDef[] = [
     ...comparisonOperators,
     ...advancedExpressions,
     ...participantFlags,
+    ...studyVariables,
     {
         categories: ['response-dependencies'],
         id: 'getSurveyItemValidation',
