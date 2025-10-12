@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { KeyValuePairDefs } from '../../types';
+import { KeyValuePairDefs, StudyVariableDef, isKeyValuePairDefs, isStudyVariableDef } from '../../types';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,9 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 
 
 interface ItemEditorProps {
-    selection?: string | KeyValuePairDefs;
+    selection?: string | KeyValuePairDefs | StudyVariableDef;
     type: string;
-    onChange: (item: string | KeyValuePairDefs) => void;
+    onChange: (item: string | KeyValuePairDefs | StudyVariableDef) => void;
     usedKeys: string[];
 }
 
@@ -66,58 +66,68 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
             )}
         </Label>
     } else {
-        content = <div className='space-y-4'>
-            <div>
-                <Label className='space-y-1.5'>
-                    <span>Key</span>
-                    <Input
-                        value={newKey}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            setNewKey(val);
-                            if (val.length === 0) {
-                                return;
-                            }
-                            if (props.usedKeys.includes(val)) {
-                                return;
-                            }
-                            props.onChange({
-                                ...props.selection as KeyValuePairDefs,
-                                key: e.target.value,
-                            });
-                        }}
-                    />
-                    {showKeyError() && (
-                        <p className='text-destructive text-xs'>Wrong key - object cannot be updated</p>
-                    )}
-                </Label>
+        if (isStudyVariableDef(props.selection)) {
+            content = <div className='space-y-4'>
+                <div>
+                    <Label className='space-y-1.5'>
+                        <span>Key</span>
+                    </Label>
+                </div>
             </div>
+        } else if (isKeyValuePairDefs(props.selection)) {
+            content = <div className='space-y-4'>
+                <div>
+                    <Label className='space-y-1.5'>
+                        <span>Key</span>
+                        <Input
+                            value={newKey}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setNewKey(val);
+                                if (val.length === 0) {
+                                    return;
+                                }
+                                if (props.usedKeys.includes(val)) {
+                                    return;
+                                }
+                                props.onChange({
+                                    ...props.selection as KeyValuePairDefs,
+                                    key: e.target.value,
+                                });
+                            }}
+                        />
+                        {showKeyError() && (
+                            <p className='text-destructive text-xs'>Wrong key - object cannot be updated</p>
+                        )}
+                    </Label>
+                </div>
 
-            <div>
-                <Label
-                    className='space-y-1.5 content-fit'
-                >
-                    <span>
-                        Possible values
-                    </span>
-                    <Textarea
-                        defaultValue={props.selection?.possibleValues?.join('\n') ?? ''}
-                        rows={10}
-                        placeholder='Enter possible values'
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            props.onChange({
-                                ...props.selection as KeyValuePairDefs,
-                                possibleValues: val.split('\n').map(e => e.trim()).filter(e => e.length > 0),
-                            });
-                        }}
-                    />
-                    <p className='text-xs text-muted-foreground'>
-                        Enter one possible value per line.
-                    </p>
-                </Label>
+                <div>
+                    <Label
+                        className='space-y-1.5 content-fit'
+                    >
+                        <span>
+                            Possible values
+                        </span>
+                        <Textarea
+                            defaultValue={props.selection?.possibleValues?.join('\n') ?? ''}
+                            rows={10}
+                            placeholder='Enter possible values'
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                props.onChange({
+                                    ...props.selection as KeyValuePairDefs,
+                                    possibleValues: val.split('\n').map(e => e.trim()).filter(e => e.length > 0),
+                                });
+                            }}
+                        />
+                        <p className='text-xs text-muted-foreground'>
+                            Enter one possible value per line.
+                        </p>
+                    </Label>
+                </div>
             </div>
-        </div>
+        }
     }
 
     return (

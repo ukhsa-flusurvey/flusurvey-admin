@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyValuePairDefs } from '../../types';
+import { KeyValuePairDefs, StudyVariableDef } from '../../types';
 import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -7,14 +7,15 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import AddPopover from './add-popover';
 import ListItemView from './list-item-view';
 import { cn } from '@/lib/utils';
+import { StudyVariableType } from '@/utils/server/types/study-variables';
 
 interface EditorCardProps {
     label: string;
     description: string;
-    type: 'string' | 'key-value-pair';
-    data?: string[] | KeyValuePairDefs[];
+    type: 'string' | 'key-value-pair' | 'study-variable';
+    data?: string[] | KeyValuePairDefs[] | StudyVariableDef[];
     selectedIndex?: number;
-    onChange?: (data: string[] | KeyValuePairDefs[]) => void;
+    onChange?: (data: string[] | KeyValuePairDefs[] | StudyVariableDef[]) => void;
     onSelectIndex?: (index: number | undefined) => void;
 }
 
@@ -53,10 +54,16 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
                 props.onChange(newData);
             }
             props.onSelectIndex?.(newData.length - 1);
+        } else if (props.type === 'study-variable') {
+            const newData: StudyVariableDef[] = props.data !== undefined ? [...(props.data as StudyVariableDef[]), { key, type: StudyVariableType.STRING }] : [{ key, type: StudyVariableType.STRING }];
+            if (props.onChange) {
+                props.onChange(newData);
+            }
+            props.onSelectIndex?.(newData.length - 1);
         }
     }
 
-    const removeItem = (item: string | KeyValuePairDefs) => {
+    const removeItem = (item: string | KeyValuePairDefs | StudyVariableDef) => {
         if (!confirm('Are you sure you want to delete this entry? All unsaved changes will be lost.')) {
             return;
         }
@@ -71,6 +78,11 @@ const EditorCard: React.FC<EditorCardProps> = (props) => {
             const newData = props.data !== undefined ? [...(props.data as KeyValuePairDefs[])] : [];
             if (props.onChange) {
                 props.onChange(newData.filter(e => e.key !== (item as KeyValuePairDefs).key));
+            }
+        } else if (props.type === 'study-variable') {
+            const newData = props.data !== undefined ? [...(props.data as StudyVariableDef[])] : [];
+            if (props.onChange) {
+                props.onChange(newData.filter(e => e.key !== (item as StudyVariableDef).key));
             }
         }
         if (props.selectedIndex !== undefined) {
