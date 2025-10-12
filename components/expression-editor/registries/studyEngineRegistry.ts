@@ -237,6 +237,65 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         color: 'dark',
         categories: ['variables'],
     },
+    {
+        id: 'study-variable-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-boolean',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'boolean',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-float',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'float',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-date',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'date',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-int',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'int',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-string',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'string',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
     ...slotKeyValueListSlotEditors,
 ]
 
@@ -623,6 +682,7 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-boolean', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -643,7 +703,7 @@ const generalStudyActions: ExpressionDef[] = [
                     { dtype: 'str', str: '' }
                 ],
                 metadata: {
-                    slotTypes: ['text-input']
+                    slotTypes: ['study-variable-key-selector-boolean']
                 }
             }
         }
@@ -660,6 +720,7 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-string', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -681,7 +742,7 @@ const generalStudyActions: ExpressionDef[] = [
                     { dtype: 'str', str: '' }
                 ],
                 metadata: {
-                    slotTypes: ['text-input']
+                    slotTypes: ['study-variable-key-selector-string']
                 }
             }
         }
@@ -698,6 +759,7 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-int', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -719,7 +781,7 @@ const generalStudyActions: ExpressionDef[] = [
                     { dtype: 'str', str: '' }
                 ],
                 metadata: {
-                    slotTypes: ['text-input']
+                    slotTypes: ['study-variable-key-selector-int']
                 }
             }
         }
@@ -736,6 +798,7 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-float', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -757,7 +820,7 @@ const generalStudyActions: ExpressionDef[] = [
                     { dtype: 'str', str: '' }
                 ],
                 metadata: {
-                    slotTypes: ['text-input']
+                    slotTypes: ['study-variable-key-selector-float']
                 }
             }
         }
@@ -774,6 +837,7 @@ const generalStudyActions: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-date', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -795,7 +859,7 @@ const generalStudyActions: ExpressionDef[] = [
                     { dtype: 'str', str: '' }
                 ],
                 metadata: {
-                    slotTypes: ['text-input']
+                    slotTypes: ['study-variable-key-selector-date']
                 }
             }
         }
@@ -1907,6 +1971,7 @@ const studyVariables: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-boolean', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -1916,9 +1981,10 @@ const studyVariables: ExpressionDef[] = [
             dtype: 'exp',
             exp: {
                 name: 'getStudyVariableBoolean',
-                data: [
-                    { dtype: 'str', str: '' }
-                ]
+                data: [],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-boolean']
+                }
             }
         }
     },
@@ -1933,6 +1999,7 @@ const studyVariables: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-string', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -1944,7 +2011,10 @@ const studyVariables: ExpressionDef[] = [
                 name: 'getStudyVariableString',
                 data: [
                     { dtype: 'str', str: '' }
-                ]
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-string']
+                }
             }
         }
     },
@@ -1959,6 +2029,7 @@ const studyVariables: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-int', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -1970,7 +2041,10 @@ const studyVariables: ExpressionDef[] = [
                 name: 'getStudyVariableInt',
                 data: [
                     { dtype: 'str', str: '' }
-                ]
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-int']
+                }
             }
         }
     },
@@ -1985,6 +2059,7 @@ const studyVariables: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-float', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -1996,7 +2071,10 @@ const studyVariables: ExpressionDef[] = [
                 name: 'getStudyVariableFloat',
                 data: [
                     { dtype: 'str', str: '' }
-                ]
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-float']
+                }
             }
         }
     },
@@ -2011,6 +2089,7 @@ const studyVariables: ExpressionDef[] = [
                 label: 'Key',
                 required: true,
                 allowedTypes: [
+                    { id: 'study-variable-key-selector-date', type: 'list-selector' },
                     { id: 'text-input', type: 'str' },
                     { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
                 ]
@@ -2022,7 +2101,10 @@ const studyVariables: ExpressionDef[] = [
                 name: 'getStudyVariableDate',
                 data: [
                     { dtype: 'str', str: '' }
-                ]
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-date']
+                }
             }
         }
     },
@@ -2047,7 +2129,10 @@ const studyVariableTemplates: ExpressionDef[] = [
                             name: 'getStudyVariableString',
                             data: [
                                 { dtype: 'str', str: '' }
-                            ]
+                            ],
+                            metadata: {
+                                slotTypes: ['study-variable-key-selector-string']
+                            }
                         }
                     },
                     { dtype: 'str', str: '' }

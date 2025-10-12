@@ -80,6 +80,14 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
         }
     });
 
+    const studyVariableKeys = currentStudyContext?.studyVariables?.map(sv => {
+        return {
+            key: sv.key,
+            label: sv.key,
+            type: sv.type
+        }
+    });
+
     const monthValues = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => {
         return {
             key: m,
@@ -137,6 +145,7 @@ const ExpEditorWrapper: React.FC<ExpEditorWrapperProps> = (props) => {
                     reportKeysWithAttributes: reportKeysWithAttributes,
                     customEventKeys: customEventKeys ?? [],
                     monthValues: monthValues ?? [],
+                    studyVariableKeys: studyVariableKeys ?? [],
                 }}
                 currentIndex={0}
                 slotDef={{
