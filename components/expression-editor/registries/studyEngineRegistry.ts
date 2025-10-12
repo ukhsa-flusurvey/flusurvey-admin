@@ -1981,9 +1981,7 @@ const studyVariables: ExpressionDef[] = [
             dtype: 'exp',
             exp: {
                 name: 'getStudyVariableBoolean',
-                data: [
-
-                ],
+                data: [],
                 metadata: {
                     slotTypes: ['study-variable-key-selector-boolean']
                 }
