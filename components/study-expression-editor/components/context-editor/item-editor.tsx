@@ -4,6 +4,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldContent, FieldError, FieldLabel, FieldSet } from '@/components/ui/field';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { StudyVariableType } from '@/utils/server/types/study-variables';
 
 
 interface ItemEditorProps {
@@ -67,13 +70,64 @@ const ItemEditor: React.FC<ItemEditorProps> = (props) => {
         </Label>
     } else {
         if (isStudyVariableDef(props.selection)) {
-            content = <div className='space-y-4'>
-                <div>
-                    <Label className='space-y-1.5'>
+            content = <FieldSet>
+                <Field>
+                    <FieldLabel>
                         <span>Key</span>
-                    </Label>
-                </div>
-            </div>
+                    </FieldLabel>
+                    <FieldContent>
+                        <Input
+                            value={newKey}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setNewKey(val);
+                                if (val.length === 0) {
+                                    return;
+                                }
+                                if (props.usedKeys.includes(val)) {
+                                    return;
+                                }
+                                props.onChange({
+                                    ...props.selection as KeyValuePairDefs,
+                                    key: e.target.value,
+                                });
+                            }}
+                        />
+                        {showKeyError() && (
+                            <FieldError>
+                                Wrong key - object cannot be updated
+                            </FieldError>)}
+                    </FieldContent>
+                </Field>
+
+                <Field>
+                    <FieldLabel>
+                        <span>Type</span>
+                    </FieldLabel>
+                    <FieldContent>
+                        <Select
+                            value={props.selection?.type}
+                            onValueChange={(value) => {
+                                props.onChange({
+                                    ...props.selection as StudyVariableDef,
+                                    type: value as StudyVariableType,
+                                });
+                            }}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder='Select type' />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={StudyVariableType.STRING}>string</SelectItem>
+                                <SelectItem value={StudyVariableType.INTEGER}>int</SelectItem>
+                                <SelectItem value={StudyVariableType.FLOAT}>float</SelectItem>
+                                <SelectItem value={StudyVariableType.BOOLEAN}>boolean</SelectItem>
+                                <SelectItem value={StudyVariableType.DATE}>date</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FieldContent>
+                </Field>
+            </FieldSet>
         } else if (isKeyValuePairDefs(props.selection)) {
             content = <div className='space-y-4'>
                 <div>
