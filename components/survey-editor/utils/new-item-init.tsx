@@ -9,37 +9,38 @@ import { initMatrixQuestion } from "case-editor-tools/surveys/responseTypeGenera
 
 // generate random 3 letter string
 const randomString = (targetLength: number = 3) => {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-    const randomNumbers = Math.random().toString(36).substring(2, targetLength + 1).toUpperCase();
+    const randomNumbers = Math.random()
+        .toString(36)
+        .substring(2, targetLength + 1)
+        .toUpperCase();
     return randomLetter + randomNumbers;
-}
+};
 
 export const getUniqueRandomKey = (existingKeys: string[], parentKey: string) => {
     let newKey = randomString();
-    while (existingKeys.includes([parentKey, newKey].join('.'))) {
+    while (existingKeys.includes([parentKey, newKey].join("."))) {
         newKey = randomString();
     }
     return newKey;
-}
+};
 
 class SimpleGroup extends Group {
     constructor(parentKey: string, key: string, metadata?: { [key: string]: string }) {
         super(parentKey, key);
-        this.groupEditor.setMetadata(metadata)
+        this.groupEditor.setMetadata(metadata);
     }
 
-    buildGroup(): void {
-    }
+    buildGroup(): void {}
 }
-
 
 export const generateNewItemForType = (props: {
     itemType: ItemTypeKey;
     parentKey: string;
     otherKeys: string[];
 }): SurveyItem | null => {
-    const newItemType = props.itemType as ItemTypeKey;
+    const newItemType = props.itemType;
     const parentKey = props.parentKey;
     const newItemKey = getUniqueRandomKey(props.otherKeys, parentKey);
     const editorItemColor = getItemColorFromID(newItemKey);
@@ -47,102 +48,104 @@ export const generateNewItemForType = (props: {
     let newSurveyItem: SurveyItem | null = null;
 
     switch (newItemType) {
-        case 'pageBreak':
+        case "pageBreak":
             newSurveyItem = generatePageBreak(parentKey);
             break;
-        case 'group':
+        case "group":
             const newGroup = new SimpleGroup(parentKey, newItemKey, {
-                editorItemColor: editorItemColor
-            })
+                editorItemColor: editorItemColor,
+            });
             newSurveyItem = newGroup.get();
-            break
-        case 'surveyEnd':
-            const editor = new ItemEditor(undefined, { itemKey: parentKey + '.' + newItemKey, type: 'surveyEnd', isGroup: false });
+            break;
+        case "surveyEnd":
+            const editor = new ItemEditor(undefined, {
+                itemKey: parentKey + "." + newItemKey,
+                type: "surveyEnd",
+                isGroup: false,
+            });
 
-            editor.setTitleComponent(
-                generateTitleComponent(new Map<string, string>())
-            );
+            editor.setTitleComponent(generateTitleComponent(new Map<string, string>()));
             newSurveyItem = editor.getItem();
             break;
-        case 'display':
+        case "display":
             newSurveyItem = SurveyItems.display({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 content: [
                     ComponentGenerators.markdown({
                         content: new Map(),
-                    })
+                    }),
                 ],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
-            })
+                    editorItemColor: editorItemColor,
+                },
+            });
             break;
-        case 'singleChoice':
+        case "singleChoice":
             newSurveyItem = SurveyItems.singleChoice({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 responseOptions: [],
                 metadata: {
-                    editorItemColor: editorItemColor
+                    editorItemColor: editorItemColor,
                 },
-            })
+            });
             break;
-        case 'multipleChoice':
+        case "multipleChoice":
             newSurveyItem = SurveyItems.multipleChoice({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 responseOptions: [],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
-            })
+                    editorItemColor: editorItemColor,
+                },
+            });
             break;
-        case 'dateInput':
+        case "dateInput":
             newSurveyItem = SurveyItems.dateInput({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
-                dateInputMode: 'YMD',
+                dateInputMode: "YMD",
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'timeInput':
+        case "timeInput":
             newSurveyItem = SurveyItems.timeInput({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'textInput':
+        case "textInput":
             newSurveyItem = SurveyItems.textInput({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'numericInput':
+        case "numericInput":
             newSurveyItem = SurveyItems.numericInput({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 inputLabel: new Map(),
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'sliderNumeric':
+        case "sliderNumeric":
             newSurveyItem = SurveyItems.numericSlider({
                 parentKey: parentKey,
                 itemKey: newItemKey,
@@ -150,181 +153,171 @@ export const generateNewItemForType = (props: {
                 noResponseLabel: new Map(),
                 sliderLabel: new Map(),
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'responsiveSingleChoiceArray':
+        case "responsiveSingleChoiceArray":
             newSurveyItem = SurveyItems.responsiveSingleChoiceArray({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
-                defaultMode: 'table',
+                defaultMode: "table",
                 rows: [],
                 scaleOptions: [],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'responsiveBipolarLikertScaleArray':
+        case "responsiveBipolarLikertScaleArray":
             newSurveyItem = SurveyItems.responsiveBipolarLikertArray({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
-                defaultMode: 'table',
+                defaultMode: "table",
                 rows: [],
                 scaleOptions: [],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'responsiveMatrix':
+        case "responsiveMatrix":
             newSurveyItem = SurveyItems.responsiveMatrix({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
-                columns: [{
-                    key: 'col1',
-                    label: new Map(),
-                }],
-                rows: [{
-                    key: 'row1',
-                    label: new Map(),
-                    role: 'row'
-                }],
-                responseType: 'input',
+                columns: [
+                    {
+                        key: "col1",
+                        label: new Map(),
+                    },
+                ],
+                rows: [
+                    {
+                        key: "row1",
+                        label: new Map(),
+                        role: "row",
+                    },
+                ],
+                responseType: "input",
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'matrix':
-            const matrixEditor = new ItemEditor(undefined, { itemKey: parentKey + '.' + newItemKey, isGroup: false });
+        case "matrix":
+            const matrixEditor = new ItemEditor(undefined, { itemKey: parentKey + "." + newItemKey, isGroup: false });
 
-            matrixEditor.setTitleComponent(
-                generateTitleComponent(new Map<string, string>())
-            );
-            const rg = matrixEditor.addNewResponseComponent({ role: 'responseGroup' });
-            const rg_inner = initMatrixQuestion('mat', [], { name: 'sequential' })
+            matrixEditor.setTitleComponent(generateTitleComponent(new Map<string, string>()));
+            const rg = matrixEditor.addNewResponseComponent({ role: "responseGroup" });
+            const rg_inner = initMatrixQuestion("mat", [], { name: "sequential" });
             rg_inner.items.push({
-                key: 'headerRow',
-                role: 'headerRow',
-                items: [
-                    { key: 'col1', role: 'text' },
-                ]
-            })
+                key: "headerRow",
+                role: "headerRow",
+                items: [{ key: "col1", role: "text" }],
+            });
             rg_inner.items.push({
-                key: 'row1',
-                role: 'responseRow',
-                items: [
-                    { key: 'col1', role: 'dropDownGroup' },
-                ]
-            })
+                key: "row1",
+                role: "responseRow",
+                items: [{ key: "col1", role: "dropDownGroup" }],
+            });
 
             matrixEditor.addExistingResponseComponent(rg_inner, rg?.key);
 
             newSurveyItem = matrixEditor.getItem();
             break;
-        case 'clozeQuestion':
+        case "clozeQuestion":
             newSurveyItem = SurveyItems.clozeQuestion({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 items: [],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'validatedRandomQuestion':
-            const vrqKey = parentKey + '.' + newItemKey;
+        case "validatedRandomQuestion":
+            const vrqKey = parentKey + "." + newItemKey;
             const vrQEditor = new ItemEditor(undefined, { itemKey: vrqKey, isGroup: false });
 
-            vrQEditor.setTitleComponent(
-                generateTitleComponent(new Map<string, string>())
-            );
+            vrQEditor.setTitleComponent(generateTitleComponent(new Map<string, string>()));
 
-            vrQEditor.addExistingResponseComponent({
-                key: 'vrq',
-                role: 'validatedRandomQuestion',
-                items: [],
-            },
-                vrQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            vrQEditor.addExistingResponseComponent(
+                {
+                    key: "vrq",
+                    role: "validatedRandomQuestion",
+                    items: [],
+                },
+                vrQEditor.addNewResponseComponent({ role: "responseGroup" })?.key
             );
 
             vrQEditor.addValidation({
-                key: 'v1',
-                type: 'hard',
+                key: "v1",
+                type: "hard",
                 rule: {
-                    name: 'hasResponse',
-                    data: [
-                        { str: vrqKey },
-                        { str: 'rg' }
-                    ]
-                }
-            })
+                    name: "hasResponse",
+                    data: [{ str: vrqKey }, { str: "rg" }],
+                },
+            });
 
             newSurveyItem = vrQEditor.getItem();
             newSurveyItem.metadata = {
-                editorItemColor: editorItemColor
-            }
+                editorItemColor: editorItemColor,
+            };
             break;
-        case 'codeValidator':
-            const cvKey = parentKey + '.' + newItemKey;
+        case "codeValidator":
+            const cvKey = parentKey + "." + newItemKey;
             const cvQEditor = new ItemEditor(undefined, { itemKey: cvKey, isGroup: false });
 
-            cvQEditor.setTitleComponent(
-                generateTitleComponent(new Map<string, string>())
-            );
+            cvQEditor.setTitleComponent(generateTitleComponent(new Map<string, string>()));
 
-            cvQEditor.addExistingResponseComponent({
-                key: 'ic',
-                role: 'codeValidator',
-                items: [
-                    {
-                        key: 'codeList',
-                        role: 'studyCode',
-                    },
-                    {
-                        key: 'codeInput',
-                        role: 'codeInput',
-                    }
-                ],
-            },
-                cvQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            cvQEditor.addExistingResponseComponent(
+                {
+                    key: "ic",
+                    role: "codeValidator",
+                    items: [
+                        {
+                            key: "codeList",
+                            role: "studyCode",
+                        },
+                        {
+                            key: "codeInput",
+                            role: "codeInput",
+                        },
+                    ],
+                },
+                cvQEditor.addNewResponseComponent({ role: "responseGroup" })?.key
             );
 
             cvQEditor.addValidation({
-                key: 'v1',
-                type: 'hard',
+                key: "v1",
+                type: "hard",
                 rule: {
-                    name: 'hasResponse',
-                    data: [
-                        { str: cvKey },
-                        { str: 'rg' }
-                    ]
-                }
-            })
+                    name: "hasResponse",
+                    data: [{ str: cvKey }, { str: "rg" }],
+                },
+            });
 
             newSurveyItem = cvQEditor.getItem();
             newSurveyItem.metadata = {
-                editorItemColor: editorItemColor
-            }
+                editorItemColor: editorItemColor,
+            };
             break;
-        case 'dropdown':
+        case "dropdown":
             newSurveyItem = SurveyItems.dropDown({
                 parentKey: parentKey,
                 itemKey: newItemKey,
                 questionText: new Map(),
                 responseOptions: [],
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'consent':
+        case "consent":
             newSurveyItem = SurveyItems.consent({
                 parentKey: parentKey,
                 itemKey: newItemKey,
@@ -335,32 +328,31 @@ export const generateNewItemForType = (props: {
                 dialogTitle: new Map(),
                 rejectBtn: new Map(),
                 metadata: {
-                    editorItemColor: editorItemColor
-                }
+                    editorItemColor: editorItemColor,
+                },
             });
             break;
-        case 'contact':
-            const contactKey = parentKey + '.' + newItemKey;
+        case "contact":
+            const contactKey = parentKey + "." + newItemKey;
             const contactQEditor = new ItemEditor(undefined, { itemKey: contactKey, isGroup: false });
 
-            contactQEditor.setTitleComponent(
-                generateTitleComponent(new Map<string, string>())
-            );
+            contactQEditor.setTitleComponent(generateTitleComponent(new Map<string, string>()));
 
-            contactQEditor.addExistingResponseComponent({
-                key: 'contact',
-                role: 'contact',
-                items: [],
-            },
-                contactQEditor.addNewResponseComponent({ role: 'responseGroup' })?.key
+            contactQEditor.addExistingResponseComponent(
+                {
+                    key: "contact",
+                    role: "contact",
+                    items: [],
+                },
+                contactQEditor.addNewResponseComponent({ role: "responseGroup" })?.key
             );
 
             newSurveyItem = contactQEditor.getItem();
             break;
 
         default:
-            console.warn('Unknown item type', newItemType);
+            console.warn("Unknown item type", newItemType);
             return null;
     }
     return newSurveyItem;
-}
+};
