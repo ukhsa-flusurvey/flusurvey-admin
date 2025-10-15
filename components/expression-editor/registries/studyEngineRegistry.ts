@@ -7,10 +7,6 @@ export const studyEngineCategories = [
         label: 'Variables'
     },
     {
-        id: 'study-variables',
-        label: 'Study variables'
-    },
-    {
         id: 'control-flow',
         label: 'Control flow'
     },
@@ -33,6 +29,10 @@ export const studyEngineCategories = [
     {
         id: 'event-checkers',
         label: 'Event properties'
+    },
+    {
+        id: 'study-variables',
+        label: 'Study variables'
     },
     {
         id: 'general-study-actions',
