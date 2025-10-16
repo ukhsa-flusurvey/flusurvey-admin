@@ -7,6 +7,9 @@ import React from 'react';
 import VariableListClient from './VariableListClient';
 import VariableDefEditDialog from '@/app/(default)/tools/study-configurator/[studyKey]/variables/_components/VariableDefEditDialog';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ExternalLink, Info } from 'lucide-react';
+import { DOC_BASE_URL } from '@/utils/constants';
 
 interface VariableListProps {
     studyKey: string;
@@ -21,13 +24,44 @@ const VariableListWrapper = (props: {
             variant={"opaque"}
             className='w-full'
         >
-            <CardHeader>
-                <CardTitle>
-                    Variables
-                </CardTitle>
-                <CardDescription>
-                    Configure dynamic values to control the study flow.
-                </CardDescription>
+            <CardHeader className='flex flex-row justify-between items-start'>
+                <div className='space-y-1.5'>
+                    <CardTitle>
+                        Variables
+                    </CardTitle>
+                    <CardDescription>
+                        Configure dynamic values to control the study flow.
+                    </CardDescription>
+                </div>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <Info className='size-4' />
+                    </TooltipTrigger>
+                    <TooltipContent
+                        className='max-w-96 space-y-1 text-sm'
+                        align='end'
+                        side='bottom'
+                    >
+                        <p>
+                            Study variables are dynamic values that can be used to customize and control your study flow. They can be referenced in study rules, conditions, and expressions to create flexible study logic.
+                        </p>
+                        <p>
+                            For more information on study variables, please see the
+                            <a
+                                href={`${DOC_BASE_URL}/docs/study-configurator/study-variables/`}
+                                target='_blank'
+                                rel='noreferrer'
+                                className='text-primary underline ms-1 inline-flex items-center gap-1'
+                            >
+                                documentation
+                                <span className='size-4 inline-block'>
+                                    <ExternalLink className='size-3' />
+                                </span>
+                            </a>
+                            .
+                        </p>
+                    </TooltipContent>
+                </Tooltip>
             </CardHeader>
 
             <CardContent>
