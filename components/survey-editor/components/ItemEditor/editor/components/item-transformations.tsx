@@ -142,6 +142,12 @@ export const supportedSurveyItemFeaturesByType: Record<ItemTypeKey, SurveyItemFe
         SurveyItemFeatures.InputPlaceholder,
         SurveyItemFeatures.InputStyling,
     ],
+    multilineTextInput: [
+        ...commonSurveyItemFeatures,
+        SurveyItemFeatures.InputLabel,
+        SurveyItemFeatures.InputPlaceholder,
+        SurveyItemFeatures.InputStyling,
+    ],
     timeInput: [...commonSurveyItemFeatures, SurveyItemFeatures.InputLabel],
     dateInput: [...commonSurveyItemFeatures, SurveyItemFeatures.InputLabel, SurveyItemFeatures.InputPlaceholder],
     numericInput: [

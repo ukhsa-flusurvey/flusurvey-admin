@@ -115,7 +115,7 @@ export const determineItemType = (item: SurveySingleItem): string => {
 
 }
 
-export type SurveyItemTypeKey = 'custom' | 'display' | 'singleChoice' | 'multipleChoice' | 'dropdown' | 'textInput' | 'timeInput' | 'dateInput' | 'numericInput' | 'sliderNumeric' | 'codeValidator' | 'matrix' | 'responsiveMatrix' | 'responsiveBipolarLikertScaleArray' | 'responsiveSingleChoiceArray' | 'clozeQuestion' | 'consent' | 'validatedRandomQuestion' | 'contact';
+export type SurveyItemTypeKey = 'custom' | 'display' | 'singleChoice' | 'multipleChoice' | 'dropdown' | 'textInput' | 'multilineTextInput' | 'timeInput' | 'dateInput' | 'numericInput' | 'sliderNumeric' | 'codeValidator' | 'matrix' | 'responsiveMatrix' | 'responsiveBipolarLikertScaleArray' | 'responsiveSingleChoiceArray' | 'clozeQuestion' | 'consent' | 'validatedRandomQuestion' | 'contact';
 export type SpecialItemTypeKey = 'group' | 'pageBreak' | 'surveyEnd';
 export type ItemTypeKey = SurveyItemTypeKey | SpecialItemTypeKey;
 
