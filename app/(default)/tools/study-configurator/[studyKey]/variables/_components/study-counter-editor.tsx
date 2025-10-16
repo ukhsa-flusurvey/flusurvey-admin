@@ -87,7 +87,6 @@ const StudyCounterEditor: React.FC<StudyCounterEditorProps> = ({
                 }
 
                 toast.success(`Counter ${isEditMode ? 'updated' : 'created'} successfully`)
-                setValue(defaultValue.toString())
                 if (!isEditMode) {
                     setNewScope('')
                 }
