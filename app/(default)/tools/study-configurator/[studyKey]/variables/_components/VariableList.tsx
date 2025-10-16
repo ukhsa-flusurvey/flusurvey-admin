@@ -112,7 +112,7 @@ const VariableList: React.FC<VariableListProps> = async (props) => {
                         <VariableDefEditDialog
                             studyKey={props.studyKey}
                             usedKeys={[]}
-                            trigger={<Button><Plus className='size-4 me-2' />Create variable</Button>}
+                            trigger={<Button variant={'outline'}><Plus className='size-4 me-2' />Create variable</Button>}
                         />
                     </EmptyContent>
                 </Empty>

@@ -1,14 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Spinner } from '@/components/ui/spinner';
-import { getStudyVariables } from '@/lib/data/study-variables-api';
 import { ExternalLink, Info, Plus, VariableIcon } from 'lucide-react';
 import React from 'react';
-import VariableListClient from './VariableListClient';
-import VariableDefEditDialog from '@/app/(default)/tools/study-configurator/[studyKey]/variables/_components/VariableDefEditDialog';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DOC_BASE_URL } from '@/utils/constants';
+import { getStudyCounters } from '@/lib/data/study-counters';
+import StudyCounterEditor from './study-counter-editor';
 
 interface StudyCounterListProps {
     studyKey: string;
@@ -21,7 +20,7 @@ const StudyCounterListWrapper = (props: {
     return (
         <Card
             variant={"opaque"}
-            className='w-full'
+            className='w-full h-fit'
         >
             <CardHeader className='flex flex-row justify-between items-start '>
                 <div className='space-y-1.5'>
@@ -75,7 +74,7 @@ const StudyCounterListWrapper = (props: {
 
 
 const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
-    const resp = await getStudyVariables(props.studyKey);
+    const resp = await getStudyCounters(props.studyKey);
 
     if (resp.error) {
         return (
@@ -95,9 +94,10 @@ const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
         );
     }
 
-    const variables = resp.variables || [];
+    const counters = resp.values || [];
+    console.log(counters);
 
-    if (variables.length === 0) {
+    if (counters.length === 0) {
         return (
             <StudyCounterListWrapper studyKey={props.studyKey}>
                 <Empty className="border border-dashed">
@@ -111,10 +111,13 @@ const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
                         </EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                        <VariableDefEditDialog
+                        <StudyCounterEditor
                             studyKey={props.studyKey}
-                            usedKeys={[]}
-                            trigger={<Button><Plus className='size-4 me-2' />Create variable</Button>}
+                            usedScopes={counters.map(c => c.scope)}
+                            defaultValue={0}
+                            trigger={<Button
+                                variant={'outline'}
+                            ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
                         />
                     </EmptyContent>
                 </Empty>
@@ -125,8 +128,19 @@ const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
 
     return (
         <StudyCounterListWrapper studyKey={props.studyKey}>
-            <VariableListClient studyKey={props.studyKey} variables={variables} />
-        </StudyCounterListWrapper>
+            todo
+            <div className='flex justify-center'>
+                <StudyCounterEditor
+                    studyKey={props.studyKey}
+                    usedScopes={counters.map(c => c.scope)}
+                    defaultValue={0}
+                    trigger={<Button
+                        variant={'outline'}
+                    ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
+                />
+            </div >
+
+        </StudyCounterListWrapper >
     );
 };
 
