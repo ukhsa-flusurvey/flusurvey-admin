@@ -9,6 +9,7 @@ import KeyboardShortcuts from './components/keyboard-shortcuts';
 interface StudyExpressionEditorProps {
     studyContext?: StudyContext
     mode?: StudyExpressionEditorMode;
+    onExit?: () => void;
 }
 
 const StudyExpressionEditor: React.FC<StudyExpressionEditorProps> = (props) => {
@@ -22,7 +23,7 @@ const StudyExpressionEditor: React.FC<StudyExpressionEditorProps> = (props) => {
             <div className='z-40 flex flex-col h-screen from-slate-50 to-neutral-50 bg-gradient-to-b'>
                 <KeyboardShortcuts />
                 <Menu
-                    onExit={() => console.log('todo: exit')}
+                    onExit={props.onExit ?? (() => { console.log('exit callback not provided') })}
                 />
 
                 <div className='overflow-hidden flex flex-col grow'>
