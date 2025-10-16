@@ -19,7 +19,7 @@ const VariableListWrapper = (props: {
     return (
         <Card
             variant={"opaque"}
-            className='w-full sm:w-1/2 sm:min-w-[400px]'
+            className='w-full'
         >
             <CardHeader>
                 <CardTitle>
