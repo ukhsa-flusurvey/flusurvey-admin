@@ -356,6 +356,7 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
         return (
             <Field
                 key={v.key}
+                className='border border-border rounded-md bg-white shadow-sm drop-shadow-sm'
             >
                 <div className='flex items-start justify-between gap-2 p-3'>
                     <div className='space-y-2 grow'>
@@ -401,7 +402,7 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
         <FieldGroup className='flex flex-col gap-4'>
 
             {props.variables.length > 0 && (
-                <div className='divide-y rounded-md border'>
+                <div className='space-y-2'>
                     {props.variables
                         .slice()
                         .sort((a, b) => (b.uiPriority ?? -Infinity) - (a.uiPriority ?? -Infinity))

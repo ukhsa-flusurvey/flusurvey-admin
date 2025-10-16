@@ -8,7 +8,7 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
 import LoadContextFromDisk from './load-context-from-disk';
 import EditorCard from './editor-card';
-import { KeyValuePairDefs, StudyContext } from '../../types';
+import { KeyValuePairDefs, StudyContext, StudyVariableDef } from '../../types';
 import ItemEditor from './item-editor';
 
 
@@ -293,6 +293,33 @@ const Overview: React.FC = () => {
                             setSelection({
                                 index,
                                 attributeKey: 'externalEventHandlers',
+                            });
+                        }}
+                    />
+
+                    <EditorCard
+                        label={'Study variables'}
+                        description={'Define study variables and their type.'}
+                        type={'study-variable'}
+                        data={currentStudyContext?.studyVariables ?? []}
+                        selectedIndex={selection?.attributeKey === 'studyVariables' ? selection?.index : undefined}
+                        onChange={(data) => {
+                            let newStudyContext = { ...currentStudyContext };
+                            if (!newStudyContext) {
+                                newStudyContext = { studyVariables: data as StudyVariableDef[] };
+                            } else {
+                                newStudyContext.studyVariables = data as StudyVariableDef[];
+                            }
+                            updateCurrentStudyContext(newStudyContext);
+                        }}
+                        onSelectIndex={(index) => {
+                            if (index === undefined) {
+                                setSelection(undefined);
+                                return;
+                            }
+                            setSelection({
+                                index,
+                                attributeKey: 'studyVariables',
                             });
                         }}
                     />
