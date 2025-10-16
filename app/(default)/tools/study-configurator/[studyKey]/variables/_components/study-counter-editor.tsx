@@ -6,6 +6,8 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Button } from '@/components/ui/button'
 import { Field, FieldContent, FieldLabel, FieldDescription, FieldError } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle } from 'lucide-react'
 import { saveStudyCounter } from '@/lib/data/study-counters'
 import { toast } from 'sonner'
 import { getErrorMessage } from '@/utils/getErrorMessage'
@@ -110,6 +112,16 @@ const StudyCounterEditor: React.FC<StudyCounterEditorProps> = ({
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Warning Alert - only shown in edit mode */}
+                    {isEditMode && (
+                        <Alert variant="default">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>
+                                Editing existing counters should only be done intentionally if you understand the impact on the study.
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
                     {/* Scope Field - only shown in creation mode */}
                     {!isEditMode && (
                         <Field>

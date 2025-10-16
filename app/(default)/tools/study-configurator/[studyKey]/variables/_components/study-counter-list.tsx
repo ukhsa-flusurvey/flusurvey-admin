@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { DOC_BASE_URL } from '@/utils/constants';
 import { getStudyCounters } from '@/lib/data/study-counters';
 import StudyCounterEditor from './study-counter-editor';
+import StudyCounterTable from './study-counter-table';
 
 interface StudyCounterListProps {
     studyKey: string;
@@ -95,7 +96,6 @@ const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
     }
 
     const counters = resp.values || [];
-    console.log(counters);
 
     if (counters.length === 0) {
         return (
@@ -128,17 +128,23 @@ const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
 
     return (
         <StudyCounterListWrapper studyKey={props.studyKey}>
-            todo
-            <div className='flex justify-center'>
-                <StudyCounterEditor
+            <div className='space-y-4'>
+                <StudyCounterTable
                     studyKey={props.studyKey}
+                    counters={counters}
                     usedScopes={counters.map(c => c.scope)}
-                    defaultValue={0}
-                    trigger={<Button
-                        variant={'outline'}
-                    ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
                 />
-            </div >
+                <div className='flex justify-center'>
+                    <StudyCounterEditor
+                        studyKey={props.studyKey}
+                        usedScopes={counters.map(c => c.scope)}
+                        defaultValue={0}
+                        trigger={<Button
+                            variant={'outline'}
+                        ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
+                    />
+                </div >
+            </div>
 
         </StudyCounterListWrapper >
     );
