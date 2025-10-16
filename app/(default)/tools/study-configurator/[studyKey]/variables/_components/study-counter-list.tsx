@@ -1,36 +1,35 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Spinner } from '@/components/ui/spinner';
-import { getStudyVariables } from '@/lib/data/study-variables-api';
-import { Plus, VariableIcon } from 'lucide-react';
+import { ExternalLink, Info, Plus, VariableIcon } from 'lucide-react';
 import React from 'react';
-import VariableListClient from './VariableListClient';
-import VariableDefEditDialog from '@/app/(default)/tools/study-configurator/[studyKey]/variables/_components/VariableDefEditDialog';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { ExternalLink, Info } from 'lucide-react';
 import { DOC_BASE_URL } from '@/utils/constants';
+import { getStudyCounters } from '@/lib/data/study-counters';
+import StudyCounterEditor from './study-counter-editor';
+import StudyCounterTable from './study-counter-table';
 
-interface VariableListProps {
+interface StudyCounterListProps {
     studyKey: string;
 }
 
-const VariableListWrapper = (props: {
+const StudyCounterListWrapper = (props: {
     studyKey: string;
     children: React.ReactNode
 }) => {
     return (
         <Card
             variant={"opaque"}
-            className='w-full'
+            className='w-full h-fit'
         >
-            <CardHeader className='flex flex-row justify-between items-start'>
+            <CardHeader className='flex flex-row justify-between items-start '>
                 <div className='space-y-1.5'>
                     <CardTitle>
-                        Variables
+                        Counters
                     </CardTitle>
                     <CardDescription>
-                        Configure dynamic values to control the study flow.
+                        The following study counter values are currently available in the study.
                     </CardDescription>
                 </div>
                 <Tooltip>
@@ -43,12 +42,15 @@ const VariableListWrapper = (props: {
                         side='bottom'
                     >
                         <p>
-                            Study variables are dynamic values that can be used to customize and control your study flow. They can be referenced in study rules, conditions, and expressions to create flexible study logic.
+                            Study counters are typically controlled by study rules, e.g., to count events such as eligible participant sign-ups.
                         </p>
                         <p>
-                            For more information on study variables, please see the
+                            {"If you don't see a counter you expect, check the study rules or if they have been triggered yet."}
+                        </p>
+                        <p>
+                            For more information on study counters, please see the
                             <a
-                                href={`${DOC_BASE_URL}/docs/study-configurator/study-variables/`}
+                                href={`${DOC_BASE_URL}/docs/study-configurator/study-variables/#counters`}
                                 target='_blank'
                                 rel='noreferrer'
                                 className='text-primary underline ms-1 inline-flex items-center gap-1'
@@ -72,72 +74,92 @@ const VariableListWrapper = (props: {
 }
 
 
-const VariableList: React.FC<VariableListProps> = async (props) => {
-    const resp = await getStudyVariables(props.studyKey);
+const StudyCounterList: React.FC<StudyCounterListProps> = async (props) => {
+    const resp = await getStudyCounters(props.studyKey);
 
     if (resp.error) {
         return (
-            <VariableListWrapper studyKey={props.studyKey}>
+            <StudyCounterListWrapper studyKey={props.studyKey}>
                 <Empty className="border border-dashed">
                     <EmptyHeader>
                         <EmptyMedia variant="icon">
                             <VariableIcon className='size-6 text-white' />
                         </EmptyMedia>
-                        <EmptyTitle>Could not load variables</EmptyTitle>
+                        <EmptyTitle>Could not load study counters</EmptyTitle>
                         <EmptyDescription>
                             {resp.error}
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>
-            </VariableListWrapper>
+            </StudyCounterListWrapper>
         );
     }
 
-    const variables = resp.variables || [];
+    const counters = resp.values || [];
 
-    if (variables.length === 0) {
+    if (counters.length === 0) {
         return (
-            <VariableListWrapper studyKey={props.studyKey}>
+            <StudyCounterListWrapper studyKey={props.studyKey}>
                 <Empty className="border border-dashed">
                     <EmptyHeader>
                         <EmptyMedia variant="icon">
                             <VariableIcon className='size-6' />
                         </EmptyMedia>
-                        <EmptyTitle>No variables yet</EmptyTitle>
+                        <EmptyTitle>No study counters yet</EmptyTitle>
                         <EmptyDescription>
-                            Create your first variable to start configuring your study.
+                            Check back later or or initialize a study counter with the button below.
                         </EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                        <VariableDefEditDialog
+                        <StudyCounterEditor
                             studyKey={props.studyKey}
-                            usedKeys={[]}
-                            trigger={<Button variant={'outline'}><Plus className='size-4 me-2' />Create variable</Button>}
+                            usedScopes={counters.map(c => c.scope)}
+                            defaultValue={0}
+                            trigger={<Button
+                                variant={'outline'}
+                            ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
                         />
                     </EmptyContent>
                 </Empty>
-            </VariableListWrapper>
+            </StudyCounterListWrapper>
         );
     }
 
 
     return (
-        <VariableListWrapper studyKey={props.studyKey}>
-            <VariableListClient studyKey={props.studyKey} variables={variables} />
-        </VariableListWrapper>
+        <StudyCounterListWrapper studyKey={props.studyKey}>
+            <div className='space-y-4'>
+                <StudyCounterTable
+                    studyKey={props.studyKey}
+                    counters={counters}
+                    usedScopes={counters.map(c => c.scope)}
+                />
+                <div className='flex justify-center'>
+                    <StudyCounterEditor
+                        studyKey={props.studyKey}
+                        usedScopes={counters.map(c => c.scope)}
+                        defaultValue={0}
+                        trigger={<Button
+                            variant={'outline'}
+                        ><Plus className='size-4 me-2' />Initialize a new counter</Button>}
+                    />
+                </div >
+            </div>
+
+        </StudyCounterListWrapper >
     );
 };
 
-export default VariableList;
+export default StudyCounterList;
 
-export const VariableListSkeleton: React.FC<VariableListProps> = (props) => {
+export const StudyCounterListSkeleton: React.FC<StudyCounterListProps> = (props) => {
     return (
-        <VariableListWrapper studyKey={props.studyKey}>
+        <StudyCounterListWrapper studyKey={props.studyKey}>
             <div className='flex items-center justify-center gap-2 text-muted-foreground py-8'>
                 <Spinner className='size-4' />
-                <span>Loading variables...</span>
+                <span>Loading study counters...</span>
             </div>
-        </VariableListWrapper>
+        </StudyCounterListWrapper>
     );
 }
 
