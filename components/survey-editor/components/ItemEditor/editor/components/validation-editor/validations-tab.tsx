@@ -98,9 +98,10 @@ const ValidationsTab: React.FC<ValidationsTabProps> = (props) => {
                                 });
                             }}
                             onDelete={() => {
+                                const updatedValidations = currentValidations?.filter(cv => cv.key !== v.key);
                                 props.onUpdateSurveyItem({
                                     ...props.surveyItem,
-                                    validations: currentValidations?.filter(v => v.key !== v.key)
+                                    validations: updatedValidations
                                 });
                             }}
                         />

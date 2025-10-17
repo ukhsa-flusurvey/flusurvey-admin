@@ -8,10 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import SlotFormEditor from './slots/SlotFormEditor';
 import { ContextMenuItem, ContextMenuSeparator } from '../ui/context-menu';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { Copy, X } from 'lucide-react';
+import { Copy, DeleteIcon, X } from 'lucide-react';
 import ExpressionPreview from './slots/ExpressionPreview';
 import Block from './components/Block';
 import ExpressionEditor from './ExpressionEditor';
+import { Separator } from '../ui/separator';
 
 interface ExpArgEditorProps {
     slotDef: SlotDef;
@@ -35,12 +36,38 @@ interface ExpArgEditorProps {
     ) => void;
 }
 
+
+
+export const ensureMinLength = <T,>(arr: Array<T>, minLength: number): Array<T> => {
+    if (arr.length >= minLength) {
+        return [...arr]; // Return a copy of the array
+    }
+
+    // Create a new array with the correct length, filled with undefined
+    const result = [...arr];
+    result.length = minLength;
+
+    return result;
+}
+
+const updateEntriesAfterIndex = <T,>(arr: Array<T>, index: number, newValues: Array<T>): Array<T> => {
+    // Create a new array with at least startIndex + newEntries.length elements
+    const targetLength = index + newValues.length;
+    const result = ensureMinLength(arr.slice(0, targetLength), targetLength);
+
+    // Update the entries starting from startIndex
+    for (let i = 0; i < newValues.length; i++) {
+        result[index + i] = newValues[i];
+    }
+
+    return result;
+}
+
 const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
     slotDef,
     ...props
 }) => {
     const [, copy] = useCopyToClipboard();
-
 
     const isListSlot = slotDef.isListSlot || false;
 
@@ -57,7 +84,6 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
         const currentSlotValues = currentArgValues.map((argValue, argIndex) => {
             const slotType = currentSlotTypes.at(argIndex) || (argValue as ExpArg)?.exp?.name;
-
             return {
                 slotType: slotType,
                 value: argValue
@@ -70,22 +96,15 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             context={props.context}
             currentSlotValues={currentSlotValues}
             onChangeValues={(newValues, newSlotTypes) => {
-                const currentData = props.availableExpData || [];
-                if (currentData.length < props.currentIndex) {
-                    currentData.fill(undefined, currentData.length, props.currentIndex)
-                }
+                const currentData = [...(props.availableExpData ?? [])];
+                const updatedData = updateEntriesAfterIndex(currentData, props.currentIndex, newValues)
 
                 const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < props.currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, props.currentIndex)
-                }
+                const updatedSlotTypes = updateEntriesAfterIndex(currentSlotTypes, props.currentIndex, newSlotTypes)
 
-                // replace list from index
-                currentData.splice(props.currentIndex, currentData.length - props.currentIndex, ...newValues)
-                currentSlotTypes.splice(props.currentIndex, currentSlotTypes.length - props.currentIndex, ...newSlotTypes)
                 props.onChange?.(
-                    currentData,
-                    currentSlotTypes
+                    updatedData,
+                    updatedSlotTypes
                 )
             }}
             depth={props.depth}
@@ -105,14 +124,10 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             expRegistry={props.expRegistry}
             onSelect={async (slotTypeId) => {
                 const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < props.currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, props.currentIndex)
-                }
+                const updatedSlotTypes = ensureMinLength(currentSlotTypes, props.currentIndex + 1)
 
-                const currentArgs = props.availableExpData || []
-                if (currentArgs.length < props.currentIndex) {
-                    currentArgs.fill(undefined, currentArgs.length, props.currentIndex)
-                }
+                const currentArgs = [...props.availableExpData] || [];
+                const updatedArgs = ensureMinLength(currentArgs, props.currentIndex + 1)
 
                 if (slotTypeId === 'clipboard') {
                     // paste item from clipboard
@@ -124,11 +139,11 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                             toast.error('Clipboard content is not valid');
                             return;
                         }
-                        currentSlotTypes[props.currentIndex] = content.slotType;
-                        currentArgs[props.currentIndex] = content.value;
+                        updatedSlotTypes[props.currentIndex] = content.slotType;
+                        updatedArgs[props.currentIndex] = content.value;
                         props.onChange?.(
-                            currentArgs,
-                            currentSlotTypes
+                            updatedArgs,
+                            updatedSlotTypes
                         )
                     } catch (error) {
                         toast.error('Error reading clipboard content');
@@ -138,21 +153,21 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                 }
 
 
-                currentSlotTypes[props.currentIndex] = slotTypeId;
+                updatedSlotTypes[props.currentIndex] = slotTypeId;
 
                 if (slotTypeId !== undefined) {
                     const expressionDef = lookupExpressionDef(slotTypeId, props.expRegistry.expressionDefs);
                     if (expressionDef?.defaultValue !== undefined) {
-                        currentArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
+                        updatedArgs[props.currentIndex] = JSON.parse(JSON.stringify(expressionDef.defaultValue));
                     }
                     if (expressionDef?.isTemplateFor) {
-                        currentSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
+                        updatedSlotTypes[props.currentIndex] = expressionDef.isTemplateFor;
                     }
                 }
 
                 props.onChange?.(
-                    currentArgs,
-                    currentSlotTypes
+                    updatedArgs,
+                    updatedSlotTypes
                 )
             }}
         />
@@ -167,21 +182,21 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
 
         const currentArgValue = props.availableExpData?.at(currentIndex);
         const options = (slotDef.allowedTypes?.at(0) as SelectSlotType).options || [];
+        const selectValue = (currentArgValue as StrArg)?.str || ''
         return <div key={props.currentIndex}>
             <SlotLabel label={slotDef.label} required={slotDef.required} />
             <Select
-                value={(currentArgValue as StrArg)?.str || ''}
+                value={selectValue}
                 onValueChange={(value) => {
                     const currentData = props.availableExpData || [];
-                    if (currentData.length < props.currentIndex) {
-                        currentData.fill(undefined, currentData.length, props.currentIndex)
-                    }
-                    currentData[props.currentIndex] = {
+                    const updatedData = ensureMinLength(currentData, props.currentIndex + 1)
+
+                    updatedData[props.currentIndex] = value === 'undefined' ? undefined : {
                         str: value,
                         dtype: 'str'
                     }
                     props.onChange?.(
-                        currentData,
+                        updatedData,
                         currentSlotTypes
                     )
                 }}
@@ -191,6 +206,16 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
                         placeholder="Select a value..." />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value='undefined'
+                        className='text-xs'
+                        disabled={selectValue === ''}
+                    >
+                        <span className='flex items-center gap-1'>
+                            <span><DeleteIcon className='size-4 text-muted-foreground' /></span>
+                            Reset selection
+                        </span>
+                    </SelectItem>
+                    <Separator />
                     {options?.map((option) => {
                         return <SelectItem key={option.key} value={option.key}>{option.label}</SelectItem>
                     })}
@@ -210,7 +235,7 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             currentSlotType={currentSlotType}
             slotDef={slotDef}
             key={props.currentIndex}
-            builtInSlotTypeDefinitions={props.expRegistry.builtInSlotTypes}
+            expRegistry={props.expRegistry}
             context={props.context}
             depth={props.depth}
             slotIndex={props.currentIndex}
@@ -223,20 +248,18 @@ const ExpArgEditor: React.FC<ExpArgEditorProps> = ({
             }}
             onClearSlot={() => {
                 const currentIndex = props.currentIndex;
-                const currentData = props.availableExpData || [];
-                if (currentData.length < currentIndex) {
-                    currentData.fill(undefined, currentData.length, currentIndex)
-                }
-                const currentSlotTypes = props.availableMetadata?.slotTypes || []
-                if (currentSlotTypes.length < currentIndex) {
-                    currentSlotTypes.fill(undefined, currentSlotTypes.length, currentIndex)
-                }
 
-                currentSlotTypes[currentIndex] = undefined;
-                currentData[currentIndex] = undefined;
+                const currentSlotTypes = props.availableMetadata?.slotTypes || []
+                const updatedSlotTypes = ensureMinLength(currentSlotTypes, props.currentIndex + 1)
+
+                const currentArgs = [...props.availableExpData] || [];
+                const updatedArgs = ensureMinLength(currentArgs, props.currentIndex + 1)
+
+                updatedSlotTypes[currentIndex] = undefined;
+                updatedArgs[currentIndex] = undefined;
                 props.onChange?.(
-                    currentData,
-                    currentSlotTypes
+                    updatedArgs,
+                    updatedSlotTypes
                 )
             }}
         />

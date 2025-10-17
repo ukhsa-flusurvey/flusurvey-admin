@@ -7,6 +7,7 @@ interface BlockHeaderProps {
     label: string;
     icon?: IconVariant;
     color?: ColorVariant;
+    returnType?: string;
 }
 
 const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
@@ -29,6 +30,9 @@ const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
             <span>
                 {props.label}
             </span>
+            {props.returnType && <span className='ms-auto font-normal ps-1'>
+                {props.returnType}
+            </span>}
         </div>
     );
 };

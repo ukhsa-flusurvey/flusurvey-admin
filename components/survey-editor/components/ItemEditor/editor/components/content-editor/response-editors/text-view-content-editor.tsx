@@ -28,7 +28,9 @@ interface SimpleTextViewContentEditorProps {
     onChange: (newComp: ItemComponent) => void;
     hideStyling?: boolean;
     label?: string;
+    hideLabel?: boolean;
     useTextArea?: boolean;
+    placeholder?: string;
 }
 
 export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorProps> = ({
@@ -36,7 +38,9 @@ export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorPr
     onChange,
     hideStyling = true,
     label = 'Content',
+    hideLabel,
     useTextArea: big = false,
+    placeholder = 'Enter content here for the selected language...',
 }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
 
@@ -46,13 +50,14 @@ export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorPr
 
     return <div data-no-dnd="true">
         <div className='space-y-1.5'>
-            <Label
+            {hideLabel ? null : <Label
                 htmlFor={component.key}
             >
                 {label}
-            </Label>
+            </Label>}
             {big ? <Textarea
                 id={component.key}
+                aria-label={label}
                 value={contentMap.get(selectedLanguage) || ''}
                 onChange={(e) => {
                     contentMap.set(selectedLanguage, e.target.value);
@@ -61,9 +66,10 @@ export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorPr
                         content: generateLocStrings(contentMap),
                     })
                 }}
-                placeholder='Enter content here for the selected language...'
+                placeholder={placeholder}
             /> : <Input
                 id={component.key}
+                aria-label={label}
                 value={contentMap.get(selectedLanguage) || ''}
                 onChange={(e) => {
                     contentMap.set(selectedLanguage, e.target.value);
@@ -72,7 +78,7 @@ export const SimpleTextViewContentEditor: React.FC<SimpleTextViewContentEditorPr
                         content: generateLocStrings(contentMap),
                     })
                 }}
-                placeholder='Enter content here for the selected language...'
+                placeholder={placeholder}
             />}
         </div>
         {!hideStyling && <div className='space-y-1.5 mt-4'>

@@ -16,10 +16,11 @@ import { Input } from '@/components/ui/input';
 import { createPermissionForManagementUser } from '@/actions/user-management/permissions';
 import { toast } from 'sonner';
 import { createPermissionForServiceAccount } from '@/lib/data/service-accounts';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 
-interface ResourcePermission {
+export interface ResourcePermission {
     actions: {
         [key: string]: {
             hideLimiter?: boolean;
@@ -28,7 +29,7 @@ interface ResourcePermission {
     };
 };
 
-interface PermissionInfos {
+export interface PermissionInfos {
     [key: string]: {
         resources: {
             [key: string]: ResourcePermission
@@ -80,6 +81,8 @@ export const permissionInfos: PermissionInfos = {
                     "update-study-props": { hideLimiter: true },
                     "update-study-status": { hideLimiter: true },
                     "manage-study-code-lists": { hideLimiter: true },
+                    "manage-study-counters": { hideLimiter: true },
+                    "manage-study-variables": { hideLimiter: true },
                     "delete-study": { hideLimiter: true },
                     "create-survey": { hideLimiter: true },
                     "update-survey": {
@@ -101,7 +104,9 @@ export const permissionInfos: PermissionInfos = {
                     "get-confidential-responses": { hideLimiter: true },
                     "get-files": { hideLimiter: true },
                     "get-participant-states": { hideLimiter: true },
-                    "edit-participant-states": { hideLimiter: true },
+                    "edit-participant-data": { hideLimiter: true },
+                    "create-virtual-participant": { hideLimiter: true },
+                    "merge-participants": { hideLimiter: true },
                     "get-reports": {
                         limiterHint: 'To specify which reports the user can access, use the format [{"reportKey": "<rk1>"}]'
                     },
@@ -183,35 +188,39 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     function onSubmit(values: z.infer<typeof permissionSchema>) {
         setError(undefined)
         startTransition(async () => {
-            if (props.userType === 'service-account') {
-                const resp = await createPermissionForServiceAccount(
-                    props.userId,
-                    values.resourceType,
-                    values.resourceId,
-                    values.action,
-                    values.limiter === "" ? undefined : JSON.parse(values.limiter),
-                )
-                if (resp.error) {
-                    setError(resp.error)
-                    return
-                }
-                toast.success('Permission added successfully');
-                dialogCloseRef.current?.click();
-                return;
-            } else {
-                const resp = await createPermissionForManagementUser(
-                    props.userId,
-                    values.resourceType,
-                    values.resourceId,
-                    values.action,
-                    values.limiter === "" ? undefined : JSON.parse(values.limiter),
-                )
-                if (resp.error) {
-                    setError(resp.error)
-                    return
-                }
+            try {
+                if (props.userType === 'service-account') {
+                    const resp = await createPermissionForServiceAccount(
+                        props.userId,
+                        values.resourceType,
+                        values.resourceId,
+                        values.action,
+                        values.limiter === "" ? undefined : JSON.parse(values.limiter),
+                    )
+                    if (resp.error) {
+                        setError(resp.error)
+                        return
+                    }
+                    toast.success('Permission added successfully');
+                    dialogCloseRef.current?.click();
+                    return;
+                } else {
+                    const resp = await createPermissionForManagementUser(
+                        props.userId,
+                        values.resourceType,
+                        values.resourceId,
+                        values.action,
+                        values.limiter === "" ? undefined : JSON.parse(values.limiter),
+                    )
+                    if (resp.error) {
+                        setError(resp.error)
+                        return
+                    }
 
-                toast('Permission added')
+                    toast('Permission added')
+                }
+            } catch (error: unknown) {
+                toast.error('Failed to add permission', { description: getErrorMessage(error) });
             }
 
             if (dialogCloseRef.current) {
@@ -380,7 +389,8 @@ const AddPermissionDialog: React.FC<AddPermissionDialogProps> = (props) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className='mt-6'
+                <Button
+                    type='button'
                     variant={'outline'}
                 >
                     <Plus className='size-4 me-2' />

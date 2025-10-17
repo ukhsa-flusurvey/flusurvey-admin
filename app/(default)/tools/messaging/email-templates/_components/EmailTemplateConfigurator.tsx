@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EmailContentPreviewAndEditor from './EmailContentPreviewAndEditor';
 import MessageConfig from './MessageConfig';
 import LoadingButton from '@/components/loading-button';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 
 interface EmailTemplateConfiguratorProps {
@@ -67,7 +68,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
 
                 } catch (error: unknown) {
                     console.error(error);
-                    toast.error('Something went wrong', { description: (error as Error).message });
+                    toast.error('Something went wrong', { description: getErrorMessage(error) });
                 }
             })
         }
@@ -92,7 +93,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 setIsDirty(false);
             } catch (error: unknown) {
                 console.error(error);
-                toast.error('Something went wrong', { description: (error as Error).message });
+                toast.error('Something went wrong', { description: getErrorMessage(error) });
             }
 
         })

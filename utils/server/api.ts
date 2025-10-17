@@ -5,16 +5,16 @@ export const getCASEManagementAPIURL = (path: string): URL => {
 }
 
 
-export const getTokenHeader = (accessToken?: string): {} | { Autorization: string } => {
+export const getTokenHeader = (accessToken?: string): object | { Authorization: string } => {
     if (!accessToken) {
         return {};
     }
     return {
-        'Authorization': `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
     }
 }
 
-const postToCASEManagementAPI = async (path: string, data: any, accessToken?: string) => {
+const postToCASEManagementAPI = async (path: string, data: object, accessToken?: string) => {
     const url = getCASEManagementAPIURL(path);
     const response = await fetch(url.toString(), {
         method: 'POST',
@@ -34,6 +34,7 @@ interface IdPLoginMsg {
     instanceId: string;
     sub: string;
     name?: string;
+    provider?: string;
     email?: string;
     imageURL?: string;
     roles?: string[];

@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import React from 'react';
 import { toast } from 'sonner';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 interface FileUploadToggleProps {
     studyKey: string;
@@ -31,7 +32,7 @@ const FileUploadToggle: React.FC<FileUploadToggleProps> = (props) => {
                             }
                             toast.success('File upload updated');
                         } catch (error: unknown) {
-                            toast.error('An error occurred', { description: (error as Error).message });
+                            toast.error('An error occurred', { description: getErrorMessage(error) });
                         }
                     });
                 }}

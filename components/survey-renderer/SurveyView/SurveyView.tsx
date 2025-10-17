@@ -73,6 +73,10 @@ const SurveyView: React.FC<SurveyViewProps> = (props) => {
     // console.log(surveyEngine.getSurveyEndItem());
 
     const renderCurrentPage = () => {
+        if (!surveyPages || surveyPages.length === 0) {
+            return <p className='text-center text-destructive'>Error during computing survey pages</p>
+        }
+
         if (currentPage < 0 || currentPage > surveyPages.length - 1) {
             setCurrentPage(0);
             return;

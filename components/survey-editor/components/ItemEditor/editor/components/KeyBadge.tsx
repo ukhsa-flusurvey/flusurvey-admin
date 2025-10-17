@@ -3,38 +3,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Check, RotateCcw, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { MouseEventHandler } from "react";
 
-export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, onClick?: MouseEventHandler<HTMLDivElement> | undefined }) => {
-    return <Badge onClick={props.onClick} variant={props.isHighlighted ? 'default' : 'outline'} className='h-auto border-2 py-0'>{props.itemKey}</Badge>;
-}
-
-export const KeyBadgeAndType = (props: { compKey?: string, type: string }) => {
-    return <div className='text-xs font-semibold flex justify-between w-full'>
-        <KeyBadge itemKey={props.compKey ?? ''} isHighlighted={false} />
-        <span className='text-muted-foreground'>
-            {props.type}
-        </span>
-    </div>
+export const KeyBadge = (props: { itemKey: string, isHighlighted: boolean, highlightColor?: string, onClick?: MouseEventHandler<HTMLDivElement> | undefined }) => {
+    return (
+        <Badge
+            onClick={props.onClick}
+            variant={props.isHighlighted ? 'default' : 'outline'}
+            className={cn("h-auto border-2 py-0 w-full flex justify-center", {
+                "hover:opacity-80": props.isHighlighted,
+            })}
+            style={{ backgroundColor: props.highlightColor }}
+        >
+            {props.itemKey}
+        </Badge>
+    );
 }
 
 export const PopoverKeyBadge: React.FC<{
     allOtherKeys: string[],
     itemKey: string,
     isHighlighted?: boolean,
-    onClick?: MouseEventHandler<HTMLDivElement> | undefined,
+    highlightColor?: string,
+    headerText?: string,
+    className?: string,
     onKeyChange?: (newKey: string) => void,
 }> = (props) => {
     const popoverCloseRef = React.useRef<HTMLButtonElement>(null);
-    const [isSelected, setIsSelected] = React.useState(props.isHighlighted ?? false);
     const [currentKey, setCurrentKey] = React.useState<string>(props.itemKey);
     const [error, setError] = React.useState<string | null>(null);
     const isValidKey = error === null;
-    const externalIsSelected = props.isHighlighted != undefined;
     const hasChanges = currentKey !== props.itemKey;
+    const headerText = props.headerText ?? 'Item Key';
+
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    useEffect(() => {
+        setCurrentKey(props.itemKey);
+    }, [props.itemKey]);
 
     useEffect(() => {
         if (currentKey.length <= 0) {
@@ -55,31 +65,59 @@ export const PopoverKeyBadge: React.FC<{
     const handleKeyChange = (e: React.MouseEvent | React.KeyboardEvent) => {
         if (!isValidKey) return;
         e.stopPropagation();
+        e.preventDefault();
         if (currentKey !== props.itemKey && props.onKeyChange) props.onKeyChange(currentKey);
         popoverCloseRef.current?.click();
     }
 
     return <Popover
+        open={isOpen}
         onOpenChange={(open) => {
+            setIsOpen(open);
             if (open) {
                 setCurrentKey(props.itemKey)
             }
         }}
     >
-        <PopoverTrigger>
-            <KeyBadge itemKey={props.itemKey} isHighlighted={externalIsSelected ? props.isHighlighted! : isSelected} onClick={(e) => {
-                if (props.onClick != undefined) {
-                    props.onClick(e);
-                } else {
-                    setIsSelected(externalIsSelected ? props.isHighlighted! : true)
-                }
-            }} />
+        <PopoverTrigger
+            asChild
+        >
+            <div
+                tabIndex={0}
+                className={cn(
+                    'flex items-center justify-center cursor-pointer',
+                    'rounded-full focus:outline focus:outline-offset-0.5 focus:outline-2 focus:outline-primary/50 hover:outline hover:outline-2 hover:outline-primary/30',
+                    props.className
+                )}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsOpen(prev => !prev);
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsOpen(prev => !prev);
+                    }
+                }}
+            >
+                <KeyBadge itemKey={props.itemKey}
+                    isHighlighted={props.isHighlighted || isOpen}
+                    highlightColor={props.highlightColor}
+                />
+            </div>
         </PopoverTrigger>
         <PopoverContent className="max-w-80 relative"
             side='right'
             align="start"
             alignOffset={12}
-            data-no-dnd="true" >
+            data-no-dnd="true"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }}
+        >
             <div className="flex flex-col gap-2 w-full">
 
                 <PopoverClose
@@ -90,9 +128,9 @@ export const PopoverKeyBadge: React.FC<{
                 </PopoverClose>
 
                 <div className="flex flex-row gap-2 items-end">
-                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-1.5'>
+                    <Label htmlFor="keyInput" className='text-sm font-semibold space-y-2'>
                         <span className="mb-1.5">
-                            Item Key
+                            {headerText}
                         </span>
                         <Input
                             id="keyInput"
@@ -106,6 +144,7 @@ export const PopoverKeyBadge: React.FC<{
                             }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
+                                    e.preventDefault();
                                     handleKeyChange(e);
                                 }
                             }}
@@ -132,9 +171,7 @@ export const PopoverKeyBadge: React.FC<{
                         <Check className='size-4 text-muted-foreground' color="green" />
                     </Button>
                 </div>
-                <div className="flex flex-row gap-2 justify-end items-center">
-                    {error && <span className='text-xs grow text-red-800'>{error}</span>}
-                </div>
+                {error && <span className='text-xs grow text-red-800'>{error}</span>}
             </div>
         </PopoverContent>
     </Popover>;

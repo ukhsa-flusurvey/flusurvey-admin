@@ -53,6 +53,11 @@ const TabNav: React.FC<TabNavProps> = (props) => {
                         label={'Service Accounts'}
                         isActive={props.activeTab === 'service-accounts'}
                     />
+                    <TabNavLink
+                        href={'/tools/user-management/app-roles'}
+                        label={'Available App Roles'}
+                        isActive={props.activeTab === 'app-roles'}
+                    />
                 </ul>
 
             </Card>

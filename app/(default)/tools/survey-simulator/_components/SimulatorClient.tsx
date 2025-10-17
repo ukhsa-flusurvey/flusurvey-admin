@@ -24,7 +24,19 @@ const SimulatorClient: React.FC = () => {
             // Assuming you're sending JSON data
             if (event.data.type === 'simulatorConfig') {
                 const newConfig = JSON.parse(event.data.data);
-                console.log('newConfig', newConfig);
+
+                newConfig.surveyContext = newConfig.surveyContext || {};
+                // Convert date strings to Date objects
+                if (newConfig.surveyContext.studyVariables) {
+                    newConfig.surveyContext.studyVariables = newConfig.surveyContext.studyVariables || {};
+                    Object.entries(newConfig.surveyContext.studyVariables).forEach(([key, value]) => {
+                        const v = value as { type: string; value: string };
+                        if (v.type === 'date') {
+                            newConfig.surveyContext.studyVariables[key].value = new Date(String(v.value));
+                        }
+                    });
+                }
+
                 setSimulatorConfig(newConfig);
                 setCounter(prev => prev + 1);
             }

@@ -2,12 +2,9 @@ import { ItemComponentRole } from "@/components/survey-editor/components/types";
 import { getLocalizedString } from '@/utils/localizedStrings';
 import { getUniqueRandomKey } from "@/components/survey-editor/utils/new-item-init";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, Plus, SquareChevronDown, TextCursorInput, Type, X, XCircle } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Binary, Calendar, Check, CircleHelp, ClipboardIcon, Clock, CopyIcon, MoveIcon, PanelBottomClose, PanelLeftCloseIcon, PanelRightCloseIcon, PanelTopCloseIcon, Plus, SquareChevronDown, TextCursorInput, Type, XCircle } from "lucide-react";
 import { ItemComponent, ItemGroupComponent, SurveySingleItem } from "survey-engine/data_types";
 import TextInputContentConfig from "./text-input-content-config";
 import NumberInputContentConfig from "./number-input-content-config";
@@ -21,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { ContextMenu, ContextMenuContent, ContextMenuSubContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuSub, ContextMenuSubTrigger, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useSurveyEditorCtx } from "@/components/survey-editor/surveyEditorContext";
-import { KeyBadge } from "../../KeyBadge";
+import { PopoverKeyBadge } from "../../KeyBadge";
 
 
 interface MatrixProps {
@@ -38,8 +35,10 @@ const OverviewMatrixCellContent: React.FC<{
     highlightKey?: boolean,
     hideIcon?: boolean,
     context: 'header' | 'row' | 'cell',
+    allOtherKeys?: string[],
     onAction: (action: MatrixAction) => void,
-}> = ({ cell, isSelected, hideKey, highlightKey, hideIcon, context, onAction }) => {
+    onKeyChange: (oldKey: string, newKey: string, item: ItemComponent) => void
+}> = ({ cell, isSelected, hideKey, highlightKey, hideIcon, context, allOtherKeys, onAction, onKeyChange }) => {
     const { selectedLanguage } = useSurveyEditorCtx();
     const icon = (cell: ItemComponent) => {
         switch (cell.role) {
@@ -73,7 +72,22 @@ const OverviewMatrixCellContent: React.FC<{
                     }
                 )}>
                     {!hideIcon && <span className="text-muted-foreground">{icon(cell)}</span>}
-                    {!hideKey && <KeyBadge itemKey={cell.key ?? ''} isHighlighted={isSelected || (highlightKey ?? false)} />}
+                    {!hideKey && (
+                        <PopoverKeyBadge
+                            itemKey={cell.key ?? ''}
+                            isHighlighted={isSelected || (highlightKey ?? false)}
+                            allOtherKeys={allOtherKeys ?? []}
+                            onKeyChange={(newKey) => {
+                                if (newKey) {
+                                    const newCell = {
+                                        ...cell,
+                                        key: newKey,
+                                    };
+                                    onKeyChange(cell.key ?? '', newKey, newCell);
+                                }
+                            }}
+                        />
+                    )}
                     <p className="text-sm">{getLocalizedString(cell.content, selectedLanguage)}</p>
                 </div>
             </ContextMenuTrigger>
@@ -167,15 +181,17 @@ const OverviewTable: React.FC<{
     matrixDef: ItemGroupComponent,
     selectedElement: Selection | undefined,
     headerColKeys: string[],
+    usedKeys: string[],
     onSelectionChange(selection: Selection | undefined): void,
     onAction: (action: MatrixAction, position: Selection) => void,
-}> = ({ matrixDef, selectedElement, headerColKeys, onSelectionChange, onAction }) => {
+    onKeyChange(oldKey: string, newKey: string, item: ItemComponent): void,
+}> = ({ matrixDef, selectedElement, headerColKeys, usedKeys, onSelectionChange, onAction, onKeyChange }) => {
 
     const responseRows = matrixDef.items.filter(comp => comp.role === MatrixRowType.ResponseRow) as ItemGroupComponent[];
     return (
         <table className="w-full table-fixed">
             <thead>
-                <tr >
+                <tr>
                     <th className="border-none"></th>
                     {(matrixDef.items.find(comp => comp.role === MatrixRowType.HeaderRow) as ItemGroupComponent).items.map((header, colIndex) => {
                         const isColSelected = selectedElement?.colIndex === colIndex;
@@ -196,6 +212,8 @@ const OverviewTable: React.FC<{
                                     highlightKey={isColSelected}
                                     context="header"
                                     onAction={(action) => { onAction(action, { rowIndex: -1, colIndex }) }}
+                                    allOtherKeys={usedKeys.filter(k => k !== header.key)}
+                                    onKeyChange={onKeyChange}
                                 />
                             </th>
                         );
@@ -223,6 +241,8 @@ const OverviewTable: React.FC<{
                                 highlightKey={isRowSelected}
                                 context="row"
                                 onAction={(action) => { onAction(action, { rowIndex: rowIndex, colIndex: -1 }) }}
+                                allOtherKeys={usedKeys.filter(k => k !== row.key)}
+                                onKeyChange={onKeyChange}
                             />
                         </th>
                         {(row as ItemGroupComponent).items.map((cell, colIndex) => {
@@ -241,6 +261,8 @@ const OverviewTable: React.FC<{
                                         hideKey={headerColKeys[colIndex] === cell.key}
                                         context="cell"
                                         onAction={(action) => { onAction(action, { rowIndex: rowIndex, colIndex }) }}
+                                        allOtherKeys={usedKeys.filter(k => k !== cell.key)}
+                                        onKeyChange={onKeyChange}
                                     />
                                 </td>
                             )
@@ -274,91 +296,16 @@ const CellEditor: React.FC<{ selectedElement: ItemComponent, onChange(key: strin
     }
 }
 
-const KeyEditor = (props: {
-    currentKey: string;
-    existingKeys?: string[];
-    onChange: (newKey: string) => void;
-}) => {
-    const [editedKey, setEditedKey] = React.useState<string>(props.currentKey);
-
-    // Ensure the edited key is updated when the key changes (selection changes)
-    useEffect(() => {
-        setEditedKey(props.currentKey);
-    }, [props.currentKey]);
-
-    const hasValidKey = (key: string): boolean => {
-        if (key.length < 1) {
-            return false;
-        }
-        if (props.existingKeys?.includes(key)) {
-            return false;
-        }
-        return true;
-    }
-
-    return <div className='flex items-center gap-2'
-        data-no-dnd="true"
-    >
-        <Label htmlFor={'item-key-' + props.currentKey} className="w-32">
-            Key
-        </Label>
-        <Input
-            id={'item-key-' + props.currentKey}
-            className='w-full'
-            value={editedKey}
-            onChange={(e) => {
-                const value = e.target.value;
-                setEditedKey(value);
-            }}
-        />
-        {editedKey !== props.currentKey &&
-            <div className='flex items-center'>
-                <Button
-                    variant='ghost'
-                    className='text-destructive'
-                    size='icon'
-                    onClick={() => {
-                        setEditedKey(props.currentKey);
-                    }}
-                >
-                    <X className='size-4' />
-                </Button>
-                <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-primary'
-                    disabled={!hasValidKey(editedKey)}
-                    onClick={() => {
-                        props.onChange(editedKey);
-                    }}
-                >
-                    <Check className='size-4' />
-                </Button>
-            </div>}
-    </div>
-}
-
 const EditSection: React.FC<{
     selectedElement: ItemComponent,
     isHeaderCell?: boolean,
-    usedKeys: string[],
     onChange(item: ItemComponent): void
-}> = ({ selectedElement, isHeaderCell, usedKeys, onChange }) => {
+}> = ({ selectedElement, isHeaderCell, onChange }) => {
 
     return <div className='space-y-4'>
         <Separator orientation='horizontal' />
         {selectedElement && <p className='font-semibold mb-2'>Selected Element: </p>}
         {selectedElement && <div className='space-y-4'>
-            {isHeaderCell && <KeyEditor
-                currentKey={selectedElement.key ?? ''}
-                existingKeys={usedKeys.filter((key): key is string => key !== undefined)}
-                onChange={(newKey) => {
-                    if (selectedElement.key) {
-                        onChange({ ...selectedElement, key: newKey });
-                    }
-                }}
-            />}
-
             {!isHeaderCell &&
                 <>
                     <div className='flex items-center gap-2'
@@ -857,6 +804,12 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
                             onSelectionChange={setSelectedElement}
                             headerColKeys={headerColKeys}
                             onAction={handleCellAction}
+                            usedKeys={getUsedKeys()}
+                            onKeyChange={(key: string, newKey: string, item: ItemComponent) => {
+                                if (key !== newKey) {
+                                    updateTargetComp(item, selectedElement);
+                                }
+                            }}
                         />
                         <Button className="rounded-full min-h-full" variant={'ghost'} size={'icon'}
                             onClick={() => {
@@ -880,7 +833,6 @@ const MatrixEditor: React.FC<MatrixProps> = (props) => {
             {selectedItemComp &&
                 <EditSection
                     selectedElement={selectedItemComp}
-                    usedKeys={getUsedKeys()}
                     isHeaderCell={selectedElement !== undefined && (selectedElement.rowIndex === -1 || selectedElement.colIndex === -1)}
                     onChange={(item: ItemComponent) => {
                         updateTargetComp(item, selectedElement);
