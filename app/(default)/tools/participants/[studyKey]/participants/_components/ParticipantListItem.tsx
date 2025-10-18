@@ -9,6 +9,9 @@ import { Activity, ChevronRight } from 'lucide-react';
 import { shortenID } from '@/utils/shortenID';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { TableCell, TableRow } from '@/components/ui/table';
+import CopyIdToClipboad from './CopyIdToClipboad';
+import { participantStudyStatus } from './utils';
 
 interface ParticipantListItemProps {
     participant: ParticipantState;
@@ -17,7 +20,7 @@ interface ParticipantListItemProps {
 
 const getModifiedAt = (modifiedAt?: number, lastSubmissions?: { [key: string]: number }) => {
     if (!modifiedAt && !lastSubmissions) return <>
-        None
+        Never
     </>
 
     let value = modifiedAt;
@@ -34,6 +37,18 @@ const getModifiedAt = (modifiedAt?: number, lastSubmissions?: { [key: string]: n
     </>
 }
 
+const StatusBadge = ({ status }: { status: string }) => {
+    const statusLabel = participantStudyStatus[status as keyof typeof participantStudyStatus]?.label || status;
+    const statusBgColor = participantStudyStatus[status as keyof typeof participantStudyStatus]?.bgColor || participantStudyStatus.other.bgColor;
+    const statusBorderColor = participantStudyStatus[status as keyof typeof participantStudyStatus]?.borderColor || participantStudyStatus.other.borderColor;
+    return (
+        <div className={cn('px-2 py-0.5 rounded-full text-xs border w-fit flex items-center gap-1 bg-white', statusBorderColor)}>
+            <span className={cn('size-2 rounded-full inline-block bg-white', statusBgColor)}></span>
+            <span className='text-[10px] font-semibold uppercase'>{statusLabel}</span>
+        </div>
+    )
+}
+
 const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -41,6 +56,7 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
 
 
     const onSelectParticipant = (participantId: string) => {
+        alert(participantId);
         const params = new URLSearchParams(searchParams);
         params.set('selectedParticipant', participantId);
 
@@ -48,52 +64,69 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
     }
 
     return (
-        <li>
-            <Button
-                className={cn(
-                    'py-3 h-auto flex gap-3 items-center w-full hover:bg-slate-200',
-                    {
-                        'bg-slate-300': props.selected
-                    }
-                )}
-                variant='ghost'
-                onClick={() => onSelectParticipant(props.participant.participantId)}
-            >
+        <TableRow
+            className='cursor-pointer text-xs'
+            onClick={() => onSelectParticipant(props.participant.participantId)}>
+            <TableCell className='p-2 flex items-center justify-center'>
                 <AvatarFromId userId={props.participant.participantId}
-                    pixelSize={3}
+                    pixelSize={2}
                 />
-                <div className='grow'>
-                    <div className='text-start font-mono text-sm font-semibold'>
-                        {shortenID(props.participant.participantId, 16)}
-                    </div>
-                    <div className='flex justify-between items-center'>
-                        <div className='text-neutral-700 text-xs grow flex items-center gap-1'>
-
-                            <Activity className='size-3 text-neutral-400 me-1' />
-                            {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
-
-                        </div>
-
-                        <div className={cn(
-                            'mx-2 text-xs px-2 bg-gray-200 rounded-sm',
-                            {
-                                'bg-green-200': props.participant.studyStatus === 'active',
-                                'bg-red-200': props.participant.studyStatus === 'accountDeleted',
-                                'bg-neutral-200': props.participant.studyStatus === 'temporary'
-                            }
-
-                        )}>
-                            {props.participant.studyStatus}
-                        </div>
-                    </div>
+            </TableCell>
+            <TableCell className='p-2 max-w-[200px]'>
+                <div className='flex items-center gap-2 max-w-[200px] overflow-x-auto'>
+                    <span className='font-mono text-xs truncate'>{props.participant.participantId}</span>
+                    <CopyIdToClipboad
+                        participantId={props.participant.participantId}
+                    />
                 </div>
+            </TableCell>
 
-                <div>
-                    <ChevronRight className="size-4" />
-                </div>
-            </Button>
-        </li>
+            <TableCell className='p-2 text-center'>
+                {format(new Date(props.participant.enteredAt * 1000), 'dd-MMM-yyyy')}
+            </TableCell>
+
+            <TableCell className='p-2 text-center'>
+                {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
+            </TableCell>
+
+            <TableCell className='p-2'>
+                <StatusBadge status={props.participant.studyStatus} />
+            </TableCell>
+        </TableRow>
     );
+    /*           />
+               <div className='grow'>
+                   <div className='text-start font-mono text-sm font-semibold'>
+                       {shortenID(props.participant.participantId, 16)}
+                   </div>
+                   <div className='flex justify-between items-center'>
+                       <div className='text-neutral-700 text-xs grow flex items-center gap-1'>
+
+                           <Activity className='size-3 text-neutral-400 me-1' />
+                           {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
+
+                       </div>
+
+                       <div className={cn(
+                           'mx-2 text-xs px-2 bg-gray-200 rounded-sm',
+                           {
+                               'bg-green-200': props.participant.studyStatus === 'active',
+                               'bg-red-200': props.participant.studyStatus === 'accountDeleted',
+                               'bg-neutral-200': props.participant.studyStatus === 'temporary'
+                           }
+
+                       )}>
+                           {props.participant.studyStatus}
+                       </div>
+                   </div>
+               </div>
+
+               <div>
+                   <ChevronRight className="size-4" />
+               </div>
+           </Button>
+       </li>
+   );*/
 };
 
 export default ParticipantListItem;

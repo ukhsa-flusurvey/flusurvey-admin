@@ -30,7 +30,7 @@ const Pagination: React.FC<PaginationProps> = (props) => {
     }
 
     return (
-        <div className={cn(" w-full gap-2 flex items-center justify-center border-t border-border py-2",
+        <div className={cn(" w-full gap-2 flex items-center justify-center border-t border-border py-2 bg-white",
             props.className
         )}>
             <Button

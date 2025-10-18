@@ -8,6 +8,7 @@ interface ParticipantsListProps {
     studyKey: string;
     filter?: string;
     page?: string;
+    sortAscending?: boolean;
     selectedParticipant?: string;
 }
 
@@ -16,7 +17,7 @@ const pageSize = 50;
 const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
     const page = parseInt(props.page || '1');
     const filter = props.filter;
-    const sort = encodeURIComponent('{ "enteredAt": 1 }');
+    const sort = encodeURIComponent(`{ "enteredAt": ${props.sortAscending ? 1 : -1} }`);
     const resp = await getParticipants(props.studyKey, page, filter, sort, pageSize);
 
     const participants = resp.participants;

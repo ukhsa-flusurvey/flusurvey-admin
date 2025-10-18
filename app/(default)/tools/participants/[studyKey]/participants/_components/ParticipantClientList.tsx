@@ -1,14 +1,12 @@
 'use client';
 
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import React, { useEffect } from 'react';
+import React from 'react';
 import ParticipantListItem from './ParticipantListItem';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { Separator } from '@/components/ui/separator';
-import LoadingButton from '@/components/loading-button';
-import { getParticipants } from '@/lib/data/participants';
-import { toast } from 'sonner';
 import Pagination from './Pagination';
+import { Table, TableHead, TableRow, TableHeader, TableBody } from '@/components/ui/table';
+import { Activity, Calendar, FlagTriangleRight, UserRound } from 'lucide-react';
 
 
 interface ParticipantClientListProps {
@@ -22,48 +20,53 @@ interface ParticipantClientListProps {
 }
 
 const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
-    const [participants, setParticipants] = React.useState<ParticipantState[]>(props.initialParticipants);
-    const [totalParticipants, setTotalParticipants] = React.useState<number>(props.totalParticipants || 0);
-    const [isPending, startTransition] = React.useTransition();
+    const participants = props.initialParticipants;
+    const totalParticipants = props.totalParticipants || 0;
 
-    useEffect(() => {
-        setTotalParticipants(props.totalParticipants || 0);
-    }, [props.totalParticipants]);
-
-    const onLoadMore = () => {
-        const page = Math.floor(participants.length / props.pageSize) + 1;
-        startTransition(async () => {
-            try {
-                const resp = await getParticipants(props.studyKey, page, props.filter, props.sort, props.pageSize);
-                if (resp.error) {
-                    toast.error('Failed to load more participants', {
-                        description: resp.error
-                    });
-                    return;
-                }
-                if (resp.participants) {
-                    setParticipants([...participants, ...resp.participants]);
-                }
-                if (resp.pagination) {
-                    setTotalParticipants(resp.pagination.totalCount);
-                }
-            } catch (e) {
-                console.error(e);
-                toast.error('Failed to load more participants');
-            }
-        });
-    }
-
-    const hasMore = totalParticipants > participants.length;
     return (
         <div className="h-full w-full flex flex-col">
-            <div className='text-sm bg-slate-100 px-4 py-2 border-b border-border font-semibold'>
-                Showing {participants.length} of {totalParticipants} participants
-            </div>
-            <ScrollArea
-                className="flex-1 w-full overflow-y-auto"
-            >
-                <ul className="divide-y p-1 w-full">
+
+            <Table className=''>
+                <TableHeader className='sticky top-0 z-10 bg-slate-50 border-b border-border font-semibold'>
+                    <TableRow>
+                        <TableHead className='p-2 h-auto w-12'>
+                            <span className='sr-only'>Avatar</span>
+                        </TableHead>
+                        <TableHead className='p-2 h-auto w-[220px]'>
+                            <span className='inline-flex items-center gap-1.5'>
+                                <UserRound className='size-3' />
+                                Participant ID
+                            </span>
+                        </TableHead>
+
+                        <TableHead className='p-2 h-auto text-center'>
+                            <span className='inline-flex items-center justify-center gap-1.5'>
+                                <Calendar className='size-3' />
+                                Joined
+                            </span>
+                        </TableHead>
+
+                        <TableHead className='p-2 h-auto text-center'>
+                            <span className='inline-flex items-center justify-center gap-1.5'>
+                                <Activity className='size-3' />
+                                Last modified
+                            </span>
+                        </TableHead>
+
+                        <TableHead className='p-2 h-auto'>
+                            <span className='inline-flex items-center gap-1.5'>
+                                <FlagTriangleRight className='size-3' />
+                                Status
+                            </span>
+
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+
+
+
+
+                <TableBody className="overflow-y-auto">
                     {participants.map((participant) => (
                         <ParticipantListItem
                             key={participant.participantId}
@@ -71,24 +74,11 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                             selected={participant.participantId === props.selectedParticipant}
                         />
                     ))}
-                </ul>
-                <Separator />
+                </TableBody>
 
-                <div className='flex justify-center py-4 pb-8'>
-                    {
-                        hasMore ? <LoadingButton
-                            isLoading={isPending}
-                            variant={'default'}
-                            onClick={onLoadMore}
-                        >
-                            Load more
-                        </LoadingButton> : <p className='text-xs text-neutral-500'>
-                            End of list
-                        </p>
-                    }
-                </div>
-                <ScrollBar />
-            </ScrollArea>
+
+            </Table>
+            <div className='grow'></div>
             <Pagination limit={props.pageSize} total={totalParticipants} page={Math.floor(participants.length / props.pageSize) + 1} />
         </div>
     );
