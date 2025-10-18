@@ -294,6 +294,9 @@ export default function ParticipantFilterPopover(): JSX.Element {
         const formState = serializeFormState(activeTab, simpleForm.filterType);
         params.set('formState', encodeURIComponent(formState));
 
+        // Reset page to 1 when filter changes
+        params.set('page', '1');
+
         replace(`${pathname}?${params.toString()}`);
         setIsOpen(false);
     };
@@ -317,6 +320,8 @@ export default function ParticipantFilterPopover(): JSX.Element {
         params.delete('filter');
         const formState = serializeFormState("simple", "none");
         params.set('formState', encodeURIComponent(formState));
+        // Reset page to 1 on clear as well
+        params.set('page', '1');
         replace(`${pathname}?${params.toString()}`);
         setIsOpen(false);
     };

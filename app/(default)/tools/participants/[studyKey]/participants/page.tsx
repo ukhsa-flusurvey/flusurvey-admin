@@ -69,7 +69,7 @@ export default async function Page(props: PageProps) {
 
                 <Card
                     variant={'opaque'}
-                    className="flex flex-col overflow-hidden grow"
+                    className="flex flex-col overflow-hidden grow rounded-xl"
                 >
 
 
@@ -85,19 +85,6 @@ export default async function Page(props: PageProps) {
                                 selectedParticipant={props.searchParams?.selectedParticipant}
                             />
                         </Suspense>
-
-                        <div className="grow h-full overflow-auto">
-                            <Suspense
-                                key={props.params.studyKey + props.searchParams?.selectedParticipant}
-                                fallback={<ParticipantDetailsSkeleton />}
-                            >
-                                <ParticipantDetails
-                                    studyKey={props.params.studyKey}
-                                    participantID={props.searchParams?.selectedParticipant}
-                                />
-
-                            </Suspense>
-                        </div>
                     </div>
                 </Card >
             </main>
