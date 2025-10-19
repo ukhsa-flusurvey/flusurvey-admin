@@ -4,12 +4,11 @@ import Link from "next/link";
 import { ArrowRight, HardDriveDownload } from "lucide-react";
 import { Suspense } from "react";
 import ParticipantList, { ParticipantListSkeleton } from "./_components/ParticipantsList";
-import ParticipantDetails, { ParticipantDetailsSkeleton } from "./_components/ParticipantDetails";
 import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
 import { ParticipantsPageLinkContent } from "../../_components/breacrumbs-contents";
 import ParticipantFilterPopover from "./_components/participant-filter-popover";
 import SortConfig from "./_components/sort-config";
-
+import { getSurveyInfos } from "@/lib/data/studyAPI";
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +32,17 @@ interface PageProps {
 export default async function Page(props: PageProps) {
     const sortAscending = props.searchParams?.sortAscending === 'true';
 
+    // Fetch survey keys for filter suggestions
+    let surveyKeys: string[] = [];
+    try {
+        const resp = await getSurveyInfos(props.params.studyKey);
+        if (resp.surveys) {
+            surveyKeys = resp.surveys.map(s => s.key);
+        }
+    } catch (e) {
+        console.error('Failed to fetch survey keys:', e);
+    }
+
     return (
         <div className="flex flex-col h-screen overflow-y-hidden">
             <SidebarToggleWithBreadcrumbs
@@ -51,7 +61,7 @@ export default async function Page(props: PageProps) {
             <main className="px-4 flex flex-col gap-4 grow overflow-hidden py-1">
 
                 <div className="flex gap-2">
-                    <ParticipantFilterPopover />
+                    <ParticipantFilterPopover surveyKeys={surveyKeys} />
 
                     <SortConfig />
 

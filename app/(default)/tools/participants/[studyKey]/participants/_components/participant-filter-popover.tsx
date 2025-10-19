@@ -20,13 +20,18 @@ interface FlagEntry {
 }
 
 interface SimpleFormState {
-    filterType: "none" | "studyStatus" | "participantId" | "flags" | "linkingCodes" | "surveyKey";
+    filterType: "none" | "studyStatus" | "participantId" | "flags" | "linkingCodes" | "surveyKey" | "enteredAt" | "lastSubmission";
     studyStatus: string; // "active", "temporary", "deleted", "virtual", "other"
     studyStatusOther?: string;
     participantId: string;
     flags: FlagEntry[];
     linkingCodes: FlagEntry[];
     surveyKey: string;
+    enteredAtDirection: "before" | "after";
+    enteredAtDate: string; // ISO yyyy-mm-dd
+    lastSubmissionDirection: "before" | "after";
+    lastSubmissionDate: string; // ISO yyyy-mm-dd
+    lastSubmissionSurveyKey: string;
 }
 
 // Helper function to build MongoDB query from simple form state
@@ -69,6 +74,28 @@ function buildSimpleQuery(form: SimpleFormState): object {
 
     if (form.filterType === "surveyKey" && form.surveyKey.trim()) {
         return { "assignedSurveys.surveyKey": form.surveyKey.trim() };
+    }
+
+    if (form.filterType === "enteredAt" && form.enteredAtDate.trim()) {
+        // Convert ISO date string (yyyy-mm-dd) to POSIX timestamp at 00:00 local time
+        const date = new Date(form.enteredAtDate + "T00:00:00");
+        const timestamp = Math.floor(date.getTime() / 1000);
+
+        if (form.enteredAtDirection === "before") {
+            return { enteredAt: { $lte: timestamp } };
+        } else {
+            return { enteredAt: { $gte: timestamp } };
+        }
+    }
+
+    if (form.filterType === "lastSubmission" && form.lastSubmissionDate.trim() && form.lastSubmissionSurveyKey.trim()) {
+        // Convert ISO date string (yyyy-mm-dd) to POSIX timestamp at 00:00 local time
+        const date = new Date(form.lastSubmissionDate + "T00:00:00");
+        const timestamp = Math.floor(date.getTime() / 1000);
+        const surveyKey = form.lastSubmissionSurveyKey.trim();
+        const operator = form.lastSubmissionDirection === "before" ? "$lte" : "$gte";
+
+        return { [`lastSubmission.${surveyKey}`]: { [operator]: timestamp } };
     }
 
     return {};
@@ -168,13 +195,58 @@ function parseFilterToSimpleValues(filterJsonStr: string, filterType: SimpleForm
             }
             return defaults;
         }
+        if (filterType === "enteredAt") {
+            // Parse { "enteredAt": { "$lte": <ts> } } or { "enteredAt": { "$gte": <ts> } }
+            if (obj.enteredAt && typeof obj.enteredAt === "object") {
+                const isLte = "$lte" in obj.enteredAt;
+                const isGte = "$gte" in obj.enteredAt;
+                if (isLte || isGte) {
+                    const ts = isLte ? obj.enteredAt.$lte : obj.enteredAt.$gte;
+                    if (typeof ts === "number") {
+                        const date = new Date(ts * 1000);
+                        const isoDate = date.toISOString().split("T")[0]; // yyyy-mm-dd
+                        return {
+                            enteredAtDirection: isLte ? "before" : "after",
+                            enteredAtDate: isoDate,
+                        };
+                    }
+                }
+            }
+            return defaults;
+        }
+        if (filterType === "lastSubmission") {
+            // Parse { "lastSubmissions.K": { "$lte": <ts> } } or { "lastSubmissions.K": { "$gte": <ts> } }
+            for (const k of Object.keys(obj)) {
+                if (k.startsWith("lastSubmission.")) {
+                    const operator = obj[k];
+                    if (typeof operator === "object") {
+                        const isLte = "$lte" in operator;
+                        const isGte = "$gte" in operator;
+                        if (isLte || isGte) {
+                            const ts = isLte ? operator.$lte : operator.$gte;
+                            if (typeof ts === "number") {
+                                const date = new Date(ts * 1000);
+                                const isoDate = date.toISOString().split("T")[0]; // yyyy-mm-dd
+                                const surveyKey = k.substring("lastSubmission.".length);
+                                return {
+                                    lastSubmissionDirection: isLte ? "before" : "after",
+                                    lastSubmissionDate: isoDate,
+                                    lastSubmissionSurveyKey: surveyKey,
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            return defaults;
+        }
         return defaults;
     } catch {
         return {};
     }
 }
 
-export default function ParticipantFilterPopover(): JSX.Element {
+export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKeys?: string[] }): JSX.Element {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -193,6 +265,11 @@ export default function ParticipantFilterPopover(): JSX.Element {
         flags: [],
         linkingCodes: [],
         surveyKey: "",
+        enteredAtDirection: "after",
+        enteredAtDate: "",
+        lastSubmissionDirection: "after",
+        lastSubmissionDate: "",
+        lastSubmissionSurveyKey: "",
     });
 
     // Custom JSON state
@@ -310,6 +387,11 @@ export default function ParticipantFilterPopover(): JSX.Element {
             flags: [],
             linkingCodes: [],
             surveyKey: "",
+            enteredAtDirection: "after",
+            enteredAtDate: "",
+            lastSubmissionDirection: "after",
+            lastSubmissionDate: "",
+            lastSubmissionSurveyKey: "",
         });
         setCustomFilter("");
         setCustomFilterError("");
@@ -350,6 +432,11 @@ export default function ParticipantFilterPopover(): JSX.Element {
                         flags: [],
                         linkingCodes: [],
                         surveyKey: "",
+                        enteredAtDirection: "after",
+                        enteredAtDate: "",
+                        lastSubmissionDirection: "after",
+                        lastSubmissionDate: "",
+                        lastSubmissionSurveyKey: "",
                     }));
                 }
             } else {
@@ -364,6 +451,11 @@ export default function ParticipantFilterPopover(): JSX.Element {
                     flags: [],
                     linkingCodes: [],
                     surveyKey: "",
+                    enteredAtDirection: "after",
+                    enteredAtDate: "",
+                    lastSubmissionDirection: "after",
+                    lastSubmissionDate: "",
+                    lastSubmissionSurveyKey: "",
                 }));
             }
 
@@ -437,6 +529,8 @@ export default function ParticipantFilterPopover(): JSX.Element {
                                                 <SelectItem value="flags">Participant Flags</SelectItem>
                                                 <SelectItem value="linkingCodes">Linking Codes</SelectItem>
                                                 <SelectItem value="surveyKey">Survey Key</SelectItem>
+                                                <SelectItem value="enteredAt">Joined</SelectItem>
+                                                <SelectItem value="lastSubmission">Last Submission</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </FieldContent>
@@ -607,6 +701,100 @@ export default function ParticipantFilterPopover(): JSX.Element {
                                                 onChange={(e) => setSimpleForm((prev) => ({ ...prev, surveyKey: e.target.value }))}
                                             />
                                             <FieldDescription>Filter for participants with this survey assigned</FieldDescription>
+                                        </FieldContent>
+                                    </Field>
+                                )}
+
+                                {/* Joined (enteredAt) Filter */}
+                                {simpleForm.filterType === "enteredAt" && (
+                                    <Field>
+                                        <FieldLabel>Filter by Joined Date</FieldLabel>
+                                        <FieldContent>
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <label className="text-sm font-medium">Before or After</label>
+                                                    <RadioGroup
+                                                        value={simpleForm.enteredAtDirection}
+                                                        className="flex gap-4 mt-2"
+                                                        onValueChange={(value) => setSimpleForm((prev) => ({ ...prev, enteredAtDirection: value as "before" | "after" }))}
+                                                    >
+                                                        <Label htmlFor="entered-before" className="font-normal cursor-pointer flex items-center gap-2">
+                                                            <RadioGroupItem value="before" id="entered-before" />
+                                                            Before
+                                                        </Label>
+                                                        <Label htmlFor="entered-after" className="font-normal cursor-pointer flex items-center gap-2">
+                                                            <RadioGroupItem value="after" id="entered-after" />
+                                                            After
+                                                        </Label>
+                                                    </RadioGroup>
+                                                </div>
+                                                <div>
+                                                    <label className="text-sm font-medium">Select Date</label>
+                                                    <Input
+                                                        type="date"
+                                                        value={simpleForm.enteredAtDate}
+                                                        onChange={(e) => setSimpleForm((prev) => ({ ...prev, enteredAtDate: e.target.value }))}
+                                                        className="mt-2"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <FieldDescription>Filter participants by their join date (inclusive)</FieldDescription>
+                                        </FieldContent>
+                                    </Field>
+                                )}
+
+                                {/* Last Submission Filter */}
+                                {simpleForm.filterType === "lastSubmission" && (
+                                    <Field>
+                                        <FieldLabel>Filter by Last Submission</FieldLabel>
+                                        <FieldContent>
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <label className="text-sm font-medium">Before or After</label>
+                                                    <RadioGroup
+                                                        value={simpleForm.lastSubmissionDirection}
+                                                        className="flex gap-4 mt-2"
+                                                        onValueChange={(value) => setSimpleForm((prev) => ({ ...prev, lastSubmissionDirection: value as "before" | "after" }))}
+                                                    >
+                                                        <Label htmlFor="lastSub-before" className="font-normal cursor-pointer flex items-center gap-2">
+                                                            <RadioGroupItem value="before" id="lastSub-before" />
+                                                            Before
+                                                        </Label>
+                                                        <Label htmlFor="lastSub-after" className="font-normal cursor-pointer flex items-center gap-2">
+                                                            <RadioGroupItem value="after" id="lastSub-after" />
+                                                            After
+                                                        </Label>
+                                                    </RadioGroup>
+                                                </div>
+                                                <div>
+                                                    <label className="text-sm font-medium">Select Date</label>
+                                                    <Input
+                                                        type="date"
+                                                        value={simpleForm.lastSubmissionDate}
+                                                        onChange={(e) => setSimpleForm((prev) => ({ ...prev, lastSubmissionDate: e.target.value }))}
+                                                        className="mt-2"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-sm font-medium">Survey Key</label>
+                                                    <Select
+                                                        onValueChange={(value) => setSimpleForm((prev) => ({ ...prev, lastSubmissionSurveyKey: value }))}
+                                                        defaultValue={simpleForm.lastSubmissionSurveyKey}
+                                                    >
+                                                        <SelectTrigger className="mt-2">
+                                                            <SelectValue placeholder="Select survey key" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {surveyKeys.map((key) => (
+                                                                <SelectItem key={key} value={key}>
+                                                                    {key}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                            <FieldDescription>Filter participants by their last submission date for a specific survey (inclusive)</FieldDescription>
                                         </FieldContent>
                                     </Field>
                                 )}
