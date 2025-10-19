@@ -93,12 +93,14 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
                     <Tooltip>
                         <TooltipTrigger>
                             <span>
-                                <Info className='size-3 text-neutral-500' />
+                                <Info className='size-3 text-muted-foreground' />
                             </span>
                         </TooltipTrigger>
-                        <TooltipContent side='left' align='start'>
+                        <TooltipContent side='left' align='start'
+                            className='max-h-64 overflow-y-auto py-4'
+                        >
                             <div className='text-start'>
-                                <h3 className='text-sm font-semibold mb-2'>
+                                <h3 className='text-xs font-semibold mb-2'>
                                     Last submission dates:
                                 </h3>
                                 <div className='rounded-md border border-border divide-y divide-border text-xs'>
@@ -123,7 +125,158 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
             </TableCell>
 
             <TableCell className='p-2'>
-                <StatusBadge status={props.participant.studyStatus} />
+                <div className='flex items-center justify-center'>
+                    <StatusBadge status={props.participant.studyStatus} />
+                </div>
+            </TableCell>
+
+            <TableCell className='p-2 text-center'>
+                <div className='flex items-center justify-center gap-2'>
+                    <span className='font-mono'>
+                        {props.participant.assignedSurveys?.length || 0}
+                    </span>
+
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <span>
+                                <Info className='size-3 text-muted-foreground' />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent side='left' align='start'
+                            className='max-h-64 overflow-y-auto py-4'
+                        >
+                            <div className='text-start'>
+                                <h3 className='text-xs font-semibold mb-2'>
+                                    Assigned surveys:
+                                </h3>
+                                <div className='rounded-md border border-border divide-y divide-border text-xs'>
+                                    {props.participant?.assignedSurveys?.map((survey, index) => (
+                                        <div key={index}
+                                            className='flex items-center gap-2 justify-between w-full p-2'
+                                        >
+                                            <span className='font-mono font-bold'>{survey.surveyKey}</span>
+                                            <span className='text-muted-foreground'>{survey.category}</span>
+                                        </div>
+                                    ))}
+                                    {(props.participant?.assignedSurveys?.length || 0) === 0 && (
+                                        <div className='p-2 text-center'>
+                                            No assigned surveys currently.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+
+            </TableCell>
+
+            <TableCell className='p-2 text-center'>
+                <div className='flex items-center justify-center gap-2'>
+                    <span className='font-mono'>
+                        {Object.keys(props.participant.flags || {}).length || 0}
+                        &nbsp;+&nbsp;
+                        {Object.keys(props.participant.linkingCodes || {}).length || 0}
+                    </span>
+
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <span>
+                                <Info className='size-3 text-muted-foreground' />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent side='left' align='start'
+                            className='max-h-64 overflow-y-auto'
+                        >
+                            <div className='text-start space-y-4 py-2'>
+                                <div>
+                                    <h3 className='text-xs font-semibold mb-2'>
+                                        Flags:
+                                    </h3>
+                                    <div className='rounded-md border border-border divide-y divide-border text-xs'>
+                                        {Object.entries(props.participant.flags || {}).map(([key, value], index) => (
+                                            <div key={index}
+                                                className='flex items-center gap-2 justify-between w-full p-2'
+                                            >
+                                                <span className='font-mono font-bold'>{key}</span>
+                                                <span className=''>{value}</span>
+                                            </div>
+                                        ))}
+                                        {(Object.keys(props.participant.flags || {}).length || 0) === 0 && (
+                                            <div className='p-2 text-center'>
+                                                No flags.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-xs font-semibold mb-2'>
+                                        Linking codes:
+                                    </h3>
+                                    <div className='rounded-md border border-border divide-y divide-border text-xs'>
+                                        {Object.entries(props.participant.linkingCodes || {}).map(([key, value], index) => (
+                                            <div key={index}
+                                                className='flex items-center gap-2 justify-between w-full p-2'
+                                            >
+                                                <span className='font-mono font-bold'>{key}</span>
+                                                <span className=''>{value}</span>
+                                            </div>
+                                        ))}
+                                        {(Object.keys(props.participant.linkingCodes || {}).length || 0) === 0 && (
+                                            <div className='p-2 text-center'>
+                                                No linking codes.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+
+            </TableCell>
+            <TableCell className='p-2 text-center'>
+                <div className='flex items-center justify-center gap-2'>
+                    <span className='font-mono'>
+                        {props.participant.messages?.length || 0}
+                    </span>
+
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <span>
+                                <Info className='size-3 text-muted-foreground' />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent side='left' align='start'
+                            className='max-h-64 overflow-y-auto'
+                        >
+                            <div className='text-start space-y-4 py-2'>
+                                <div>
+                                    <h3 className='text-xs font-semibold mb-2'>
+                                        Scheduled messages:
+                                    </h3>
+                                    <div className='rounded-md border border-border divide-y divide-border text-xs'>
+                                        {props.participant.messages?.map((message, index) => (
+                                            <div key={index}
+                                                className='flex items-center gap-2 justify-between w-full p-2'
+                                            >
+                                                <span className='font-mono font-bold'>{message.type}</span>
+                                                <span className=''>{format(new Date(message.scheduledFor * 1000), 'dd-MMM-yyyy HH:mm')}</span>
+                                            </div>
+                                        ))}
+                                        {(props.participant.messages?.length || 0) === 0 && (
+                                            <div className='p-2 text-center'>
+                                                No messages.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+
             </TableCell>
         </TableRow>
     );
