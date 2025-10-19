@@ -4,14 +4,13 @@ import React from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import AvatarFromId from '@/components/AvatarFromID';
 import { ParticipantState } from '@/utils/server/types/participantState';
-import { Button } from '@/components/ui/button';
-import { Activity, ChevronRight } from 'lucide-react';
-import { shortenID } from '@/utils/shortenID';
+import { Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { TableCell, TableRow } from '@/components/ui/table';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { participantStudyStatus } from './utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ParticipantListItemProps {
     participant: ParticipantState;
@@ -86,7 +85,41 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
             </TableCell>
 
             <TableCell className='p-2 text-center'>
-                {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
+                <span className='inline-flex items-center gap-2'>
+                    <span>
+                        {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
+                    </span>
+
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <span>
+                                <Info className='size-3 text-neutral-500' />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent side='left' align='start'>
+                            <div className='text-start'>
+                                <h3 className='text-sm font-semibold mb-2'>
+                                    Last submission dates:
+                                </h3>
+                                <div className='rounded-md border border-border divide-y divide-border text-xs'>
+                                    {Object.entries(props.participant?.lastSubmissions || {}).map(([surveyKey, timestamp]) => (
+                                        <div key={surveyKey}
+                                            className='flex items-center gap-2 justify-between w-full p-2'
+                                        >
+                                            <span className='font-mono font-bold'>{surveyKey}</span>
+                                            <span>{format(new Date(timestamp * 1000), 'dd-MMM-yyyy HH:mm')}</span>
+                                        </div>
+                                    ))}
+                                    {Object.entries(props.participant?.lastSubmissions || {}).length === 0 && (
+                                        <div className='p-2 text-center'>
+                                            No submissions yet.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </span>
             </TableCell>
 
             <TableCell className='p-2'>
@@ -94,39 +127,6 @@ const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
             </TableCell>
         </TableRow>
     );
-    /*           />
-               <div className='grow'>
-                   <div className='text-start font-mono text-sm font-semibold'>
-                       {shortenID(props.participant.participantId, 16)}
-                   </div>
-                   <div className='flex justify-between items-center'>
-                       <div className='text-neutral-700 text-xs grow flex items-center gap-1'>
-
-                           <Activity className='size-3 text-neutral-400 me-1' />
-                           {getModifiedAt(props.participant.modifiedAt, props.participant.lastSubmissions)}
-
-                       </div>
-
-                       <div className={cn(
-                           'mx-2 text-xs px-2 bg-gray-200 rounded-sm',
-                           {
-                               'bg-green-200': props.participant.studyStatus === 'active',
-                               'bg-red-200': props.participant.studyStatus === 'accountDeleted',
-                               'bg-neutral-200': props.participant.studyStatus === 'temporary'
-                           }
-
-                       )}>
-                           {props.participant.studyStatus}
-                       </div>
-                   </div>
-               </div>
-
-               <div>
-                   <ChevronRight className="size-4" />
-               </div>
-           </Button>
-       </li>
-   );*/
 };
 
 export default ParticipantListItem;
