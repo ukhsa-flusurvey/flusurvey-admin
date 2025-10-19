@@ -1,20 +1,19 @@
 'use client'
 
 import React from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import AvatarFromId from '@/components/AvatarFromID';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import { Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { TableCell, TableRow } from '@/components/ui/table';
 import CopyIdToClipboad from './CopyIdToClipboad';
-import { participantStudyStatus } from './utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import StatusBadge from './status-badge';
 
 interface ParticipantListItemProps {
     participant: ParticipantState;
     selected: boolean;
+    onSelectParticipant: () => void;
 }
 
 const getModifiedAt = (modifiedAt?: number, lastSubmissions?: { [key: string]: number }) => {
@@ -36,36 +35,14 @@ const getModifiedAt = (modifiedAt?: number, lastSubmissions?: { [key: string]: n
     </>
 }
 
-const StatusBadge = ({ status }: { status: string }) => {
-    const statusLabel = participantStudyStatus[status as keyof typeof participantStudyStatus]?.label || status;
-    const statusBgColor = participantStudyStatus[status as keyof typeof participantStudyStatus]?.bgColor || participantStudyStatus.other.bgColor;
-    const statusBorderColor = participantStudyStatus[status as keyof typeof participantStudyStatus]?.borderColor || participantStudyStatus.other.borderColor;
-    return (
-        <div className={cn('px-2 py-0.5 rounded-full text-xs border w-fit flex items-center gap-1 bg-white', statusBorderColor)}>
-            <span className={cn('size-2 rounded-full inline-block bg-white', statusBgColor)}></span>
-            <span className='text-[10px] font-semibold uppercase'>{statusLabel}</span>
-        </div>
-    )
-}
+
 
 const ParticipantListItem: React.FC<ParticipantListItemProps> = (props) => {
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const { replace } = useRouter();
-
-
-    const onSelectParticipant = (participantId: string) => {
-        alert(participantId);
-        const params = new URLSearchParams(searchParams);
-        params.set('selectedParticipant', participantId);
-
-        replace(`${pathname}?${params.toString()}`);
-    }
 
     return (
         <TableRow
             className='cursor-pointer text-xs'
-            onClick={() => onSelectParticipant(props.participant.participantId)}>
+            onClick={props.onSelectParticipant}>
             <TableCell className='p-2 flex items-center justify-center'>
                 <AvatarFromId userId={props.participant.participantId}
                     pixelSize={2}

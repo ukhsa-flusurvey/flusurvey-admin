@@ -9,7 +9,6 @@ interface ParticipantsListProps {
     filter?: string;
     page?: string;
     sortAscending?: boolean;
-    selectedParticipant?: string;
 }
 
 const pageSize = 50;
@@ -52,7 +51,6 @@ const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
                 filter={filter}
                 sort={sort}
                 initialParticipants={participants}
-                selectedParticipant={props.selectedParticipant}
                 totalParticipants={pagination.totalCount}
                 pageSize={pageSize}
             />

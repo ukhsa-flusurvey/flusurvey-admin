@@ -24,7 +24,6 @@ interface PageProps {
     searchParams?: {
         filter?: string;
         page?: string;
-        selectedParticipant?: string;
         sortAscending?: string; // parsed to boolean below
     };
 }
@@ -98,7 +97,6 @@ export default async function Page(props: PageProps) {
                                 studyKey={props.params.studyKey}
                                 filter={props.searchParams?.filter}
                                 page={props.searchParams?.page}
-                                selectedParticipant={props.searchParams?.selectedParticipant}
                                 sortAscending={sortAscending}
                             />
                         </Suspense>

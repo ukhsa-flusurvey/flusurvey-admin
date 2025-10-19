@@ -1,17 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import ParticipantListItem from './ParticipantListItem';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import Pagination from './Pagination';
 import { Table, TableHead, TableRow, TableHeader, TableBody } from '@/components/ui/table';
 import { Activity, Calendar, FlagTriangleRight, FileStack, UserRound, Tag, Mail } from 'lucide-react';
+import ParticipantDetails from './ParticipantDetails';
 
 
 interface ParticipantClientListProps {
     studyKey: string;
     initialParticipants: ParticipantState[];
-    selectedParticipant?: string;
     totalParticipants?: number;
     filter?: string;
     sort?: string;
@@ -21,6 +21,7 @@ interface ParticipantClientListProps {
 const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
     const participants = props.initialParticipants;
     const totalParticipants = props.totalParticipants || 0;
+    const [selectedParticipant, setSelectedParticipant] = useState<ParticipantState | undefined>(undefined);
 
     return (
         <div className="h-full w-full flex flex-col">
@@ -82,20 +83,26 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                     </TableRow>
                 </TableHeader>
 
-
-
-
                 <TableBody className="overflow-y-auto">
                     {participants.map((participant) => (
                         <ParticipantListItem
                             key={participant.participantId}
                             participant={participant}
-                            selected={participant.participantId === props.selectedParticipant}
+                            selected={participant.participantId === selectedParticipant?.participantId}
+                            onSelectParticipant={() => {
+                                setSelectedParticipant(participant);
+                            }}
                         />
                     ))}
                 </TableBody>
 
-
+                <ParticipantDetails
+                    participant={selectedParticipant}
+                    studyKey={props.studyKey}
+                    onClose={() => {
+                        setSelectedParticipant(undefined);
+                    }}
+                />
             </Table>
             <div className='grow'></div>
             <Pagination limit={props.pageSize} total={totalParticipants} page={Math.floor(participants.length / props.pageSize) + 1} />
