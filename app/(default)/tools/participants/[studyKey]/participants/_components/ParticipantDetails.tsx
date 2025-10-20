@@ -1,11 +1,11 @@
 'use client';
 
 import AvatarFromId from '@/components/AvatarFromID';
-import { Activity, Bookmark, Calendar, FlagTriangleRight, LinkIcon, Mail, PencilIcon } from 'lucide-react';
+import { Activity, Calendar, Edit2, FlagTriangleRight, MoreVertical, PencilIcon, Plus, Tag, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import { format } from 'date-fns';
 import StatusBadge from './status-badge';
@@ -15,11 +15,22 @@ import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { participantStudyStatus } from './utils';
 import { Spinner } from '@/components/ui/spinner';
+import { updateParticipant } from '@/lib/data/participants';
+import { toast } from 'sonner';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { flagKeySchema, flagValueSchema } from '@/utils/server/types/flagValidation';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 interface ParticipantDetailsProps {
     studyKey: string;
     participant?: ParticipantState;
     onClose: () => void;
+    onChange: (participant: ParticipantState) => void;
 }
 
 const StatusEditPopover = (props:
@@ -28,6 +39,11 @@ const StatusEditPopover = (props:
         onStatusChange: (status: string) => void
     }) => {
     const [open, setOpen] = useState(false);
+
+    const onStatusChange = (status: string) => {
+        props.onStatusChange(status);
+        setOpen(false);
+    }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -47,7 +63,7 @@ const StatusEditPopover = (props:
                         </FieldLabel>
 
                         <FieldContent>
-                            <Select value={props.status} onValueChange={(value) => props.onStatusChange(value)}>
+                            <Select value={props.status} onValueChange={(value) => onStatusChange(value)}>
                                 <SelectTrigger>
                                     <SelectValue placeholder='Select status' />
                                 </SelectTrigger>
@@ -67,12 +83,276 @@ const StatusEditPopover = (props:
     )
 }
 
+const FlagEditorForm = (props: {
+    initialValue?: { key: string; value: string; };
+    onSave: (key: string, value: string) => void;
+    onCancel: () => void;
+    usedKeys: string[];
+}) => {
+    const isNewFlag = props.initialValue === undefined;
+
+    const schema = React.useMemo(() => {
+        return z.object({
+            key: flagKeySchema.refine((key) => {
+                if (!isNewFlag) return true; // editing: key is read-only and already unique
+                return !props.usedKeys.includes(key);
+            }, {
+                message: 'This key is already in use',
+            }),
+            value: flagValueSchema,
+        });
+    }, [isNewFlag, props.usedKeys]);
+
+    const form = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            key: props.initialValue?.key ?? '',
+            value: props.initialValue?.value ?? '',
+        },
+        mode: 'onChange',
+    });
+
+    const onSubmit = (values: z.infer<typeof schema>) => {
+        if (values.key === props.initialValue?.key && values.value === props.initialValue?.value) {
+            props.onCancel();
+            return;
+        }
+        props.onSave(values.key, values.value);
+    };
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+
+                <FormField
+                    control={form.control}
+                    name="key"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Key</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    readOnly={props.initialValue !== undefined}
+                                    className='font-mono text-xs'
+                                />
+                            </FormControl>
+                            {props.initialValue !== undefined && (
+                                <FormDescription>
+                                    Key cannot be changed when editing existing flags
+                                </FormDescription>
+                            )}
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="value"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Value</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    className='font-mono text-xs'
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className='flex justify-end gap-2'>
+                    <Button
+                        type='button'
+                        variant='outline'
+                        onClick={props.onCancel}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type='submit'
+                        disabled={form.formState.isSubmitting}
+                    >
+                        Save
+                    </Button>
+                </div>
+            </form>
+        </Form>
+    )
+}
+
+const ParticipantFlagSection = (props: {
+    participant?: ParticipantState;
+    isLoading: boolean;
+    onChange: (participant: ParticipantState) => void;
+}) => {
+    const participant = props.participant;
+    const [flagToEdit, setFlagToEdit] = useState<{ key: string, value: string } | undefined>(undefined);
+    const [newFlagEditorOpen, setNewFlagEditorOpen] = useState(false);
+
+    if (!participant) return null;
+
+    const flags = participant?.flags ? Object.entries(participant.flags) : [];
+
+    return (
+        <div>
+            <div className='flex items-center gap-2 justify-between'>
+                <h3 className='text-sm font-bold flex items-center gap-2'>
+                    <span className='text-muted-foreground'>
+                        <Tag className='size-3' />
+                    </span>
+                    Flags
+                </h3>
+
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => setNewFlagEditorOpen(true)}
+                >
+                    <Plus className='size-4' />
+                </Button>
+            </div>
+
+            <div className='rounded-md border border-border overflow-hidden'>
+                {flags.length > 0 && <Table className='text-xs'>
+                    <TableHeader className='bg-muted'>
+                        <TableRow>
+                            <TableHead className='h-auto p-2'>KEY</TableHead>
+                            <TableHead className='h-auto p-2'>VALUE</TableHead>
+                            <TableHead className='h-auto w-16'>
+                                <span className='sr-only'>Actions</span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {flags.map(([key, value]) => (
+                            <TableRow key={key} className='font-mono'>
+                                <TableCell className='p-2'>{key}</TableCell>
+                                <TableCell className='p-2'>{value}</TableCell>
+                                <TableCell className='p-0'>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant='ghost' className='w-full h-8'>
+                                                <span className='sr-only'>Open menu</span>
+                                                <MoreVertical className='h-4 w-4' />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align='end'>
+                                            <DropdownMenuItem onClick={() => {
+                                                setFlagToEdit({ key: key, value: value });
+                                            }}>
+                                                <Edit2 className='mr-2 h-4 w-4' />
+                                                Edit
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => {
+                                                if (confirm('Are you sure you want to delete this flag?')) {
+                                                    const newFlags = { ...participant?.flags };
+                                                    delete newFlags[key];
+                                                    props.onChange({ ...participant, flags: newFlags });
+                                                }
+                                            }}>
+                                                <Trash2 className='mr-2 h-4 w-4' />
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                }
+
+                {flags.length === 0 && <div className='flex items-center justify-center h-16 text-xs text-muted-foreground'>
+                    No participant flags
+                </div>}
+            </div>
+
+            <Dialog
+                open={flagToEdit !== undefined}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setFlagToEdit(undefined);
+                    }
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Edit flag
+                        </DialogTitle>
+                    </DialogHeader>
+                    <FlagEditorForm
+                        initialValue={flagToEdit}
+                        usedKeys={flags.map(([key,]) => key)}
+                        onSave={(key, value) => {
+                            props.onChange({ ...participant, flags: { ...participant?.flags, [key]: value } });
+                            setFlagToEdit(undefined);
+                        }}
+                        onCancel={() => {
+                            setFlagToEdit(undefined);
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={newFlagEditorOpen}
+                onOpenChange={setNewFlagEditorOpen}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Add new flag
+                        </DialogTitle>
+                    </DialogHeader>
+                    <FlagEditorForm
+                        usedKeys={flags.map(([key,]) => key)}
+                        onSave={(key, value) => {
+                            props.onChange({ ...participant, flags: { ...participant?.flags, [key]: value } });
+                            setNewFlagEditorOpen(false);
+                        }}
+                        onCancel={() => {
+                            setNewFlagEditorOpen(false);
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
+        </div>
+    )
+}
 
 const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
     const participant = props.participant;
     const lastModified = participant?.modifiedAt ? participant.modifiedAt : participant?.lastSubmissions ? Object.values(participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+
+    const onUpdateParticipant = async (participant: ParticipantState) => {
+        setIsLoading(true);
+
+        try {
+            const resp = await updateParticipant(props.studyKey, participant);
+            if (resp.error) {
+                throw new Error(resp.error);
+            }
+            if (!resp.participant) {
+                throw new Error('No participant returned');
+            }
+            toast.success('Participant updated');
+            props.onChange(resp.participant);
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to update participant');
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const renderParticipantCard = () => {
         if (!participant) return null;
@@ -134,14 +414,18 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                 <div className='flex items-center gap-1'>
                     <StatusBadge status={participant.studyStatus} />
                     <StatusEditPopover status={participant.studyStatus}
-                        onStatusChange={() => { }}
+                        onStatusChange={(value) => {
+                            const newParticipant = {
+                                ...participant,
+                                studyStatus: value,
+                            }
+                            onUpdateParticipant(newParticipant);
+                        }}
                     />
                 </div>
             </div>
         </div>)
     }
-
-
 
     return (
         <Dialog
@@ -157,284 +441,26 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                     <DialogTitle>
                         Participant details
                     </DialogTitle>
+                    <DialogDescription>
+                        View and edit state of the selected participant.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div>
                     {renderParticipantCard()}
                 </div>
                 <Separator />
+
+                <ParticipantFlagSection
+                    participant={participant}
+                    isLoading={isLoading}
+                    onChange={(participant) => {
+                        onUpdateParticipant(participant);
+                    }}
+                />
             </DialogContent>
         </Dialog>
     )
 }
 
 export default ParticipantDetails;
-
-/*    if (!props.participantID) {
-       return (
-           <div className='flex gap-2 p-4'>
-               <ArrowDownLeft className='size-6' />
-               <p>Select a participant to view details</p>
-           </div>
-       );
-   }
-
-   const resp = await getParticipantById(props.studyKey, props.participantID);
-   const participant = resp.participant;
-   const error = resp.error;
-
-   if (error || !participant) {
-       return (
-           <div className='p-4'>
-               <ErrorAlert
-                   title='Error loading participant details'
-                   error={error || 'No participant found'}
-               />
-           </div>
-       );
-   }
-
-   const lastModified = participant.modifiedAt ? participant.modifiedAt : participant.lastSubmissions ? Object.values(participant.lastSubmissions).sort((a, b) => b - a)[0] : undefined;
-
-   const participantCard = <Card className='p-6'>
-
-
-   </Card>
-
-   const separator = <Separator className='bg-neutral-300' />
-
-   const flags = participant.flags ? Object.entries(participant.flags) : [];
-   const flagsTable = <Table>
-       <TableHeader >
-           <TableRow>
-               <TableHead className='font-bold'>KEY</TableHead>
-               <TableHead className='font-bold'>VALUE</TableHead>
-           </TableRow>
-       </TableHeader>
-       <TableBody>
-           {flags.length === 0 && (
-               <TableRow>
-                   <TableCell colSpan={2}>No flags</TableCell>
-               </TableRow>
-           )
-           }
-           {flags.map(([key, value]) => (
-               <TableRow key={key}
-                   className='font-mono'
-               >
-                   <TableCell className='text-muted-foreground'>{key}</TableCell>
-                   <TableCell>{value}</TableCell>
-               </TableRow>
-           ))}
-       </TableBody>
-   </Table>
-
-   const linkingCodes = participant.linkingCodes ? Object.entries(participant.linkingCodes) : [];
-   const linkingCodesTable = <Table>
-       <TableHeader >
-           <TableRow>
-               <TableHead className='font-bold'>KEY</TableHead>
-               <TableHead className='font-bold'>VALUE</TableHead>
-           </TableRow>
-       </TableHeader>
-       <TableBody>
-           {linkingCodes.length === 0 && (
-               <TableRow>
-                   <TableCell colSpan={2}>No linking codes</TableCell>
-               </TableRow>
-           )
-           }
-           {linkingCodes.map(([key, value]) => (
-               <TableRow key={key}
-                   className='font-mono'
-               >
-                   <TableCell className='text-muted-foreground'>{key}</TableCell>
-                   <TableCell>{value}</TableCell>
-               </TableRow>
-           ))}
-       </TableBody>
-   </Table>
-
-   const assignedSurveys = participant.assignedSurveys ? participant.assignedSurveys.map((s, index) => {
-       return {
-           key: index,
-           ...s,
-       }
-   }) : [];
-
-   const assignedSurveysTable = <Table>
-       <TableHeader >
-           <TableRow>
-               <TableHead className='font-bold'>SURVEY KEY</TableHead>
-               <TableHead className='font-bold'>CATEGORY</TableHead>
-               <TableHead className='font-bold'>FROM</TableHead>
-               <TableHead className='font-bold'>UNTIL</TableHead>
-           </TableRow>
-       </TableHeader>
-       <TableBody>
-           {assignedSurveys.length === 0 && (
-               <TableRow>
-                   <TableCell colSpan={4}>No assigned surveys</TableCell>
-               </TableRow>
-           )
-           }
-           {assignedSurveys.map((survey, index) => {
-               let from = '';
-               if (survey.validFrom) {
-                   const date = new Date(survey.validFrom * 1000);
-                   from = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-               }
-
-               let until = '';
-               if (survey.validUntil) {
-                   const date = new Date(survey.validUntil * 1000);
-                   until = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-               }
-
-               return <TableRow key={index}>
-                   <TableCell
-                       className='font-bold font-mono'
-                   >{survey.surveyKey}</TableCell>
-                   <TableCell>{survey.category}</TableCell>
-                   <TableCell>{from}</TableCell>
-                   <TableCell>{until}</TableCell>
-               </TableRow>
-           })}
-       </TableBody>
-   </Table>
-
-   const lastSubmissions = participant.lastSubmissions ? Object.entries(participant.lastSubmissions) : [];
-   const lastSubmissionsTable = <Table>
-       <TableHeader >
-           <TableRow>
-               <TableHead className='font-bold'>SURVEY KEY</TableHead>
-               <TableHead className='font-bold'>DATE</TableHead>
-           </TableRow>
-       </TableHeader>
-       <TableBody>
-           {lastSubmissions.length === 0 && (
-               <TableRow>
-                   <TableCell colSpan={4}>No responses</TableCell>
-               </TableRow>
-           )
-           }
-           {lastSubmissions.map((submission, index) => {
-               let value = '';
-               if (submission.length > 1) {
-                   const date = new Date(submission[1] * 1000);
-                   value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-               }
-
-               return <TableRow key={index}>
-                   <TableCell
-                       className='font-bold font-mono'
-                   >{submission[0]}</TableCell>
-                   <TableCell>{value}</TableCell>
-               </TableRow>
-           })}
-       </TableBody>
-   </Table>
-
-   const scheduledMessages = participant.messages ? participant.messages : [];
-   const scheduledMessagesTable = <Table>
-       <TableHeader >
-           <TableRow>
-               <TableHead className='font-bold'>MESSAGE TYPE</TableHead>
-               <TableHead className='font-bold'>DUE</TableHead>
-           </TableRow>
-       </TableHeader>
-       <TableBody>
-           {scheduledMessages.length === 0 && (
-               <TableRow>
-                   <TableCell colSpan={4}>No scheduled messages</TableCell>
-               </TableRow>
-           )
-           }
-           {scheduledMessages.map((message, index) => {
-               const date = new Date(message.scheduledFor * 1000);
-               const value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-
-
-
-               return <TableRow key={index}>
-                   <TableCell
-                       className='font-bold font-mono'
-                   >{message.type}</TableCell>
-                   <TableCell>{value}</TableCell>
-               </TableRow>
-           })}
-       </TableBody>
-   </Table>
-
-
-   return (
-       <div className='p-4 space-y-4'>
-           <h3 className='text-xl font-bold'>Participant details</h3>
-
-           {participantCard}
-
-           {separator}
-
-           <div className='flex w-full'>
-               <Card className='p-4'>
-                   <h4 className='font-bold mb-2 flex items-center gap-2'>
-                       <span className='text-neutral-400'><Bookmark /></span>
-                       Flags
-                   </h4>
-                   {flagsTable}
-               </Card>
-           </div>
-
-           {separator}
-
-           <div className='flex w-full'>
-               <Card className='p-4'>
-                   <h4 className='font-bold mb-2 flex items-center gap-2'>
-                       <span className='text-neutral-400'><LinkIcon /></span>
-                       Linking codes
-                   </h4>
-                   {linkingCodesTable}
-               </Card>
-           </div>
-
-           {separator}
-
-           <div className='flex '>
-               <Card className='p-4'>
-                   <h4 className='font-bold mb-2 flex items-center gap-2'>
-                       <span className='text-neutral-400'><FileStack /></span>
-                       Assigned surveys
-                   </h4>
-                   {assignedSurveysTable}
-               </Card>
-           </div>
-
-           {separator}
-
-           <div className='flex '>
-               <Card className='p-4'>
-                   <h4 className='font-bold mb-2 flex items-center gap-2'>
-                       <span className='text-neutral-400'><Activity /></span>
-                       Last submissions
-                   </h4>
-                   {lastSubmissionsTable}
-               </Card>
-           </div>
-
-           {separator}
-
-           <div className='flex '>
-               <Card className='p-4'>
-                   <h4 className='font-bold mb-2 flex items-center gap-2'>
-                       <span className='text-neutral-400'><Mail /></span>
-                       Scheduled messages
-                   </h4>
-                   {scheduledMessagesTable}
-               </Card>
-           </div>
-       </div>
-   );
-};
-
-
-*/

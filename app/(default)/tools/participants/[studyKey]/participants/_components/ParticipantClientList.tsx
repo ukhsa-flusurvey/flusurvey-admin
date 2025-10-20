@@ -19,7 +19,7 @@ interface ParticipantClientListProps {
 }
 
 const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
-    const participants = props.initialParticipants;
+    const [participants, setParticipants] = useState<ParticipantState[]>(props.initialParticipants);
     const totalParticipants = props.totalParticipants || 0;
     const [selectedParticipant, setSelectedParticipant] = useState<ParticipantState | undefined>(undefined);
 
@@ -101,6 +101,10 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                     studyKey={props.studyKey}
                     onClose={() => {
                         setSelectedParticipant(undefined);
+                    }}
+                    onChange={(participant) => {
+                        setSelectedParticipant(participant);
+                        setParticipants(prev => prev.map((p) => p.participantId === participant.participantId ? participant : p));
                     }}
                 />
             </Table>
