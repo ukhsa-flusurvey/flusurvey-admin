@@ -1,7 +1,7 @@
 'use client';
 
 import AvatarFromId from '@/components/AvatarFromID';
-import { Activity, Calendar } from 'lucide-react';
+import { Activity, Calendar, Clock } from 'lucide-react';
 import React, { useState } from 'react';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { Separator } from '@/components/ui/separator';
@@ -15,6 +15,9 @@ import { toast } from 'sonner';
 import StatusEditPopover from './participant-editors/status-edit-popover';
 import LinkingCodeSection from './participant-editors/linking-code-editor';
 import ParticipantFlagSection from './participant-editors/flag-editor';
+import AssignedSurveysEditor from './participant-editors/assigned-surveys-editor';
+import ScheduledMessagesEditor from './participant-editors/scheduled-messages-editor';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 
 interface ParticipantDetailsProps {
@@ -23,9 +26,6 @@ interface ParticipantDetailsProps {
     onClose: () => void;
     onChange: (participant: ParticipantState) => void;
 }
-
-
-
 
 
 const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
@@ -129,6 +129,48 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         </div>)
     }
 
+    const renderLastSubmissions = () => {
+        if (!participant) return null;
+
+        const lastSubmissions = Object.entries(participant.lastSubmissions || {}).sort(([, t1], [, t2]) => t1 < t2 ? 1 : -1);
+
+
+        return <div>
+            <h3 className='text-sm font-bold flex items-center gap-2 mb-2'>
+                <span className='text-muted-foreground'>
+                    <Clock className='size-3' />
+                </span>
+                Last submissions
+            </h3>
+
+            <div className='rounded-md border border-border overflow-hidden'>
+                {lastSubmissions.length > 0 && <Table className='text-xs'>
+                    <TableHeader className='bg-muted'>
+                        <TableRow>
+                            <TableHead className='h-auto p-2'>SURVEY KEY</TableHead>
+                            <TableHead className='h-auto p-2 text-end'>TIMESTAMP</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {lastSubmissions.map(([key, value]) => (
+                            <TableRow key={key} className='font-mono'>
+                                <TableCell className='p-2'>{key}</TableCell>
+                                <TableCell className='p-2 text-end'>
+                                    {format(new Date(value * 1000), 'dd-MMM-yyyy HH:mm')}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                }
+                {lastSubmissions.length === 0 && <div className='flex items-center justify-center h-16 text-xs text-muted-foreground'>
+                    No previous submissions
+                </div>}
+            </div>
+
+        </div>
+    }
+
     return (
         <Dialog
             open={props.participant !== undefined}
@@ -153,6 +195,14 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                 </div>
                 <Separator />
 
+                <AssignedSurveysEditor
+                    participant={participant}
+                    isLoading={isLoading}
+                    onChange={(participant) => {
+                        onUpdateParticipant(participant);
+                    }}
+                />
+
                 <ParticipantFlagSection
                     participant={participant}
                     isLoading={isLoading}
@@ -168,6 +218,16 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                         onUpdateParticipant(participant);
                     }}
                 />
+
+                <ScheduledMessagesEditor
+                    participant={participant}
+                    isLoading={isLoading}
+                    onChange={(participant) => {
+                        onUpdateParticipant(participant);
+                    }}
+                />
+
+                {renderLastSubmissions()}
             </DialogContent>
         </Dialog>
     )
