@@ -34,6 +34,7 @@ const ParticipantFlagSection = (props: {
                 <Button
                     variant='ghost'
                     size='icon'
+                    disabled={props.isLoading}
                     onClick={() => setNewFlagEditorOpen(true)}
                 >
                     <Plus className='size-4' />

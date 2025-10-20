@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { PencilIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import { participantStudyStatus } from "../utils";
-import { FlagTriangleRight } from "lucide-react";
+import { FlagTriangleRight, PencilIcon } from "lucide-react";
 
 
 const StatusEditPopover = (props:

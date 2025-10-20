@@ -34,6 +34,7 @@ const LinkingCodeSection = (props: {
                 <Button
                     variant='ghost'
                     size='icon'
+                    disabled={props.isLoading}
                     onClick={() => setNewLinkingCodeEditorOpen(true)}
                 >
                     <Plus className='size-4' />

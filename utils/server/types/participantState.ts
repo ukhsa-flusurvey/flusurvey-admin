@@ -18,7 +18,7 @@ export interface ParticipantState {
     participantId: string;
     studyStatus: string;
     enteredAt: number;
-    modifiedAt: number;
+    modifiedAt?: number;
     currentStudySession?: string;
     flags: { [key: string]: string };
     linkingCodes?: { [key: string]: string };

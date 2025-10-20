@@ -111,7 +111,7 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                 />
             </Table>
             <div className='grow'></div>
-            <Pagination limit={props.pageSize} total={totalParticipants} page={Math.floor(participants.length / props.pageSize) + 1} />
+            <Pagination limit={props.pageSize} total={totalParticipants} />
         </div>
     );
 };

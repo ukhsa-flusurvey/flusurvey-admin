@@ -15,8 +15,7 @@ export const flagKeySchema = z.string()
 /**
  * Schema for validating flag values
  * Rules:
- * - Required
- * - Max 1000 characters
+  * - Max 1000 characters
  */
 export const flagValueSchema = z.string()
     .max(1000, 'Value must not exceed 1000 characters');

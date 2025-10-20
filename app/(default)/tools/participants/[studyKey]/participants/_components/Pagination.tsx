@@ -10,7 +10,6 @@ interface PaginationProps {
     className?: string;
     limit: number;
     total: number;
-    page: number;
 }
 
 

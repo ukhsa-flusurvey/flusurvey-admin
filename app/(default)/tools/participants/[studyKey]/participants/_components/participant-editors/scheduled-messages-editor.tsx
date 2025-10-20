@@ -35,6 +35,7 @@ const ScheduledMessagesEditor = (props: {
             <Button
                 variant='ghost'
                 size='icon'
+                disabled={props.isLoading}
                 onClick={() => setNewScheduledMessageEditorOpen(true)}
             >
                 <Plus className='size-4' />

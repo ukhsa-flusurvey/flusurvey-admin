@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { ArrowDown01, ArrowDown10, ArrowUp01 } from "lucide-react"
+import { ArrowDown01, ArrowUp01 } from "lucide-react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 
 const SortConfig = () => {
