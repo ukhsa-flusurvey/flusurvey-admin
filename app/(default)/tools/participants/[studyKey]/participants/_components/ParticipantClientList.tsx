@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ParticipantListItem from './ParticipantListItem';
 import { ParticipantState } from '@/utils/server/types/participantState';
 import Pagination from './Pagination';
@@ -23,6 +23,10 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
     const [participants, setParticipants] = useState<ParticipantState[]>(props.initialParticipants);
     const totalParticipants = props.totalParticipants || 0;
     const [selectedParticipant, setSelectedParticipant] = useState<ParticipantState | undefined>(undefined);
+
+    useEffect(() => {
+        setParticipants(props.initialParticipants);
+    }, [props.initialParticipants]);
 
     return (
         <div className="h-full w-full flex flex-col">
@@ -96,20 +100,19 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                         />
                     ))}
                 </TableBody>
-
-                <ParticipantDetails
-                    participant={selectedParticipant}
-                    studyKey={props.studyKey}
-                    surveyKeys={props.surveyKeys}
-                    onClose={() => {
-                        setSelectedParticipant(undefined);
-                    }}
-                    onChange={(participant) => {
-                        setSelectedParticipant(participant);
-                        setParticipants(prev => prev.map((p) => p.participantId === participant.participantId ? participant : p));
-                    }}
-                />
             </Table>
+            <ParticipantDetails
+                participant={selectedParticipant}
+                studyKey={props.studyKey}
+                surveyKeys={props.surveyKeys}
+                onClose={() => {
+                    setSelectedParticipant(undefined);
+                }}
+                onChange={(participant) => {
+                    setSelectedParticipant(participant);
+                    setParticipants(prev => prev.map((p) => p.participantId === participant.participantId ? participant : p));
+                }}
+            />
             <div className='grow'></div>
             <Pagination limit={props.pageSize} total={totalParticipants} />
         </div>

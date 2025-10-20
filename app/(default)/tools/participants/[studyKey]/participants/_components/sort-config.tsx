@@ -17,7 +17,7 @@ const SortConfig = () => {
         params.set('sortAscending', sortAscending ? 'false' : 'true')
         // Reset pagination to first page when changing sort order
         params.set('page', '1')
-        router.push(`${pathname}?${params.toString()}`)
+        router.replace(`${pathname}?${params.toString()}`)
     }
 
     return (
