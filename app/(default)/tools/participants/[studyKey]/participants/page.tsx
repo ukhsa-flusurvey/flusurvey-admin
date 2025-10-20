@@ -98,6 +98,7 @@ export default async function Page(props: PageProps) {
                                 filter={props.searchParams?.filter}
                                 page={props.searchParams?.page}
                                 sortAscending={sortAscending}
+                                surveyKeys={surveyKeys}
                             />
                         </Suspense>
                     </div>

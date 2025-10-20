@@ -12,6 +12,7 @@ import ParticipantDetails from './ParticipantDetails';
 interface ParticipantClientListProps {
     studyKey: string;
     initialParticipants: ParticipantState[];
+    surveyKeys: string[];
     totalParticipants?: number;
     filter?: string;
     sort?: string;
@@ -99,6 +100,7 @@ const ParticipantClientList: React.FC<ParticipantClientListProps> = (props) => {
                 <ParticipantDetails
                     participant={selectedParticipant}
                     studyKey={props.studyKey}
+                    surveyKeys={props.surveyKeys}
                     onClose={() => {
                         setSelectedParticipant(undefined);
                     }}

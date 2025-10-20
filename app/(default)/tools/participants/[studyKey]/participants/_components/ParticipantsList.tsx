@@ -9,6 +9,7 @@ interface ParticipantsListProps {
     filter?: string;
     page?: string;
     sortAscending?: boolean;
+    surveyKeys: string[];
 }
 
 const pageSize = 50;
@@ -22,7 +23,6 @@ const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
     const participants = resp.participants;
     const pagination = resp.pagination;
     const error = resp.error;
-
 
     if (error) {
         return <div className='w-full relative p-4'>
@@ -53,6 +53,7 @@ const ParticipantsList: React.FC<ParticipantsListProps> = async (props) => {
                 initialParticipants={participants}
                 totalParticipants={pagination.totalCount}
                 pageSize={pageSize}
+                surveyKeys={props.surveyKeys}
             />
         </div>
     );

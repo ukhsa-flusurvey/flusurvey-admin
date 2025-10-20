@@ -23,6 +23,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 interface ParticipantDetailsProps {
     studyKey: string;
     participant?: ParticipantState;
+    surveyKeys: string[];
     onClose: () => void;
     onChange: (participant: ParticipantState) => void;
 }
@@ -180,7 +181,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                 }
             }}
         >
-            <DialogContent className='max-w-3xl  max-h-auto overflow-y-auto'>
+            <DialogContent className='max-w-3xl  max-h-svh overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
                         Participant details
@@ -197,6 +198,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
                 <AssignedSurveysEditor
                     participant={participant}
+                    surveyKeys={props.surveyKeys}
                     isLoading={isLoading}
                     onChange={(participant) => {
                         onUpdateParticipant(participant);
