@@ -55,8 +55,8 @@ function AvatarFromId({ userId, pixelSize }: {
     if (!binaryString) {
         return <Skeleton
             style={{
-                width: size * pixelSize + 4,
-                height: size * pixelSize + 4,
+                width: size * pixelSize + 8,
+                height: size * pixelSize + 8,
             }}
             className='rounded-md'
         />;
