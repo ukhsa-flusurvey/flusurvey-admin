@@ -73,7 +73,7 @@ const LinkingCodeSection = (props: {
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => {
-                                                if (confirm('Are you sure you want to delete this flag?')) {
+                                                if (confirm('Are you sure you want to delete this linking code?')) {
                                                     const newLinkingCodes = { ...participant?.linkingCodes };
                                                     delete newLinkingCodes[key];
                                                     props.onChange({ ...participant, linkingCodes: newLinkingCodes });
