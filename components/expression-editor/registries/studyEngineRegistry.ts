@@ -31,6 +31,10 @@ export const studyEngineCategories = [
         label: 'Event properties'
     },
     {
+        id: 'study-variables',
+        label: 'Study variables'
+    },
+    {
         id: 'general-study-actions',
         label: 'General study actions'
     },
@@ -45,6 +49,10 @@ export const studyEngineCategories = [
     {
         id: 'advanced',
         label: 'Advanced'
+    },
+    {
+        id: 'templates',
+        label: 'Templates'
     },
     {
         id: 'date-helpers',
@@ -225,6 +233,65 @@ export const supportedBuiltInSlotTypes: SlotInputDef[] = [
         type: 'key-value',
         contextObjectKey: 'reportKeysWithAttributes',
         label: 'Report key with attribute',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-boolean',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'boolean',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-float',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'float',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-date',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'date',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-int',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'int',
+        icon: 'tag',
+        color: 'dark',
+        categories: ['variables'],
+    },
+    {
+        id: 'study-variable-key-selector-string',
+        type: 'list-selector',
+        contextArrayKey: 'studyVariableKeys',
+        label: 'Available study variable keys',
+        filterForItemType: 'string',
         icon: 'tag',
         color: 'dark',
         categories: ['variables'],
@@ -599,6 +666,200 @@ const generalStudyActions: ExpressionDef[] = [
                 ],
                 metadata: {
                     slotTypes: ['text-input']
+                }
+            }
+        }
+    },
+    {
+        id: 'UPDATE_STUDY_VARIABLE_BOOLEAN',
+        categories: ['general-study-actions'],
+        label: 'Update study variable (boolean)',
+        returnType: 'action',
+        icon: 'refresh-ccw',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-boolean', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['boolean'] }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_VARIABLE_BOOLEAN',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-boolean']
+                }
+            }
+        }
+    },
+    {
+        id: 'UPDATE_STUDY_VARIABLE_STRING',
+        categories: ['general-study-actions'],
+        label: 'Update study variable (string)',
+        returnType: 'action',
+        icon: 'refresh-ccw',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-string', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_VARIABLE_STRING',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-string']
+                }
+            }
+        }
+    },
+    {
+        id: 'UPDATE_STUDY_VARIABLE_INT',
+        categories: ['general-study-actions'],
+        label: 'Update study variable (integer)',
+        returnType: 'action',
+        icon: 'refresh-ccw',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-int', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    { id: 'number-input', type: 'num' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['num'] }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_VARIABLE_INT',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-int']
+                }
+            }
+        }
+    },
+    {
+        id: 'UPDATE_STUDY_VARIABLE_FLOAT',
+        categories: ['general-study-actions'],
+        label: 'Update study variable (float)',
+        returnType: 'action',
+        icon: 'refresh-ccw',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-float', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+            {
+                label: 'Value',
+                required: true,
+                allowedTypes: [
+                    { id: 'number-input', type: 'num' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['num'] }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_VARIABLE_FLOAT',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-float']
+                }
+            }
+        }
+    },
+    {
+        id: 'UPDATE_STUDY_VARIABLE_DATE',
+        categories: ['general-study-actions'],
+        label: 'Update study variable (date)',
+        returnType: 'action',
+        icon: 'refresh-ccw',
+        color: 'blue',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-date', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+            {
+                label: 'Value (posix seconds)',
+                required: true,
+                allowedTypes: [
+                    { id: 'date-picker', type: 'date' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['num'] }
+                ]
+            }
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'UPDATE_STUDY_VARIABLE_DATE',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-date']
                 }
             }
         }
@@ -1695,6 +1956,194 @@ const participantStateActions: ExpressionDef[] = [
             }
         },
     },
+]
+
+
+const studyVariables: ExpressionDef[] = [
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableBoolean',
+        label: 'Get study variable as boolean',
+        returnType: 'boolean',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-boolean', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableBoolean',
+                data: [],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-boolean']
+                }
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableString',
+        label: 'Get study variable as string',
+        returnType: 'str',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-string', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableString',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-string']
+                }
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableInt',
+        label: 'Get study variable as integer',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-int', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableInt',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-int']
+                }
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableFloat',
+        label: 'Get study variable as float',
+        returnType: 'num',
+        icon: 'function',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-float', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableFloat',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-float']
+                }
+            }
+        }
+    },
+    {
+        categories: ['study-variables'],
+        id: 'getStudyVariableDate',
+        label: 'Get study variable as date (posix seconds)',
+        returnType: 'num',
+        icon: 'calendar-days',
+        slots: [
+            {
+                label: 'Key',
+                required: true,
+                allowedTypes: [
+                    { id: 'study-variable-key-selector-date', type: 'list-selector' },
+                    { id: 'text-input', type: 'str' },
+                    { id: 'exp-slot', type: 'expression', allowedExpressionTypes: ['str'] }
+                ]
+            },
+        ],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getStudyVariableDate',
+                data: [
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: ['study-variable-key-selector-date']
+                }
+            }
+        }
+    },
+]
+
+const studyVariableTemplates: ExpressionDef[] = [
+    {
+        categories: ['templates', 'study-variables'],
+        id: 'study-variable-string-equals',
+        label: 'Study variable string equals',
+        returnType: 'boolean',
+        icon: 'function',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'eq',
+                data: [
+                    {
+                        dtype: 'exp',
+                        exp: {
+                            name: 'getStudyVariableString',
+                            data: [
+                                { dtype: 'str', str: '' }
+                            ],
+                            metadata: {
+                                slotTypes: ['study-variable-key-selector-string']
+                            }
+                        }
+                    },
+                    { dtype: 'str', str: '' }
+                ],
+                metadata: {
+                    slotTypes: [undefined, 'text-input']
+                }
+            }
+        },
+        isTemplateFor: 'eq',
+    }
 ]
 
 
@@ -4229,8 +4678,10 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
 export const studyEngineRegistry: ExpressionDef[] = [
     ...controlFlowOperators,
     ...miscExpressions,
+    ...studyVariables,
     ...generalStudyActions,
     ...participantStateActions,
+    ...studyVariableTemplates,
     ...advancedExpressions,
     ...responseCheckers,
     ...participantStateCheckers,

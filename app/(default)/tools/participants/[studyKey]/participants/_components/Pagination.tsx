@@ -10,7 +10,6 @@ interface PaginationProps {
     className?: string;
     limit: number;
     total: number;
-    page: number;
 }
 
 
@@ -19,7 +18,7 @@ const Pagination: React.FC<PaginationProps> = (props) => {
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    const page = props.page; // parseInt(searchParams.get('page') || '1');
+    const page = parseInt(searchParams.get('page') || '1');
 
 
     const setPage = (page: number) => {
@@ -30,22 +29,26 @@ const Pagination: React.FC<PaginationProps> = (props) => {
     }
 
     return (
-        <div className={cn(" w-full h-12  flex items-center justify-center border-t border-neutral-300",
+        <div className={cn(" w-full gap-2 flex items-center justify-center border-t border-border py-2 bg-white",
             props.className
         )}>
             <Button
-                variant='ghost'
+                variant='outline'
+                className='rounded-full'
                 size={'icon'}
                 onClick={() => setPage(Math.max(page - 1, 1))}
+                aria-label='Previous page'
             >
                 <ChevronLeft className='size-4' />
             </Button>
-            <p className='text-sm'>
+            <p className='text-sm font-bold'>
                 {page * props.limit - props.limit + 1} - {Math.min(props.total, page * props.limit)} of {props.total}
             </p>
             <Button
-                variant='ghost'
+                variant='outline'
+                className='rounded-full'
                 size={'icon'}
+                aria-label='Next page'
                 onClick={() => setPage(Math.min(page + 1, Math.ceil(props.total / props.limit)))}
             >
                 <ChevronRight className='size-4' />

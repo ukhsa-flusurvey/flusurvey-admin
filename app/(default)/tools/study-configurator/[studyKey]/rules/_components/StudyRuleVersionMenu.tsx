@@ -4,8 +4,7 @@ import { deleteStudyRuleVersion } from '@/actions/study/studyRules';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { getStudyRulesVersion } from '@/lib/data/studyAPI';
-import { Download, MoreVertical, PenSquare, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Download, MoreVertical, Trash2 } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { BarLoader } from 'react-spinners';
 import { toast } from 'sonner';
@@ -18,11 +17,6 @@ interface StudyRuleVersionMenuProps {
 const StudyRuleVersionMenu: React.FC<StudyRuleVersionMenuProps> = (props) => {
     const [isPending, startTransition] = useTransition();
 
-    const router = useRouter();
-
-    const onOpenInEditor = () => {
-        router.push(`/tools/study-configurator/${props.studyKey}/rules/${props.versionId}`);
-    }
 
     const onDownload = () => {
         startTransition(async () => {
@@ -93,13 +87,6 @@ const StudyRuleVersionMenu: React.FC<StudyRuleVersionMenuProps> = (props) => {
                 >
                     <Download className='me-2 size-4 text-neutral-500' />
                     Download JSON
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    disabled={isPending}
-                    onClick={onOpenInEditor}
-                >
-                    <PenSquare className='me-2 size-4 text-neutral-500' />
-                    Open in editor
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

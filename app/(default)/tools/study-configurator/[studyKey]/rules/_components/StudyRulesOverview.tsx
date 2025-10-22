@@ -1,8 +1,6 @@
 import CogLoader from '@/components/CogLoader';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
 import React from 'react';
 import UploadStudyRulesDialog from './UploadStudyRulesDialog';
 import { getStudyRulesVersions } from '@/lib/data/studyAPI';
@@ -60,9 +58,8 @@ const StudyRulesOverview: React.FC<StudyRulesOverviewProps> = async (props) => {
 
 
     let content: React.ReactNode = null;
-    let latestVersionId: string = 'new';
-    if (!versions || versions.length === 0) {
 
+    if (!versions || versions.length === 0) {
         content = <div>
             <p className='font-bold'>
                 No study rules found
@@ -71,10 +68,7 @@ const StudyRulesOverview: React.FC<StudyRulesOverviewProps> = async (props) => {
                 Upload the initial set of rules for the study.
             </p>
         </div>
-
     } else {
-        latestVersionId = versions[0].id;
-
         content = <Timeline
             items={versions.map((version) => {
                 const publishedTime = version.uploadedAt ? new Date(version.uploadedAt * 1000).toLocaleString() : 'Not published yet';
@@ -112,16 +106,6 @@ const StudyRulesOverview: React.FC<StudyRulesOverviewProps> = async (props) => {
                 <UploadStudyRulesDialog
                     studyKey={props.studyKey}
                 />
-                <Button
-                    variant={'outline'}
-                    asChild
-                >
-                    <Link
-                        href={`/tools/study-configurator/${props.studyKey}/rules/${latestVersionId}`}
-                    >
-                        {latestVersionId === 'new' ? 'Create New Version' : 'Open Current Version in Editor'}
-                    </Link>
-                </Button>
             </div>
             <Separator />
 

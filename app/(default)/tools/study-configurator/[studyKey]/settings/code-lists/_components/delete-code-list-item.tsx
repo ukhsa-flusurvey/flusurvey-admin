@@ -11,6 +11,7 @@ interface DeleteCodeListItemProps {
     studyKey: string;
     listKey: string;
     code: string;
+    onDeleteSuccess: () => void;
 }
 
 const DeleteCodeListItem: React.FC<DeleteCodeListItemProps> = (props) => {
@@ -28,6 +29,7 @@ const DeleteCodeListItem: React.FC<DeleteCodeListItemProps> = (props) => {
                     return;
                 }
                 toast.success('Code list entry deleted');
+                props.onDeleteSuccess();
             } catch (error: unknown) {
                 toast.error('Failed to delete code list entry', { description: getErrorMessage(error) });
             }

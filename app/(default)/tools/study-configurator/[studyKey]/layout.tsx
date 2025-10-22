@@ -43,6 +43,10 @@ export default function Layout({
                             href: `/tools/study-configurator/${params.studyKey}/rules`,
                         },
                         {
+                            title: 'Variables',
+                            href: `/tools/study-configurator/${params.studyKey}/variables`,
+                        },
+                        {
                             title: 'Settings',
                             href: `/tools/study-configurator/${params.studyKey}/settings`,
                         },

@@ -19,7 +19,8 @@ const CopyIdToClipboad: React.FC<CopyIdToClipboadProps> = (props) => {
             variant={'ghost'}
             size='icon'
             className='size-6'
-            onClick={() => {
+            onClick={(e) => {
+                e.stopPropagation();
                 copyToClipboard(props.participantId)
                 toast.success('Participant ID copied to clipboard');
             }}

@@ -1,14 +1,14 @@
-import { Card, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, HardDriveDownload } from "lucide-react";
 import { Suspense } from "react";
 import ParticipantList, { ParticipantListSkeleton } from "./_components/ParticipantsList";
-import ParticipantDetails, { ParticipantDetailsSkeleton } from "./_components/ParticipantDetails";
-import QueryFilterInput from "@/components/QueryFilterInput";
 import SidebarToggleWithBreadcrumbs from "@/components/sidebar-toggle-with-breadcrumbs";
 import { ParticipantsPageLinkContent } from "../../_components/breacrumbs-contents";
-
+import ParticipantFilterPopover from "./_components/participant-filter-popover";
+import SortConfig from "./_components/sort-config";
+import { getSurveyInfos } from "@/lib/data/studyAPI";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,11 +24,23 @@ interface PageProps {
     searchParams?: {
         filter?: string;
         page?: string;
-        selectedParticipant?: string;
+        sortAscending?: string; // parsed to boolean below
     };
 }
 
 export default async function Page(props: PageProps) {
+    const sortAscending = props.searchParams?.sortAscending === 'true';
+
+    // Fetch survey keys for filter suggestions
+    let surveyKeys: string[] = [];
+    try {
+        const resp = await getSurveyInfos(props.params.studyKey);
+        if (resp.surveys) {
+            surveyKeys = resp.surveys.map(s => s.key);
+        }
+    } catch (e) {
+        console.error('Failed to fetch survey keys:', e);
+    }
 
     return (
         <div className="flex flex-col h-screen overflow-y-hidden">
@@ -45,66 +57,50 @@ export default async function Page(props: PageProps) {
             />
 
 
-            <main className="px-4 flex flex-col gap-4 grow overflow-hidden pb-1">
-                <Card
-                    className="p-4 gap-1 bg-neutral-50"
-                >
-                    <CardTitle className="flex items-center justify-end">
+            <main className="px-4 flex flex-col gap-4 grow overflow-hidden py-1">
 
-                        <Button
-                            variant='link'
-                            asChild
-                            className="font-bold"
+                <div className="flex gap-2">
+                    <ParticipantFilterPopover surveyKeys={surveyKeys} />
+
+                    <SortConfig />
+
+                    <div className="grow" />
+                    <Button
+                        variant='outline'
+                        asChild
+                        className="font-bold rounded-full shadow-sm"
+                    >
+                        <Link
+                            href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
                         >
-                            <Link
-                                href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
-                            >
-                                <HardDriveDownload className="size-4 me-2" />
-                                Open Exporter
-                                <ArrowRight className="ml-2 size-4" />
-                            </Link>
-                        </Button>
-                    </CardTitle>
-                    <div className="flex gap-12">
-                        <div className="grow">
-                            <QueryFilterInput
-                                id='participant-filter'
-                            />
-                        </div>
-                    </div>
-                </Card>
+                            <HardDriveDownload className="size-4 me-2" />
+                            Open Exporter
+                            <ArrowRight className="ml-2 size-4" />
+                        </Link>
+                    </Button>
+
+
+                </div>
 
                 <Card
                     variant={'opaque'}
-                    className="flex flex-col overflow-hidden grow"
+                    className="flex flex-col overflow-hidden grow rounded-xl"
                 >
 
 
                     <div className="grow flex overflow-hidden">
                         <Suspense
-                            key={props.params.studyKey + props.searchParams?.filter + props.searchParams?.page}
+                            key={props.params.studyKey + props.searchParams?.filter + props.searchParams?.page + (sortAscending ? '1' : '-1')}
                             fallback={<ParticipantListSkeleton />}
                         >
                             <ParticipantList
                                 studyKey={props.params.studyKey}
                                 filter={props.searchParams?.filter}
                                 page={props.searchParams?.page}
-                                selectedParticipant={props.searchParams?.selectedParticipant}
+                                sortAscending={sortAscending}
+                                surveyKeys={surveyKeys}
                             />
                         </Suspense>
-
-                        <div className="grow h-full overflow-auto">
-                            <Suspense
-                                key={props.params.studyKey + props.searchParams?.selectedParticipant}
-                                fallback={<ParticipantDetailsSkeleton />}
-                            >
-                                <ParticipantDetails
-                                    studyKey={props.params.studyKey}
-                                    participantID={props.searchParams?.selectedParticipant}
-                                />
-
-                            </Suspense>
-                        </div>
                     </div>
                 </Card >
             </main>
