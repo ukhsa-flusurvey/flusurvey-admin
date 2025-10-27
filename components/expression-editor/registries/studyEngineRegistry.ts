@@ -3485,6 +3485,22 @@ const participantStateCheckers: ExpressionDef[] = [
         }
     },
     {
+        id: 'getCurrentStudySession',
+        categories: ['participant-state-checkers'],
+        label: "Get current study session's ID",
+        returnType: 'str',
+        icon: 'key-round',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'getCurrentStudySession',
+                data: []
+            }
+        }
+    },
+    {
         id: 'hasSurveyKeyAssigned',
         categories: ['participant-state-checkers'],
         label: 'Has a survey with key assigned',
@@ -4178,6 +4194,22 @@ export const mergeParticipantStateCheckers: ExpressionDef[] = [
             dtype: 'exp',
             exp: {
                 name: 'incomingState:getStudyEntryTime',
+                data: []
+            }
+        }
+    },
+    {
+        id: 'getCurrentStudySession',
+        categories: ['incoming-participant-state-checkers'],
+        label: "Get current study session's ID",
+        returnType: 'str',
+        icon: 'key-round',
+        color: 'lime',
+        slots: [],
+        defaultValue: {
+            dtype: 'exp',
+            exp: {
+                name: 'incomingState:getCurrentStudySession',
                 data: []
             }
         }
