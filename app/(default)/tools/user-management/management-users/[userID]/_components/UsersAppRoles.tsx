@@ -52,7 +52,7 @@ const PermissionWarningPopover: React.FC<{ role: ManagementUserAppRole, template
         const template = templates.find(t => t.appName === role.appName && t.role === role.role);
         if (!template) return [];
 
-        return template.requiredPermissions.filter((requiredPerm: ManagementUserPermission) =>
+        return template.requiredPermissions?.filter((requiredPerm: ManagementUserPermission) =>
             !userPermissions.some((userPerm: ManagementUserPermission) =>
                 userPerm.resourceType === requiredPerm.resourceType &&
                 userPerm.resourceKey === requiredPerm.resourceKey &&
@@ -62,7 +62,7 @@ const PermissionWarningPopover: React.FC<{ role: ManagementUserAppRole, template
         );
     };
     const missingPermissions = getMissingPermissions(role);
-    if (missingPermissions.length === 0) return null;
+    if (!missingPermissions || missingPermissions.length === 0) return null;
 
     return (
         <Popover>

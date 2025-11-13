@@ -71,7 +71,7 @@ const Permissions: React.FC<PermissionsProps> = async (props) => {
     const getAppRolesForPermission = (permission: ManagementUserPermission) => {
         const userRoles = userRolesResp.appRoles || [];
         const templatesUsedOnUser = appRoleTemplatesResp.appRoleTemplates?.filter(t => userRoles.some(r => r.appName === t.appName && r.role === t.role));
-        return templatesUsedOnUser?.filter(t => t.requiredPermissions.some(p => p.resourceType === permission.resourceType && p.resourceKey === permission.resourceKey && p.action === permission.action && (JSON.stringify(p.limiter) === JSON.stringify(permission.limiter) || !permission.limiter)));
+        return templatesUsedOnUser?.filter(t => t.requiredPermissions?.some(p => p.resourceType === permission.resourceType && p.resourceKey === permission.resourceKey && p.action === permission.action && (JSON.stringify(p.limiter) === JSON.stringify(permission.limiter) || !permission.limiter)));
     }
 
     if (!permissions || permissions.length === 0) {
