@@ -17,8 +17,8 @@ export interface StudyVariableFloatConfig {
 }
 
 export interface StudyVariableDateConfig {
-    min?: Date;
-    max?: Date;
+    min?: string;
+    max?: string;
 }
 
 export interface StudyVariableStringConfig {

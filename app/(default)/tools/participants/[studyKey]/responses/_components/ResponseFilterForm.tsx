@@ -161,7 +161,6 @@ const ResponseFilterForm: React.FC<ResponseFilterFormProps> = (props) => {
                                                 }
                                             }}
                                             maxDate={new Date()}
-
                                         />
                                     </FormControl>
                                     <FormMessage />
