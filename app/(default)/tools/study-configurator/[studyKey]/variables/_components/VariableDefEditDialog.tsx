@@ -213,8 +213,8 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
         } else if (type === StudyVariableType.DATE) {
             const cfg = (values.configs || {}) as z.infer<typeof dateSchema>;
             const configs: StudyVariableDateConfig = {
-                min: cfg.min,
-                max: cfg.max,
+                min: cfg.min ? cfg.min.toISOString() : undefined,
+                max: cfg.max ? cfg.max.toISOString() : undefined,
             };
             payload = {
                 type,

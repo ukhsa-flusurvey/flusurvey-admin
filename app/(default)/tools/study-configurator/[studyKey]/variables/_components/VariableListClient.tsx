@@ -301,8 +301,8 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
                 break;
             case StudyVariableType.DATE:
                 const dateConfig = v.configs as StudyVariableDateConfig | undefined;
-                const minDate = dateConfig?.min;
-                const maxDate = dateConfig?.max;
+                const minDate = dateConfig?.min ? new Date(dateConfig.min) : undefined;
+                const maxDate = dateConfig?.max ? new Date(dateConfig.max) : undefined;
                 controller = (
                     <Popover>
                         <PopoverTrigger asChild>
@@ -342,9 +342,10 @@ const VariableListClient: React.FC<VariableListClientProps> = (props) => {
                                     }
                                     return false;
                                 }}
-                                initialFocus
-                                fromDate={minDate}
-                                toDate={maxDate}
+                                captionLayout="dropdown"
+                                autoFocus
+                                startMonth={minDate}
+                                endMonth={maxDate}
                             />
                         </PopoverContent>
                     </Popover>
