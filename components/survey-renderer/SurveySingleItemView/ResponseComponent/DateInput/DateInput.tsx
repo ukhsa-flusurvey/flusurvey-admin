@@ -10,7 +10,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
-import 'react-day-picker/dist/style.css';
 
 
 interface DateInputProps extends CommonResponseComponentProps {
@@ -108,7 +107,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                         </span>}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0 overflow-hidden">
                     <Calendar
                         mode="single"
                         locale={props.dateLocales?.find(dl => dl.code === props.languageCode)?.locale}
@@ -116,18 +115,17 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                         selected={selectedDate}
                         startMonth={minDate}
                         endMonth={maxDate}
-
+                        disabled={(date) => {
+                            if (minDate && date < minDate) {
+                                return true;
+                            }
+                            if (maxDate && date > maxDate) {
+                                return true;
+                            }
+                            return false;
+                        }}
                         onSelect={handleDateChange}
                         autoFocus
-                        className='p-0'
-                        classNames={{
-                            caption_label: 'flex items-center text-sm font-medium',
-                            dropdown: 'rdp-dropdown bg-card',
-                            dropdown_icon: 'ml-2',
-                            dropdown_year: 'rdp-dropdown_year ml-3',
-                            button: '',
-                            button_reset: '',
-                        }}
                     />
                 </PopoverContent>
             </Popover>
