@@ -112,12 +112,13 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                     <Calendar
                         mode="single"
                         locale={props.dateLocales?.find(dl => dl.code === props.languageCode)?.locale}
-                        captionLayout="dropdown-buttons"
+                        captionLayout="dropdown"
                         selected={selectedDate}
-                        fromDate={minDate}
-                        toDate={maxDate}
+                        startMonth={minDate}
+                        endMonth={maxDate}
+
                         onSelect={handleDateChange}
-                        initialFocus
+                        autoFocus
                         className='p-0'
                         classNames={{
                             caption_label: 'flex items-center text-sm font-medium',

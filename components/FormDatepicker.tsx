@@ -57,9 +57,11 @@ const FormDatepicker: React.FC<FormDatepickerProps> = ({
                         }
                         return false;
                     }}
-                    initialFocus
-                    fromDate={minDate}
-                    toDate={maxDate}
+                    className="[--cell-size:2.5rem]"
+                    captionLayout="dropdown"
+                    autoFocus
+                    startMonth={minDate}
+                    endMonth={maxDate}
                 />
             </PopoverContent>
         </Popover>
