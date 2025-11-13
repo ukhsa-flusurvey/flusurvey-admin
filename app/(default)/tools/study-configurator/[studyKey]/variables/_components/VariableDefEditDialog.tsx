@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import FormDatepicker from '@/components/FormDatepicker';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
+import { addYears } from 'date-fns';
 
 type VariableUIType = 'input' | 'select';
 
@@ -590,11 +591,14 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Min date</FormLabel>
-                            <FormDatepicker field={{
-                                name: field.name,
-                                value: toValidDateOrUndefined(field.value),
-                                onChange: field.onChange,
-                            }} />
+                            <FormDatepicker
+                                field={{
+                                    name: field.name,
+                                    value: toValidDateOrUndefined(field.value),
+                                    onChange: field.onChange,
+                                }}
+                                maxDate={addYears(new Date(), 50)}
+                            />
                         </FormItem>
                     )}
                 />
@@ -605,11 +609,13 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Max date</FormLabel>
-                            <FormDatepicker field={{
-                                name: field.name,
-                                value: toValidDateOrUndefined(field.value),
-                                onChange: field.onChange,
-                            }}
+                            <FormDatepicker
+                                field={{
+                                    name: field.name,
+                                    value: toValidDateOrUndefined(field.value),
+                                    onChange: field.onChange,
+                                }}
+                                maxDate={addYears(new Date(), 50)}
                             />
                         </FormItem>
                     )}
