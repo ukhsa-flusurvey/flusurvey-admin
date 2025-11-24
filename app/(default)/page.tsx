@@ -68,7 +68,7 @@ export default async function Page() {
                 </Container>
             </nav>
 
-            <div className="relative w-full h-80 py-8 ">
+            <div className="relative w-full min-h-80 h-80 py-8 ">
                 <Image
                     src="/images/crowd.png"
                     fill
