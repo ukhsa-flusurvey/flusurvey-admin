@@ -49,7 +49,7 @@ function buildSimpleQuery(form: SimpleFormState): object {
     }
 
     if (form.filterType === "participantId" && form.participantId.trim()) {
-        return { participantId: form.participantId.trim() };
+        return { participantID: form.participantId.trim() };
     }
 
     if (form.filterType === "flags") {

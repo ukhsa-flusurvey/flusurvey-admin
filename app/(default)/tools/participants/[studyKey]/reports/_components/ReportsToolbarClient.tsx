@@ -129,7 +129,7 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                             {from ? format(from, 'yyyy-MM-dd') : 'Select'}
                                         </Button>
                                     </PopoverTrigger>
-                                    <PopoverContent align="start" className="p-0">
+                                    <PopoverContent align="start" className="p-0 w-fit">
                                         <Calendar
                                             mode="single"
                                             selected={from}
@@ -139,7 +139,8 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                                     setFromOpen(false);
                                                 }
                                             }}
-                                            initialFocus
+                                            captionLayout="dropdown"
+                                            autoFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
@@ -153,7 +154,7 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                             {until ? format(until, 'yyyy-MM-dd') : 'Select'}
                                         </Button>
                                     </PopoverTrigger>
-                                    <PopoverContent align="start" className="p-0">
+                                    <PopoverContent align="start" className="p-0 w-fit">
                                         <Calendar
                                             mode="single"
                                             selected={until}
@@ -163,7 +164,8 @@ export default function ReportsToolbarClient(props: ReportsToolbarClientProps) {
                                                     setUntilOpen(false);
                                                 }
                                             }}
-                                            initialFocus
+                                            captionLayout="dropdown"
+                                            autoFocus
                                         />
                                     </PopoverContent>
                                 </Popover>

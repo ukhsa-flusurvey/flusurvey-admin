@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { addYears, format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 
 interface DatePickerProps {
@@ -62,7 +62,9 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
                                     props.onValueChange(date.getTime() / 1000);
                                 }
                             }}
-                            initialFocus
+                            captionLayout="dropdown"
+                            endMonth={addYears(new Date(), 50)}
+                            autoFocus
                         />
                     </PopoverContent>
                 </Popover>
