@@ -33,7 +33,10 @@ interface ScheduleMessageActionFormProps {
     availableStudyEmailTemplates?: Array<EmailTemplate>;
 }
 
-const dateToInputStr = (date: Date) => {
+const dateToInputStr = (date: Date | undefined) => {
+    if (!date) {
+        return '';
+    }
     return format(date, 'yyyy-MM-dd\'T\'HH:mm')
 }
 
@@ -226,7 +229,7 @@ const ScheduleMessageActionForm: React.FC<ScheduleMessageActionFormProps> = (pro
                             <FormItem>
                                 <FormControl>
                                     <ParticipantInfoUploader
-                                        values={field.value}
+                                        values={field.value || []}
                                         onChange={field.onChange}
                                     />
                                 </FormControl>

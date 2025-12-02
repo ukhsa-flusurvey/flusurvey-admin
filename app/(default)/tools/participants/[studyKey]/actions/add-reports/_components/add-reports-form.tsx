@@ -176,7 +176,7 @@ const AddReportsForm: React.FC<AddReportsFormProps> = (props) => {
                             <FormItem>
                                 <FormControl>
                                     <ParticipantInfoUploader
-                                        values={field.value}
+                                        values={field.value || []}
                                         onChange={field.onChange}
                                     />
                                 </FormControl>
