@@ -1,5 +1,6 @@
-import NextAuth from "next-auth"
-import "next-auth"
+import NextAuth from 'next-auth';
+import 'next-auth';
+import 'next-auth/jwt';
 
 import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/microsoft-entra-id";
@@ -162,7 +163,7 @@ declare module "next-auth" {
 
 }
 
-declare module "@auth/core/jwt" {
+declare module 'next-auth/jwt' {
     /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
     interface JWT {
         provider?: string
