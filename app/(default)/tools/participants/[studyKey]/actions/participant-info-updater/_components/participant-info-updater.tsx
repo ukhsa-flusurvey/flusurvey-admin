@@ -152,7 +152,7 @@ const ParticipantInfoUpdater: React.FC<ParticipantInfoUpdaterProps> = (props) =>
                             <FormItem>
                                 <FormControl>
                                     <ParticipantInfoUploader
-                                        values={field.value}
+                                        values={field.value || []}
                                         onChange={field.onChange}
                                     />
                                 </FormControl>
