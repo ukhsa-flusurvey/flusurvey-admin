@@ -178,7 +178,7 @@ const ParticipantFilesClient: React.FC<ParticipantFilesClientProps> = (props) =>
                                         <Calendar className='size-4' />
                                     </span>
                                     <span>
-                                        {fileInfo.submittedAt ? new Date(fileInfo.submittedAt * 1000).toLocaleString() : 'N/A'}
+                                        {fileInfo.createdAt ? new Date(fileInfo.createdAt).toLocaleString() : 'N/A'}
                                     </span>
                                     {fileInfo.status !== 'ready' && <Badge>{fileInfo.status}</Badge>}
                                 </div>

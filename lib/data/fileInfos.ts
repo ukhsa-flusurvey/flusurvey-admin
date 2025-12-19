@@ -9,8 +9,9 @@ export interface FileInfo {
     fileType: string;
     status: string;
     participantID: string;
-    submittedAt: number;
+    createdAt: string;
     size: number;
+    visibleToParticipant: boolean;
 }
 
 
