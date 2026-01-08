@@ -40,6 +40,7 @@ const systemMessageTypes = [
     'verify-email',
     'verification-code',
     'account-id-changed',
+    'phone-number-changed',
     'account-deleted',
     'invitation',
     'account-inactivity',
