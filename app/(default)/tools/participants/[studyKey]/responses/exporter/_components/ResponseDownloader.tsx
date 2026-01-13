@@ -240,7 +240,7 @@ const ResponseDownloader: React.FC<ResponseDownloaderProps> = (props) => {
                                                 <Input placeholder="Enter key separator" {...field} />
                                             </FormControl>
                                             <FormDescription className='text-xs'>
-                                                This character will be used to separate parts the slot keys in the output.
+                                                Separator used between item key, slot key and optional suffix in exported keys.
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>

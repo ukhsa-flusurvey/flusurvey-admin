@@ -13,7 +13,7 @@ const MsEntraIDProvider = AzureADProvider({
     name: "Management User Azure AD",
     clientId: process.env.AZURE_AD_CLIENT_ID,
     clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-    tenantId: process.env.AZURE_AD_TENANT_ID || '',
+    issuer: process.env.MS_ENTRA_ISSUER || '',
     authorization: { params: { scope: "openid email profile offline_access" } },
     profile: (profile) => {
         return {
@@ -21,7 +21,6 @@ const MsEntraIDProvider = AzureADProvider({
             name: profile.name,
             roles: profile.roles,
             email: profile.email,
-            image: profile.picture,
         }
     }
 })
