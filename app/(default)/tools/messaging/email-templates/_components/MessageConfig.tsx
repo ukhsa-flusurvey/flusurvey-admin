@@ -90,7 +90,7 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                                 props.onChange(newEmailTemplateConfig);
                             }}
                         >
-                            <SelectTrigger className={cn(props.studyKeyError && 'border-danger-500 focus-visible:ring-danger-500')}>
+                            <SelectTrigger className={cn(props.studyKeyError && 'border-red-500 focus-visible:ring-red-500')}>
                                 <SelectValue placeholder="Select a study key..." />
                             </SelectTrigger>
                             <SelectContent>
@@ -103,7 +103,7 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                             </SelectContent>
                         </Select>
                         {props.studyKeyError && (
-                            <p className='text-xs text-red-600'>
+                            <p className='text-xs text-red-500'>
                                 Please select a study key before creating a template.
                             </p>
                         )}
