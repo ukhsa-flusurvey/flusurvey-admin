@@ -124,7 +124,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 <CardHeader>
                     <CardTitle className='flex items-center'>
                         <span className='grow'>
-                            {props.emailTemplateConfig ? 'Edit edit template' : 'New template'}
+                            {props.emailTemplateConfig ? 'Edit template' : 'New template'}
                         </span>
                         {(props.emailTemplateConfig && !props.isSystemTemplate) && (
                             <Button
