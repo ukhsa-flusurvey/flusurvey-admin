@@ -82,7 +82,7 @@ export const StudyEmailTemplatesSkeleton: React.FC = () => {
         <StudyEmailTemplatesCard isLoading={true}>
             <div className='animate-pulse px-6 py-3 rounded-md bg-white'>
                 <p className='text-center'>
-                    Loading global templates...
+                    Loading study templates...
                 </p>
                 <p className='text-center flex justify-center mt-3'>
                     <Cog className='size-8 animate-spin' />

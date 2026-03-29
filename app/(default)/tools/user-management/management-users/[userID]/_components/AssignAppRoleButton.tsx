@@ -88,12 +88,12 @@ const AssignAppRoleButton: React.FC<AssignAppRoleButtonProps> = (props) => {
                     disabled={props.disabled}
                 >
                     <Plus className='size-4 me-2' />
-                    Assign app role
+                    Assign App Role
                 </Button>
             </DialogTrigger>
             <DialogContent className='sm:max-w-lg max-h-full overflow-y-auto'>
                 <DialogHeader>
-                    <DialogTitle>Assign app role</DialogTitle>
+                    <DialogTitle>Assign App Role</DialogTitle>
                     <DialogDescription>
                         Choose an app role template to assign to this user.
                     </DialogDescription>
