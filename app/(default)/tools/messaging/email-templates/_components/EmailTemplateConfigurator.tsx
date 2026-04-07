@@ -38,6 +38,10 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
     const router = useRouter();
     const [isPending, startTransition] = React.useTransition();
     const [isDirty, setIsDirty] = useState(false);
+    const [studyKeyError, setStudyKeyError] = useState(false);
+
+    const isStudyTemplate = !props.isSystemTemplate && !props.isGlobalTemplate;
+    const isCreateMode = !props.emailTemplateConfig;
 
     useEffect(() => {
         if (props.emailTemplateConfig) {
@@ -75,6 +79,11 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
     }
 
     const onSaveEmailTemplate = () => {
+        if (isCreateMode && isStudyTemplate && !emailTemplateConfig.studyKey?.trim()) {
+            setStudyKeyError(true);
+            return;
+        }
+
         startTransition(async () => {
             try {
                 const resp = await uploadEmailTemplate(emailTemplateConfig);
@@ -115,7 +124,7 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                 <CardHeader>
                     <CardTitle className='flex items-center'>
                         <span className='grow'>
-                            {props.emailTemplateConfig ? 'Edit edit template' : 'New template'}
+                            {props.emailTemplateConfig ? 'Edit template' : 'New template'}
                         </span>
                         {(props.emailTemplateConfig && !props.isSystemTemplate) && (
                             <Button
@@ -151,8 +160,12 @@ const EmailTemplateConfigurator: React.FC<EmailTemplateConfiguratorProps> = (pro
                                 isSystemTemplate={props.isSystemTemplate}
                                 isGlobalTemplate={props.isGlobalTemplate}
                                 availableStudyKeys={props.availableStudyKeys}
+                                studyKeyError={studyKeyError}
                                 onChange={(newConfig) => {
                                     setIsDirty(true);
+                                    if (newConfig.studyKey?.trim()) {
+                                        setStudyKeyError(false);
+                                    }
                                     setEmailTemplateConfig(newConfig)
                                 }}
                             />

@@ -16,6 +16,7 @@ interface MessageConfigProps {
     isSystemTemplate?: boolean;
     isGlobalTemplate?: boolean;
     availableStudyKeys?: string[];
+    studyKeyError?: boolean;
     onChange: (template: EmailTemplate) => void;
 }
 
@@ -75,7 +76,7 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                                     <Info className='size-4 text-neutral-600' />
                                 </TooltipTrigger>
                                 <TooltipContent className='max-w-64'>
-                                    {'Assign this message to a study if you want to use it in a study, to avoid name (message type) collisions. Cannot be changed later.'}
+                                    {'Select the study this template belongs to.'}
                                 </TooltipContent>
                             </Tooltip>
                         </Label>
@@ -89,7 +90,7 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                                 props.onChange(newEmailTemplateConfig);
                             }}
                         >
-                            <SelectTrigger>
+                            <SelectTrigger className={cn(props.studyKeyError && 'border-red-500 focus-visible:ring-red-500')}>
                                 <SelectValue placeholder="Select a study key..." />
                             </SelectTrigger>
                             <SelectContent>
@@ -101,6 +102,11 @@ const MessageConfig: React.FC<MessageConfigProps> = (props) => {
                                 })}
                             </SelectContent>
                         </Select>
+                        {props.studyKeyError && (
+                            <p className='text-xs text-red-500'>
+                                Please select a study key before creating a template.
+                            </p>
+                        )}
                     </div>}
 
                     <Separator />
