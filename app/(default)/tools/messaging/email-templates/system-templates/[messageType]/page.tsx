@@ -4,12 +4,13 @@ import EmailTemplateConfig, { EmailTemplateConfigSkeleton } from "../../_compone
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         messageType: string;
-    }
+    }>
 }
 
-export default function Page(props: PageProps) {
+export default async function Page(props: PageProps) {
+    const { messageType } = await props.params;
 
     return (
         <main className="p-6 h-full">
@@ -18,7 +19,7 @@ export default function Page(props: PageProps) {
                 <div className="grow flex overflow-hidden">
                     <Suspense fallback={<EmailTemplateConfigSkeleton />}>
                         <EmailTemplateConfig
-                            messageType={props.params.messageType}
+                            messageType={messageType}
                             isSystemTemplate={true}
                         />
                     </Suspense>

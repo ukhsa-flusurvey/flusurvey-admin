@@ -13,7 +13,7 @@ export const uploadSmsTemplate = async (template: SMSTemplate) => {
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/messaging/sms-templates`;
+    const url = `/v1/messaging/sms-templates`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,

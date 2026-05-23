@@ -27,48 +27,49 @@ export interface ParticipantState {
     messages: ParticipantMessage[];
 }
 
-export const pStateFromAPI = (pState: any): ParticipantState => {
-    // convert enteredAt to number
-    if (pState.enteredAt && typeof (pState.enteredAt) === 'string') {
-        pState.enteredAt = parseInt(pState.enteredAt);
+const parseTimestamp = (value: number | string | undefined): number | undefined => {
+    if (typeof value === "string") {
+        return parseInt(value, 10);
     }
 
-    // convert modifiedAt to number
-    if (pState.modifiedAt && typeof (pState.modifiedAt) === 'string') {
-        pState.modifiedAt = parseInt(pState.modifiedAt);
-    }
+    return value;
+};
 
-    // convert lastSubmissions to numbers
-    if (pState.lastSubmissions) {
-        for (const key in pState.lastSubmissions) {
-            if (typeof (pState.lastSubmissions[key]) === 'string') {
-                pState.lastSubmissions[key] = parseInt(pState.lastSubmissions[key]);
-            }
-        }
-    }
+type APIAssignedSurvey = Omit<AssignedSurvey, "validFrom" | "validUntil"> & {
+    validFrom?: number | string;
+    validUntil?: number | string;
+};
 
-    // convert assignedSurveys to numbers
-    if (pState.assignedSurveys) {
-        pState.assignedSurveys = pState.assignedSurveys.map((s: any) => {
-            if (typeof (s.validFrom) === 'string') {
-                s.validFrom = parseInt(s.validFrom);
-            }
-            if (typeof (s.validUntil) === 'string') {
-                s.validUntil = parseInt(s.validUntil);
-            }
-            return s;
-        });
-    }
+type APIParticipantMessage = Omit<ParticipantMessage, "scheduledFor"> & {
+    scheduledFor: number | string;
+};
 
-    // convert messages to numbers
-    if (pState.messages) {
-        pState.messages = pState.messages.map((m: any) => {
-            if (typeof (m.scheduledFor) === 'string') {
-                m.scheduledFor = parseInt(m.scheduledFor);
-            }
-            return m;
-        });
-    }
+type APIParticipantState = Omit<ParticipantState, "enteredAt" | "modifiedAt" | "lastSubmissions" | "assignedSurveys" | "messages"> & {
+    enteredAt: number | string;
+    modifiedAt?: number | string;
+    lastSubmissions?: Record<string, number | string>;
+    assignedSurveys?: APIAssignedSurvey[];
+    messages?: APIParticipantMessage[];
+};
 
-    return pState
+export const pStateFromAPI = (pState: APIParticipantState): ParticipantState => {
+    const lastSubmissions = Object.fromEntries(
+        Object.entries(pState.lastSubmissions ?? {}).map(([key, value]) => [key, parseTimestamp(value) ?? 0]),
+    );
+
+    return {
+        ...pState,
+        enteredAt: parseTimestamp(pState.enteredAt) ?? 0,
+        modifiedAt: parseTimestamp(pState.modifiedAt),
+        lastSubmissions,
+        assignedSurveys: (pState.assignedSurveys ?? []).map((survey) => ({
+            ...survey,
+            validFrom: parseTimestamp(survey.validFrom),
+            validUntil: parseTimestamp(survey.validUntil),
+        })),
+        messages: (pState.messages ?? []).map((message) => ({
+            ...message,
+            scheduledFor: parseTimestamp(message.scheduledFor) ?? 0,
+        })),
+    };
 }

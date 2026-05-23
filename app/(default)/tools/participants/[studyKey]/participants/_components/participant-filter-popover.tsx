@@ -246,7 +246,7 @@ function parseFilterToSimpleValues(filterJsonStr: string, filterType: SimpleForm
     }
 }
 
-export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKeys?: string[] }): JSX.Element {
+export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKeys?: string[] }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();

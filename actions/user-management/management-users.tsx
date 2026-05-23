@@ -3,7 +3,6 @@
 import { auth } from "@/auth";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export const deleteManagementUser = async (userID: string) => {
     const session = await auth();

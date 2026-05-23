@@ -3,15 +3,16 @@ import EmailTemplateConfig, { EmailTemplateConfigSkeleton } from "../../../_comp
 import SimpleBreadcrumbsPageLayout from "@/components/SimpleBreadcrumbsPageLayout";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string;
         messageType: string;
-    }
+    }>
 }
 
 export const dynamic = 'force-dynamic';
 
-export default function Page(props: PageProps) {
+export default async function Page(props: PageProps) {
+    const { studyKey, messageType } = await props.params;
 
     return (
         <SimpleBreadcrumbsPageLayout
@@ -26,10 +27,10 @@ export default function Page(props: PageProps) {
                         href: '/tools/messaging/email-templates/study-templates',
                     },
                     {
-                        title: props.params.studyKey,
+                        title: studyKey,
                     },
                     {
-                        title: props.params.messageType,
+                        title: messageType,
                     },
                 ]
             }
@@ -39,8 +40,8 @@ export default function Page(props: PageProps) {
                 <div className="grow flex overflow-hidden">
                     <Suspense fallback={<EmailTemplateConfigSkeleton />}>
                         <EmailTemplateConfig
-                            messageType={props.params.messageType}
-                            studyKey={props.params.studyKey}
+                            messageType={messageType}
+                            studyKey={studyKey}
                             isSystemTemplate={false}
                             isGlobalTemplate={false}
                         />

@@ -18,23 +18,25 @@ export const metadata = {
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string;
-    }
-    searchParams?: {
+    }>
+    searchParams?: Promise<{
         filter?: string;
         page?: string;
         sortAscending?: string; // parsed to boolean below
-    };
+    }>;
 }
 
 export default async function Page(props: PageProps) {
-    const sortAscending = props.searchParams?.sortAscending === 'true';
+    const { studyKey } = await props.params;
+    const searchParams = await props.searchParams;
+    const sortAscending = searchParams?.sortAscending === 'true';
 
     // Fetch survey keys for filter suggestions
     let surveyKeys: string[] = [];
     try {
-        const resp = await getSurveyInfos(props.params.studyKey);
+        const resp = await getSurveyInfos(studyKey);
         if (resp.surveys) {
             surveyKeys = resp.surveys.map(s => s.key);
         }
@@ -48,15 +50,13 @@ export default async function Page(props: PageProps) {
                 breadcrumbs={[
                     {
                         href: "/tools/participants",
-                        content: props.params.studyKey
+                        content: studyKey
                     },
                     {
                         content: <ParticipantsPageLinkContent />
                     }
                 ]}
             />
-
-
             <main className="px-4 flex flex-col gap-4 grow overflow-hidden py-1">
 
                 <div className="flex gap-2">
@@ -71,7 +71,7 @@ export default async function Page(props: PageProps) {
                         className="font-bold rounded-full shadow-sm"
                     >
                         <Link
-                            href={`/tools/participants/${props.params.studyKey}/participants/exporter`}
+                            href={`/tools/participants/${studyKey}/participants/exporter`}
                         >
                             <HardDriveDownload className="size-4 me-2" />
                             Open Exporter
@@ -90,13 +90,13 @@ export default async function Page(props: PageProps) {
 
                     <div className="grow flex overflow-hidden">
                         <Suspense
-                            key={props.params.studyKey + props.searchParams?.filter + props.searchParams?.page + (sortAscending ? '1' : '-1')}
+                            key={studyKey + searchParams?.filter + searchParams?.page + (sortAscending ? '1' : '-1')}
                             fallback={<ParticipantListSkeleton />}
                         >
                             <ParticipantList
-                                studyKey={props.params.studyKey}
-                                filter={props.searchParams?.filter}
-                                page={props.searchParams?.page}
+                                studyKey={studyKey}
+                                filter={searchParams?.filter}
+                                page={searchParams?.page}
                                 sortAscending={sortAscending}
                                 surveyKeys={surveyKeys}
                             />
@@ -104,8 +104,6 @@ export default async function Page(props: PageProps) {
                     </div>
                 </Card >
             </main>
-
-
         </div >
-    )
+    );
 }
