@@ -42,6 +42,11 @@ export const {
     session: {
         strategy: "jwt",
     },
+    cookies: {
+        sessionToken: {
+            name: 'case-admin-session'
+        }
+    },
     pages: {
         signIn: '/auth/login',
     },
