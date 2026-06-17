@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ResponseItem } from 'survey-engine/data_types';
 import { CommonResponseComponentProps, getClassName, getLocaleStringTextByCode } from '../../utils';
 import { format } from 'date-fns';
-import { addYears, getUnixTime } from 'date-fns';
+import { addYears } from 'date-fns';
 import YearMonthSelector from './YearMonthSelector';
 import clsx from 'clsx';
 import { CalendarDaysIcon } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
+import { dateToUtcDayTimestamp, utcDayTimestampToLocalDate } from './date-utils';
 
 
 interface DateInputProps extends CommonResponseComponentProps {
@@ -24,7 +25,7 @@ const DateInput: React.FC<DateInputProps> = (props) => {
     const [touched, setTouched] = useState(false);
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-        props.prefill && props.prefill.value ? new Date(parseInt(props.prefill.value) * 1000) : undefined,
+        utcDayTimestampToLocalDate(props.prefill?.value),
     );
 
     useEffect(() => {
@@ -52,19 +53,19 @@ const DateInput: React.FC<DateInputProps> = (props) => {
                 return {
                     key: props.compDef.key ? props.compDef.key : 'no key found',
                     dtype: 'date',
-                    value: getUnixTime(date).toString(),
+                    value: dateToUtcDayTimestamp(date).toString(),
                 }
             }
             return {
                 ...prev,
                 dtype: 'date',
-                value: getUnixTime(date).toString(),
+                value: dateToUtcDayTimestamp(date).toString(),
             }
         });
     }
 
-    const minDate = props.compDef.properties?.min ? new Date((props.compDef.properties?.min as number) * 1000) : new Date(1900, 1);
-    const maxDate = props.compDef.properties?.max ? new Date((props.compDef.properties?.max as number) * 1000) : addYears(new Date(), 100);
+    const minDate = props.compDef.properties?.min ? utcDayTimestampToLocalDate(props.compDef.properties?.min as number) ?? new Date(1900, 1) : new Date(1900, 1);
+    const maxDate = props.compDef.properties?.max ? utcDayTimestampToLocalDate(props.compDef.properties?.max as number) ?? addYears(new Date(), 100) : addYears(new Date(), 100);
 
     let datepicker = <p>{'...'}</p>;
     switch (props.compDef.properties?.dateInputMode) {

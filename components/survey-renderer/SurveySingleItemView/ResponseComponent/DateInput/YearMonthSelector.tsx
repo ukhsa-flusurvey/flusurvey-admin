@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getYear, format, eachMonthOfInterval, startOfYear, getMonth, endOfYear, Locale } from 'date-fns';
+import { createLocalDate } from './date-utils';
 
 
 interface YearMonthSelectorProps {
@@ -36,7 +37,7 @@ const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
             return;
         }
         if (props.onlyYear) {
-            props.onChange(new Date(selectedYear, 0, 2));
+            props.onChange(createLocalDate(selectedYear, 0, 2));
             return;
         }
 
@@ -44,7 +45,7 @@ const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
             props.onChange(undefined);
             return;
         }
-        props.onChange(new Date(selectedYear, selectedMonth, 2));
+        props.onChange(createLocalDate(selectedYear, selectedMonth, 2));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedYear, selectedMonth]);
 
@@ -52,8 +53,8 @@ const YearMonthSelector: React.FC<YearMonthSelectorProps> = (props) => {
 
     const referenceYear = getYear(new Date());
     const months = eachMonthOfInterval({
-        start: startOfYear(new Date(referenceYear, 0, 2)),
-        end: endOfYear(new Date(referenceYear, 0, 2)),
+        start: startOfYear(createLocalDate(referenceYear, 0, 2)),
+        end: endOfYear(createLocalDate(referenceYear, 0, 2)),
     }).map(m => {
         return {
             label: format(m, 'MMMM', { locale: props.dateLocales?.find(l => l.code === props.languageCode)?.locale }),
