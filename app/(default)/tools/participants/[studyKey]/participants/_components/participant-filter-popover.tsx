@@ -20,10 +20,11 @@ interface FlagEntry {
 }
 
 interface SimpleFormState {
-    filterType: "none" | "studyStatus" | "participantId" | "flags" | "linkingCodes" | "surveyKey" | "enteredAt" | "lastSubmission";
+    filterType: "none" | "studyStatus" | "participantId" | "accountId" | "flags" | "linkingCodes" | "surveyKey" | "enteredAt" | "lastSubmission";
     studyStatus: string; // "active", "temporary", "deleted", "virtual", "other"
     studyStatusOther?: string;
     participantId: string;
+    accountId: string;
     flags: FlagEntry[];
     linkingCodes: FlagEntry[];
     surveyKey: string;
@@ -50,6 +51,10 @@ function buildSimpleQuery(form: SimpleFormState): object {
 
     if (form.filterType === "participantId" && form.participantId.trim()) {
         return { participantID: form.participantId.trim() };
+    }
+
+    if (form.filterType === "accountId" && form.accountId.trim()) {
+        return { hashedAccountID: form.accountId.trim() };
     }
 
     if (form.filterType === "flags") {
@@ -150,9 +155,16 @@ function parseFilterToSimpleValues(filterJsonStr: string, filterType: SimpleForm
             return defaults;
         }
         if (filterType === "participantId") {
-            const v = obj.participantId;
+            const v = obj.participantID || obj.participantId;
             if (typeof v === "string") {
                 return { participantId: v };
+            }
+            return defaults;
+        }
+        if (filterType === "accountId") {
+            const v = obj.hashedAccountID;
+            if (typeof v === "string") {
+                return { accountId: v };
             }
             return defaults;
         }
@@ -262,6 +274,7 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
         studyStatus: "active",
         studyStatusOther: "",
         participantId: "",
+        accountId: "",
         flags: [],
         linkingCodes: [],
         surveyKey: "",
@@ -384,6 +397,7 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
             studyStatus: "active",
             studyStatusOther: "",
             participantId: "",
+            accountId: "",
             flags: [],
             linkingCodes: [],
             surveyKey: "",
@@ -429,6 +443,7 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
                         studyStatus: "active",
                         studyStatusOther: "",
                         participantId: "",
+                        accountId: "",
                         flags: [],
                         linkingCodes: [],
                         surveyKey: "",
@@ -448,6 +463,7 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
                     studyStatus: "active",
                     studyStatusOther: "",
                     participantId: "",
+                    accountId: "",
                     flags: [],
                     linkingCodes: [],
                     surveyKey: "",
@@ -526,6 +542,7 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
                                                 <SelectItem value="none">No filter</SelectItem>
                                                 <SelectItem value="studyStatus">Study Status</SelectItem>
                                                 <SelectItem value="participantId">Participant ID</SelectItem>
+                                                <SelectItem value="accountId">Account ID</SelectItem>
                                                 <SelectItem value="flags">Participant Flags</SelectItem>
                                                 <SelectItem value="linkingCodes">Linking Codes</SelectItem>
                                                 <SelectItem value="surveyKey">Survey Key</SelectItem>
@@ -591,6 +608,22 @@ export default function ParticipantFilterPopover({ surveyKeys = [] }: { surveyKe
                                                 onChange={(e) => setSimpleForm((prev) => ({ ...prev, participantId: e.target.value }))}
                                             />
                                             <FieldDescription>Filter for a single participant by ID</FieldDescription>
+                                        </FieldContent>
+                                    </Field>
+                                )}
+
+                                {/* Account ID Filter */}
+                                {simpleForm.filterType === "accountId" && (
+                                    <Field>
+                                        <FieldLabel htmlFor="account-id">Enter Account ID</FieldLabel>
+                                        <FieldContent>
+                                            <Input
+                                                id="account-id"
+                                                placeholder="Enter account ID"
+                                                value={simpleForm.accountId}
+                                                onChange={(e) => setSimpleForm((prev) => ({ ...prev, accountId: e.target.value }))}
+                                            />
+                                            <FieldDescription>Filter for a single account by ID</FieldDescription>
                                         </FieldContent>
                                     </Field>
                                 )}
