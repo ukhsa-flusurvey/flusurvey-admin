@@ -113,7 +113,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                 </div>
             )}
 
-            <div className='flex gap-8 items-end -mt-4'>
+            <div className={`flex gap-8 items-end ${participant.hashedAccountID ? '-mt-4' : 'mt-1'}`}>
                 <div className=''>
                     <div className='text-xs text-muted-foreground mb-1 flex items-center gap-2'>
                         <span><Calendar className='size-3' /></span>
