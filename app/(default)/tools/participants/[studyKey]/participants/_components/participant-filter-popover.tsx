@@ -155,7 +155,7 @@ function parseFilterToSimpleValues(filterJsonStr: string, filterType: SimpleForm
             return defaults;
         }
         if (filterType === "participantId") {
-            const v = obj.participantID || obj.participantId;
+            const v = obj.participantID ?? obj.participantId;
             if (typeof v === "string") {
                 return { participantId: v };
             }
