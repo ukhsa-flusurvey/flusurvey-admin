@@ -25,6 +25,7 @@ export interface Study {
     configs: {
         idMappingMethod: string;
         participantFileUploadRule: Expression;
+        trackAccount: boolean;
     }
     stats: {
         participantCount: number;

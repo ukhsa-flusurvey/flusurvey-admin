@@ -5,11 +5,12 @@ export const dynamic = 'force-dynamic';
 
 
 
-export default function Page(props: StudyKeyPageParams) {
+export default async function Page(props: StudyKeyPageParams) {
+    const { studyKey } = await props.params;
 
     return (
         <DangerZone
-            studyKey={props.params.studyKey}
+            studyKey={studyKey}
         />
     );
 }

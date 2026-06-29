@@ -17,7 +17,7 @@ export default auth((req) => {
     const isAuthRoute = AuthPages.includes(nextUrl.pathname);
 
     if (process.env.NODE_ENV === 'development') {
-        console.log("middleware", { path: nextUrl.pathname, login: isLoggedIn, isPublicRoute, isAuthRoute });
+        console.log("proxy", { path: nextUrl.pathname, login: isLoggedIn, isPublicRoute, isAuthRoute });
     }
 
     if (isPublicRoute) {

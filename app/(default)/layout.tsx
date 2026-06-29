@@ -11,9 +11,11 @@ import '@fontsource/open-sans/latin-700.css'
 import '@fontsource/open-sans/latin-700-italic.css'
 import '@fontsource/open-sans/latin-800.css'
 import '@fontsource/open-sans/latin-800-italic.css'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { Metadata } from 'next'
 
 
-export const metadata = {
+export const metadata: Metadata = {
     title: {
         default: process.env.NEXT_PUBLIC_APP_NAME || 'Case Admin',
         template: `%s | ${process.env.NEXT_PUBLIC_APP_NAME || 'Case Admin'} `,
@@ -30,7 +32,9 @@ export default function RootLayout({
     return (
         <html lang="en" className="font-sans">
             <body>
-                {children}
+                <TooltipProvider>
+                    {children}
+                </TooltipProvider>
             </body>
         </html>
     );

@@ -4,22 +4,23 @@ import SurveyEditorLoader from "./_components/survey-editor-loader";
 
 
 interface PageProps {
-    searchParams: {
+    searchParams: Promise<{
         studyKey: string;
         surveyKey: string;
         versionId: string;
-    }
+    }>
 }
 
 export default async function Page(props: PageProps) {
+    const { studyKey, surveyKey, versionId } = await props.searchParams;
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <SurveyEditorLoader
-                studyKey={props.searchParams.studyKey}
-                surveyKey={props.searchParams.surveyKey}
-                versionId={props.searchParams.versionId}
+                studyKey={studyKey}
+                surveyKey={surveyKey}
+                versionId={versionId}
             />
         </Suspense>
-    )
+    );
 
 }

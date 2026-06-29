@@ -1,16 +1,16 @@
-import React from 'react';
 import { redirect } from "next/navigation";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string
-    }
+    }>
 }
 
 export const dynamic = 'force-dynamic';
 
-const Page: React.FC<PageProps> = async (props) => {
-    redirect(`/tools/participants/${props.params.studyKey}/actions/general`);
+const Page = async (props: PageProps) => {
+    const { studyKey } = await props.params;
+    redirect(`/tools/participants/${studyKey}/actions/general`);
     return null;
 };
 

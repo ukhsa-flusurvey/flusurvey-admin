@@ -1,7 +1,6 @@
 'use server';
 
 import { auth } from "@/auth";
-import { getCASEManagementAPIURL } from "@/utils/server/api";
 import { fetchCASEManagementAPI } from "@/utils/server/fetch-case-management-api";
 import { MessageSchedule } from "@/utils/server/types/messaging";
 import { revalidatePath } from "next/cache";

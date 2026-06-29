@@ -13,7 +13,7 @@ export const createStudy = async (newStudy: z.infer<typeof newStudySchema>) => {
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies`;
+    const url = `/v1/studies`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,

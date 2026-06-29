@@ -12,7 +12,7 @@ export const deleteStudyAction = async (studyKey: string) => {
         return { status: 401, error: 'Unauthorized' };
     }
 
-    let url = `/v1/studies/${studyKey}`;
+    const url = `/v1/studies/${studyKey}`;
 
     const resp = await fetchCASEManagementAPI(url,
         session.CASEaccessToken,

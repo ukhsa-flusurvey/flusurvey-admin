@@ -15,16 +15,18 @@ export const metadata = {
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string;
-    }
-    searchParams?: {
+    }>
+    searchParams?: Promise<{
         filter?: string;
-    }
+    }>
 }
 
 export default async function Page(props: PageProps) {
-    const filesCompKey = props.params.studyKey + JSON.stringify(props.searchParams);
+    const { studyKey } = await props.params;
+    const searchParams = await props.searchParams;
+    const filesCompKey = studyKey + JSON.stringify(searchParams);
 
     return (
         <div
@@ -33,7 +35,7 @@ export default async function Page(props: PageProps) {
                 breadcrumbs={[
                     {
                         href: "/tools/participants",
-                        content: props.params.studyKey
+                        content: studyKey
                     },
                     {
                         content: <FilesPageLinkContent />
@@ -71,8 +73,8 @@ export default async function Page(props: PageProps) {
                             key={filesCompKey}
                             fallback={<ParticipantFilesSkeleton />}>
                             <ParticipantFiles
-                                studyKey={props.params.studyKey}
-                                filter={props.searchParams?.filter}
+                                studyKey={studyKey}
+                                filter={searchParams?.filter}
                             />
                         </Suspense>
                     </div>

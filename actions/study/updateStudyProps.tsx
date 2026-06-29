@@ -117,3 +117,28 @@ export const updateStudyDisplayProps = async (studyKey: string,
     revalidatePath('/tools/study-configurator');
     return resp.body;
 }
+
+export const updateStudyTrackAccount = async (studyKey: string, trackAccount: boolean): Promise<{
+    error?: string,
+    message?: string
+}> => {
+    const session = await auth();
+    if (!session || !session.CASEaccessToken) {
+        return { error: 'Unauthorized' };
+    }
+    const url = `/v1/studies/${studyKey}/track-account`;
+    const resp = await fetchCASEManagementAPI(
+        url,
+        session.CASEaccessToken,
+        {
+            method: 'PUT',
+            body: JSON.stringify({ trackAccount }),
+            revalidate: 0,
+        }
+    );
+    if (resp.status !== 200) {
+        return { error: `Failed to update track account: ${resp.status} - ${resp.body.error}` };
+    }
+    revalidatePath('/tools/study-configurator');
+    return resp.body;
+}

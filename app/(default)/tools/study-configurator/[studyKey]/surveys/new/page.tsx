@@ -4,32 +4,32 @@ import BackButton from "../../../../../../../components/BackButton";
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string
-    }
+    }>
 }
 
 export const dynamic = 'force-dynamic';
 
 
 export default async function Page(props: PageProps) {
-    const surveyKeys = (await getSurveyInfos(props.params.studyKey)).surveys?.map(s => s.key) || [];
+    const { studyKey } = await props.params;
+    const surveyKeys = (await getSurveyInfos(studyKey)).surveys?.map(s => s.key) || [];
 
     return (
         <div className="space-y-4">
             <div>
                 <BackButton
                     label="Back to surveys"
-                    href={`/tools/study-configurator/${props.params.studyKey}/surveys`}
+                    href={`/tools/study-configurator/${studyKey}/surveys`}
                 />
             </div>
             <div className="w-full sm:w-2/3 md:1/2">
                 <CreateSurveyActionsCard
-                    studyKey={props.params.studyKey}
+                    studyKey={studyKey}
                     existingSurveyKeys={surveyKeys || []}
                 />
             </div>
         </div>
-
-    )
+    );
 }

@@ -3,21 +3,23 @@ import StudyRulesOverview, { StudyRulesOverviewSkeleton } from './_components/St
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string
-    }
+    }>
 }
 
 export const dynamic = 'force-dynamic';
 
-const Page: React.FC<PageProps> = async (props) => {
+const Page = async (props: PageProps) => {
+    const { studyKey } = await props.params;
+
     return (
         <div className='flex'>
             <Suspense fallback={<StudyRulesOverviewSkeleton
-                studyKey={props.params.studyKey}
+                studyKey={studyKey}
             />}>
                 <StudyRulesOverview
-                    studyKey={props.params.studyKey}
+                    studyKey={studyKey}
                 />
             </Suspense>
         </div>

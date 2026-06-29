@@ -33,7 +33,7 @@ export const fetchCASEManagementAPI = async (
             status: response.status,
             body: responseBody,
         };
-    } catch (e) {
+    } catch {
         return {
             status: response.status,
             body: { error: response.statusText },

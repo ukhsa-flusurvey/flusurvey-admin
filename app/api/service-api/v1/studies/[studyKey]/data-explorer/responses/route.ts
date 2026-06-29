@@ -9,10 +9,13 @@ const studyKeySchema = z.string().min(2).max(50).regex(
     'Study key must contain only letters, numbers, hyphens, and underscores.'
 );
 
-export async function GET(
-    request: NextRequest,
-    { params: { studyKey } }: { params: { studyKey: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ studyKey: string }> }) {
+    const params = await props.params;
+
+    const {
+        studyKey
+    } = params;
+
     const parsedStudyKey = studyKeySchema.safeParse(studyKey);
     if (!parsedStudyKey.success) {
         return NextResponse.json(

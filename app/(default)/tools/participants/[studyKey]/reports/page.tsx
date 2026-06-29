@@ -21,19 +21,21 @@ export const metadata = {
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         studyKey: string;
-    }
-    searchParams?: {
+    }>
+    searchParams?: Promise<{
         pid?: string;
         from?: string;
         until?: string;
         reportKey?: string;
-    }
+    }>
 }
 
 export default async function Page(props: PageProps) {
-    const reportsCompKey = props.params.studyKey + JSON.stringify(props.searchParams);
+    const { studyKey } = await props.params;
+    const searchParams = await props.searchParams;
+    const reportsCompKey = studyKey + JSON.stringify(searchParams);
 
     return (
         <div
@@ -42,7 +44,7 @@ export default async function Page(props: PageProps) {
                 breadcrumbs={[
                     {
                         href: "/tools/participants",
-                        content: props.params.studyKey
+                        content: studyKey
                     },
                     {
                         // href: `/tools/participants/${props.params.studyKey}/reports`,
@@ -68,7 +70,7 @@ export default async function Page(props: PageProps) {
                                 className="font-bold"
                             >
                                 <Link
-                                    href={`/tools/participants/${props.params.studyKey}/reports/exporter`}
+                                    href={`/tools/participants/${studyKey}/reports/exporter`}
                                 >
                                     <HardDriveDownload className="size-4 me-2" />
                                     Open Exporter
@@ -77,8 +79,8 @@ export default async function Page(props: PageProps) {
                             </Button>
                         </CardTitle>
                         <ReportsToolbar
-                            studyKey={props.params.studyKey}
-                            searchParams={props.searchParams}
+                            studyKey={studyKey}
+                            searchParams={searchParams}
                         />
                     </CardHeader>
                     <Separator
@@ -89,11 +91,11 @@ export default async function Page(props: PageProps) {
                             key={reportsCompKey}
                             fallback={<ReportViewerSkeleton />}>
                             <ReportViewer
-                                studyKey={props.params.studyKey}
-                                reportKey={props.searchParams?.reportKey}
-                                pid={props.searchParams?.pid}
-                                from={parseUnixSecondsToDate(props.searchParams?.from)}
-                                until={parseUnixSecondsToDate(props.searchParams?.until)}
+                                studyKey={studyKey}
+                                reportKey={searchParams?.reportKey}
+                                pid={searchParams?.pid}
+                                from={parseUnixSecondsToDate(searchParams?.from)}
+                                until={parseUnixSecondsToDate(searchParams?.until)}
                             />
                         </Suspense>
                     </div>
