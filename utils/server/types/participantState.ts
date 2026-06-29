@@ -25,6 +25,8 @@ export interface ParticipantState {
     lastSubmissions: { [key: string]: number };
     assignedSurveys: AssignedSurvey[];
     messages: ParticipantMessage[];
+    hashedAccountID?: string;
+    isMainProfile?: boolean;
 }
 
 const parseTimestamp = (value: number | string | undefined): number | undefined => {

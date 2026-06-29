@@ -1,7 +1,7 @@
 'use client';
 
 import AvatarFromId from '@/components/AvatarFromID';
-import { Activity, Calendar, Clock } from 'lucide-react';
+import { Activity, Calendar, Clock, User } from 'lucide-react';
 import React, { useState } from 'react';
 import CopyIdToClipboad from './CopyIdToClipboad';
 import { Separator } from '@/components/ui/separator';
@@ -10,6 +10,7 @@ import { ParticipantState } from '@/utils/server/types/participantState';
 import { format } from 'date-fns';
 import StatusBadge from './status-badge';
 import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
 import { updateParticipant } from '@/lib/data/participants';
 import { toast } from 'sonner';
 import StatusEditPopover from './participant-editors/status-edit-popover';
@@ -61,7 +62,7 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
         if (!participant) return null;
 
         return (<div className='flex flex-col gap-6'>
-            <div className='flex items-start gap-4'>
+            <div className='flex items-center gap-4'>
                 <div>
                     <AvatarFromId
                         userId={participant.participantId}
@@ -69,13 +70,13 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
                     />
                 </div>
                 <div className=''>
-                    <div className='text-sm mb-1 font-semibold'>
+                    <div className='text-xs text-muted-foreground mb-1'>
                         Participant ID
                     </div>
                     <p
                         className='flex items-center gap-2'
                     >
-                        <span className='font-mono text-xs truncate'>{participant.participantId}</span>
+                        <span className='font-mono text-sm truncate'>{participant.participantId}</span>
                         <CopyIdToClipboad
                             participantId={participant.participantId}
                         />
@@ -92,23 +93,43 @@ const ParticipantDetails: React.FC<ParticipantDetailsProps> = (props) => {
 
             </div>
 
-            <div className='flex gap-8 items-end'>
+            {participant.hashedAccountID && (
                 <div className=''>
-                    <div className='text-sm mb-1 flex items-center gap-2'>
-                        <span className='text-neutral-400'><Calendar className='size-3' /></span>
+                    <div className='text-xs text-muted-foreground mb-1 flex items-center gap-2'>
+                        <span><User className='size-3' /></span>
+                        <span>Account ID</span>
+                        {participant.isMainProfile && (
+                            <Badge variant='secondary'>Main Profile</Badge>
+                        )}
+                    </div>
+                    <p
+                        className='flex items-center gap-2'
+                    >
+                        <span className='font-mono text-sm truncate'>{participant.hashedAccountID}</span>
+                        <CopyIdToClipboad
+                            participantId={participant.hashedAccountID}
+                        />
+                    </p>
+                </div>
+            )}
+
+            <div className={`flex gap-8 items-end ${participant.hashedAccountID ? '-mt-4' : 'mt-1'}`}>
+                <div className=''>
+                    <div className='text-xs text-muted-foreground mb-1 flex items-center gap-2'>
+                        <span><Calendar className='size-3' /></span>
                         Joined
                     </div>
-                    <div className='font-mono text-sm font-semibold'>
+                    <div className='font-mono text-sm'>
                         {format(new Date(participant.enteredAt * 1000), 'dd-MMM-yyyy')}
                     </div>
                 </div>
 
                 <div className=''>
-                    <div className='text-sm text-foreground mb-1 flex items-center gap-2'>
-                        <span className='text-neutral-400'><Activity className='size-3' /></span>
+                    <div className='text-xs text-muted-foreground mb-1 flex items-center gap-2'>
+                        <span><Activity className='size-3' /></span>
                         Last modified
                     </div>
-                    <div className='font-mono text-sm font-semibold'>
+                    <div className='font-mono text-sm'>
                         {lastModified ? format(new Date(lastModified * 1000), 'dd-MMM-yyyy') : 'Never'}
                     </div>
                 </div>
