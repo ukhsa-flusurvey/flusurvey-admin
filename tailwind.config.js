@@ -97,7 +97,6 @@ module.exports = {
         }
     },
     plugins: [
-        require('@headlessui/tailwindcss')({ prefix: 'ui' }),
         require('@tailwindcss/typography'),
         require("tailwindcss-animate"),
         require('@tailwindcss/container-queries'),

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { BsGlobe2 } from 'react-icons/bs';
-import { RadioGroup } from '@headlessui/react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import NotificationBadge from './NotificationBadge';
 
 interface LanguageSelectorProps {
@@ -28,30 +28,36 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
     return (
         <div className='flex items-center'>
-            <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
-                <div className='flex items-center bg-neutral-50 p-1 rounded-md gap-1.5 border border-slate-200'>
-                    <RadioGroup.Label>
-                        <span className='sr-only'>Language</span>
-                        <span>
-                            <BsGlobe2 className='text-neutral-400 mx-1' />
-                        </span>
-                    </RadioGroup.Label>
-                    {languages.map((lang) => (
-                        <NotificationBadge key={lang}
-                            variant={'warning'}
-                            animation={'ping'}
-                            isInvisible={!showBadgeForLanguages || !showBadgeForLanguages.includes(lang)}
+            <ToggleGroup
+                type='single'
+                value={selectedLanguage}
+                onValueChange={(lang) => {
+                    if (lang) {
+                        setSelectedLanguage(lang);
+                    }
+                }}
+                aria-label='Language'
+                className='flex items-center bg-neutral-50 p-1 rounded-md gap-1.5 border border-slate-200'
+            >
+                <span className='sr-only'>Language</span>
+                <BsGlobe2 className='text-neutral-400 mx-1' aria-hidden='true' />
+                {languages.map((lang) => (
+                    <NotificationBadge key={lang}
+                        variant={'warning'}
+                        animation={'ping'}
+                        isInvisible={!showBadgeForLanguages || !showBadgeForLanguages.includes(lang)}
+                    >
+                        <ToggleGroupItem
+                            value={lang}
+                            aria-label={lang}
+                            size='sm'
+                            className='h-auto px-1.5 py-0.5 rounded-sm text-sm hover:underline data-[state=on]:font-bold data-[state=on]:bg-white data-[state=on]:underline data-[state=on]:shadow-sm data-[state=on]:border-slate-200 border border-transparent'
                         >
-                            <RadioGroup.Option
-                                value={lang}
-                                className='px-1.5 py-0.5 cursor-pointer rounded-sm text-sm hover:underline ui-checked:font-bold ui-checked:bg-white ui-checked:underline ui-checked:shadow-sm border border-transparent ui-checked:border-slate-200'>
-                                {lang}
-                            </RadioGroup.Option>
-
-                        </NotificationBadge>
-                    ))}
-                </div>
-            </RadioGroup>
+                            {lang}
+                        </ToggleGroupItem>
+                    </NotificationBadge>
+                ))}
+            </ToggleGroup>
 
         </div>
     );
