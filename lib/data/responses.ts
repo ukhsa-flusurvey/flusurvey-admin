@@ -6,6 +6,16 @@ import { Pagination } from "@/utils/server/types/paginationInfo";
 import { Task } from "./tasks";
 
 const surveyResponseExtraContextColumns = process.env.SURVEY_RESPONSE_EXTRA_CONTEXT_COLUMNS;
+const accountTrackingContextColumns = ['accountID', 'mainProfile'];
+
+const configuredExtraContextColumns = surveyResponseExtraContextColumns
+    ?.split(',')
+    .map(column => column.trim())
+    .filter(Boolean) ?? [];
+
+const requestedContextColumns = [
+    ...new Set([...configuredExtraContextColumns, ...accountTrackingContextColumns])
+];
 
 export const getResponses = async (
     studyKey: string,
@@ -21,6 +31,7 @@ export const getResponses = async (
         [key: string]: number | string | boolean | object
     }>
     pagination?: Pagination
+    contextColumns?: string[]
 }> => {
     const session = await auth();
     if (!session || !session.CASEaccessToken) {
@@ -39,8 +50,8 @@ export const getResponses = async (
     if (pageSize) queryParams.append('limit', pageSize.toString());
     queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
 
-    if (surveyResponseExtraContextColumns) {
-        queryParams.append('extraContextColumns', surveyResponseExtraContextColumns);
+    if (requestedContextColumns.length > 0) {
+        queryParams.append('extraContextColumns', requestedContextColumns.join(','));
     }
 
 
@@ -57,7 +68,18 @@ export const getResponses = async (
     if (resp.status !== 200) {
         return { error: `Failed to fetch responses: ${resp.status} - ${resp.body.error}` };
     }
-    return resp.body;
+
+    const responses = resp.body.responses ?? [];
+    const accountColumnsInResponse = accountTrackingContextColumns.filter(column =>
+        responses.some((response: Record<string, unknown>) => Object.hasOwn(response, column))
+    );
+
+    return {
+        ...resp.body,
+        contextColumns: [
+            ...new Set([...configuredExtraContextColumns, ...accountColumnsInResponse])
+        ],
+    };
 }
 
 
@@ -95,8 +117,8 @@ export const startResponseExport = async (
     queryParams.append('questionOptionSep', keySeparator);
     queryParams.append('surveyKey', surveyKey);
     queryParams.append('shortKeys', useShortKeys ? 'true' : 'false');
-    if (surveyResponseExtraContextColumns) {
-        queryParams.append('extraContextColumns', surveyResponseExtraContextColumns);
+    if (requestedContextColumns.length > 0) {
+        queryParams.append('extraContextColumns', requestedContextColumns.join(','));
     }
 
     const queryString = queryParams.toString();

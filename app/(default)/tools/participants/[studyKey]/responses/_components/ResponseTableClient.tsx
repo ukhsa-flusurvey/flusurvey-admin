@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { deleteResponses } from '@/actions/study/responses';
+import { Badge } from '@/components/ui/badge';
 
 interface ResponseTableClientProps {
     studyKey: string;
@@ -59,9 +60,25 @@ const ObjectValue = (props: { value: object }) => {
     )
 }
 
+const BooleanValue = (props: { value: boolean }) => (
+    <Badge
+        variant='outline'
+        className={cn(
+            'gap-0.5 px-1.5 py-0 text-[10px] leading-3 font-normal',
+            { 'text-muted-foreground': !props.value }
+        )}
+    >
+        <span aria-hidden>{props.value ? '✓' : '×'}</span>
+        {props.value ? 'TRUE' : 'FALSE'}
+    </Badge>
+)
+
 const printValue = (value: number | string | boolean | object): string | React.ReactNode => {
     if (typeof value === 'object') {
         return <ObjectValue value={value} />
+    }
+    if (typeof value === 'boolean') {
+        return <BooleanValue value={value} />;
     }
     return value;
 }
@@ -71,7 +88,7 @@ const printAsDate = (value: number) => {
     return date.toLocaleString();
 }
 
-const escapeCsvValue = (val: string | undefined) => {
+const escapeCsvValue = (val: unknown) => {
     if (val === null || val === undefined) {
         return '';
     }
@@ -123,8 +140,11 @@ const ResponseTableClient: React.FC<ResponseTableClientProps> = (props) => {
                         if (typeof value === 'object') {
                             return JSON.stringify(value);
                         }
+                        if (value === null || value === undefined) {
+                            return '';
+                        }
                         if (typeof value !== 'string') {
-                            return value.toString();
+                            return String(value);
                         }
                         return value;
                     }).map((value) => escapeCsvValue(value));
