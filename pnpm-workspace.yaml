@@ -11,6 +11,12 @@ overrides:
 resolutionMode: highest
 minimumReleaseAge: 1440
 minimumReleaseAgeIgnoreMissingTime: true
+minimumReleaseAgeExclude:
+  - react
+  - react-dom
+  - next
+  - "@next/*"
+  - eslint-config-next
 allowBuilds:
   es5-ext: true
   sharp: true
