@@ -284,7 +284,7 @@ const ParticipantFilesClient: React.FC<ParticipantFilesClientProps> = (props) =>
         }
     };
 
-    const getFileIcon = (fileType: string) => {
+    const getFileIcon = (fileType: string = '') => {
         let icon = <span><BsFileEarmark /></span>;
         if (fileType.includes('csv')) {
             icon = <span><BsFiletypeCsv /></span>;

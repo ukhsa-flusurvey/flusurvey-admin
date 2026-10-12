@@ -6,7 +6,7 @@ import { Pagination } from "@/utils/server/types/paginationInfo";
 
 export interface FileInfo {
     id: string;
-    fileType: string;
+    fileType?: string;
     status: string;
     participantID: string;
     createdAt: string;
