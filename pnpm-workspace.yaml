@@ -2,9 +2,11 @@ packages:
   - "."
 
 overrides:
-  baseline-browser-mapping: 2.10.31
-  glob: ^10.5.0
-  diff@>=5.0.0 <5.2.2: ">=5.2.2"
+  # MDXEditor 3.55.0 pins 4.1.1; avoid a major editor migration for YAML DoS fixes.
+  "@mdxeditor/editor@3>js-yaml": 4.3.2
+  # Tailwind 3/postcss-nested require v6; typography pins 6.0.10. The CPU DoS
+  # fix is only in v7.1.6. Validate generated CSS when changing this major override.
+  "postcss-selector-parser@>=6 <7": 7.1.6
 
 resolutionMode: highest
 minimumReleaseAge: 1440
