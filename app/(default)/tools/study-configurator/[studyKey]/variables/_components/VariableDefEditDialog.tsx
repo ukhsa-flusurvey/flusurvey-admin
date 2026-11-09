@@ -45,7 +45,9 @@ const baseSchema = z.object({
     label: z.string().optional(),
     description: z.string().optional(),
     key: z.string().min(1, 'Key is required'),
-    type: z.nativeEnum(StudyVariableType, { required_error: 'Type is required' }),
+    type: z.enum(StudyVariableType, {
+        error: issue => issue.input === undefined ? 'Type is required' : undefined,
+    }),
     uiPriority: z.preprocess(v => (v === '' || v == null ? undefined : Number(v)), z.number().int().optional()),
     uiType: z.custom<VariableUIType>().optional(),
 });
@@ -84,7 +86,7 @@ const VariableDefEditDialog: React.FC<VariableDefEditDialogProps> = (props) => {
     const [step, setStep] = React.useState<number>(0); // 0: key+type, 1: type-specific
     const [loading, setLoading] = React.useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<z.input<typeof formSchema>, unknown, z.output<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             key: '',

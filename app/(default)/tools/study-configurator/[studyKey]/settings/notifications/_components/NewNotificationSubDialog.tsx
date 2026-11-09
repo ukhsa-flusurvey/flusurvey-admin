@@ -26,7 +26,7 @@ interface NewNotificationSubDialogProps {
 
 const newSubSchema = z.object({
     messageType: z.string().min(1).max(50),
-    email: z.string().email(),
+    email: z.email(),
 })
 
 const NewNotificationSubDialog: React.FC<NewNotificationSubDialogProps> = (props) => {
