@@ -90,7 +90,7 @@ const ContactFormDialog: React.FC<ContactFormDialogProps> = (props) => {
         }, {
             message: props.fieldConfig.company?.error
         }) : z.string().optional(),
-        email: useEmail ? z.string().email(props.fieldConfig.email?.error).refine((email => {
+        email: useEmail ? z.email({ error: props.fieldConfig.email?.error }).refine((email => {
             return new RegExp(props.fieldConfig.email?.pattern || '').test(email);
         }), {
             message: props.fieldConfig.email?.error
