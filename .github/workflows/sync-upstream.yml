@@ -1,8 +1,9 @@
 # Brings changes from case-framework/case-admin into this repo.
 #
-# Every weekday morning (or when run by hand under Actions), the `upstream` branch is set to
-# case-admin's `main`, and a pull request from `upstream` into `main` is opened when `main` doesn't
-# have those changes yet. An open pull request just picks up the newer commits.
+# Run it by hand after a change lands in case-admin: Actions › Sync from case-admin › Run workflow,
+# or `gh workflow run sync-upstream.yml --repo <this repo>`. It sets the `upstream` branch to
+# case-admin's `main` and opens a pull request from `upstream` into `main` when `main` doesn't have
+# those changes yet. An open pull request just picks up the newer commits.
 #
 # Merge it with "Create a merge commit", not squash or rebase: a merge commit records which
 # upstream commits are in, so the next sync only brings what is new. If GitHub reports conflicts,
@@ -17,8 +18,6 @@
 name: Sync from case-admin
 
 on:
-  schedule:
-    - cron: "0 5 * * 1-5"
   workflow_dispatch:
 
 permissions:
